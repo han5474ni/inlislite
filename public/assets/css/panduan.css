@@ -1,0 +1,501 @@
+/* Custom CSS for Panduan Page - Complete Layout */
+
+:root {
+  --primary-color: #0d6efd;
+  --primary-dark: #0b5ed7;
+  --success-color: #198754;
+  --warning-color: #fd7e14;
+  --danger-color: #dc3545;
+  --light-gray: #f8f9fa;
+  --border-color: #dee2e6;
+  --text-muted: #6c757d;
+  --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --border-radius: 0.75rem;
+  --transition: all 0.15s ease-in-out;
+}
+
+/* Base Styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f5f7fa;
+}
+
+/* Header Styles */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+.logo-container {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* Container Styles */
+.container-fluid {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Card Styles */
+.bg-white {
+  background-color: white !important;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.rounded-3 {
+  border-radius: var(--border-radius) !important;
+}
+
+.shadow-sm {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Information Section Styles */
+.info-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.patch-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* Document item styling */
+.document-item {
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.document-item:hover {
+  background-color: #f8f9fa;
+}
+
+.document-item:last-child {
+  border-bottom: none !important;
+}
+
+.document-item h5 {
+  font-size: 1rem;
+  color: #212529;
+  font-weight: 600;
+}
+
+.document-item p {
+  font-size: 0.875rem;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+/* Badge Styles */
+.badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+  border-radius: 0.375rem;
+}
+
+/* Button Styles */
+.btn {
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: var(--transition);
+  font-size: 0.875rem;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+  border-color: #d0d7de;
+  color: #656d76;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #f6f8fa;
+  border-color: #d0d7de;
+  color: #656d76;
+}
+
+.btn-link {
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  text-decoration: none;
+  color: var(--primary-color) !important;
+}
+
+/* Search input styling */
+.input-group-text {
+  border-color: #ced4da;
+  background-color: white;
+}
+
+.form-control {
+  border-color: #ced4da;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Custom Modal Styles - Matching UI Design */
+.custom-modal {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  max-width: 500px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.custom-modal-header {
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  border-bottom: none;
+  padding: 1.5rem 2rem;
+  position: relative;
+}
+
+.custom-modal-header .modal-title {
+  color: #1e293b;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.custom-close {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #1e293b;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.custom-close:hover {
+  opacity: 1;
+  color: #1e293b;
+}
+
+.custom-modal-body {
+  padding: 2rem;
+  background-color: #ffffff;
+}
+
+.custom-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.custom-input,
+.custom-select,
+.custom-textarea {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: #ffffff;
+}
+
+.custom-input:focus,
+.custom-select:focus,
+.custom-textarea:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+  outline: none;
+}
+
+.custom-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.custom-modal-footer {
+  padding: 1.5rem 2rem;
+  background-color: #f8fafc;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-cancel {
+  background-color: #ffffff;
+  border: 2px solid #d1d5db;
+  color: #374151;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+.btn-save,
+.btn-update {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-save:hover,
+.btn-update:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  color: white;
+}
+
+/* Page background */
+body {
+  background-color: #f5f7fa !important;
+}
+
+#page-content-wrapper {
+  background-color: #f5f7fa !important;
+}
+
+/* Card styling */
+.card {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  background-color: white;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+/* Typography */
+h1.fw-bold {
+  font-size: 2rem;
+  color: #212529;
+  font-weight: 700;
+}
+
+h3.fw-bold {
+  font-size: 1.5rem;
+  color: #212529;
+  font-weight: 700;
+}
+
+.lead {
+  font-size: 1.1rem;
+  color: #6c757d;
+  line-height: 1.6;
+}
+
+/* Icon styling */
+.text-success i {
+  color: #198754 !important;
+}
+
+.text-primary i {
+  color: #0d6efd !important;
+}
+
+.text-info i {
+  color: #17a2b8 !important;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumb-item {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+/* Header styling */
+.page-header {
+  background-color: white;
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  h1.fw-bold {
+    font-size: 1.5rem;
+  }
+
+  h3.fw-bold {
+    font-size: 1.25rem;
+  }
+
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .document-item .col-md-4 {
+    margin-top: 1rem;
+    text-align: left !important;
+  }
+
+  .btn-sm {
+    margin-bottom: 0.5rem;
+  }
+
+  .custom-modal {
+    max-width: 95%;
+    margin: 1rem auto;
+  }
+
+  .custom-modal-header,
+  .custom-modal-body,
+  .custom-modal-footer {
+    padding: 1.5rem;
+  }
+
+  .custom-modal-footer {
+    flex-direction: column;
+  }
+
+  .btn-cancel,
+  .btn-save,
+  .btn-update {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Dark mode support */
+[data-bs-theme="dark"] body {
+  background-color: #212529 !important;
+}
+
+[data-bs-theme="dark"] #page-content-wrapper {
+  background-color: #212529 !important;
+}
+
+[data-bs-theme="dark"] .card {
+  background-color: #343a40;
+  border-color: #495057;
+}
+
+[data-bs-theme="dark"] .page-header {
+  background-color: #343a40;
+  border-bottom-color: #495057;
+}
+
+[data-bs-theme="dark"] h1.fw-bold,
+[data-bs-theme="dark"] h3.fw-bold {
+  color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .lead {
+  color: #ced4da;
+}
+
+[data-bs-theme="dark"] .document-item h5 {
+  color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .document-item p {
+  color: #ced4da;
+}
+
+[data-bs-theme="dark"] .document-item:hover {
+  background-color: #495057;
+}
+
+[data-bs-theme="dark"] .btn-link {
+  color: #ced4da !important;
+}
+
+[data-bs-theme="dark"] .btn-link:hover {
+  color: #f8f9fa !important;
+}
+
+[data-bs-theme="dark"] .modal-content {
+  background-color: #343a40;
+  color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .custom-modal-body {
+  background-color: #343a40;
+}
+
+[data-bs-theme="dark"] .custom-modal-footer {
+  background-color: #2d3748;
+}
+
+[data-bs-theme="dark"] .form-control {
+  background-color: #495057;
+  border-color: #6c757d;
+  color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .form-control:focus {
+  background-color: #495057;
+  border-color: #86b7fe;
+  color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .input-group-text {
+  background-color: #495057;
+  border-color: #6c757d;
+  color: #f8f9fa;
+}
