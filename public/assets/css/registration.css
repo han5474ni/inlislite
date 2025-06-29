@@ -284,3 +284,325 @@
         border-bottom: 2px solid #000;
     }
 }
+
+/* ===== EDIT MODAL STYLES ===== */
+
+/* Edit modal enhancements */
+#editRegistrationModal .modal-content {
+    border-radius: 0.75rem;
+    border: none;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+#editRegistrationModal .modal-header {
+    background: linear-gradient(135deg, #1C6EC4, #2DA84D);
+    color: white;
+    border-radius: 0.75rem 0.75rem 0 0;
+    border: none;
+    padding: 1.5rem;
+}
+
+#editRegistrationModal .modal-title {
+    font-weight: 600;
+    margin: 0;
+}
+
+#editRegistrationModal .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+#editRegistrationModal .btn-close:hover {
+    opacity: 1;
+}
+
+#editRegistrationModal .modal-body {
+    padding: 2rem;
+}
+
+#editRegistrationModal .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+#editRegistrationModal .form-control,
+#editRegistrationModal .form-select {
+    border-radius: 0.5rem;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+}
+
+#editRegistrationModal .form-control:focus,
+#editRegistrationModal .form-select:focus {
+    border-color: #2DA84D;
+    box-shadow: 0 0 0 0.25rem rgba(45, 168, 77, 0.25);
+}
+
+#editRegistrationModal .form-control.is-invalid,
+#editRegistrationModal .form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+#editRegistrationModal .modal-footer {
+    padding: 1.5rem 2rem;
+    border: none;
+    background-color: #f8f9fa;
+    border-radius: 0 0 0.75rem 0.75rem;
+}
+
+#editRegistrationModal .btn {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+#editRegistrationModal .btn-primary {
+    background: linear-gradient(135deg, #1C6EC4, #2DA84D);
+    border: none;
+}
+
+#editRegistrationModal .btn-primary:hover {
+    background: linear-gradient(135deg, #155a9e, #238f5a);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(28, 110, 196, 0.3);
+}
+
+#editRegistrationModal .btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+#editRegistrationModal .btn-secondary:hover {
+    background-color: #545b62;
+    transform: translateY(-1px);
+}
+
+/* Dropdown action button enhancements */
+.dropdown-item.edit-btn {
+    color: #0d6efd;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item.edit-btn:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+.dropdown-item.edit-btn i {
+    color: #0d6efd;
+}
+
+/* Form validation feedback */
+.invalid-feedback {
+    display: block;
+    font-size: 0.875rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+}
+
+/* Loading states */
+.btn .spinner-border-sm {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+/* Mobile responsive for edit modal */
+@media (max-width: 575.98px) {
+    #editRegistrationModal .modal-body {
+        padding: 1.5rem;
+    }
+    
+    #editRegistrationModal .modal-header {
+        padding: 1.25rem;
+    }
+    
+    #editRegistrationModal .modal-footer {
+        padding: 1.25rem 1.5rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    #editRegistrationModal .btn {
+        width: 100%;
+    }
+}
+
+/* ===== AUTO DROPUP STYLES ===== */
+
+/* Smooth transitions for dropdown positioning */
+.dropdown .dropdown-menu,
+.dropup .dropdown-menu {
+    transition: all 0.15s ease-in-out;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0;
+    min-width: 180px;
+    z-index: 1050;
+}
+
+/* Dropup specific styling */
+.dropup .dropdown-menu {
+    margin-bottom: 0.125rem;
+}
+
+/* Enhanced dropdown menu items */
+.dropdown-menu .dropdown-item {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    border-radius: 0.25rem;
+    margin: 0.125rem 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: translateX(2px);
+}
+
+.dropdown-menu .dropdown-item:active {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-menu .dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 0.75rem;
+}
+
+/* Dropdown divider styling */
+.dropdown-menu .dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Animation for dropdown appearance */
+.dropdown-menu.show {
+    animation: dropdownFadeIn 0.15s ease-out;
+}
+
+.dropup .dropdown-menu.show {
+    animation: dropupFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes dropupFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Dropdown button enhancements */
+.dropdown .btn-icon,
+.dropup .btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: transparent;
+    color: #6c757d;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dropdown .btn-icon:hover,
+.dropup .btn-icon:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #495057;
+    transform: scale(1.1);
+}
+
+.dropdown .btn-icon:focus,
+.dropup .btn-icon:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    outline: none;
+}
+
+/* Loading state for dropdown actions */
+.dropdown-item.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.dropdown-item.loading::after {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #333;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive dropdown positioning */
+@media (max-width: 767.98px) {
+    .dropdown-menu,
+    .dropup .dropdown-menu {
+        min-width: 160px;
+        font-size: 0.875rem;
+    }
+    
+    .dropdown-menu .dropdown-item {
+        padding: 0.625rem 0.875rem;
+    }
+    
+    .dropdown-menu .dropdown-item i {
+        margin-right: 0.5rem;
+    }
+}
+
+/* High contrast mode for dropdowns */
+@media (prefers-contrast: high) {
+    .dropdown-menu,
+    .dropup .dropdown-menu {
+        border: 2px solid #000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dropdown-menu .dropdown-item:hover {
+        background-color: #000;
+        color: #fff;
+    }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .dropdown-menu,
+    .dropup .dropdown-menu,
+    .dropdown-menu .dropdown-item,
+    .dropdown .btn-icon,
+    .dropup .btn-icon {
+        transition: none;
+        animation: none;
+    }
+}

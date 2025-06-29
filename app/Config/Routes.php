@@ -70,6 +70,8 @@ $routes->get('registration-stats', 'Home::getRegistrationStats');
 $routes->get('registration-data', 'Home::getRegistrationData');
 $routes->get('registration-years', 'Home::getAvailableYears');
 $routes->post('registration/add', 'Home::addRegistration');
+$routes->get('registration/get/(:num)', 'Home::getRegistration/$1');
+$routes->post('registration/update/(:num)', 'Home::updateRegistration/$1');
 $routes->post('registration/update-status', 'Home::updateRegistrationStatus');
 $routes->get('registration/delete/(:num)', 'Home::deleteRegistration/$1');
 $routes->get('setup/create-registrations-table', 'Setup::createRegistrationsTable');

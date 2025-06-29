@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const saveRegistrationBtn = document.getElementById('saveRegistration');
     const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
     
+    // Edit modal elements
+    const editRegistrationForm = document.getElementById('editRegistrationForm');
+    const updateRegistrationBtn = document.getElementById('updateRegistration');
+    const editRegistrationModal = new bootstrap.Modal(document.getElementById('editRegistrationModal'));
+    
     let tableRows = Array.from(tableBody.querySelectorAll('tr[data-id]'));
 
     // --- Live Search ---
@@ -308,6 +313,69 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // --- Edit Registration Form Handling ---
+    if (updateRegistrationBtn) {
+        updateRegistrationBtn.addEventListener('click', function() {
+            const formData = new FormData(editRegistrationForm);
+            
+            // Validate required fields
+            const requiredFields = [
+                { field: 'library_name', id: 'editLibraryName' },
+                { field: 'province', id: 'editProvince' },
+                { field: 'city', id: 'editCity' },
+                { field: 'email', id: 'editEmail' },
+                { field: 'status', id: 'editStatus' }
+            ];
+            let isValid = true;
+            
+            requiredFields.forEach(item => {
+                const input = document.getElementById(item.id);
+                if (!input.value.trim()) {
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                alert('Mohon lengkapi semua field yang wajib diisi!');
+                return;
+            }
+            
+            // Disable button during submission
+            updateRegistrationBtn.disabled = true;
+            updateRegistrationBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+            
+            const id = document.getElementById('editRegistrationId').value;
+            
+            fetch(`registration/update/${id}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    editRegistrationModal.hide();
+                    editRegistrationForm.reset();
+                    // Refresh page to show updated data
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mengupdate data');
+            })
+            .finally(() => {
+                updateRegistrationBtn.disabled = false;
+                updateRegistrationBtn.innerHTML = 'Simpan Perubahan';
+            });
+        });
+    }
+
     // --- Status Dropdown Handling ---
     document.addEventListener('change', function(e) {
         if (e.target.classList.contains('status-dropdown')) {
@@ -323,8 +391,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // --- Status Update Handling ---
+    // --- Action Button Handling ---
     document.addEventListener('click', function(e) {
+        // Edit button
+        if (e.target.classList.contains('edit-btn') || e.target.closest('.edit-btn')) {
+            e.preventDefault();
+            const btn = e.target.classList.contains('edit-btn') ? e.target : e.target.closest('.edit-btn');
+            const id = btn.dataset.id;
+            loadRegistrationForEdit(id);
+        }
+        
+        // Delete button
         if (e.target.classList.contains('delete-btn') || e.target.closest('.delete-btn')) {
             e.preventDefault();
             const btn = e.target.classList.contains('delete-btn') ? e.target : e.target.closest('.delete-btn');
@@ -501,6 +578,40 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Update table rows after any changes ---
     function updateTableRows() {
         tableRows = Array.from(tableBody.querySelectorAll('tr[data-id]'));
+    }
+
+    // --- Load Registration for Edit ---
+    function loadRegistrationForEdit(id) {
+        fetch(`registration/get/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.registration) {
+                    const registration = data.registration;
+                    
+                    // Populate edit form
+                    document.getElementById('editRegistrationId').value = registration.id;
+                    document.getElementById('editLibraryName').value = registration.library_name || '';
+                    document.getElementById('editProvince').value = registration.province || '';
+                    document.getElementById('editCity').value = registration.city || '';
+                    document.getElementById('editEmail').value = registration.email || '';
+                    document.getElementById('editPhone').value = registration.phone || '';
+                    document.getElementById('editStatus').value = registration.status || 'pending';
+                    
+                    // Clear any previous validation errors
+                    editRegistrationForm.querySelectorAll('.is-invalid').forEach(input => {
+                        input.classList.remove('is-invalid');
+                    });
+                    
+                    // Show modal
+                    editRegistrationModal.show();
+                } else {
+                    alert('Error: Tidak dapat memuat data registrasi');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading registration:', error);
+                alert('Terjadi kesalahan saat memuat data registrasi');
+            });
     }
 
     // --- Load Available Years ---
@@ -827,6 +938,184 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial mobile adjustment
     adjustForMobile();
+
+    // Setup auto dropup functionality
+    setupAutoDropup();
+
+    // --- Auto Dropup Functionality ---
+    function setupAutoDropup() {
+        // Function to check and adjust dropdown position
+        function adjustDropdownPosition(dropdownElement) {
+            const dropdown = dropdownElement.closest('.dropdown');
+            if (!dropdown) return;
+            
+            const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+            if (!dropdownMenu) return;
+            
+            // Get dropdown button position
+            const buttonRect = dropdownElement.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+            
+            // Calculate actual dropdown dimensions if possible
+            let dropdownHeight = 200; // Default fallback
+            let dropdownWidth = 180; // Default fallback
+            
+            // Try to get actual dimensions
+            if (dropdownMenu.offsetHeight > 0) {
+                dropdownHeight = dropdownMenu.offsetHeight;
+            }
+            if (dropdownMenu.offsetWidth > 0) {
+                dropdownWidth = dropdownMenu.offsetWidth;
+            }
+            
+            const buffer = 20; // Safety buffer
+            
+            // Calculate space below and above
+            const spaceBelow = viewportHeight - buttonRect.bottom;
+            const spaceAbove = buttonRect.top;
+            const spaceRight = viewportWidth - buttonRect.right;
+            const spaceLeft = buttonRect.left;
+            
+            // Store original classes
+            const wasDropup = dropdown.classList.contains('dropup');
+            const wasDropdownEnd = dropdownMenu.classList.contains('dropdown-menu-end');
+            
+            // Remove existing positioning classes
+            dropdown.classList.remove('dropup');
+            dropdownMenu.classList.remove('dropdown-menu-end');
+            
+            // Always ensure dropdown class is present
+            if (!dropdown.classList.contains('dropdown')) {
+                dropdown.classList.add('dropdown');
+            }
+            
+            // Determine vertical positioning
+            const shouldUseDropup = spaceBelow < dropdownHeight + buffer && spaceAbove > spaceBelow;
+            
+            if (shouldUseDropup) {
+                dropdown.classList.remove('dropdown');
+                dropdown.classList.add('dropup');
+                console.log('Switched to dropup - Space below:', spaceBelow, 'Space above:', spaceAbove);
+            } else {
+                console.log('Using dropdown - Space below:', spaceBelow, 'Space above:', spaceAbove);
+            }
+            
+            // Determine horizontal positioning
+            const shouldUseEnd = spaceRight < dropdownWidth + buffer && spaceLeft > spaceRight;
+            
+            if (shouldUseEnd) {
+                dropdownMenu.classList.add('dropdown-menu-end');
+                console.log('Using dropdown-menu-end - Space right:', spaceRight, 'Space left:', spaceLeft);
+            }
+            
+            // Log changes for debugging
+            const nowDropup = dropdown.classList.contains('dropup');
+            const nowDropdownEnd = dropdownMenu.classList.contains('dropdown-menu-end');
+            
+            if (wasDropup !== nowDropup || wasDropdownEnd !== nowDropdownEnd) {
+                console.log('Dropdown position changed:', {
+                    element: dropdownElement,
+                    wasDropup,
+                    nowDropup,
+                    wasDropdownEnd,
+                    nowDropdownEnd,
+                    buttonRect,
+                    spaceBelow,
+                    spaceAbove,
+                    spaceRight,
+                    spaceLeft
+                });
+            }
+        }
+        
+        // Add event listeners to all dropdown buttons
+        function attachDropdownListeners() {
+            const dropdownButtons = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+            
+            dropdownButtons.forEach(button => {
+                // Remove existing listeners to prevent duplicates
+                button.removeEventListener('show.bs.dropdown', handleDropdownShow);
+                button.removeEventListener('click', handleDropdownClick);
+                
+                // Add new listeners
+                button.addEventListener('show.bs.dropdown', handleDropdownShow);
+                button.addEventListener('click', handleDropdownClick);
+            });
+        }
+        
+        function handleDropdownShow(e) {
+            adjustDropdownPosition(this);
+        }
+        
+        function handleDropdownClick(e) {
+            // Small delay to ensure Bootstrap has processed the click
+            setTimeout(() => {
+                adjustDropdownPosition(this);
+            }, 10);
+        }
+        
+        // Initial setup
+        attachDropdownListeners();
+        
+        // Re-attach listeners when table content changes
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    // Check if new dropdown buttons were added
+                    const hasNewDropdowns = Array.from(mutation.addedNodes).some(node => {
+                        return node.nodeType === 1 && (
+                            node.querySelector && node.querySelector('[data-bs-toggle="dropdown"]') ||
+                            node.matches && node.matches('[data-bs-toggle="dropdown"]')
+                        );
+                    });
+                    
+                    if (hasNewDropdowns) {
+                        attachDropdownListeners();
+                    }
+                }
+            });
+        });
+        
+        // Observe table body for changes
+        const tableBody = document.getElementById('registrationTableBody');
+        if (tableBody) {
+            observer.observe(tableBody, {
+                childList: true,
+                subtree: true
+            });
+        }
+        
+        // Re-check positions on window resize or scroll
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
+                openDropdowns.forEach(menu => {
+                    const button = menu.previousElementSibling;
+                    if (button && button.hasAttribute('data-bs-toggle')) {
+                        adjustDropdownPosition(button);
+                    }
+                });
+            }, 100);
+        });
+        
+        // Also check on scroll
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
+                openDropdowns.forEach(menu => {
+                    const button = menu.previousElementSibling;
+                    if (button && button.hasAttribute('data-bs-toggle')) {
+                        adjustDropdownPosition(button);
+                    }
+                });
+            }, 50);
+        });
+    }
 
     // Start auto-refresh
     startAutoRefresh();

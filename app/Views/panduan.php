@@ -1,346 +1,258 @@
-<?php
-// Panduan INLISLite Versi 3
-$page_title = "Panduan";
-$page_subtitle = "Paket unduhan dan instalasi";
-
-// Helper function for file size formatting
-function formatFileSize($bytes) {
-    if ($bytes >= 1073741824) {
-        return number_format($bytes / 1073741824, 2) . ' GB';
-    } elseif ($bytes >= 1048576) {
-        return number_format($bytes / 1048576, 2) . ' MB';
-    } elseif ($bytes >= 1024) {
-        return number_format($bytes / 1024, 2) . ' KB';
-    } else {
-        return $bytes . ' bytes';
-    }
-}
-?>
-
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo esc($title ?? $page_title); ?></title>
-    
-    <!-- Bootstrap 5 CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#2DA84D">
+    <title><?= esc($title ?? 'Panduan - INLISLite v3.0') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="<?= base_url('assets/css/panduan.css') ?>" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('assets/css/dashboard.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/responsive.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/panduan.css') ?>">
 </head>
 <body>
-    <!-- Header Navigation -->
-    <header class="header-nav bg-white shadow-sm sticky-top">
-        <div class="container-fluid">
-            <div class="row align-items-center py-3">
-                <div class="col-auto">
-                    <button class="btn btn-link text-decoration-none p-0" id="backBtn">
-                        <i class="bi bi-arrow-left fs-4 text-dark"></i>
-                    </button>
-                </div>
-                <div class="col">
-                    <div class="d-flex align-items-center">
-                        <div class="header-icon me-3">
-                            <i class="bi bi-book text-white"></i>
-                        </div>
-                        <div>
-                            <h1 class="header-title mb-0"><?php echo esc($page_title); ?></h1>
-                            <p class="header-subtitle text-muted mb-0"><?php echo esc($page_subtitle); ?></p>
+    <div id="wrapper" class="d-flex">
+        <?= $this->include('layout/sidebar') ?>
+
+        <!-- Page Content -->
+        <main id="page-content-wrapper">
+            <div class="container-fluid p-0">
+                <!-- Header Section -->
+                <header class="page-header-modern">
+                    <div class="header-content">
+                        <div class="header-top">
+                            <a href="<?= site_url('dashboard') ?>" class="back-button">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </a>
+                            <div class="header-icon">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                            <div class="header-titles">
+                                <h1>Panduan</h1>
+                                <p>Paket unduhan dan instalasi</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </header>
+                </header>
 
-    <!-- Main Content -->
-    <main class="container mt-4 pb-5">
-        <!-- Hero Section -->
-        <div class="text-center mb-5">
-            <div class="hero-icon mx-auto mb-4">
-                <i class="bi bi-file-earmark-text fs-1 text-white"></i>
-            </div>
-            <h2 class="hero-title mb-3">Panduan Penggunaan INLISLite Versi 3 PHP Opensource.</h2>
-            <p class="hero-description text-muted">
-                Dokumentasi resmi dan panduan praktis untuk membantu Anda menggunakan semua fitur 
-                sistem manajemen perpustakaan INLISLite v3 secara efektif.
-            </p>
-        </div>
-
-        <!-- Search and Add Section -->
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <div class="search-wrapper">
-                    <i class="bi bi-search search-icon"></i>
-                    <input type="text" class="form-control search-input" placeholder="Cari dokumen..." id="searchInput">
-                </div>
-            </div>
-            <div class="col-md-4 text-end">
-                <button class="btn btn-primary add-btn" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
-                    + Tambah Dokumen
-                </button>
-            </div>
-        </div>
-
-        <!-- Flash Messages -->
-        <?php if (session()->has('success')): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i>
-                <?= session('success') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-
-        <?php if (session()->has('error')): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-circle me-2"></i>
-                <?= session('error') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-
-        <!-- Setup Required Alert -->
-        <?php if (isset($setup_required) && $setup_required): ?>
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                <strong>Database Setup Required!</strong><br>
-                <?= $error_message ?? 'Database table belum dibuat.' ?><br>
-                <hr class="my-2">
-                <p class="mb-2"><strong>Quick Fix:</strong></p>
-                <button class="btn btn-warning btn-sm me-2" onclick="autoSetupDatabase()" id="autoSetupBtn">
-                    <i class="bi bi-tools me-1"></i>Auto Setup Database
-                </button>
-                <a href="/install_db.php" class="btn btn-info btn-sm me-2" target="_blank">
-                    <i class="bi bi-gear me-1"></i>Manual Setup
-                </a>
-                <button class="btn btn-secondary btn-sm" onclick="location.reload()">
-                    <i class="bi bi-arrow-clockwise me-1"></i>Refresh Page
-                </button>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-
-        <!-- Documents Section -->
-        <div class="documents-container">
-            <div class="documents-header mb-4">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-download text-success me-3 fs-4"></i>
-                    <div>
-                        <h3 class="mb-0 fw-bold">Dokumentasi Tersedia(<span class="documents-count"><?= $document_count ?></span>)</h3>
-                        <small class="text-muted">Protokol Instalasi Arsip Terbuka untuk Pengembangan Metadata</small>
+                <!-- Main Content -->
+                <div class="main-content">
+                    <!-- Hero Section -->
+                    <div class="hero-section">
+                        <div class="hero-icon">
+                            <i class="fa-solid fa-file-alt"></i>
+                        </div>
+                        <div class="hero-content">
+                            <h2>Panduan Penggunaan INLISLite Versi 3 PHP Opensource.</h2>
+                            <p>Dokumentasi resmi dan panduan praktis untuk membantu Anda menggunakan semua fitur sistem manajemen perpustakaan INLISLite v3 secara efektif.</p>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Document List -->
-            <div class="document-list" id="documentList">
-                <?php if (!empty($documents)) : ?>
-                    <?php foreach ($documents as $index => $doc) : ?>
-                        <div class="document-item" data-document-id="<?= $doc['id'] ?>">
-                            <div class="d-flex align-items-start">
-                                <div class="document-number me-3">
-                                    <span class="number"><?= $index + 1 ?></span>
+                    <!-- Search and Action Bar -->
+                    <div class="action-bar">
+                        <div class="search-container">
+                            <div class="search-box">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" placeholder="Cari dokumen..." id="searchDocuments">
+                            </div>
+                        </div>
+                        <button class="btn-add-document" data-bs-toggle="modal" data-bs-target="#addDocumentModal">
+                            <i class="fa-solid fa-plus"></i>
+                            Tambah Dokumen
+                        </button>
+                    </div>
+
+                    <!-- Documents Section -->
+                    <div class="documents-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-download"></i>
+                            </div>
+                            <div class="section-title">
+                                <h3>Dokumentasi Tersedia(<?= count($documents ?? []) ?>)</h3>
+                                <p>Protokol Instalasi Arsip Terbuka untuk Pengembilan Metadata</p>
+                            </div>
+                        </div>
+
+                        <div class="documents-container">
+                            <?php if (empty($documents)): ?>
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fa-solid fa-folder-open"></i>
+                                    </div>
+                                    <h6>Belum ada dokumen panduan</h6>
+                                    <p>Tambahkan dokumen panduan pertama Anda</p>
                                 </div>
-                                <div class="document-content flex-grow-1">
-                                    <h5 class="document-title mb-2"><?= esc($doc['title']) ?></h5>
-                                    <p class="document-description text-muted mb-2"><?= esc($doc['description']) ?></p>
-                                    <div class="document-meta d-flex align-items-center gap-3">
-                                        <span class="document-badge"><?= esc($doc['file_type']) ?></span>
-                                        <span class="document-size"><?= formatFileSize($doc['file_size']) ?></span>
-                                        <span class="document-version"><?= esc($doc['version']) ?></span>
-                                        <span class="document-downloads"><?= $doc['download_count'] ?? 0 ?> unduhan</span>
+                            <?php else: ?>
+                                <?php foreach ($documents as $index => $document): ?>
+                                <div class="document-card" data-id="<?= $document['id'] ?>">
+                                    <div class="document-number">
+                                        <?= $index + 1 ?>
+                                    </div>
+                                    <div class="document-info">
+                                        <h4 class="document-title"><?= esc($document['title']) ?></h4>
+                                        <p class="document-description"><?= esc($document['description']) ?></p>
+                                        <div class="document-meta">
+                                            <span class="file-type">PDF</span>
+                                            <span class="file-size"><?= esc($document['file_size'] ?? '0 MB') ?></span>
+                                            <?php if (!empty($document['version'])): ?>
+                                            <span class="file-version">v<?= esc($document['version']) ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <div class="document-actions">
+                                        <button class="btn-action btn-download" data-id="<?= $document['id'] ?>">
+                                            <i class="fa-solid fa-download"></i>
+                                            Unduh
+                                        </button>
+                                        <button class="btn-action btn-edit" data-id="<?= $document['id'] ?>">
+                                            <i class="fa-solid fa-edit"></i>
+                                        </button>
+                                        <button class="btn-action btn-delete" data-id="<?= $document['id'] ?>">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="document-actions">
-                                    <button class="btn-action btn-download" onclick="downloadDocument(<?= $doc['id'] ?>)" title="Unduh">
-                                        <i class="bi bi-download"></i>
-                                        Unduh
-                                    </button>
-                                    <button class="btn-action btn-edit" onclick="editDocument(<?= $doc['id'] ?>)" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn-action btn-delete" onclick="deleteDocument(<?= $doc['id'] ?>)" title="Hapus">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Additional Resources Section -->
+                    <div class="resources-section">
+                        <div class="resources-header">
+                            <div class="resources-icon">
+                                <i class="fa-solid fa-plus-circle"></i>
+                            </div>
+                            <h3>Sumber Daya Tambahan</h3>
+                        </div>
+                        
+                        <div class="resources-content">
+                            <div class="resource-card">
+                                <div class="resource-icon install">
+                                    <i class="fa-solid fa-download"></i>
+                                </div>
+                                <div class="resource-info">
+                                    <h4>Petunjuk Instalasi:</h4>
+                                    <p>Untuk petunjuk instalasi secara lengkap, silakan kunjungi: 
+                                        <a href="#">Installer > Platform PHP (Opensource)</a>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <div class="resource-icon update">
+                                    <i class="fa-solid fa-sync-alt"></i>
+                                </div>
+                                <div class="resource-info">
+                                    <h4>Petunjuk Pembaruan:</h4>
+                                    <p>Untuk petunjuk penerapan pembaruan, silakan kunjungi: 
+                                        <a href="#">Patch & Updater > Platform PHP (Opensource)</a>
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                <?php else : ?>
-                    <div class="no-documents text-center py-5">
-                        <i class="bi bi-file-earmark-x fs-1 text-muted mb-3"></i>
-                        <h5 class="text-muted">Belum ada dokumen</h5>
-                        <p class="text-muted">Klik tombol "Tambah Dokumen" untuk menambahkan dokumen baru.</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Additional Resources Section -->
-        <div class="resources-card mt-5">
-            <div class="resources-card-header">
-                <i class="bi bi-file-earmark-text text-primary me-3"></i>
-                <h3 class="resources-title">Sumber Daya Tambahan</h3>
-            </div>
-            
-            <div class="resources-card-body">
-                <div class="resource-item-card">
-                    <div class="d-flex align-items-start">
-                        <i class="bi bi-download resource-icon me-3"></i>
-                        <div class="resource-content">
-                            <strong class="resource-label">Petunjuk Instalasi:</strong>
-                            <div class="resource-description">
-                                Untuk petunjuk instalasi secara lengkap, silakan kunjungi: 
-                                <a href="#" class="resource-link">Installer > Platform PHP (Opensource)</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="resource-item-card">
-                    <div class="d-flex align-items-start">
-                        <i class="bi bi-arrow-repeat resource-icon me-3"></i>
-                        <div class="resource-content">
-                            <strong class="resource-label">Petunjuk Pembaruan:</strong>
-                            <div class="resource-description">
-                                Untuk petunjuk penerapan pembaruan, silakan kunjungi: 
-                                <a href="#" class="resource-link">Patch & Updater > Platform PHP (Opensource)</a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <!-- Add Document Modal -->
-    <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-labelledby="addDocumentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content custom-modal">
-                <div class="modal-header custom-modal-header">
-                    <h5 class="modal-title" id="addDocumentModalLabel">Tambah Dokumen Baru</h5>
-                    <button type="button" class="custom-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa-solid fa-times"></i>
-                    </button>
+    <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title h5">Tambah Dokumen Baru</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body custom-modal-body">
-                    <form id="addDocumentForm" enctype="multipart/form-data">
-                        <input type="hidden" id="documentId" name="document_id" value="">
-                        
-                        <div id="form-errors" class="alert alert-danger d-none"></div>
-                        <div id="form-success" class="alert alert-success d-none"></div>
-                        
+                <div class="modal-body">
+                    <p class="text-muted small mb-4">Tambahkan dokumen panduan penggunaan baru ke dalam koleksi.</p>
+                    <form id="addDocumentForm">
                         <div class="mb-3">
-                            <label for="documentTitle" class="form-label custom-label">Judul Dokumen</label>
-                            <input type="text" class="form-control custom-input" id="documentTitle" name="title" required>
+                            <label for="documentTitle" class="form-label">Judul <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="documentTitle" name="title" required>
                         </div>
                         <div class="mb-3">
-                            <label for="documentDescription" class="form-label custom-label">Deskripsi</label>
-                            <textarea class="form-control custom-textarea" id="documentDescription" name="description" rows="3"></textarea>
+                            <label for="documentDescription" class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="documentDescription" name="description" rows="3"></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="documentVersion" class="form-label custom-label">Versi</label>
-                                    <input type="text" class="form-control custom-input" id="documentVersion" name="version" placeholder="V3.2.0">
+                                    <label for="documentFileSize" class="form-label">Ukuran File</label>
+                                    <input type="text" class="form-control" id="documentFileSize" name="file_size" placeholder="2.5 MB">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="documentType" class="form-label custom-label">Tipe File</label>
-                                    <select class="form-select custom-select" id="documentType" name="file_type" required>
-                                        <option value="">Pilih Tipe</option>
-                                        <option value="PDF">PDF</option>
-                                        <option value="DOC">DOC</option>
-                                        <option value="DOCX">DOCX</option>
-                                    </select>
+                                    <label for="documentVersion" class="form-label">Versi</label>
+                                    <input type="text" class="form-control" id="documentVersion" name="version" placeholder="3.2.1">
                                 </div>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="documentFile" class="form-label custom-label">Upload File</label>
-                            
-                            <!-- Current file display (for edit mode) -->
-                            <div id="currentFileDisplay" class="alert alert-info d-none mb-2">
-                                <i class="bi bi-file-earmark me-2"></i>
-                                <strong>File saat ini:</strong> <span id="currentFileName">-</span>
-                                <br><small class="text-muted">Upload file baru untuk mengganti file yang ada</small>
-                            </div>
-                            
-                            <input type="file" class="form-control custom-input" id="documentFile" name="document_file" accept=".pdf,.doc,.docx">
-                            <div class="form-text" id="fileHelpText">Biarkan kosong jika tidak ingin mengubah file (khusus untuk edit)</div>
-                        </div>
                     </form>
                 </div>
-                <div class="modal-footer custom-modal-footer">
-                    <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-save" id="saveDocumentBtn">
-                        <span class="btn-text">Simpan Dokumen</span>
-                        <span class="btn-spinner d-none">
-                            <i class="bi bi-arrow-repeat spin me-1"></i>Menyimpan...
-                        </span>
-                    </button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success" id="saveDocument">Tambah Dokumen</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS -->
+    <!-- Edit Document Modal -->
+    <div class="modal fade" id="editDocumentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title h5">Edit Dokumen</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editDocumentForm">
+                        <input type="hidden" id="editDocumentId" name="id">
+                        <div class="mb-3">
+                            <label for="editDocumentTitle" class="form-label">Judul <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editDocumentTitle" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDocumentDescription" class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="editDocumentDescription" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editDocumentFileSize" class="form-label">Ukuran File</label>
+                                    <input type="text" class="form-control" id="editDocumentFileSize" name="file_size" placeholder="2.5 MB">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editDocumentVersion" class="form-label">Versi</label>
+                                    <input type="text" class="form-control" id="editDocumentVersion" name="version" placeholder="3.2.1">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="updateDocument">Simpan Perubahan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
+    <script src="<?= base_url('assets/js/dashboard.js') ?>"></script>
     <script src="<?= base_url('assets/js/panduan.js') ?>"></script>
-    
-    <!-- Auto Setup Database Function -->
-    <script>
-    function autoSetupDatabase() {
-        const btn = document.getElementById('autoSetupBtn');
-        const originalHtml = btn.innerHTML;
-        
-        // Show loading state
-        btn.innerHTML = '<i class="bi bi-arrow-clockwise fa-spin me-1"></i>Setting up...';
-        btn.disabled = true;
-        
-        fetch('<?= base_url('documents/setup') ?>', {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Show success message
-                const alert = document.querySelector('.alert-warning');
-                alert.className = 'alert alert-success alert-dismissible fade show';
-                alert.innerHTML = `
-                    <i class="bi bi-check-circle me-2"></i>
-                    <strong>Setup Berhasil!</strong><br>
-                    ${data.message}<br>
-                    <hr class="my-2">
-                    <button class="btn btn-success btn-sm" onclick="location.reload()">
-                        <i class="bi bi-arrow-clockwise me-1"></i>Reload Page
-                    </button>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                `;
-            } else {
-                alert('Error: ' + data.message);
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat setup database');
-            btn.innerHTML = originalHtml;
-            btn.disabled = false;
-        });
-    }
-    </script>
 </body>
 </html>

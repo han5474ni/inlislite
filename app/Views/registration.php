@@ -205,18 +205,23 @@
                                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <?php if ($registration['status'] === 'pending'): ?>
-                                                        <li><a class="dropdown-item verify-btn" href="#" data-id="<?= $registration['id'] ?>">
-                                                            <i class="fa-solid fa-check me-2"></i>Verifikasi
-                                                        </a></li>
-                                                        <li><a class="dropdown-item reject-btn" href="#" data-id="<?= $registration['id'] ?>">
-                                                            <i class="fa-solid fa-times me-2"></i>Tolak
-                                                        </a></li>
-                                                        <?php endif; ?>
-                                                        <li><a class="dropdown-item delete-btn text-danger" href="#" data-id="<?= $registration['id'] ?>">
-                                                            <i class="fa-solid fa-trash me-2"></i>Hapus
-                                                        </a></li>
-                                                    </ul>
+                                                    <li><a class="dropdown-item edit-btn" href="#" data-id="<?= $registration['id'] ?>">
+                                                        <i class="fa-solid fa-edit me-2"></i>Edit
+                                                    </a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <?php if ($registration['status'] === 'pending'): ?>
+                                                    <li><a class="dropdown-item verify-btn" href="#" data-id="<?= $registration['id'] ?>">
+                                                        <i class="fa-solid fa-check me-2"></i>Verifikasi
+                                                    </a></li>
+                                                    <li><a class="dropdown-item reject-btn" href="#" data-id="<?= $registration['id'] ?>">
+                                                    <i class="fa-solid fa-times me-2"></i>Tolak
+                                                    </a></li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                         <?php endif; ?>
+                                                         <li><a class="dropdown-item delete-btn text-danger" href="#" data-id="<?= $registration['id'] ?>">
+                                                             <i class="fa-solid fa-trash me-2"></i>Hapus
+                                                         </a></li>
+                                                     </ul>
                                                 </div>
                                             </td>
                                         </tr>
@@ -287,6 +292,76 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-primary" id="saveRegistration">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Registration Modal -->
+    <div class="modal fade" id="editRegistrationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title h5">Edit Registrasi Perpustakaan</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editRegistrationForm">
+                        <input type="hidden" id="editRegistrationId" name="id">
+                        <div class="mb-3">
+                            <label for="editLibraryName" class="form-label">Nama Perpustakaan <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editLibraryName" name="library_name" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editProvince" class="form-label">Provinsi <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="editProvince" name="province" required>
+                                        <option value="">Pilih Provinsi</option>
+                                        <option value="DKI Jakarta">DKI Jakarta</option>
+                                        <option value="Jawa Barat">Jawa Barat</option>
+                                        <option value="Jawa Tengah">Jawa Tengah</option>
+                                        <option value="Jawa Timur">Jawa Timur</option>
+                                        <option value="DI Yogyakarta">DI Yogyakarta</option>
+                                        <option value="Bali">Bali</option>
+                                        <option value="Sumatera Utara">Sumatera Utara</option>
+                                        <option value="Sumatera Barat">Sumatera Barat</option>
+                                        <option value="Sumatera Selatan">Sumatera Selatan</option>
+                                        <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+                                        <option value="Sulawesi Utara">Sulawesi Utara</option>
+                                        <option value="Kalimantan Timur">Kalimantan Timur</option>
+                                        <option value="Kalimantan Barat">Kalimantan Barat</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editCity" class="form-label">Kota/Kabupaten <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="editCity" name="city" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="editEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPhone" class="form-label">Nomor Telepon</label>
+                            <input type="tel" class="form-control" id="editPhone" name="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editStatus" name="status" required>
+                                <option value="pending">Menunggu Verifikasi</option>
+                                <option value="verified">Terverifikasi</option>
+                                <option value="rejected">Ditolak</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="updateRegistration">Simpan Perubahan</button>
                 </div>
             </div>
         </div>

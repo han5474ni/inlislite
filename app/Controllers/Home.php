@@ -164,6 +164,74 @@ class Home extends BaseController
         }
     }
 
+    public function getRegistration($id)
+    {
+        try {
+            $registrationModel = new \App\Models\RegistrationModel();
+            $registration = $registrationModel->find($id);
+            
+            if ($registration) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'registration' => $registration
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Registrasi tidak ditemukan'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function updateRegistration($id)
+    {
+        try {
+            $registrationModel = new \App\Models\RegistrationModel();
+            
+            $data = [
+                'library_name' => $this->request->getPost('library_name'),
+                'province' => $this->request->getPost('province'),
+                'city' => $this->request->getPost('city'),
+                'email' => $this->request->getPost('email'),
+                'phone' => $this->request->getPost('phone'),
+                'status' => $this->request->getPost('status')
+            ];
+            
+            // If status is being changed to verified, add verified_at timestamp
+            if ($data['status'] === 'verified') {
+                $currentRegistration = $registrationModel->find($id);
+                if ($currentRegistration && $currentRegistration['status'] !== 'verified') {
+                    $data['verified_at'] = date('Y-m-d H:i:s');
+                }
+            }
+            
+            $result = $registrationModel->update($id, $data);
+            
+            if ($result) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Registrasi berhasil diupdate!'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Gagal mengupdate registrasi'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
+
     public function deleteRegistration($id)
     {
         try {
@@ -271,13 +339,8 @@ class Home extends BaseController
 
     public function panduan(): string
     {
-        $data = [
-            'title' => 'Panduan - INLISLite v3',
-            'page_title' => 'Panduan',
-            'page_subtitle' => 'Paket unduhan dan instalasi'
-        ];
-        
-        return view('panduan', $data);
+        // Redirect to DocumentController
+        return redirect()->to(site_url('panduan'));
     }
 
     public function debugDatabase(): string
