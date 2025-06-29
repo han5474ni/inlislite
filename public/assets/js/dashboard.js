@@ -16,6 +16,9 @@ class DashboardManager {
     this.setupDarkMode()
     this.setupMobileMenu()
     this.setupCardNavigation()
+    this.restoreSidebarState()
+    this.debugElements() // Add debug check
+    this.setupDebugButton() // Add debug button functionality
   }
 
   /**
@@ -228,18 +231,128 @@ class DashboardManager {
    * Setup mobile menu functionality
    */
   setupMobileMenu() {
-    // This would integrate with your sidebar component
-    // Implementation depends on your sidebar structure
+    this.setupSidebarToggle()
+    this.setupOverlayClick()
+    this.setupKeyboardNavigation()
+    this.handleWindowResize()
   }
 
   /**
-   * Toggle mobile menu
+   * Setup sidebar toggle functionality
    */
-  toggleMobileMenu() {
+  setupSidebarToggle() {
+    // Desktop collapse toggle
+    const desktopToggle = document.getElementById("menu-toggle")
+    if (desktopToggle) {
+      desktopToggle.addEventListener("click", () => this.toggleDesktopSidebar())
+    }
+
+    // Mobile menu toggle
+    const mobileToggle = document.getElementById("mobile-menu-toggle")
+    if (mobileToggle) {
+      mobileToggle.addEventListener("click", (e) => {
+        e.preventDefault()
+        console.log('Mobile menu toggle clicked') // Debug logging
+        this.toggleMobileSidebar()
+      })
+    } else {
+      console.warn('Mobile menu toggle button not found')
+    }
+
+    // Mobile close button
+    const sidebarClose = document.getElementById("sidebar-close")
+    if (sidebarClose) {
+      sidebarClose.addEventListener("click", () => this.closeMobileSidebar())
+    }
+  }
+
+  /**
+   * Setup overlay click to close sidebar
+   */
+  setupOverlayClick() {
+    const overlay = document.getElementById("sidebar-overlay")
+    if (overlay) {
+      overlay.addEventListener("click", () => this.closeMobileSidebar())
+    }
+  }
+
+  /**
+   * Handle window resize
+   */
+  handleWindowResize() {
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 768) {
+        // Desktop - remove mobile classes
+        document.body.classList.remove("sidebar-mobile-open")
+      } else {
+        // Mobile - remove desktop classes
+        document.body.classList.remove("sidebar-collapsed")
+      }
+    })
+  }
+
+  /**
+   * Toggle desktop sidebar (collapse/expand)
+   */
+  toggleDesktopSidebar() {
+    document.body.classList.toggle("sidebar-collapsed")
+    
+    // Save state to localStorage
+    const isCollapsed = document.body.classList.contains("sidebar-collapsed")
+    localStorage.setItem("sidebar-collapsed", isCollapsed)
+  }
+
+  /**
+   * Toggle mobile sidebar (show/hide)
+   */
+  toggleMobileSidebar() {
+    const isOpen = document.body.classList.contains("sidebar-mobile-open")
+    console.log('Toggling mobile sidebar. Currently open:', isOpen) // Debug logging
+    
+    if (isOpen) {
+      this.closeMobileSidebar()
+    } else {
+      this.openMobileSidebar()
+    }
+  }
+
+  /**
+   * Open mobile sidebar
+   */
+  openMobileSidebar() {
+    console.log('Opening mobile sidebar') // Debug logging
+    document.body.classList.add("sidebar-mobile-open")
+    document.body.style.overflow = "hidden" // Prevent body scroll
+    
+    // Add animation delay for better UX
+    setTimeout(() => {
+      const sidebar = document.getElementById("sidebar-wrapper")
+      if (sidebar) {
+        sidebar.style.transform = "translateX(0)"
+      }
+    }, 10)
+  }
+
+  /**
+   * Close mobile sidebar
+   */
+  closeMobileSidebar() {
+    console.log('Closing mobile sidebar') // Debug logging
+    document.body.classList.remove("sidebar-mobile-open")
+    document.body.style.overflow = "" // Restore body scroll
+    
+    // Reset sidebar position
     const sidebar = document.getElementById("sidebar-wrapper")
     if (sidebar) {
-      sidebar.classList.toggle("show")
+      sidebar.style.transform = ""
     }
+  }
+
+  /**
+   * Toggle mobile menu (legacy method for compatibility)
+   */
+  toggleMobileMenu() {
+    this.toggleMobileSidebar()
   }
 
   /**
@@ -297,14 +410,93 @@ class DashboardManager {
    */
   setupKeyboardNavigation() {
     document.addEventListener("keydown", (e) => {
-      // ESC key to close any open modals or overlays
+      // ESC key to close sidebar on mobile or any open modals
       if (e.key === "Escape") {
+        // Close mobile sidebar if open
+        if (document.body.classList.contains("sidebar-mobile-open")) {
+          this.closeMobileSidebar()
+          return
+        }
+        
+        // Close loading indicator
         const loader = document.querySelector(".loading-indicator")
         if (loader) {
           loader.remove()
         }
       }
+      
+      // Ctrl/Cmd + B to toggle sidebar
+      if ((e.ctrlKey || e.metaKey) && e.key === "b") {
+        e.preventDefault()
+        if (window.innerWidth >= 768) {
+          this.toggleDesktopSidebar()
+        } else {
+          this.toggleMobileSidebar()
+        }
+      }
     })
+  }
+
+  /**
+   * Restore sidebar state from localStorage
+   */
+  restoreSidebarState() {
+    // Only restore desktop sidebar state on desktop
+    if (window.innerWidth >= 768) {
+      const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true"
+      if (isCollapsed) {
+        document.body.classList.add("sidebar-collapsed")
+      }
+    }
+  }
+
+  /**
+   * Debug function to check if all elements exist
+   */
+  debugElements() {
+    const elements = {
+      'mobile-menu-toggle': document.getElementById("mobile-menu-toggle"),
+      'sidebar-wrapper': document.getElementById("sidebar-wrapper"),
+      'sidebar-overlay': document.getElementById("sidebar-overlay"),
+      'sidebar-close': document.getElementById("sidebar-close"),
+      'menu-toggle': document.getElementById("menu-toggle")
+    }
+
+    console.log('=== Dashboard Elements Debug ===')
+    for (const [name, element] of Object.entries(elements)) {
+      if (element) {
+        console.log(`✓ ${name}: Found`)
+      } else {
+        console.warn(`✗ ${name}: Not found`)
+      }
+    }
+
+    // Check if we're on mobile
+    const isMobile = window.innerWidth < 768
+    console.log(`Screen width: ${window.innerWidth}px (Mobile: ${isMobile})`)
+    
+    // Check current classes
+    console.log('Body classes:', document.body.classList.toString())
+  }
+
+  /**
+   * Setup debug button for mobile testing
+   */
+  setupDebugButton() {
+    const debugBtn = document.getElementById("debugMobileBtn")
+    if (debugBtn && window.innerWidth < 768) {
+      // Show debug button on mobile
+      debugBtn.style.display = 'block'
+      
+      debugBtn.addEventListener('click', () => {
+        console.log('=== MOBILE DEBUG TEST ===')
+        this.debugElements()
+        
+        // Test mobile sidebar toggle
+        console.log('Testing mobile sidebar toggle...')
+        this.toggleMobileSidebar()
+      })
+    }
   }
 }
 

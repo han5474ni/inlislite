@@ -21,8 +21,20 @@ $routes->get('tentang-aplikasi', 'Home::tentang');
 $routes->get('about', 'Home::tentang');
 
 // Panduan Routes
-$routes->get('panduan', 'Home::panduan');
-$routes->get('guide', 'Home::panduan');
+$routes->get('panduan', 'DocumentController::index');
+$routes->get('guide', 'DocumentController::index');
+
+// Document Management AJAX Routes
+$routes->group('documents', function($routes) {
+    $routes->get('/', 'DocumentController::getDocuments');
+    $routes->get('(:num)', 'DocumentController::getDocument/$1');
+    $routes->post('add', 'DocumentController::addDocument');
+    $routes->post('update/(:num)', 'DocumentController::updateDocument/$1');
+    $routes->post('delete/(:num)', 'DocumentController::deleteDocument/$1');
+    $routes->get('download/(:num)', 'DocumentController::downloadDocument/$1');
+    $routes->post('search', 'DocumentController::searchDocuments');
+    $routes->post('setup', 'DocumentController::setupDatabase');
+});
 
 // Authentication Routes
 $routes->get('logout', 'Auth::logout');
@@ -41,7 +53,27 @@ $routes->group('users', function($routes) {
 
 // Legacy user management routes (for backward compatibility)
 $routes->get('user-management', 'Home::userManagement');
+$routes->get('usermanagement', 'UserManagement::index');
+$routes->post('usermanagement/addUser', 'UserManagement::addUser');
+$routes->post('usermanagement/editUser/(:num)', 'UserManagement::editUser/$1');
+$routes->get('usermanagement/deleteUser/(:num)', 'UserManagement::deleteUser/$1');
+
+// AJAX user management routes
+$routes->get('usermanagement/getUser/(:num)', 'UserManagement::getUser/$1');
+$routes->post('usermanagement/addUserAjax', 'UserManagement::addUserAjax');
+$routes->post('usermanagement/editUserAjax/(:num)', 'UserManagement::editUserAjax/$1');
+$routes->post('usermanagement/deleteUserAjax/(:num)', 'UserManagement::deleteUserAjax/$1');
+$routes->get('usermanagement/getUsersAjax', 'UserManagement::getUsersAjax');
+
 $routes->get('registration', 'Home::registration');
+$routes->get('registration-stats', 'Home::getRegistrationStats');
+$routes->get('registration-data', 'Home::getRegistrationData');
+$routes->get('registration-years', 'Home::getAvailableYears');
+$routes->post('registration/add', 'Home::addRegistration');
+$routes->post('registration/update-status', 'Home::updateRegistrationStatus');
+$routes->get('registration/delete/(:num)', 'Home::deleteRegistration/$1');
+$routes->get('setup/create-registrations-table', 'Setup::createRegistrationsTable');
+$routes->get('debug-database', 'Home::debugDatabase');
 
 // ============================================================================
 // PATCH UPDATER ROUTES

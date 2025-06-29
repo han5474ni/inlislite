@@ -26,3 +26,261 @@
     padding: 1rem 1.5rem;
     border-bottom: 1px solid #dee2e6;
 }
+
+/* Chart Styles */
+#registrationChart {
+    padding: 10px;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    padding: 20px;
+}
+
+.card-body canvas {
+    max-height: 400px;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Mobile First Approach */
+@media (max-width: 575.98px) {
+    /* Extra Small Devices (phones, less than 576px) */
+    
+    .page-header-um {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    
+    .page-header-um .header-text h1 {
+        font-size: 1.5rem;
+    }
+    
+    /* Statistics Cards - Stack vertically */
+    .stat-card .card-body {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-card .stat-icon {
+        margin-bottom: 0.75rem;
+        margin-right: 0 !important;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    /* Chart Header - Stack items */
+    .chart-container {
+        height: 300px;
+        padding: 10px;
+    }
+    
+    .card-header.d-flex {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start !important;
+    }
+    
+    .card-header .d-flex.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        width: 100%;
+    }
+    
+    #yearSelector {
+        width: 100% !important;
+    }
+    
+    /* Table responsive adjustments */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem 0.25rem;
+        white-space: nowrap;
+    }
+    
+    /* Search and action buttons */
+    .card-header .col-12.col-md-6 {
+        margin-bottom: 1rem;
+    }
+    
+    .card-header .d-flex {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .dropdown-menu {
+        min-width: 100%;
+    }
+    
+    /* Modal adjustments */
+    .modal-dialog {
+        margin: 1rem 0.5rem;
+    }
+    
+    .modal-body .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .modal-body .col-md-6 {
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    /* Debug button */
+    #debugBtn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    /* Small Devices (landscape phones, 576px and up) */
+    
+    .chart-container {
+        height: 350px;
+        padding: 15px;
+    }
+    
+    .stat-card .card-body {
+        padding: 1.25rem;
+    }
+    
+    .page-header-um .header-text h1 {
+        font-size: 1.75rem;
+    }
+    
+    /* Two column layout for action buttons */
+    .card-header .d-flex:last-child {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .dropdown {
+        flex: 1;
+    }
+    
+    .btn-primary {
+        flex: 1;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    /* Medium Devices (tablets, 768px and up) */
+    
+    .chart-container {
+        height: 380px;
+        padding: 18px;
+    }
+    
+    /* Statistics cards responsive layout */
+    .stat-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    /* Better spacing for tablet view */
+    .page-header-um {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Table improvements */
+    .table th,
+    .table td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    /* Large Devices (desktops, 992px and up) */
+    
+    .chart-container {
+        height: 400px;
+        padding: 20px;
+    }
+    
+    /* Full desktop experience */
+    .stat-card .card-body {
+        padding: 2rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    /* Extra Large Devices (large desktops, 1200px and up) */
+    
+    .chart-container {
+        height: 450px;
+        padding: 25px;
+    }
+    
+    .page-header-um .header-text h1 {
+        font-size: 2rem;
+    }
+    
+    .stat-card .card-body {
+        padding: 2.5rem;
+    }
+    
+    .stat-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .sidebar,
+    .mobile-menu-toggle,
+    .btn,
+    .dropdown,
+    #debugBtn {
+        display: none !important;
+    }
+    
+    #page-content-wrapper {
+        margin-left: 0 !important;
+        background: white !important;
+        color: black !important;
+    }
+    
+    .card {
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+}
+
+/* ===== ACCESSIBILITY IMPROVEMENTS ===== */
+@media (prefers-reduced-motion: reduce) {
+    .stat-card,
+    .chart-container,
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .stat-card {
+        border: 2px solid #000;
+    }
+    
+    .card-header {
+        border-bottom: 2px solid #000;
+    }
+}

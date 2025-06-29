@@ -2,11 +2,16 @@
 <html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#2DA84D">
     <title><?= esc($title ?? 'INLISLite v3.0 Dashboard') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="<?= base_url('assets/css/dashboard.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/responsive.css') ?>">
 </head>
 <body>
     <div class="d-flex" id="wrapper">
@@ -24,9 +29,15 @@
                         <p class="text-muted"><?= esc($page_subtitle ?? 'Kelola sistem perpustakaan Anda dengan alat dan analitik yang lengkap.') ?></p>
                     </div>
                 </div>
-                <div class="form-check form-switch me-3">
-                    <input class="form-check-input" type="checkbox" role="switch" id="darkModeSwitch">
-                    <label class="form-check-label" for="darkModeSwitch"><i class="fa-solid fa-moon"></i></label>
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Debug button (only visible in development) -->
+                    <button id="debugMobileBtn" class="btn btn-sm btn-outline-light d-md-none" style="display: none;">
+                        <i class="fa-solid fa-bug"></i> Debug
+                    </button>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="darkModeSwitch">
+                        <label class="form-check-label" for="darkModeSwitch"><i class="fa-solid fa-moon"></i></label>
+                    </div>
                 </div>
             </header>
 

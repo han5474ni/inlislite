@@ -19,6 +19,36 @@
         <!-- Page Content -->
         <main id="page-content-wrapper">
             <div class="container-fluid p-4">
+                
+                <!-- Success/Error Messages -->
+                <?php if (session()->has('success')): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fa-solid fa-check-circle me-2"></i>
+                        <?= session('success') ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (session()->has('error')): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fa-solid fa-exclamation-circle me-2"></i>
+                        <?= session('error') ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (session()->has('errors')): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fa-solid fa-exclamation-circle me-2"></i>
+                        <strong>Terjadi kesalahan:</strong>
+                        <ul class="mb-0 mt-2">
+                            <?php foreach (session('errors') as $error): ?>
+                                <li><?= esc($error) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
                 <header class="page-header-um">
                     <div class="d-flex align-items-center">
                         <button class="btn btn-sm mobile-menu-toggle d-md-none me-3" id="mobile-menu-toggle">
@@ -37,7 +67,7 @@
                 </header>
 
                 <!-- Filter Card -->
-                <div class="card shadow-sm filter-card mb-4">
+                <div class="card filter-card mb-4">
                     <div class="card-body">
                         <div class="row g-3 justify-content-between align-items-center">
                             <div class="col-md-auto">
@@ -74,17 +104,39 @@
                                     <option value="2">Non-aktif</option>
                                 </select>
                             </div>
+                            <div class="col-lg-4 col-md-12">
+                                <select id="lastLoginFilter" class="form-select">
+                                    <option value="">Semua Waktu Login</option>
+                                    <option value="today">Hari ini</option>
+                                    <option value="week">7 hari terakhir</option>
+                                    <option value="month">30 hari terakhir</option>
+                                    <option value="never">Belum pernah masuk</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- User Table Card -->
-                <div class="card shadow-sm">
+                <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">User(4)</h5>
-                        <p class="card-subtitle text-muted mb-3">Daftar seluruh pengguna sistem beserta informasinya</p>
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h5 class="card-title fw-bold mb-1">User(4)</h5>
+                                <p class="card-subtitle text-muted mb-0">Daftar seluruh pengguna sistem beserta informasinya</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm">
+                                    <i class="fa-solid fa-download me-1"></i>Export
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-refresh me-1"></i>Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <div class="table-responsive">
+                                <table class="table align-middle">
                                 <thead class="table-light">
                                     <tr>
                                         <th scope="col" class="sortable" data-sort="name">User <i class="fa-solid fa-sort"></i></th>
@@ -96,42 +148,84 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    $users = [
-                                        ['initial' => 'AS', 'name' => 'Administrator Sistem', 'email' => 'admin@inlislite.com', 'role' => 'Super Admin', 'role_color' => 'primary', 'status' => 'Aktif', 'status_color' => 'primary', 'last_login' => '2025-01-15 10:30:00', 'created' => '2024-01-01'],
-                                        ['initial' => 'JS', 'name' => 'Jane Smith', 'email' => 'librarian@library.com', 'role' => 'Pustakawan', 'role_color' => 'success', 'status' => 'Aktif', 'status_color' => 'primary', 'last_login' => '2025-01-14 16:45:00', 'created' => '2024-03-15'],
-                                        ['initial' => 'MJ', 'name' => 'Mike Johnson', 'email' => 'staff1@staff.com', 'role' => 'Staff', 'role_color' => 'dark-green', 'status' => 'Non-aktif', 'status_color' => 'secondary', 'last_login' => '2025-01-10 09:15:00', 'created' => '2023-06-20'],
-                                        ['initial' => 'SW', 'name' => 'Sarah Wilson', 'email' => 'admin2@inlislite.com', 'role' => 'Admin', 'role_color' => 'info', 'status' => 'Aktif', 'status_color' => 'primary', 'last_login' => '2025-01-14 14:20:00', 'created' => '2023-05-10'],
-                                    ];
-                                    foreach ($users as $user) : ?>
-                                    <tr
-                                        data-name="<?= $user['name'] ?>"
-                                        data-username="<?= strtolower(str_replace(' ', '', $user['name'])) ?>"
-                                        data-email="<?= $user['email'] ?>"
-                                        data-role="<?= $user['role'] ?>"
-                                        data-status="<?= $user['status'] ?>">
+                                    <?php foreach ($users as $user) : 
+                                        $initial = strtoupper(substr($user['nama_lengkap'], 0, 1));
+                                        $roleColors = [
+                                            'Super Admin' => 'primary',
+                                            'Admin' => 'info',
+                                            'Pustakawan' => 'success',
+                                            'Staff' => 'secondary',
+                                        ];
+                                        $statusColors = [
+                                            'Aktif' => 'primary',
+                                            'Non-Aktif' => 'secondary',
+                                            'Ditangguhkan' => 'warning',
+                                        ];
+                                        $roleColor = $roleColors[$user['role']] ?? 'secondary';
+                                        $statusColor = $statusColors[$user['status']] ?? 'secondary';
+                                    ?>
+                                    <tr data-id="<?= $user['id'] ?>"
+                                        data-name="<?= esc($user['nama_lengkap']) ?>"
+                                        data-username="<?= esc($user['nama_pengguna']) ?>"
+                                        data-email="<?= esc($user['email']) ?>"
+                                        data-role="<?= esc($user['role']) ?>"
+                                        data-status="<?= esc($user['status']) ?>"
+                                        data-last-login="<?= $user['last_login'] ?>"
+                                        data-created="<?= $user['created_at'] ?>"
+                                        data-created-timestamp="<?= strtotime($user['created_at']) ?>"
+                                        data-last-login-timestamp="<?= $user['last_login'] ? strtotime($user['last_login']) : 0 ?>">
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="avatar avatar-<?= strtolower(substr($user['name'], 0, 1)) ?>"><?= $user['initial'] ?></div>
-                                                <div class="ms-3">
-                                                    <div class="fw-bold"><?= $user['name'] ?></div>
-                                                    <div class="text-muted small"><?= $user['email'] ?></div>
+                                                <div class="avatar avatar-<?= strtolower($initial) ?>"><?= $initial ?></div>
+                                                <div class="ms-3 user-info">
+                                                    <div class="user-name"><?= esc($user['nama_lengkap']) ?></div>
+                                                    <div class="user-email"><?= esc($user['email']) ?></div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td><span class="badge badge-role-<?= $user['role_color'] ?>"><?= $user['role'] ?></span></td>
-                                        <td><span class="badge rounded-pill badge-status-<?= $user['status_color'] ?>"><?= $user['status'] ?></span></td>
-                                        <td><?= $user['last_login'] ?></td>
-                                        <td><?= $user['created'] ?></td>
+                                        <td><span class="badge badge-role-<?= $roleColor ?>"><?= esc($user['role']) ?></span></td>
+                                        <td><span class="badge rounded-pill badge-status-<?= $statusColor ?>"><?= esc($user['status']) ?></span></td>
+                                        <td class="date-column">
+                                            <?php if ($user['last_login']): ?>
+                                                <div class="date-primary" 
+                                                     data-bs-toggle="tooltip" 
+                                                     data-bs-placement="top" 
+                                                     title="<?= date('l, d F Y H:i:s', strtotime($user['last_login'])) ?> WIB">
+                                                    <?= date('d/m/Y', strtotime($user['last_login'])) ?>
+                                                </div>
+                                                <small class="date-time"><?= date('H:i', strtotime($user['last_login'])) ?> WIB</small>
+                                            <?php else: ?>
+                                                <span class="never-login" 
+                                                      data-bs-toggle="tooltip" 
+                                                      data-bs-placement="top" 
+                                                      title="User ini belum pernah melakukan login">
+                                                    Belum pernah masuk
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="date-column">
+                                            <div class="fw-bold" 
+                                                 data-bs-toggle="tooltip" 
+                                                 data-bs-placement="top" 
+                                                 title="Dibuat pada <?= date('l, d F Y H:i:s', strtotime($user['created_at'])) ?> WIB">
+                                                <?= date('d/m/Y', strtotime($user['created_at'])) ?>
+                                            </div>
+                                            <small class="date-time"><?= date('H:i', strtotime($user['created_at'])) ?> WIB</small>
+                                        </td>
                                         <td class="text-end">
                                             <div class="dropdown">
-                                                <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button class="btn btn-sm btn-icon dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="true" id="dropdownMenuButton<?= $user['id'] ?>" aria-haspopup="true">
                                                     <i class="fa-solid fa-ellipsis-vertical"></i>
                                                 </button>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item edit-user-btn" href="#" data-bs-toggle="modal" data-bs-target="#userModal"><i class="fa-solid fa-pencil me-2"></i>Edit User</a></li>
-                                                    <li><a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-trash me-2"></i>Hapus User</a></li>
-                                                </ul>
+                                                <div class="dropdown-menu dropdown-menu-start shadow" aria-labelledby="dropdownMenuButton<?= $user['id'] ?>">
+                                                    <div class="dropdown-header">Aksi</div>
+                                                    <a class="dropdown-item edit-user-btn" href="#" data-bs-toggle="modal" data-bs-target="#userModal">
+                                                        <i class="fa-solid fa-pencil me-2"></i>Edit User
+                                                    </a>
+                                                    <a class="dropdown-item text-danger delete-user-btn" href="#" data-user-id="<?= $user['id'] ?>">
+                                                        <i class="fa-solid fa-trash me-2"></i>Hapus
+                                                    </a>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -142,7 +236,8 @@
                                         <td colspan="6" class="text-center">Tidak ada data</td>
                                     </tr>
                                 </tbody>
-                            </table>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -162,39 +257,45 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="userForm" method="post" action="<?= site_url('usermanagement/addUser') ?>">
+                        <?= csrf_field() ?>
+                        <input type="hidden" id="userId" name="id" value="">
+                        <div id="form-errors" class="alert alert-danger d-none"></div>
+                        <div id="form-success" class="alert alert-success d-none"></div>
                         <div class="mb-3">
-                            <label for="fullName" class="form-label fw-bold">Nama Lengkap</label>
-                            <input type="text" class="form-control" id="fullName">
+                            <label for="nama_lengkap" class="form-label fw-bold">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
                         </div>
                         <div class="mb-3">
-                            <label for="username" class="form-label fw-bold">Nama Pengguna</label>
-                            <input type="text" class="form-control" id="username">
+                            <label for="nama_pengguna" class="form-label fw-bold">Nama Pengguna</label>
+                            <input type="text" class="form-control" id="nama_pengguna" name="nama_pengguna" required>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label fw-bold">Email</label>
-                            <input type="email" class="form-control" id="email">
+                            <input type="email" class="form-control" id="email" name="email" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-bold">Kata Sandi</label>
-                            <input type="password" class="form-control" id="password">
+                        <div class="mb-3" id="passwordGroup">
+                            <label for="kata_sandi" class="form-label fw-bold">Kata Sandi</label>
+                            <input type="password" class="form-control" id="kata_sandi" name="kata_sandi" required>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="role" class="form-label fw-bold">Role</label>
-                                <select id="role" class="form-select">
-                                    <option>Staff</option>
-                                    <option>Pustakawan</option>
-                                    <option>Admin</option>
-                                    <option>Super Admin</option>
+                                <select id="role" name="role" class="form-select" required>
+                                    <option value="">Pilih Role</option>
+                                    <option value="Super Admin">Super Admin</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Pustakawan">Pustakawan</option>
+                                    <option value="Staff">Staff</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="status" class="form-label fw-bold">Status</label>
-                                <select id="status" class="form-select">
-                                    <option>Aktif</option>
-                                    <option>Non-Aktif</option>
-                                    <option>Ditangguhkan</option>
+                                <select id="status" name="status" class="form-select" required>
+                                    <option value="">Pilih Status</option>
+                                    <option value="Aktif">Aktif</option>
+                                    <option value="Non-Aktif">Non-Aktif</option>
+                                    <option value="Ditangguhkan">Ditangguhkan</option>
                                 </select>
                             </div>
                         </div>
@@ -202,7 +303,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-success">Tambahkan User</button>
+                    <button type="submit" class="btn btn-success" id="submitUserBtn">
+                        <span class="btn-text">Tambahkan User</span>
+                        <span class="btn-spinner d-none">
+                            <i class="fa-solid fa-spinner fa-spin me-1"></i>Menyimpan...
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>
