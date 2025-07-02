@@ -12,7 +12,7 @@ class Home extends BaseController
             'page_subtitle' => 'Kelola sistem perpustakaan Anda dengan alat dan analitik yang lengkap.'
         ];
         
-        return view('dashboard', $data);
+        return view('admin/dashboard', $data);
     }
 
     public function dashboard(): string
@@ -23,7 +23,7 @@ class Home extends BaseController
             'page_subtitle' => 'Kelola sistem perpustakaan Anda dengan alat dan analitik yang lengkap.'
         ];
         
-        return view('dashboard', $data);
+        return view('admin/dashboard', $data);
     }
 
     public function userManagement(): string
@@ -55,12 +55,12 @@ class Home extends BaseController
         }
         
         $data = [
-            'title' => 'Registration - INLISLite v3',
+            'title' => 'Inlislite Registration - INLISlite v3.0',
             'stats' => $stats,
             'registrations' => $registrations
         ];
         
-        return view('registration', $data);
+        return view('admin/registration', $data);
     }
 
     public function getRegistrationStats(): string
@@ -373,5 +373,99 @@ class Home extends BaseController
                 'trace' => $e->getTraceAsString()
             ]);
         }
+    }
+
+    public function profile(): string
+    {
+        // For now, get default user data since no authentication system is implemented
+        $userData = [
+            'nama_lengkap' => 'Administrator',
+            'nama_pengguna' => 'admin',
+            'email' => 'admin@inlislite.com',
+            'role' => 'Super Admin',
+            'status' => 'Aktif',
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        
+        // Try to get actual user data from database
+        try {
+            $builder = \Config\Database::connect()->table('users');
+            $user = $builder->where('nama_pengguna', 'admin')->get()->getRowArray();
+            if ($user) {
+                $userData = $user;
+            }
+        } catch (\Exception $e) {
+            // Use default data if database error
+        }
+
+        $data = [
+            'title' => 'User Profile - INLISlite v3.0',
+            'user' => $userData
+        ];
+        
+        return view('admin/profile', $data);
+    }
+
+    public function updateProfile()
+    {
+        try {
+            $validation = \Config\Services::validation();
+            
+            $rules = [
+                'nama_lengkap' => 'required|min_length[3]|max_length[255]',
+                'email' => 'required|valid_email',
+                'nama_pengguna' => 'required|min_length[3]|max_length[50]'
+            ];
+
+            if (!$this->validate($rules)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $this->validator->getErrors()
+                ]);
+            }
+
+            $data = [
+                'nama_lengkap' => $this->request->getPost('nama_lengkap'),
+                'email' => $this->request->getPost('email'),
+                'nama_pengguna' => $this->request->getPost('nama_pengguna'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+
+            // If password is provided, hash it
+            $newPassword = $this->request->getPost('kata_sandi');
+            if (!empty($newPassword)) {
+                $data['kata_sandi'] = password_hash($newPassword, PASSWORD_DEFAULT);
+            }
+
+            $builder = \Config\Database::connect()->table('users');
+            $result = $builder->where('nama_pengguna', 'admin')->update($data);
+            
+            if ($result) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Profile berhasil diupdate!'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Gagal mengupdate profile'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function sidebarDemo(): string
+    {
+        $data = [
+            'title' => 'New Sidebar Demo - INLISLite v3'
+        ];
+        
+        return view('new_sidebar_demo', $data);
     }
 }

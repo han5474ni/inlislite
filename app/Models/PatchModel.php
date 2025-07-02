@@ -12,98 +12,161 @@ class PatchModel extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
-    
     protected $allowedFields = [
-        'nama_paket',
-        'versi',
-        'prioritas',
-        'tanggal_rilis',
-        'ukuran',
-        'jumlah_unduhan',
-        'deskripsi',
-        'created_at',
-        'updated_at'
+        'version',
+        'title',
+        'description',
+        'changelog',
+        'file_path',
+        'file_size',
+        'release_date',
+        'is_critical',
+        'downloads',
+        'is_active'
     ];
 
+    // Dates
     protected $useTimestamps = true;
     protected $dateFormat = 'datetime';
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
+    // Validation
     protected $validationRules = [
-        'nama_paket' => 'required|min_length[3]|max_length[255]',
-        'versi' => 'required|min_length[1]|max_length[50]',
-        'prioritas' => 'required|in_list[High,Medium,Low]',
-        'tanggal_rilis' => 'required|valid_date[Y-m-d]',
-        'ukuran' => 'required|min_length[1]|max_length[50]',
-        'deskripsi' => 'required|min_length[10]|max_length[1000]',
-        'jumlah_unduhan' => 'permit_empty|is_natural'
+        'version' => 'required|is_unique[patches.version,id,{id}]',
+        'title' => 'required|min_length[5]|max_length[255]',
+        'description' => 'required|min_length[10]',
+        'release_date' => 'required|valid_date'
     ];
 
     protected $validationMessages = [
-        'nama_paket' => [
-            'required' => 'Nama paket harus diisi.',
-            'min_length' => 'Nama paket minimal 3 karakter.',
-            'max_length' => 'Nama paket maksimal 255 karakter.'
+        'version' => [
+            'required' => 'Versi patch harus diisi',
+            'is_unique' => 'Versi patch sudah ada'
         ],
-        'versi' => [
-            'required' => 'Versi harus diisi.',
-            'min_length' => 'Versi minimal 1 karakter.',
-            'max_length' => 'Versi maksimal 50 karakter.'
+        'title' => [
+            'required' => 'Judul patch harus diisi',
+            'min_length' => 'Judul patch minimal 5 karakter',
+            'max_length' => 'Judul patch maksimal 255 karakter'
         ],
-        'prioritas' => [
-            'required' => 'Prioritas harus dipilih.',
-            'in_list' => 'Prioritas harus High, Medium, atau Low.'
+        'description' => [
+            'required' => 'Deskripsi patch harus diisi',
+            'min_length' => 'Deskripsi patch minimal 10 karakter'
         ],
-        'tanggal_rilis' => [
-            'required' => 'Tanggal rilis harus diisi.',
-            'valid_date' => 'Format tanggal tidak valid.'
-        ],
-        'ukuran' => [
-            'required' => 'Ukuran file harus diisi.',
-            'min_length' => 'Ukuran file minimal 1 karakter.',
-            'max_length' => 'Ukuran file maksimal 50 karakter.'
-        ],
-        'deskripsi' => [
-            'required' => 'Deskripsi harus diisi.',
-            'min_length' => 'Deskripsi minimal 10 karakter.',
-            'max_length' => 'Deskripsi maksimal 1000 karakter.'
+        'release_date' => [
+            'required' => 'Tanggal rilis harus diisi',
+            'valid_date' => 'Format tanggal tidak valid'
         ]
     ];
 
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
+    // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert = ['setDefaults'];
-    protected $afterInsert = [];
-    protected $beforeUpdate = [];
-    protected $afterUpdate = [];
-    protected $beforeFind = [];
-    protected $afterFind = [];
-    protected $beforeDelete = [];
-    protected $afterDelete = [];
 
     /**
-     * Get patches with optional filters
+     * Get active patches
      */
+    public function getActivePatches()
+    {
+        return $this->where('is_active', 1)
+                   ->orderBy('release_date', 'DESC')
+                   ->findAll();
+    }
+
+    /**
+     * Get critical patches
+     */
+    public function getCriticalPatches()
+    {
+        return $this->where('is_critical', 1)
+                   ->where('is_active', 1)
+                   ->orderBy('release_date', 'DESC')
+                   ->findAll();
+    }
+
+    /**
+     * Get latest patch
+     */
+    public function getLatestPatch()
+    {
+        return $this->where('is_active', 1)
+                   ->orderBy('release_date', 'DESC')
+                   ->first();
+    }
+
+    /**
+     * Increment download counter
+     */
+    public function incrementDownload($id)
+    {
+        $patch = $this->find($id);
+        if ($patch) {
+            return $this->update($id, ['downloads' => $patch['downloads'] + 1]);
+        }
+        return false;
+    }
+
+    /**
+     * Get patch statistics
+     */
+    public function getStats()
+    {
+        $total = $this->countAll();
+        $active = $this->where('is_active', 1)->countAllResults();
+        $critical = $this->where('is_critical', 1)->where('is_active', 1)->countAllResults();
+        $totalDownloads = $this->selectSum('downloads')->first()['downloads'] ?? 0;
+
+        return [
+            'total' => $total,
+            'active' => $active,
+            'critical' => $critical,
+            'total_downloads' => $totalDownloads
+        ];
+    }
+
+    /**
+     * Search patches
+     */
+    public function searchPatches($keyword)
+    {
+        return $this->like('title', $keyword)
+                   ->orLike('description', $keyword)
+                   ->orLike('version', $keyword)
+                   ->where('is_active', 1)
+                   ->orderBy('release_date', 'DESC')
+                   ->findAll();
+    }
+
+    /**
+     * Get patches by date range
+     */
+    public function getPatchesByDateRange($startDate, $endDate)
+    {
+        return $this->where('release_date >=', $startDate)
+                   ->where('release_date <=', $endDate)
+                   ->where('is_active', 1)
+                   ->orderBy('release_date', 'DESC')
+                   ->findAll();
+    }
+
+    // Legacy methods for backward compatibility
     public function getPatches(array $filters = []): array
     {
         $builder = $this->builder();
 
-        // Apply search filter
         if (!empty($filters['search'])) {
             $search = $filters['search'];
             $builder->groupStart()
-                    ->like('nama_paket', $search)
-                    ->orLike('deskripsi', $search)
-                    ->orLike('versi', $search)
+                    ->like('title', $search)
+                    ->orLike('description', $search)
+                    ->orLike('version', $search)
                     ->groupEnd();
         }
 
-        // Apply priority filter
         if (!empty($filters['priority'])) {
-            $builder->where('prioritas', $filters['priority']);
+            $builder->where('is_critical', $filters['priority'] === 'High' ? 1 : 0);
         }
 
         return $builder->orderBy('created_at', 'DESC')
@@ -111,55 +174,29 @@ class PatchModel extends Model
                       ->getResultArray();
     }
 
-    /**
-     * Get patch statistics
-     */
     public function getStatistics(): array
     {
         return [
             'total_patches' => $this->countAll(),
-            'high_priority' => $this->where('prioritas', 'High')->countAllResults(false),
-            'medium_priority' => $this->where('prioritas', 'Medium')->countAllResults(false),
-            'low_priority' => $this->where('prioritas', 'Low')->countAllResults(false),
-            'total_downloads' => $this->selectSum('jumlah_unduhan')->get()->getRow()->jumlah_unduhan ?? 0
+            'high_priority' => $this->where('is_critical', 1)->countAllResults(false),
+            'medium_priority' => $this->where('is_critical', 0)->where('is_active', 1)->countAllResults(false),
+            'low_priority' => $this->where('is_active', 0)->countAllResults(false),
+            'total_downloads' => $this->selectSum('downloads')->get()->getRow()->downloads ?? 0
         ];
     }
 
-    /**
-     * Set default values before insert
-     */
-    protected function setDefaults(array $data): array
-    {
-        if (!isset($data['data']['jumlah_unduhan'])) {
-            $data['data']['jumlah_unduhan'] = 0;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Increment download count
-     */
     public function incrementDownloadCount(int $id): bool
     {
-        return $this->where('id', $id)
-                   ->set('jumlah_unduhan', 'jumlah_unduhan + 1', false)
-                   ->update();
+        return $this->incrementDownload($id);
     }
 
-    /**
-     * Get most downloaded patches
-     */
     public function getMostDownloaded(int $limit = 10): array
     {
-        return $this->orderBy('jumlah_unduhan', 'DESC')
+        return $this->orderBy('downloads', 'DESC')
                    ->limit($limit)
                    ->findAll();
     }
 
-    /**
-     * Get recent patches
-     */
     public function getRecent(int $limit = 10): array
     {
         return $this->orderBy('created_at', 'DESC')
