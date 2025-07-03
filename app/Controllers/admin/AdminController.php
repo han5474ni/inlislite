@@ -62,4 +62,57 @@ class AdminController extends BaseController
         
         return view('admin/tentang', $data);
     }
+    
+    public function patch_updater()
+    {
+        $data = [
+            'title' => 'Patch and Updater - INLISlite v3.0',
+            'page_title' => 'Patch and Updater',
+            'page_subtitle' => 'Download and install patch packages',
+            'patches' => [
+                [
+                    'id' => 1,
+                    'nama_paket' => 'INLISLite v3.2 Cumulative Updater',
+                    'versi' => '3.2.1',
+                    'prioritas' => 'High',
+                    'ukuran' => '15.2 MB',
+                    'tanggal_rilis' => '2024-01-15',
+                    'deskripsi' => 'Updater ini ditujukan untuk memperbaharui paket instalasi INLISLite v3 sebelumnya dengan fitur terbaru dan perbaikan bug.',
+                    'jumlah_unduhan' => 1250
+                ],
+                [
+                    'id' => 2,
+                    'nama_paket' => 'Security Patch v3.1.8',
+                    'versi' => '3.1.8',
+                    'prioritas' => 'High',
+                    'ukuran' => '8.7 MB',
+                    'tanggal_rilis' => '2024-01-10',
+                    'deskripsi' => 'Patch keamanan penting untuk memperbaiki vulnerabilitas yang ditemukan pada versi sebelumnya.',
+                    'jumlah_unduhan' => 2100
+                ],
+                [
+                    'id' => 3,
+                    'nama_paket' => 'Performance Enhancement Pack',
+                    'versi' => '3.1.5',
+                    'prioritas' => 'Medium',
+                    'ukuran' => '12.4 MB',
+                    'tanggal_rilis' => '2024-01-05',
+                    'deskripsi' => 'Peningkatan performa sistem dan optimasi database untuk pengalaman pengguna yang lebih baik.',
+                    'jumlah_unduhan' => 890
+                ],
+                [
+                    'id' => 4,
+                    'nama_paket' => 'UI/UX Improvements',
+                    'versi' => '3.1.2',
+                    'prioritas' => 'Low',
+                    'ukuran' => '5.8 MB',
+                    'tanggal_rilis' => '2023-12-28',
+                    'deskripsi' => 'Perbaikan antarmuka pengguna dan pengalaman pengguna untuk kemudahan navigasi.',
+                    'jumlah_unduhan' => 650
+                ]
+            ]
+        ];
+        
+        return view('admin/patch', $data);
+    }
 }

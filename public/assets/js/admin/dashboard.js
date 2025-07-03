@@ -148,7 +148,7 @@ function handleCardClick(title, cardElement) {
     // Route to appropriate pages based on card title
     switch (title) {
         case 'Tentang InlisLite':
-            navigateToPage('/tentang');
+            navigateToPage('/admin/tentang');
             break;
         case 'Features & Program Modules':
             navigateToPage('/admin/demo');
@@ -157,7 +157,7 @@ function handleCardClick(title, cardElement) {
             navigateToPage('/installer');
             break;
         case 'Patch dan Updater':
-            navigateToPage('/admin/patches');
+            navigateToPage('/admin/patch_updater');
             break;
         case 'Aplikasi Pendukung':
             navigateToPage('/admin/applications');

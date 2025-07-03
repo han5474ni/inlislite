@@ -24,54 +24,7 @@
         <i data-feather="menu"></i>
     </button>
 
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
-                <div class="sidebar-logo-icon">
-                    <i data-feather="star"></i>
-                </div>
-                <div class="sidebar-title">
-                    INLISlite v3.0<br>
-                    <small style="font-size: 0.85rem; opacity: 0.8;">Dashboard</small>
-                </div>
-            </a>
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i data-feather="chevrons-left"></i>
-            </button>
-        </div>
-        
-        <div class="sidebar-nav">
-            <div class="nav-item">
-                <a href="<?= base_url('admin/dashboard') ?>" class="nav-link">
-                    <i data-feather="home" class="nav-icon"></i>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-                <div class="nav-tooltip">Dashboard</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/users') ?>" class="nav-link active">
-                    <i data-feather="users" class="nav-icon"></i>
-                    <span class="nav-text">Manajemen User</span>
-                </a>
-                <div class="nav-tooltip">Manajemen User</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('registration') ?>" class="nav-link">
-                    <i data-feather="book" class="nav-icon"></i>
-                    <span class="nav-text">Registrasi</span>
-                </a>
-                <div class="nav-tooltip">Registrasi</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/profile') ?>" class="nav-link">
-                    <i data-feather="user" class="nav-icon"></i>
-                    <span class="nav-text">Profile</span>
-                </a>
-                <div class="nav-tooltip">Profile</div>
-            </div>
-        </div>
-    </nav>
+    <?php include APPPATH . 'Views/admin/partials/sidebar.php'; ?>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -367,6 +320,28 @@
             if (typeof feather !== 'undefined') {
                 feather.replace();
             }
+            
+            // Ensure User Management menu remains active
+            const userManagementLink = document.querySelector('a[data-page="admin/users"]');
+            if (userManagementLink) {
+                // Remove active class from all other links
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link !== userManagementLink) {
+                        link.classList.remove('active');
+                    }
+                });
+                
+                // Ensure user management link is active
+                userManagementLink.classList.add('active');
+                
+                // Store in session storage for consistency
+                sessionStorage.setItem('activeMenu', 'admin/users');
+            }
+            
+            // Debug: Log current URL and active menu detection
+            console.log('Current URL:', window.location.pathname);
+            console.log('User Management Link:', userManagementLink);
+            console.log('Active menu stored:', sessionStorage.getItem('activeMenu'));
         });
     </script>
 </body>

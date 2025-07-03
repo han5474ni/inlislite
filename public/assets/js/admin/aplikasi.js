@@ -1,462 +1,542 @@
 /**
- * Aplikasi Pendukung JavaScript
+ * INLISLite v3.0 Supporting Applications JavaScript
  * Handles interactions for supporting applications page
  */
 
-// Import Bootstrap if not already imported
-const bootstrap = window.bootstrap
-
-class AplikasiManager {
-  constructor() {
-    this.init()
-  }
-
-  /**
-   * Initialize the application manager
-   */
-  init() {
-    this.setupEventListeners()
-    this.setupAnimations()
-    this.setupTooltips()
-  }
-
-  /**
-   * Setup all event listeners
-   */
-  setupEventListeners() {
-    // Download button clicks
-    document.addEventListener("click", (e) => {
-      if (e.target.classList.contains("btn") && e.target.textContent.includes("Unduh")) {
-        this.handleDownload(e)
-      }
-    })
-
-    // Card hover effects
-    document.querySelectorAll(".app-card").forEach((card) => {
-      card.addEventListener("mouseenter", () => this.handleCardHover(card, true))
-      card.addEventListener("mouseleave", () => this.handleCardHover(card, false))
-    })
-
-    // Three dots menu clicks
-    document.querySelectorAll(".btn-link").forEach((btn) => {
-      if (btn.querySelector(".bi-three-dots")) {
-        btn.addEventListener("click", (e) => this.handleMenuClick(e))
-      }
-    })
-
-    // Copy URL functionality
-    document.querySelectorAll(".url-box").forEach((urlBox) => {
-      urlBox.addEventListener("click", () => this.copyToClipboard(urlBox))
-    })
-
-    // Copy location path functionality
-    document.querySelectorAll(".location-box").forEach((locationBox) => {
-      locationBox.addEventListener("click", () => this.copyToClipboard(locationBox))
-    })
-  }
-
-  /**
-   * Setup animations for page elements
-   */
-  setupAnimations() {
-    // Animate cards on page load
-    const cards = document.querySelectorAll(".app-card")
-    cards.forEach((card, index) => {
-      card.style.opacity = "0"
-      card.style.transform = "translateY(20px)"
-
-      setTimeout(() => {
-        card.style.transition = "all 0.5s ease"
-        card.style.opacity = "1"
-        card.style.transform = "translateY(0)"
-      }, index * 100)
-    })
-
-    // Animate introduction section
-    const introSection = document.querySelector(".container-fluid .bg-white")
-    if (introSection) {
-      introSection.style.opacity = "0"
-      introSection.style.transform = "translateY(-20px)"
-
-      setTimeout(() => {
-        introSection.style.transition = "all 0.5s ease"
-        introSection.style.opacity = "1"
-        introSection.style.transform = "translateY(0)"
-      }, 50)
-    }
-  }
-
-  /**
-   * Setup tooltips for interactive elements
-   */
-  setupTooltips() {
-    // Add tooltips to download buttons
-    document.querySelectorAll(".btn").forEach((btn) => {
-      if (btn.textContent.includes("Unduh")) {
-        btn.setAttribute("title", "Klik untuk mengunduh file")
-      }
-    })
-
-    // Add tooltips to copy-able elements
-    document.querySelectorAll(".url-box, .location-box").forEach((box) => {
-      box.style.cursor = "pointer"
-      box.setAttribute("title", "Klik untuk menyalin")
-    })
-
-    // Initialize Bootstrap tooltips if available
-    if (bootstrap && bootstrap.Tooltip) {
-      document.querySelectorAll("[title]").forEach((element) => {
-        new bootstrap.Tooltip(element)
-      })
-    }
-  }
-
-  /**
-   * Handle download button clicks
-   */
-  handleDownload(e) {
-    const button = e.target.closest(".btn")
-    const originalText = button.innerHTML
-    const fileName = this.getFileName(button)
-
-    // Show loading state
-    button.disabled = true
-    button.innerHTML = '<span class="loading"></span>Mengunduh...'
-
-    // Simulate download process
-    setTimeout(() => {
-      this.simulateDownload(fileName)
-      this.showNotification(`Download ${fileName} dimulai`, "success")
-
-      // Restore button state
-      button.disabled = false
-      button.innerHTML = originalText
-    }, 1500)
-  }
-
-  /**
-   * Get filename from download card
-   */
-  getFileName(button) {
-    const downloadCard = button.closest(".download-card")
-    if (downloadCard) {
-      const fileNameElement = downloadCard.querySelector("small")
-      return fileNameElement ? fileNameElement.textContent : "file"
-    }
-    return "file"
-  }
-
-  /**
-   * Simulate file download
-   */
-  simulateDownload(fileName) {
-    // Create a temporary download link
-    const link = document.createElement("a")
-    link.href = "#"
-    link.download = fileName
-    link.style.display = "none"
-
-    document.body.appendChild(link)
-    // Note: In a real application, this would trigger an actual download
-    // link.click()
-    document.body.removeChild(link)
-  }
-
-  /**
-   * Handle card hover effects
-   */
-  handleCardHover(card, isHovering) {
-    const icon = card.querySelector(".app-icon")
-    if (icon) {
-      if (isHovering) {
-        icon.style.transform = "scale(1.1) rotate(5deg)"
-      } else {
-        icon.style.transform = "scale(1) rotate(0deg)"
-      }
-    }
-  }
-
-  /**
-   * Handle three dots menu clicks
-   */
-  handleMenuClick(e) {
-    e.preventDefault()
-    const card = e.target.closest(".app-card")
-    const appName = card.querySelector("h5").textContent
-
-    // Create context menu options
-    const options = [
-      { text: "Lihat Detail", action: () => this.showDetails(appName) },
-      { text: "Bagikan", action: () => this.shareApp(appName) },
-      { text: "Laporkan Masalah", action: () => this.reportIssue(appName) },
-    ]
-
-    this.showContextMenu(e, options)
-  }
-
-  /**
-   * Show context menu
-   */
-  showContextMenu(e, options) {
-    // Remove existing context menu
-    const existingMenu = document.querySelector(".context-menu")
-    if (existingMenu) {
-      existingMenu.remove()
+class SupportingApplicationsManager {
+    constructor() {
+        this.currentEditingCard = null;
+        this.deleteModal = null;
+        this.init();
     }
 
-    // Create context menu
-    const menu = document.createElement("div")
-    menu.className = "context-menu"
-    menu.style.cssText = `
-            position: fixed;
-            top: ${e.clientY}px;
-            left: ${e.clientX}px;
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-            z-index: 1050;
-            min-width: 150px;
-            padding: 0.5rem 0;
-        `
-
-    options.forEach((option) => {
-      const item = document.createElement("div")
-      item.className = "context-menu-item"
-      item.textContent = option.text
-      item.style.cssText = `
-                padding: 0.5rem 1rem;
-                cursor: pointer;
-                font-size: 0.875rem;
-                transition: background-color 0.15s ease;
-            `
-
-      item.addEventListener("mouseenter", () => {
-        item.style.backgroundColor = "#f8f9fa"
-      })
-
-      item.addEventListener("mouseleave", () => {
-        item.style.backgroundColor = "transparent"
-      })
-
-      item.addEventListener("click", () => {
-        option.action()
-        menu.remove()
-      })
-
-      menu.appendChild(item)
-    })
-
-    document.body.appendChild(menu)
-
-    // Remove menu when clicking outside
-    setTimeout(() => {
-      document.addEventListener(
-        "click",
-        () => {
-          menu.remove()
-        },
-        { once: true },
-      )
-    }, 100)
-  }
-
-  /**
-   * Show application details
-   */
-  showDetails(appName) {
-    this.showNotification(`Menampilkan detail untuk ${appName}`, "info")
-  }
-
-  /**
-   * Share application
-   */
-  shareApp(appName) {
-    if (navigator.share) {
-      navigator.share({
-        title: appName,
-        text: `Aplikasi pendukung INLISLite: ${appName}`,
-        url: window.location.href,
-      })
-    } else {
-      // Fallback: copy to clipboard
-      this.copyToClipboard(null, `${appName} - ${window.location.href}`)
-      this.showNotification("Link disalin ke clipboard", "success")
-    }
-  }
-
-  /**
-   * Report issue
-   */
-  reportIssue(appName) {
-    this.showNotification(`Melaporkan masalah untuk ${appName}`, "warning")
-  }
-
-  /**
-   * Copy text to clipboard
-   */
-  copyToClipboard(element, text = null) {
-    const textToCopy = text || element.textContent.trim()
-
-    if (navigator.clipboard) {
-      navigator.clipboard
-        .writeText(textToCopy)
-        .then(() => {
-          this.showNotification("Disalin ke clipboard", "success")
-          this.highlightElement(element)
-        })
-        .catch(() => {
-          this.fallbackCopyToClipboard(textToCopy)
-        })
-    } else {
-      this.fallbackCopyToClipboard(textToCopy)
-    }
-  }
-
-  /**
-   * Fallback copy to clipboard method
-   */
-  fallbackCopyToClipboard(text) {
-    const textArea = document.createElement("textarea")
-    textArea.value = text
-    textArea.style.position = "fixed"
-    textArea.style.left = "-999999px"
-    textArea.style.top = "-999999px"
-    document.body.appendChild(textArea)
-    textArea.focus()
-    textArea.select()
-
-    try {
-      document.execCommand("copy")
-      this.showNotification("Disalin ke clipboard", "success")
-    } catch (err) {
-      this.showNotification("Gagal menyalin ke clipboard", "error")
+    /**
+     * Initialize the application manager
+     */
+    init() {
+        this.setupEventListeners();
+        this.setupAnimations();
+        this.initializeModals();
+        this.setupTooltips();
     }
 
-    document.body.removeChild(textArea)
-  }
+    /**
+     * Setup all event listeners
+     */
+    setupEventListeners() {
+        // Edit application clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.edit-app')) {
+                e.preventDefault();
+                const appId = e.target.closest('.edit-app').getAttribute('data-id');
+                this.enableEditMode(appId);
+            }
+        });
 
-  /**
-   * Highlight element temporarily
-   */
-  highlightElement(element) {
-    if (!element) return
+        // Delete application clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.delete-app')) {
+                e.preventDefault();
+                const appId = e.target.closest('.delete-app').getAttribute('data-id');
+                this.showDeleteConfirmation(appId);
+            }
+        });
 
-    const originalBackground = element.style.backgroundColor
-    element.style.backgroundColor = "#fff3cd"
-    element.style.transition = "background-color 0.3s ease"
+        // Save application clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.save-app')) {
+                e.preventDefault();
+                this.saveApplication();
+            }
+        });
 
-    setTimeout(() => {
-      element.style.backgroundColor = originalBackground
-    }, 1000)
-  }
+        // Cancel edit clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.cancel-edit')) {
+                e.preventDefault();
+                this.cancelEdit();
+            }
+        });
 
-  /**
-   * Show notification message
-   */
-  showNotification(message, type = "info") {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll(".notification")
-    existingNotifications.forEach((notification) => notification.remove())
+        // Download button clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-download')) {
+                e.preventDefault();
+                this.handleDownload(e.target.closest('.btn-download'));
+            }
+        });
 
-    // Create notification
-    const notification = document.createElement("div")
-    notification.className = `notification alert alert-${type === "error" ? "danger" : type} alert-dismissible fade show`
-    notification.style.cssText = `
+        // Card hover effects
+        document.querySelectorAll('.application-card').forEach(card => {
+            card.addEventListener('mouseenter', () => this.handleCardHover(card, true));
+            card.addEventListener('mouseleave', () => this.handleCardHover(card, false));
+        });
+
+        // Confirm delete button
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('#confirmDelete')) {
+                this.confirmDelete();
+            }
+        });
+    }
+
+    /**
+     * Setup animations for page elements
+     */
+    setupAnimations() {
+        // Animate cards on page load
+        const cards = document.querySelectorAll('.application-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 150);
+        });
+
+        // Animate page header
+        const pageHeader = document.querySelector('.page-header');
+        if (pageHeader) {
+            pageHeader.style.opacity = '0';
+            pageHeader.style.transform = 'translateY(-20px)';
+
+            setTimeout(() => {
+                pageHeader.style.transition = 'all 0.5s ease';
+                pageHeader.style.opacity = '1';
+                pageHeader.style.transform = 'translateY(0)';
+            }, 100);
+        }
+    }
+
+    /**
+     * Initialize modals
+     */
+    initializeModals() {
+        const deleteModalElement = document.getElementById('deleteModal');
+        if (deleteModalElement && window.bootstrap) {
+            this.deleteModal = new bootstrap.Modal(deleteModalElement);
+        }
+    }
+
+    /**
+     * Setup tooltips for interactive elements
+     */
+    setupTooltips() {
+        // Add tooltips to download buttons
+        document.querySelectorAll('.btn-download').forEach(btn => {
+            const fileName = btn.getAttribute('data-file');
+            const fileSize = btn.getAttribute('data-size');
+            btn.setAttribute('title', `Download ${fileName} (${fileSize})`);
+        });
+
+        // Add tooltips to action buttons
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.setAttribute('title', 'More options');
+        });
+
+        // Initialize Bootstrap tooltips if available
+        if (window.bootstrap && bootstrap.Tooltip) {
+            document.querySelectorAll('[title]').forEach(element => {
+                new bootstrap.Tooltip(element);
+            });
+        }
+    }
+
+    /**
+     * Enable edit mode for an application card
+     */
+    enableEditMode(appId) {
+        const card = document.querySelector(`[data-app-id="${appId}"]`);
+        if (!card) return;
+
+        // Hide content and show edit form
+        const content = card.querySelector('.card-content');
+        const editForm = card.querySelector('.card-edit-form');
+        
+        if (content && editForm) {
+            content.classList.add('d-none');
+            editForm.classList.remove('d-none');
+            this.currentEditingCard = appId;
+
+            // Focus on the first input
+            const firstInput = editForm.querySelector('input, textarea');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+
+            this.showNotification('Edit mode enabled. Make your changes and click Save.', 'info');
+        }
+    }
+
+    /**
+     * Save application changes
+     */
+    saveApplication() {
+        if (!this.currentEditingCard) return;
+
+        const card = document.querySelector(`[data-app-id="${this.currentEditingCard}"]`);
+        if (!card) return;
+
+        const editForm = card.querySelector('.card-edit-form');
+        const titleInput = editForm.querySelector('.edit-title');
+        const descriptionInput = editForm.querySelector('.edit-description');
+
+        // Get new values
+        const newTitle = titleInput.value.trim();
+        const newDescription = descriptionInput.value.trim();
+
+        if (!newTitle || !newDescription) {
+            this.showNotification('Please fill in all required fields.', 'error');
+            return;
+        }
+
+        // Update the card content
+        const cardTitle = card.querySelector('.card-title');
+        const cardDescription = card.querySelector('.card-content p');
+
+        if (cardTitle) cardTitle.textContent = newTitle;
+        if (cardDescription) cardDescription.textContent = newDescription;
+
+        // Exit edit mode
+        this.cancelEdit();
+
+        this.showNotification('Application updated successfully!', 'success');
+    }
+
+    /**
+     * Cancel edit mode
+     */
+    cancelEdit() {
+        if (!this.currentEditingCard) return;
+
+        const card = document.querySelector(`[data-app-id="${this.currentEditingCard}"]`);
+        if (!card) return;
+
+        // Show content and hide edit form
+        const content = card.querySelector('.card-content');
+        const editForm = card.querySelector('.card-edit-form');
+        
+        if (content && editForm) {
+            content.classList.remove('d-none');
+            editForm.classList.add('d-none');
+            this.currentEditingCard = null;
+        }
+    }
+
+    /**
+     * Show delete confirmation modal
+     */
+    showDeleteConfirmation(appId) {
+        this.currentEditingCard = appId;
+        if (this.deleteModal) {
+            this.deleteModal.show();
+        }
+    }
+
+    /**
+     * Confirm and execute delete
+     */
+    confirmDelete() {
+        if (!this.currentEditingCard) return;
+
+        const card = document.querySelector(`[data-app-id="${this.currentEditingCard}"]`);
+        if (!card) return;
+
+        // Animate card removal
+        card.style.transition = 'all 0.5s ease';
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(-100%)';
+
+        setTimeout(() => {
+            card.remove();
+            this.showNotification('Application deleted successfully.', 'success');
+        }, 500);
+
+        // Hide modal
+        if (this.deleteModal) {
+            this.deleteModal.hide();
+        }
+
+        this.currentEditingCard = null;
+    }
+
+    /**
+     * Handle download button clicks
+     */
+    handleDownload(button) {
+        const fileName = button.getAttribute('data-file');
+        const fileSize = button.getAttribute('data-size');
+        const originalContent = button.innerHTML;
+
+        // Show loading state
+        button.disabled = true;
+        button.innerHTML = '<span class="loading"></span>Downloading...';
+
+        // Simulate download process
+        setTimeout(() => {
+            this.simulateDownload(fileName);
+            this.showNotification(`Download started: ${fileName} (${fileSize})`, 'success');
+
+            // Restore button state
+            button.disabled = false;
+            button.innerHTML = originalContent;
+        }, 1500);
+    }
+
+    /**
+     * Simulate file download
+     */
+    simulateDownload(fileName) {
+        // Create a temporary download link
+        const link = document.createElement('a');
+        link.href = '#';
+        link.download = fileName;
+        link.style.display = 'none';
+
+        document.body.appendChild(link);
+        // Note: In a real application, this would trigger an actual download
+        // link.click();
+        document.body.removeChild(link);
+
+        console.log(`Simulated download: ${fileName}`);
+    }
+
+    /**
+     * Handle card hover effects
+     */
+    handleCardHover(card, isHovering) {
+        const icon = card.querySelector('.app-icon-circle');
+        if (icon) {
+            if (isHovering) {
+                icon.style.transform = 'scale(1.1) rotate(5deg)';
+            } else {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            }
+        }
+    }
+
+    /**
+     * Show notification message
+     */
+    showNotification(message, type = 'info') {
+        // Remove existing notifications
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notification => notification.remove());
+
+        // Create notification
+        const notification = document.createElement('div');
+        notification.className = `notification alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+        notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1060;
             min-width: 300px;
             max-width: 400px;
-        `
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        `;
 
-    const iconMap = {
-      success: "bi-check-circle",
-      error: "bi-exclamation-triangle",
-      warning: "bi-exclamation-triangle",
-      info: "bi-info-circle",
-    }
+        const iconMap = {
+            success: 'bi-check-circle',
+            error: 'bi-exclamation-triangle',
+            warning: 'bi-exclamation-triangle',
+            info: 'bi-info-circle'
+        };
 
-    notification.innerHTML = `
+        notification.innerHTML = `
             <i class="bi ${iconMap[type]} me-2"></i>${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `
+        `;
 
-    document.body.appendChild(notification)
+        document.body.appendChild(notification);
 
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.remove()
-      }
-    }, 5000)
-  }
-
-  /**
-   * Smooth scroll to element
-   */
-  scrollToElement(element) {
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    })
-  }
-
-  /**
-   * Format file size
-   */
-  formatFileSize(bytes) {
-    if (bytes === 0) return "0 Bytes"
-
-    const k = 1024
-    const sizes = ["Bytes", "KB", "MB", "GB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
-  }
-
-  /**
-   * Debounce function
-   */
-  debounce(func, wait) {
-    let timeout
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout)
-        func(...args)
-      }
-      clearTimeout(timeout)
-      timeout = setTimeout(later, wait)
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
     }
-  }
+
+    /**
+     * Highlight element temporarily
+     */
+    highlightElement(element) {
+        if (!element) return;
+
+        const originalBackground = element.style.backgroundColor;
+        element.style.backgroundColor = '#fff3cd';
+        element.style.transition = 'background-color 0.3s ease';
+
+        setTimeout(() => {
+            element.style.backgroundColor = originalBackground;
+        }, 1000);
+    }
+
+    /**
+     * Copy text to clipboard
+     */
+    copyToClipboard(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    this.showNotification('Copied to clipboard', 'success');
+                })
+                .catch(() => {
+                    this.fallbackCopyToClipboard(text);
+                });
+        } else {
+            this.fallbackCopyToClipboard(text);
+        }
+    }
+
+    /**
+     * Fallback copy to clipboard method
+     */
+    fallbackCopyToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            document.execCommand('copy');
+            this.showNotification('Copied to clipboard', 'success');
+        } catch (err) {
+            this.showNotification('Failed to copy to clipboard', 'error');
+        }
+
+        document.body.removeChild(textArea);
+    }
+
+    /**
+     * Smooth scroll to element
+     */
+    scrollToElement(element) {
+        element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+
+    /**
+     * Format file size
+     */
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    /**
+     * Debounce function
+     */
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    /**
+     * Get application data
+     */
+    getApplicationData(appId) {
+        const card = document.querySelector(`[data-app-id="${appId}"]`);
+        if (!card) return null;
+
+        const title = card.querySelector('.card-title')?.textContent || '';
+        const description = card.querySelector('.card-content p')?.textContent || '';
+        const icon = card.querySelector('.app-icon-circle i')?.className || '';
+
+        return {
+            id: appId,
+            title,
+            description,
+            icon
+        };
+    }
+
+    /**
+     * Export applications data
+     */
+    exportApplicationsData() {
+        const applications = [];
+        document.querySelectorAll('.application-card').forEach(card => {
+            const appId = card.getAttribute('data-app-id');
+            const data = this.getApplicationData(appId);
+            if (data) {
+                applications.push(data);
+            }
+        });
+
+        const dataStr = JSON.stringify(applications, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = 'supporting-applications.json';
+        link.click();
+
+        this.showNotification('Applications data exported successfully!', 'success');
+    }
 }
 
 // Initialize when document is ready
-document.addEventListener("DOMContentLoaded", () => {
-  new AplikasiManager()
+document.addEventListener('DOMContentLoaded', () => {
+    window.supportingAppsManager = new SupportingApplicationsManager();
 
-  // Add some additional UI enhancements
-  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((tooltip) => {
-    if (bootstrap && bootstrap.Tooltip) {
-      new bootstrap.Tooltip(tooltip)
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Escape key to cancel edit mode
+        if (e.key === 'Escape' && window.supportingAppsManager.currentEditingCard) {
+            window.supportingAppsManager.cancelEdit();
+        }
+
+        // Ctrl/Cmd + S to save (prevent default browser save)
+        if ((e.ctrlKey || e.metaKey) && e.key === 's' && window.supportingAppsManager.currentEditingCard) {
+            e.preventDefault();
+            window.supportingAppsManager.saveApplication();
+        }
+    });
+
+    // Add smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Initialize Bootstrap tooltips if available
+    if (window.bootstrap && bootstrap.Tooltip) {
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(tooltip => {
+            new bootstrap.Tooltip(tooltip);
+        });
     }
-  })
-
-  // Smooth scroll for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", function (e) {
-      e.preventDefault()
-      const target = document.querySelector(this.getAttribute("href"))
-      if (target) {
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        })
-      }
-    })
-  })
-})
+});
 
 // Export for potential external use
-window.AplikasiManager = AplikasiManager
+window.SupportingApplicationsManager = SupportingApplicationsManager;

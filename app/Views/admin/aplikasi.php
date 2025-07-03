@@ -3,469 +3,617 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Pendukung - INLISLite v3</title>
+    <title><?= $title ?? 'Supporting Applications - INLISlite v3.0' ?></title>
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= base_url('assets/css/admin/aplikasi.css') ?>">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Dashboard CSS -->
+    <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="<?= base_url('assets/css/admin/aplikasi.css') ?>" rel="stylesheet">
 </head>
-<body class="bg-light">
-    <!-- Header -->
-    <header class="bg-white border-bottom shadow-sm">
-        <div class="container-fluid py-3">
-            <div class="d-flex align-items-center">
-                <button class="btn btn-link text-dark p-0 me-3" onclick="history.back()">
-                    <i class="bi bi-arrow-left fs-4"></i>
-                </button>
-                <div class="d-flex align-items-center">
-                    <div class="logo-container me-3">
-                        <i class="bi bi-book-fill text-white"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-0 fw-bold">Aplikasi Pendukung</h5>
-                        <small class="text-muted">Paket unduhan dan instalasi</small>
-                    </div>
+<body>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i data-feather="menu"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <i data-feather="star"></i>
                 </div>
+                <div class="sidebar-title">
+                    INLISlite v3.0<br>
+                    <small style="font-size: 0.85rem; opacity: 0.8;">Dashboard</small>
+                </div>
+            </a>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i data-feather="chevrons-left"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-nav">
+            <div class="nav-item">
+                <a href="<?= base_url('admin/dashboard') ?>" class="nav-link">
+                    <i data-feather="home" class="nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <div class="nav-tooltip">Dashboard</div>
+            </div>
+            <div class="nav-item">
+                <a href="<?= base_url('admin/users') ?>" class="nav-link">
+                    <i data-feather="users" class="nav-icon"></i>
+                    <span class="nav-text">Manajemen User</span>
+                </a>
+                <div class="nav-tooltip">Manajemen User</div>
+            </div>
+            <div class="nav-item">
+                <a href="<?= base_url('registration') ?>" class="nav-link">
+                    <i data-feather="book" class="nav-icon"></i>
+                    <span class="nav-text">Registrasi</span>
+                </a>
+                <div class="nav-tooltip">Registrasi</div>
+            </div>
+            <div class="nav-item">
+                <a href="<?= base_url('admin/profile') ?>" class="nav-link">
+                    <i data-feather="user" class="nav-icon"></i>
+                    <span class="nav-text">Profile</span>
+                </a>
+                <div class="nav-tooltip">Profile</div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <div class="container-fluid py-4">
-        <!-- Introduction Section -->
-        <div class="bg-white rounded-3 shadow-sm p-4 mb-4">
-            <h4 class="text-primary fw-bold mb-3">Aplikasi Pendukung Untuk INLISLite V3</h4>
-            <p class="text-muted mb-0">
-                Modul dan layanan penting yang memperluas fungsionalitas sistem manajemen perpustakaan 
-                INLISLite Anda. Aplikasi-aplikasi ini menyediakan fitur tambahan untuk komunikasi, integrasi data, 
-                dan peningkatan sistem.
-            </p>
-        </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="header-top">
+                    <div class="header-left">
+                        <div class="header-icon">
+                            <i class="bi bi-tools"></i>
+                        </div>
+                        <div>
+                            <h1 class="page-title">Supporting Applications</h1>
+                            <p class="page-subtitle">Download and install supporting tools and modules</p>
+                        </div>
+                    </div>
+                    <a href="<?= base_url('admin/dashboard') ?>" class="back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Kembali
+                    </a>
+                </div>
+            </div>
 
-        <!-- Applications Grid -->
-        <div class="row g-4">
+            <!-- Alert Messages -->
+            <div id="alertContainer"></div>
+
+    <!-- Applications Content -->
+            <div class="applications-content" id="applicationsContent">
             <!-- OAI-PMH Service -->
-            <div class="col-12">
-                <div class="app-card bg-white rounded-3 shadow-sm p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="app-icon bg-primary me-3">
-                                <i class="bi bi-diamond-fill text-white"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-1">OAI-PMH Service</h5>
-                                <small class="text-muted">Protokol Interoperabilitas Arsip Terbuka untuk Pengambilan Metadata</small>
+                <div class="application-card card" data-app-id="1">
+                    <div class="card-header d-flex justify-content-between align-items-start">
+                        <div class="card-title-section">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="app-icon-circle bg-primary">
+                                    <i class="bi bi-network-widescreen"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h3 class="card-title mb-1">OAI-PMH Service</h3>
+                                    <p class="card-subtitle text-muted mb-0">Open Archives Initiative Protocol for Metadata Harvesting</p>
+                                </div>
                             </div>
                         </div>
-                        <button class="btn btn-link text-muted p-0">
-                            <i class="bi bi-three-dots"></i>
-                        </button>
+                        <div class="dropdown">
+                            <button class="action-btn btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item edit-app" href="#" data-id="1"><i class="bi bi-pencil me-2"></i>Edit Application</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item delete-app text-danger" href="#" data-id="1"><i class="bi bi-trash me-2"></i>Delete Application</a></li>
+                            </ul>
+                        </div>
                     </div>
-
-                    <p class="text-muted mb-4">
-                        Modul layanan ringan untuk komunikasi data melalui protokol harvesting. Memungkinkan 
-                        pengguna INLISLite membagikan data perpustakaan secara online ke platform katalog pusat 
-                        seperti Indonesia OneSearch dan Katalog Induk Nasional.
-                    </p>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="detail-section">
-                                <h6 class="text-primary fw-bold mb-3">
-                                    <i class="bi bi-diamond me-2"></i>Detail Teknis
+                    <div class="card-body">
+                        <div class="card-content">
+                            <p class="mb-4">Lightweight service module for data communication through harvesting protocol. Enables INLISLite users to share library data online to central catalog platforms like Indonesia OneSearch and National Union Catalog.</p>
+                            
+                            <div class="technical-details mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-gear me-2"></i>Technical Details
                                 </h6>
                                 <ul class="detail-list">
-                                    <li>Berdasarkan format MARCXML</li>
-                                    <li>Modul ini terintegrasi langsung di dalam INLISLite versi 3</li>
-                                    <li>Kompatibel dengan Indonesia OneSearch</li>
-                                    <li>Mendukung Integrasi dengan Katalog Induk Nasional</li>
+                                    <li>Based on MARCXML format</li>
+                                    <li>Integrated directly within INLISLite version 3</li>
+                                    <li>Compatible with Indonesia OneSearch</li>
+                                    <li>Supports National Union Catalog integration</li>
                                 </ul>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="location-section">
-                                <h6 class="text-success fw-bold mb-3">
-                                    <i class="bi bi-check-circle me-2"></i>Lokasi Modul
+
+                            <div class="requirements-section mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-check-circle me-2"></i>Requirements
                                 </h6>
-                                <div class="location-box">
-                                    <code>inlislite3\opac\modules\oai</code>
-                                </div>
-                                <div class="mt-3">
-                                    <h6 class="fw-bold mb-2">URL Pengujian</h6>
-                                    <div class="url-box">
-                                        <small class="text-muted">
-                                            http://localhost:8080/opac.php?verb=ListRecords&metadataPrefix=oai_marc
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SMS Gateway Service -->
-            <div class="col-12">
-                <div class="app-card bg-white rounded-3 shadow-sm p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="app-icon bg-success me-3">
-                                <i class="bi bi-chat-square-text-fill text-white"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-1">SMS Gateway Service</h5>
-                                <small class="text-muted">Pemberitahuan SMS otomatis menggunakan Gammu SMS Gateway</small>
-                            </div>
-                        </div>
-                        <button class="btn btn-link text-muted p-0">
-                            <i class="bi bi-three-dots"></i>
-                        </button>
-                    </div>
-
-                    <h6 class="fw-bold mb-3">Tujuan dari SMS Gateway di INLISLite</h6>
-                    <p class="text-muted mb-4">
-                        Mengirim notifikasi SMS terjadwal secara manual seperti batas tinggi jatuh tempo atau pengumuman 
-                        perpustakaan. Layanan SMS Gateway terintegrasi dengan INLISLite untuk menyediakan 
-                        komunikasi otomatis dengan anggota perpustakaan melalui Gammu 1.33.0.
-                    </p>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="feature-section">
-                                <h6 class="text-success fw-bold mb-3">
-                                    <i class="bi bi-phone me-2"></i>Penggunaan SMS
-                                </h6>
-                                <ul class="feature-list">
-                                    <li>Pengingatkan buku yang lewat jatuh tempo</li>
-                                    <li>Promosi dan acara perpustakaan</li>
-                                    <li>Notifikasi ketersediaan buku</li>
-                                    <li>Pengingatkan perpanjangan keanggotaan</li>
-                                    <li>Pengingatkan pembayaran denda</li>
+                                <ul class="requirements-list">
+                                    <li>INLISLite v3.0 or higher</li>
+                                    <li>Web server with PHP support</li>
+                                    <li>Active internet connection</li>
+                                    <li>MARCXML compatible data</li>
                                 </ul>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="about-section">
-                                <h6 class="text-info fw-bold mb-3">
-                                    <i class="bi bi-info-circle me-2"></i>Tentang Gammu
+
+                            <div class="download-options">
+                                <h6 class="section-title">
+                                    <i class="bi bi-download me-2"></i>Download Options
                                 </h6>
-                                <p class="small text-muted">
-                                    Gammu adalah pustaka open-source yang andal serta utilitas baris perintah untuk 
-                                    ponsel. Gammu menyediakan kemampuan pengiriman SMS melalui modem GSM atau 
-                                    ponsel, menjadikannya alat yang ideal untuk notifikasi SMS di perpustakaan.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="download-section mt-4">
-                        <h6 class="fw-bold mb-3">Unduh Gammu</h6>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <div class="download-card">
-                                    <div class="download-header">
-                                        <h6 class="fw-bold mb-1">Windows 32-bit</h6>
-                                        <small class="text-muted">Gammu-1.33.0-Windows.zip</small>
-                                    </div>
-                                    <div class="download-footer">
-                                        <span class="file-size">4 MB</span>
-                                        <button class="btn btn-success btn-sm">
-                                            <i class="bi bi-download me-1"></i>Unduh
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="download-card">
-                                    <div class="download-header">
-                                        <h6 class="fw-bold mb-1">Windows 64-bit</h6>
-                                        <small class="text-muted">Gammu-1.33.0-Windows-64bit.zip</small>
-                                    </div>
-                                    <div class="download-footer">
-                                        <span class="file-size">4 MB</span>
-                                        <button class="btn btn-success btn-sm">
-                                            <i class="bi bi-download me-1"></i>Unduh
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="download-card">
-                                    <div class="download-header">
-                                        <h6 class="fw-bold mb-1">Linux</h6>
-                                        <small class="text-muted">gammu-1.33.0.tar.gz</small>
-                                    </div>
-                                    <div class="download-footer">
-                                        <span class="file-size">4 MB</span>
-                                        <button class="btn btn-success btn-sm">
-                                            <i class="bi bi-download me-1"></i>Unduh
-                                        </button>
-                                    </div>
+                                <div class="download-buttons">
+                                    <button class="btn btn-download" data-file="oai-pmh-service.zip" data-size="2.1 MB">
+                                        <i class="bi bi-download me-2"></i>
+                                        Download Module
+                                        <span class="file-size">2.1 MB</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="guide-section mt-4">
-                        <h6 class="fw-bold mb-3">Panduan Pengunduhan</h6>
-                        <div class="guide-card">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="fw-bold mb-1">Panduan Instalasi di Windows</h6>
-                                    <small class="text-muted">Instruksi instalasi lengkap untuk sistem operasi Windows</small>
-                                </div>
-                                <button class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-file-pdf me-1"></i>Panduan PDF
+                        
+                        <!-- Edit Form (Hidden by default) -->
+                        <div class="card-edit-form d-none">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Application Title</label>
+                                <input type="text" class="form-control edit-title" value="OAI-PMH Service">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea class="form-control edit-description" rows="4">Lightweight service module for data communication through harvesting protocol. Enables INLISLite users to share library data online to central catalog platforms like Indonesia OneSearch and National Union Catalog.</textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary save-app">
+                                    <i class="bi bi-check-lg me-2"></i>Save
+                                </button>
+                                <button class="btn btn-secondary cancel-edit">
+                                    <i class="bi bi-x-lg me-2"></i>Cancel
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- RFID Gateway Service -->
-            <div class="col-12">
-                <div class="app-card bg-white rounded-3 shadow-sm p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="app-icon bg-info me-3">
-                                <i class="bi bi-wifi text-white"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-1">RFID Gateway Service (SIP2)</h5>
-                                <small class="text-muted">Menghubungkan database INLISLite dengan terminal peminjaman mandiri berbasis RFID menggunakan protokol SIP2</small>
+                    <!-- SMS Gateway Service -->
+                <div class="application-card card" data-app-id="2">
+                    <div class="card-header d-flex justify-content-between align-items-start">
+                        <div class="card-title-section">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="app-icon-circle bg-success">
+                                    <i class="bi bi-chat-dots"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h3 class="card-title mb-1">SMS Gateway Service</h3>
+                                    <p class="card-subtitle text-muted mb-0">Automated SMS notifications using Gammu SMS Gateway</p>
+                                </div>
                             </div>
                         </div>
-                        <button class="btn btn-link text-muted p-0">
-                            <i class="bi bi-three-dots"></i>
-                        </button>
-                    </div>
-
-                    <p class="text-muted mb-4">
-                        Menghubungkan database INLISLite dengan terminal peminjaman mandiri berbasis RFID 
-                        menggunakan protokol SIP2. Telah diuji dengan terminal RFID dari 3M dan Fe Technologies 
-                        untuk memastikan kelancaran operasi sirkulasi otomatis.
-                    </p>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="hardware-section">
-                                <h6 class="text-success fw-bold mb-3">
-                                    <i class="bi bi-wifi me-2"></i>Perangkat Keras yang Diuji:
-                                </h6>
-                                <ul class="hardware-list">
-                                    <li>Terminal RFID 3M</li>
-                                    <li>Terminal RFID Fe Technologies</li>
-                                    <li>Kompatibilitas protokol SIP2</li>
-                                    <li>Integrasi terminal peminjaman mandiri</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="system-section">
-                                <h6 class="text-primary fw-bold mb-3">
-                                    <i class="bi bi-gear me-2"></i>Persyaratan Sistem:
-                                </h6>
-                                <ul class="system-list">
-                                    <li>Hanya untuk Windows OS</li>
-                                    <li>Dukungan protokol SIP2</li>
-                                    <li>Konektivitas terminal RFID</li>
-                                    <li>Integrasi dengan database</li>
-                                </ul>
-                            </div>
+                        <div class="dropdown">
+                            <button class="action-btn btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item edit-app" href="#" data-id="2"><i class="bi bi-pencil me-2"></i>Edit Application</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item delete-app text-danger" href="#" data-id="2"><i class="bi bi-trash me-2"></i>Delete Application</a></li>
+                            </ul>
                         </div>
                     </div>
+                    <div class="card-body">
+                        <div class="card-content">
+                            <p class="mb-4">Send scheduled SMS notifications manually such as overdue reminders or library announcements. SMS Gateway service integrated with INLISLite to provide automated communication with library members through Gammu 1.33.0.</p>
+                            
+                            <div class="technical-details mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-gear me-2"></i>Technical Details
+                                </h6>
+                                <ul class="detail-list">
+                                    <li>Based on Gammu 1.33.0 library</li>
+                                    <li>Supports GSM modem integration</li>
+                                    <li>Automated notification system</li>
+                                    <li>Customizable message templates</li>
+                                </ul>
+                            </div>
 
-                    <div class="download-section mt-4">
-                        <h6 class="fw-bold mb-3">Opsi Unduhan</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="download-card">
-                                    <div class="download-header">
-                                        <h6 class="fw-bold mb-1">Windows</h6>
-                                        <small class="text-muted">installer_rfidsip2-gateway-inlislitev3.rar</small>
-                                    </div>
-                                    <div class="download-footer">
+                            <div class="requirements-section mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-check-circle me-2"></i>Requirements
+                                </h6>
+                                <ul class="requirements-list">
+                                    <li>Windows/Linux operating system</li>
+                                    <li>GSM modem or mobile phone</li>
+                                    <li>Active SIM card with SMS credits</li>
+                                    <li>Gammu 1.33.0 or higher</li>
+                                </ul>
+                            </div>
+
+                            <div class="download-options">
+                                <h6 class="section-title">
+                                    <i class="bi bi-download me-2"></i>Download Options
+                                </h6>
+                                <div class="download-buttons">
+                                    <button class="btn btn-download" data-file="gammu-windows-32bit.zip" data-size="4.0 MB">
+                                        <i class="bi bi-download me-2"></i>
+                                        Windows 32-bit
+                                        <span class="file-size">4.0 MB</span>
+                                    </button>
+                                    <button class="btn btn-download" data-file="gammu-windows-64bit.zip" data-size="4.0 MB">
+                                        <i class="bi bi-download me-2"></i>
+                                        Windows 64-bit
+                                        <span class="file-size">4.0 MB</span>
+                                    </button>
+                                    <button class="btn btn-download" data-file="gammu-linux.tar.gz" data-size="4.0 MB">
+                                        <i class="bi bi-download me-2"></i>
+                                        Linux
+                                        <span class="file-size">4.0 MB</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Edit Form (Hidden by default) -->
+                        <div class="card-edit-form d-none">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Application Title</label>
+                                <input type="text" class="form-control edit-title" value="SMS Gateway Service">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea class="form-control edit-description" rows="4">Send scheduled SMS notifications manually such as overdue reminders or library announcements. SMS Gateway service integrated with INLISLite to provide automated communication with library members through Gammu 1.33.0.</textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary save-app">
+                                    <i class="bi bi-check-lg me-2"></i>Save
+                                </button>
+                                <button class="btn btn-secondary cancel-edit">
+                                    <i class="bi bi-x-lg me-2"></i>Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- RFID Gateway Service -->
+                <div class="application-card card" data-app-id="3">
+                    <div class="card-header d-flex justify-content-between align-items-start">
+                        <div class="card-title-section">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="app-icon-circle bg-info">
+                                    <i class="bi bi-wifi"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h3 class="card-title mb-1">RFID Gateway Service</h3>
+                                    <p class="card-subtitle text-muted mb-0">Connect INLISLite database with RFID-based self-service terminals using SIP2 protocol</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="action-btn btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item edit-app" href="#" data-id="3"><i class="bi bi-pencil me-2"></i>Edit Application</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item delete-app text-danger" href="#" data-id="3"><i class="bi bi-trash me-2"></i>Delete Application</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-content">
+                            <p class="mb-4">Connect INLISLite database with RFID-based self-service terminals using SIP2 protocol. Tested with RFID terminals from 3M and Fe Technologies to ensure smooth automated circulation operations.</p>
+                            
+                            <div class="technical-details mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-gear me-2"></i>Technical Details
+                                </h6>
+                                <ul class="detail-list">
+                                    <li>SIP2 protocol support</li>
+                                    <li>RFID terminal integration</li>
+                                    <li>Self-service circulation</li>
+                                    <li>Real-time database connectivity</li>
+                                </ul>
+                            </div>
+
+                            <div class="requirements-section mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-check-circle me-2"></i>Requirements
+                                </h6>
+                                <ul class="requirements-list">
+                                    <li>Windows operating system only</li>
+                                    <li>RFID terminal hardware</li>
+                                    <li>SIP2 protocol support</li>
+                                    <li>Network connectivity</li>
+                                </ul>
+                            </div>
+
+                            <div class="download-options">
+                                <h6 class="section-title">
+                                    <i class="bi bi-download me-2"></i>Download Options
+                                </h6>
+                                <div class="download-buttons">
+                                    <button class="btn btn-download" data-file="rfid-gateway.rar" data-size="179 KB">
+                                        <i class="bi bi-download me-2"></i>
+                                        Windows (RAR)
                                         <span class="file-size">179 KB</span>
-                                        <button class="btn btn-success btn-sm">
-                                            <i class="bi bi-download me-1"></i>Unduh
-                                        </button>
-                                    </div>
+                                    </button>
+                                    <button class="btn btn-download" data-file="rfid-gateway.zip" data-size="208 KB">
+                                        <i class="bi bi-download me-2"></i>
+                                        Windows (ZIP)
+                                        <span class="file-size">208 KB</span>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="download-card">
-                                    <div class="download-header">
-                                        <h6 class="fw-bold mb-1">Windows</h6>
-                                        <small class="text-muted">installer_rfidsip2-gateway-inlislitev3.zip</small>
-                                    </div>
-                                    <div class="download-footer">
-                                        <span class="file-size">208 KB</span>
-                                        <button class="btn btn-success btn-sm">
-                                            <i class="bi bi-download me-1"></i>Unduh
-                                        </button>
-                                    </div>
-                                </div>
+                        </div>
+                        
+                        <!-- Edit Form (Hidden by default) -->
+                        <div class="card-edit-form d-none">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Application Title</label>
+                                <input type="text" class="form-control edit-title" value="RFID Gateway Service">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea class="form-control edit-description" rows="4">Connect INLISLite database with RFID-based self-service terminals using SIP2 protocol. Tested with RFID terminals from 3M and Fe Technologies to ensure smooth automated circulation operations.</textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary save-app">
+                                    <i class="bi bi-check-lg me-2"></i>Save
+                                </button>
+                                <button class="btn btn-secondary cancel-edit">
+                                    <i class="bi bi-x-lg me-2"></i>Cancel
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Data Migrator -->
-            <div class="col-12">
-                <div class="app-card bg-white rounded-3 shadow-sm p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="app-icon bg-primary me-3">
-                                <i class="bi bi-gear-fill text-white"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-1">Data Migrator (V212 to V3)</h5>
+                <!-- Data Migrator -->
+                <div class="application-card card" data-app-id="4">
+                    <div class="card-header d-flex justify-content-between align-items-start">
+                        <div class="card-title-section">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="app-icon-circle bg-warning">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h3 class="card-title mb-1">Data Migrator</h3>
+                                    <p class="card-subtitle text-muted mb-0">Migrate data from INLISLite v2.1.2 to v3.0</p>
+                                </div>
                             </div>
                         </div>
-                        <button class="btn btn-link text-muted p-0">
-                            <i class="bi bi-three-dots"></i>
-                        </button>
-                    </div>
-
-                    <p class="text-muted mb-4">
-                        Utilitas desktop untuk memigrasi data dari INLISLite versi 2.1.2 ke versi 3. Menjamin integritas 
-                        data yang lengkap selama proses upgrade.
-                    </p>
-
-                    <div class="detail-info-section mb-4">
-                        <h6 class="fw-bold mb-3">Detail Teknis</h6>
-                        <div class="info-box">
-                            <p class="mb-0">
-                                Konversi skema database lengkap dengan pelestarian data. Termasuk panduan PDF di 
-                                dalam arsip.
-                            </p>
+                        <div class="dropdown">
+                            <button class="action-btn btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item edit-app" href="#" data-id="4"><i class="bi bi-pencil me-2"></i>Edit Application</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item delete-app text-danger" href="#" data-id="4"><i class="bi bi-trash me-2"></i>Delete Application</a></li>
+                            </ul>
                         </div>
                     </div>
-
-                    <div class="requirements-section mb-4">
-                        <h6 class="fw-bold mb-3">Persyaratan:</h6>
-                        <ul class="requirements-list">
-                            <li>Sistem operasi Windows</li>
-                            <li>Database INLISLite versi 2.1.2</li>
-                            <li>Hak akses administrator</li>
-                            <li>Media penyimpanan untuk backup</li>
-                        </ul>
-                    </div>
-
-                    <div class="download-section">
-                        <div class="download-card single-download">
-                            <div class="download-header">
-                                <h6 class="fw-bold mb-1">Windows</h6>
-                                <small class="text-muted">migrator_inlislite_v212_to_v3_rev03012017.7z</small>
+                    <div class="card-body">
+                        <div class="card-content">
+                            <p class="mb-4">Desktop utility to migrate data from INLISLite version 2.1.2 to version 3. Ensures complete data integrity during the upgrade process with comprehensive database schema conversion.</p>
+                            
+                            <div class="technical-details mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-gear me-2"></i>Technical Details
+                                </h6>
+                                <ul class="detail-list">
+                                    <li>Complete database schema conversion</li>
+                                    <li>Data integrity preservation</li>
+                                    <li>Includes PDF guide in archive</li>
+                                    <li>Automated migration process</li>
+                                </ul>
                             </div>
-                            <div class="download-footer">
-                                <span class="file-size">179 KB</span>
-                                <button class="btn btn-primary btn-sm">
-                                    <i class="bi bi-download me-1"></i>Unduh
+
+                            <div class="requirements-section mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-check-circle me-2"></i>Requirements
+                                </h6>
+                                <ul class="requirements-list">
+                                    <li>Windows operating system</li>
+                                    <li>INLISLite v2.1.2 database</li>
+                                    <li>Administrator access rights</li>
+                                    <li>Backup storage media</li>
+                                </ul>
+                            </div>
+
+                            <div class="download-options">
+                                <h6 class="section-title">
+                                    <i class="bi bi-download me-2"></i>Download Options
+                                </h6>
+                                <div class="download-buttons">
+                                    <button class="btn btn-download" data-file="data-migrator.7z" data-size="179 KB">
+                                        <i class="bi bi-download me-2"></i>
+                                        Windows Migrator
+                                        <span class="file-size">179 KB</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Edit Form (Hidden by default) -->
+                        <div class="card-edit-form d-none">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Application Title</label>
+                                <input type="text" class="form-control edit-title" value="Data Migrator">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea class="form-control edit-description" rows="4">Desktop utility to migrate data from INLISLite version 2.1.2 to version 3. Ensures complete data integrity during the upgrade process with comprehensive database schema conversion.</textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary save-app">
+                                    <i class="bi bi-check-lg me-2"></i>Save
+                                </button>
+                                <button class="btn btn-secondary cancel-edit">
+                                    <i class="bi bi-x-lg me-2"></i>Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Record Indexing -->
+                <div class="application-card card" data-app-id="5">
+                    <div class="card-header d-flex justify-content-between align-items-start">
+                        <div class="card-title-section">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="app-icon-circle bg-dark">
+                                    <i class="bi bi-search"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h3 class="card-title mb-1">Record Indexing</h3>
+                                    <p class="card-subtitle text-muted mb-0">Enhanced OPAC search speed through ElasticSearch engine</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="action-btn btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item edit-app" href="#" data-id="5"><i class="bi bi-pencil me-2"></i>Edit Application</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item delete-app text-danger" href="#" data-id="5"><i class="bi bi-trash me-2"></i>Delete Application</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-content">
+                            <p class="mb-4">Enhance OPAC search speed through ElasticSearch engine. Provides powerful search capabilities for large databases with advanced indexing and full-text search functionality.</p>
+                            
+                            <div class="technical-details mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-gear me-2"></i>Technical Details
+                                </h6>
+                                <ul class="detail-list">
+                                    <li>ElasticSearch 6.2.2 engine</li>
+                                    <li>Java Runtime Environment 8</li>
+                                    <li>Full-text search capabilities</li>
+                                    <li>Advanced indexing system</li>
+                                </ul>
+                            </div>
+
+                            <div class="requirements-section mb-4">
+                                <h6 class="section-title">
+                                    <i class="bi bi-check-circle me-2"></i>Requirements
+                                </h6>
+                                <ul class="requirements-list">
+                                    <li>Windows 64-bit</li>
+                                    <li>Java Runtime Environment 8</li>
+                                    <li>ElasticSearch 6.2.2</li>
+                                    <li>Adequate system resources</li>
+                                </ul>
+                            </div>
+
+                            <div class="download-options">
+                                <h6 class="section-title">
+                                    <i class="bi bi-download me-2"></i>Download Options
+                                </h6>
+                                <div class="download-buttons">
+                                    <button class="btn btn-download" data-file="elasticsearch-indexer.7z" data-size="68.8 MB">
+                                        <i class="bi bi-download me-2"></i>
+                                        ElasticSearch Indexer
+                                        <span class="file-size">68.8 MB</span>
+                                    </button>
+                                    <button class="btn btn-download" data-file="elasticsearch-6.2.2.msi" data-size="33.4 MB">
+                                        <i class="bi bi-download me-2"></i>
+                                        ElasticSearch Engine
+                                        <span class="file-size">33.4 MB</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Edit Form (Hidden by default) -->
+                        <div class="card-edit-form d-none">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Application Title</label>
+                                <input type="text" class="form-control edit-title" value="Record Indexing">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea class="form-control edit-description" rows="4">Enhance OPAC search speed through ElasticSearch engine. Provides powerful search capabilities for large databases with advanced indexing and full-text search functionality.</textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary save-app">
+                                    <i class="bi bi-check-lg me-2"></i>Save
+                                </button>
+                                <button class="btn btn-secondary cancel-edit">
+                                    <i class="bi bi-x-lg me-2"></i>Cancel
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </main>
 
-            <!-- Record Indexing -->
-            <div class="col-12">
-                <div class="app-card bg-white rounded-3 shadow-sm p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="app-icon bg-primary me-3">
-                                <i class="bi bi-search text-white"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-1">Record Indexing (ElasticSearch)</h5>
-                            </div>
-                        </div>
-                        <button class="btn btn-link text-muted p-0">
-                            <i class="bi bi-three-dots"></i>
-                        </button>
-                    </div>
-
-                    <p class="text-muted mb-4">
-                        Meningkatkan kecepatan pencarian OPAC melalui mesin ElasticSearch. Menyediakan 
-                        kemampuan pencarian yang kuat untuk database berukuran besar.
-                    </p>
-
-                    <div class="detail-info-section mb-4">
-                        <h6 class="fw-bold mb-3">Detail Teknis</h6>
-                        <div class="info-box">
-                            <p class="mb-0">
-                                ElasticSearch 6.2.2 dengan Java Runtime Environment 8. Memerlukan instalasi 
-                                khusus.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="requirements-section mb-4">
-                        <h6 class="fw-bold mb-3">Persyaratan:</h6>
-                        <ul class="requirements-list">
-                            <li>Windows 64-bit</li>
-                            <li>Java Runtime Environment 8</li>
-                            <li>ElasticSearch 6.2.2</li>
-                            <li>Sumber daya sistem yang memadai</li>
-                        </ul>
-                    </div>
-
-                    <div class="download-section">
-                        <h6 class="fw-bold mb-3">Unduh:</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="download-card">
-                                    <div class="download-header">
-                                        <h6 class="fw-bold mb-1">Windows 64-bit</h6>
-                                        <small class="text-muted">migrator_inlislite_v212_to_v3_rev03012017.7z</small>
-                                    </div>
-                                    <div class="download-footer">
-                                        <span class="file-size">68.8 MB</span>
-                                        <button class="btn btn-primary btn-sm">
-                                            <i class="bi bi-download me-1"></i>Unduh
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="download-card">
-                                    <div class="download-header">
-                                        <h6 class="fw-bold mb-1">Windows 64-bit</h6>
-                                        <small class="text-muted">elasticsearch-6.2.2.msi</small>
-                                    </div>
-                                    <div class="download-footer">
-                                        <span class="file-size">33.4 MB</span>
-                                        <button class="btn btn-primary btn-sm">
-                                            <i class="bi bi-download me-1"></i>Unduh
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="download-card">
-                                    <div class="download-header">
-                                        <h6 class="fw-bold mb-1">Windows 64-bit</h6>
-                                        <small class="text-muted">migrator_inlislite_v212_to_v3_rev03012017.7z</small>
-                                    </div>
-                                    <div class="download-footer">
-                                        <span class="file-size">452 KB</span>
-                                        <button class="btn btn-primary btn-sm">
-                                            <i class="bi bi-download me-1"></i>Unduh
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this application? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">
+                        <i class="bi bi-trash me-2"></i>Delete
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Dashboard JS -->
+    <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
+    <!-- Custom JavaScript -->
     <script src="<?= base_url('assets/js/admin/aplikasi.js') ?>"></script>
+    
+    <script>
+        // Initialize Feather icons after page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+            
+            // Clear any active menu state since applications page doesn't have active menu in sidebar
+            sessionStorage.removeItem('activeMenu');
+            
+            // Remove active class from all sidebar links since this page is not in the main navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+        });
+    </script>
 </body>
 </html>

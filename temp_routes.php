@@ -234,5 +234,5 @@ if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
 }
 
 
+
 // Additional admin routes
-$routes->get('admin/patch_updater', 'Admin\AdminController::patch_updater', ['filter' => 'adminauth']);

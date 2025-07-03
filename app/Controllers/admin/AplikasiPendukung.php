@@ -82,10 +82,10 @@ class AplikasiPendukung extends BaseController
                 'success' => session('success')
             ];
 
-            return view('aplikasi', $data);
+            return view('admin/aplikasi', $data);
         } catch (Exception $e) {
             log_message('error', 'AplikasiPendukung index error: ' . $e->getMessage());
-            return view('aplikasi', [
+            return view('admin/aplikasi', [
                 'title' => 'Aplikasi Pendukung',
                 'applications' => [],
                 'error' => 'Terjadi kesalahan saat memuat data aplikasi.'
