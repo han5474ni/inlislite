@@ -37,7 +37,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="<?= site_url('registration') ?>" class="nav-link <?= (uri_string() == 'registration') ? 'active' : '' ?>" data-tooltip="Registrasi">
+                <a href="<?= site_url('admin/registration') ?>" class="nav-link <?= (uri_string() == 'admin/registration') ? 'active' : '' ?>" data-tooltip="Registrasi">
                     <i class="fa-solid fa-book nav-icon"></i>
                     <span class="nav-text">Registrasi</span>
                 </a>
@@ -46,6 +46,14 @@
                 <a href="<?= site_url('profile') ?>" class="nav-link <?= (uri_string() == 'profile') ? 'active' : '' ?>" data-tooltip="Profile">
                     <i class="fa-solid fa-user nav-icon"></i>
                     <span class="nav-text">Profile</span>
+                </a>
+            </li>
+            
+            <!-- Logout Button -->
+            <li class="nav-item logout-item">
+                <a href="<?= site_url('admin/secure-logout') ?>" class="nav-link logout-link" data-tooltip="Logout" onclick="return confirmLogout()">
+                    <i class="fa-solid fa-right-from-bracket nav-icon"></i>
+                    <span class="nav-text">Logout</span>
                 </a>
             </li>
         </ul>
@@ -61,3 +69,58 @@
 <button class="mobile-toggle-btn d-md-none" id="mobile-toggle-btn">
     <i class="fa-solid fa-bars"></i>
 </button>
+
+<style>
+/* Logout button styling for new sidebar */
+.logout-item {
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+}
+
+.logout-link {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    color: white !important;
+    border-radius: 0.5rem;
+    margin: 0.5rem;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.logout-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 1rem 3rem rgba(220, 53, 69, 0.4);
+    color: white !important;
+}
+
+.logout-link:hover .nav-icon {
+    transform: translateX(3px);
+}
+
+/* Ensure sidebar nav takes full height and logout stays at bottom */
+.sidebar-nav-new {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.sidebar-nav-new .nav-list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar-nav-new .nav-item:not(.logout-item) {
+    flex-shrink: 0;
+}
+</style>
+
+<script>
+// Logout confirmation function
+function confirmLogout() {
+    return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
+}
+</script>

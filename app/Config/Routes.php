@@ -49,8 +49,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($rout
     // Login routes (accessible without authentication)
     $routes->get('login', 'LoginController::index');
     $routes->post('login/authenticate', 'LoginController::authenticate');
+    $routes->get('login/test-redirect', 'LoginController::testRedirect');
     $routes->get('logout', 'LoginController::logout');
+    $routes->post('logout', 'LoginController::logout');
     $routes->post('check-password-strength', 'LoginController::checkPasswordStrength');
+    
+    // Registration routes (accessible without authentication)
+    $routes->get('registration', '\App\Controllers\Home::registration');
     
     // Secure login routes
     $routes->get('secure-login', 'SecureAuthController::login');

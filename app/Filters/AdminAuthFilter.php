@@ -35,7 +35,7 @@ class AdminAuthFilter implements FilterInterface
             // Log unauthorized access attempt
             log_message('warning', 'Unauthorized admin access attempt to: ' . current_url() . ' from IP: ' . $request->getIPAddress());
             
-            return redirect()->to('/admin/secure-login')->with('error', 'Please log in to access the admin area.');
+            return redirect()->to('/admin/login?force=1')->with('error', 'Please log in to access the admin area.');
         }
         
         // Check if session is still valid (not expired)
@@ -48,7 +48,7 @@ class AdminAuthFilter implements FilterInterface
             
             log_message('info', 'Admin session expired for user: ' . $session->get('admin_username'));
             
-            return redirect()->to('/admin/secure-login')->with('error', 'Your session has expired. Please log in again.');
+            return redirect()->to('/admin/login?force=1')->with('error', 'Your session has expired. Please log in again.');
         }
         
         // Check if user still has admin privileges
@@ -58,7 +58,7 @@ class AdminAuthFilter implements FilterInterface
             
             log_message('warning', 'Access denied for user without admin privileges: ' . $session->get('admin_username'));
             
-            return redirect()->to('/admin/secure-login')->with('error', 'Access denied. Admin privileges required.');
+            return redirect()->to('/admin/login?force=1')->with('error', 'Access denied. Admin privileges required.');
         }
         
         // Update last activity time

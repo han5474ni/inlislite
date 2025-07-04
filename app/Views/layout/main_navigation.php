@@ -304,7 +304,7 @@
                     <?php else: ?>
                         <!-- Admin not logged in -->
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/secure-login') ?>" class="btn-login">
+                            <a href="<?= base_url('admin/login') ?>" class="btn-login">
                                 <i class="bi bi-box-arrow-in-right me-1"></i>
                                 Admin Login
                             </a>
@@ -417,7 +417,7 @@
                             <li class="mb-2"><a href="<?= base_url('admin/users') ?>" class="footer-link">User Management</a></li>
                             <li class="mb-2"><a href="<?= base_url('admin/secure-logout') ?>" class="footer-link">Logout</a></li>
                         <?php else: ?>
-                            <li class="mb-2"><a href="<?= base_url('admin/secure-login') ?>" class="footer-link">Admin Login</a></li>
+                            <li class="mb-2"><a href="<?= base_url('admin/login') ?>" class="footer-link">Admin Login</a></li>
                             <li class="mb-2"><a href="<?= base_url('admin/forgot-password') ?>" class="footer-link">Forgot Password</a></li>
                         <?php endif; ?>
                     </ul>

@@ -147,7 +147,7 @@ class SecureAuthController extends BaseController
             setcookie('remember_token', '', time() - 3600, '/');
         }
 
-        return redirect()->to(base_url('admin/secure-login'))
+        return redirect()->to(base_url('/'))
                        ->with('success', 'Anda telah berhasil logout');
     }
 

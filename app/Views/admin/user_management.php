@@ -315,6 +315,9 @@
     <script src="<?= base_url('assets/js/user_management.js') ?>"></script>
     
     <script>
+        // Mark that user has visited an admin page
+        sessionStorage.setItem('admin_page_visited', 'true');
+        
         // Initialize Feather icons after page load
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof feather !== 'undefined') {

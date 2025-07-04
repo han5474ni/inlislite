@@ -379,7 +379,7 @@
                             Sistem otomasi perpustakaan modern yang dirancang untuk memenuhi kebutuhan perpustakaan masa kini dengan teknologi terdepan.
                         </p>
                         <div class="mt-3">
-                            <a href="<?= base_url('admin/secure-login') ?>" class="login-btn-footer">
+                            <a href="<?= base_url('admin/login') ?>" class="login-btn-footer">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>
                                 Admin Login
                             </a>

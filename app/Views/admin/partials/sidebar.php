@@ -33,8 +33,8 @@ $menuItems = [
     [
         'title' => 'Registrasi',
         'icon' => 'book',
-        'url' => 'registration',
-        'active_patterns' => ['registration']
+        'url' => 'admin/registration',
+        'active_patterns' => ['admin/registration']
     ],
     [
         'title' => 'Profile',
@@ -98,10 +98,70 @@ function isMenuActive($patterns, $currentPath) {
                 <div class="nav-tooltip"><?= $item['title'] ?></div>
             </div>
         <?php endforeach; ?>
+        
+        <!-- Logout Button -->
+        <div class="nav-item logout-item">
+            <a href="<?= base_url('admin/secure-logout') ?>" class="nav-link logout-link" onclick="return confirmLogout()">
+                <i data-feather="log-out" class="nav-icon"></i>
+                <span class="nav-text">Logout</span>
+            </a>
+            <div class="nav-tooltip">Logout</div>
+        </div>
     </div>
 </nav>
 
+<style>
+/* Logout button styling */
+.logout-item {
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+}
+
+.logout-link {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    color: white !important;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    /* Remove custom margin and border-radius to match other nav items */
+    margin: 0 !important;
+    border-radius: 0 !important;
+    /* Remove text transformation to match other nav items */
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+
+.logout-link:hover {
+    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%) !important;
+    color: white !important;
+    /* Remove transform to match other nav items hover behavior */
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.logout-link:hover .nav-icon {
+    transform: translateX(3px);
+}
+
+/* Ensure sidebar nav takes full height and logout stays at bottom */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.sidebar-nav .nav-item:not(.logout-item) {
+    flex-shrink: 0;
+}
+</style>
+
 <script>
+// Logout confirmation function
+function confirmLogout() {
+    return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
+}
+
 // Enhanced sidebar navigation with persistent active state
 document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.nav-link');
@@ -134,9 +194,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     targetPath.includes('dashboard')) {
                     link.classList.add('active');
                 }
-            } else if (linkPath === 'registration') {
+            } else if (linkPath === 'admin/registration') {
                 // Registration handling
-                if (targetPath.includes('registration')) {
+                if (targetPath.includes('admin/registration')) {
                     link.classList.add('active');
                 }
             } else if (linkPath === 'admin/profile') {

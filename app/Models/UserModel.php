@@ -273,6 +273,26 @@ class UserModel extends Model
     }
 
     /**
+     * Get user by username
+     */
+    public function getUserByUsername($username)
+    {
+        // Check which database schema is being used
+        $fields = $this->db->getFieldNames($this->table);
+        $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
+        
+        return $this->where($usernameField, $username)->first();
+    }
+
+    /**
+     * Get user by email
+     */
+    public function getUserByEmail($email)
+    {
+        return $this->where('email', $email)->first();
+    }
+
+    /**
      * Update last login time
      */
     public function updateLastLogin($userId)

@@ -55,7 +55,7 @@
                 <div class="nav-tooltip">Manajemen User</div>
             </div>
             <div class="nav-item">
-                <a href="<?= base_url('registration') ?>" class="nav-link">
+                <a href="<?= base_url('admin/registration') ?>" class="nav-link">
                     <i data-feather="book" class="nav-icon"></i>
                     <span class="nav-text">Registrasi</span>
                 </a>
@@ -67,6 +67,15 @@
                     <span class="nav-text">Profile</span>
                 </a>
                 <div class="nav-tooltip">Profile</div>
+            </div>
+            
+            <!-- Logout Button -->
+            <div class="nav-item logout-item">
+                <a href="<?= base_url('admin/secure-logout') ?>" class="nav-link logout-link" onclick="return confirmLogout()">
+                    <i data-feather="log-out" class="nav-icon"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+                <div class="nav-tooltip">Logout</div>
             </div>
         </div>
     </nav>
@@ -171,7 +180,57 @@
     <!-- Dashboard JS -->
     <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
     
+    <style>
+        /* Logout button styling - matching login button style */
+        .logout-item {
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+
+        .logout-link {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+            color: white !important;
+            border-radius: 0.5rem;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .logout-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 1rem 3rem rgba(220, 53, 69, 0.4);
+            color: white !important;
+        }
+
+        .logout-link:hover .nav-icon {
+            transform: translateX(3px);
+        }
+
+        /* Ensure sidebar nav takes full height and logout stays at bottom */
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .sidebar-nav .nav-item:not(.logout-item) {
+            flex-shrink: 0;
+        }
+    </style>
+
     <script>
+        // Logout confirmation function
+        function confirmLogout() {
+            return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
+        }
+
+        // Mark that user has visited an admin page
+        sessionStorage.setItem('admin_page_visited', 'true');
+        
         // Initialize Feather icons after page load
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof feather !== 'undefined') {
