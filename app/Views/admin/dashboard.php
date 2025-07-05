@@ -165,7 +165,7 @@
             </a>
 
             <!-- Card 9: Demo Program -->
-            <a href="<?= base_url('admin/demo') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
+            <a href="<?= base_url('admin/demo_program') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="bar-chart-2"></i>
                 </div>

@@ -6,6 +6,18 @@ use App\Controllers\BaseController;
 
 class DemoController extends BaseController
 {
+    public function demo_program()
+    {
+        $data = [
+            'title' => 'Demo Program - INLISLite v3',
+            'page_title' => 'Demo Program',
+            'page_subtitle' => 'Paket unduhan dan instalasi',
+            'demos' => $this->getDemoProgramData()
+        ];
+        
+        return view('admin/demo', $data);
+    }
+    
     public function index()
     {
         $data = [
@@ -362,5 +374,79 @@ class DemoController extends BaseController
         }
         
         return $transactions;
+    }
+    
+    private function getDemoProgramData()
+    {
+        return [
+            [
+                'id' => 1,
+                'title' => 'Demo INLISLite v3 Opensource',
+                'description' => 'Platform demo lengkap untuk sistem manajemen perpustakaan INLISLite versi 3 dengan teknologi PHP dan MySQL.',
+                'platform' => 'PHP Open Source',
+                'version' => 'v3.0',
+                'url' => 'https://demo.inlislite.perpusnas.go.id',
+                'username' => 'admin',
+                'password' => 'demo123',
+                'features' => [
+                    'Katalogisasi lengkap',
+                    'Sistem sirkulasi',
+                    'Manajemen anggota',
+                    'Laporan dan statistik',
+                    'OPAC (Online Public Access Catalog)'
+                ]
+            ],
+            [
+                'id' => 2,
+                'title' => 'Demo INLISLite .NET Framework',
+                'description' => 'Demo sistem perpustakaan berbasis .NET Framework dengan fitur enterprise dan performa tinggi.',
+                'platform' => '.NET Framework',
+                'version' => 'v2.5',
+                'url' => 'https://demo-net.inlislite.perpusnas.go.id',
+                'username' => 'administrator',
+                'password' => 'demo456',
+                'features' => [
+                    'Interface Windows Forms',
+                    'Integrasi database SQL Server',
+                    'Sistem backup otomatis',
+                    'Multi-user support',
+                    'Reporting tools'
+                ]
+            ],
+            [
+                'id' => 3,
+                'title' => 'Demo Mobile App INLISLite',
+                'description' => 'Aplikasi mobile untuk akses perpustakaan digital dengan fitur pencarian dan peminjaman online.',
+                'platform' => 'Mobile App',
+                'version' => 'v1.2',
+                'url' => 'https://mobile-demo.inlislite.perpusnas.go.id',
+                'username' => 'user',
+                'password' => 'mobile123',
+                'features' => [
+                    'Pencarian katalog mobile',
+                    'Reservasi buku online',
+                    'Notifikasi push',
+                    'Riwayat peminjaman',
+                    'QR Code scanner'
+                ]
+            ],
+            [
+                'id' => 4,
+                'title' => 'Demo OPAC Public',
+                'description' => 'Demo Online Public Access Catalog untuk akses publik ke katalog perpustakaan.',
+                'platform' => 'Web Public',
+                'version' => 'v3.0',
+                'url' => 'https://opac-demo.inlislite.perpusnas.go.id',
+                'username' => 'guest',
+                'password' => 'public123',
+                'features' => [
+                    'Pencarian advanced',
+                    'Filter kategori',
+                    'Detail koleksi',
+                    'Informasi ketersediaan',
+                    'Wishlist dan favorit'
+                ]
+            ]
+        ];
     }
 }

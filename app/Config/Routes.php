@@ -146,6 +146,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     });
     
     // Demo Program
+    $routes->get('demo_program', 'DemoController::demo_program');
     $routes->group('demo', function($routes) {
         $routes->get('/', 'DemoController::index');
         $routes->get('cataloging', 'DemoController::cataloging');
