@@ -145,6 +145,17 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('ajax', 'AplikasiPendukung::ajaxHandler');
     });
     
+    // Registration Management
+    $routes->group('registration', function($routes) {
+        $routes->get('/', '\App\Controllers\Home::registration');
+        $routes->get('add', '\App\Controllers\Home::addRegistrationForm');
+        $routes->post('add', '\App\Controllers\Home::addRegistration');
+        $routes->get('edit/(:num)', '\App\Controllers\Home::editRegistrationForm/$1');
+        $routes->post('edit/(:num)', '\App\Controllers\Home::updateRegistration/$1');
+        $routes->get('view/(:num)', '\App\Controllers\Home::viewRegistration/$1');
+        $routes->get('delete/(:num)', '\App\Controllers\Home::deleteRegistration/$1');
+    });
+    
     // Demo Program
     $routes->get('demo_program', 'DemoController::demo_program');
     $routes->group('demo', function($routes) {

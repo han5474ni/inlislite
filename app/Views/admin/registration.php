@@ -171,7 +171,7 @@
                         </button>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addRegistrationModal">
+                        <button class="btn btn-primary w-100" id="addRegistrationBtn">
                             <i class="bi bi-plus-lg me-2"></i>
                             Add Registration
                         </button>
@@ -227,8 +227,8 @@
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#"><i class="bi bi-eye me-2"></i>View</a></li>
-                                            <li><a class="dropdown-item" href="#"><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                                            <li><a class="dropdown-item view-registration" href="#" data-id="1"><i class="bi bi-eye me-2"></i>View</a></li>
+                                            <li><a class="dropdown-item edit-registration" href="#" data-id="1"><i class="bi bi-pencil me-2"></i>Edit</a></li>
                                             <li><hr class="dropdown-divider"></li>
                                             <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
                                         </ul>

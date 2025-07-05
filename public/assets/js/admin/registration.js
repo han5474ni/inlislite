@@ -93,6 +93,22 @@ function setupEventListeners() {
             }
         }
     });
+
+    // Add Registration button
+    const addRegistrationBtn = document.getElementById('addRegistrationBtn');
+    if (addRegistrationBtn) {
+        addRegistrationBtn.addEventListener('click', function() {
+            navigateToAddRegistration();
+        });
+    }
+
+    // Edit Registration button (for detail page)
+    const editRegistrationBtn = document.getElementById('editRegistrationBtn');
+    if (editRegistrationBtn) {
+        editRegistrationBtn.addEventListener('click', function() {
+            navigateToEditRegistration();
+        });
+    }
 }
 
 /**
@@ -406,13 +422,44 @@ function submitAddRegistration() {
 }
 
 /**
+ * Navigate to add registration page
+ */
+function navigateToAddRegistration() {
+    console.log('🆕 Navigating to add registration page...');
+    showToast('Navigating to add registration form...', 'info');
+    
+    // Navigate to add registration page
+    setTimeout(() => {
+        window.location.href = '/admin/registration/add';
+    }, 500);
+}
+
+/**
+ * Navigate to edit registration page
+ */
+function navigateToEditRegistration(libraryId = null) {
+    console.log('✏️ Navigating to edit registration page...');
+    showToast('Navigating to edit registration form...', 'info');
+    
+    // Navigate to edit registration page
+    setTimeout(() => {
+        window.location.href = `/admin/registration/edit/${libraryId || 1}`;
+    }, 500);
+}
+
+/**
  * View registration details
  */
 function viewRegistration(libraryName) {
     console.log(`👁️ Viewing registration: ${libraryName}`);
     const registration = registrations.find(r => r.library_name === libraryName);
     if (registration) {
-        showToast(`Viewing details for: ${registration.library_name}`, 'info');
+        showToast('Navigating to registration details...', 'info');
+        
+        // Navigate to view registration page
+        setTimeout(() => {
+            window.location.href = `/admin/registration/view/${registration.id}`;
+        }, 500);
     }
 }
 
@@ -423,7 +470,7 @@ function editRegistration(libraryName) {
     console.log(`✏️ Editing registration: ${libraryName}`);
     const registration = registrations.find(r => r.library_name === libraryName);
     if (registration) {
-        showToast(`Edit form for: ${registration.library_name}`, 'info');
+        navigateToEditRegistration(registration.id);
     }
 }
 
@@ -651,6 +698,185 @@ function debounce(func, wait) {
     };
 }
 
+/**
+ * Handle registration form submission
+ */
+function handleRegistrationFormSubmit() {
+    const registrationForm = document.getElementById('registrationForm');
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitRegistrationForm();
+        });
+    }
+}
+
+/**
+ * Submit registration form
+ */
+function submitRegistrationForm() {
+    console.log('📝 Submitting registration form...');
+    
+    const form = document.getElementById('registrationForm');
+    if (!form) {
+        console.error('❌ Registration form not found');
+        return;
+    }
+    
+    const formData = new FormData(form);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+        
+        // Simulate form submission
+        setTimeout(() => {
+            // Get form data
+            const registrationData = {
+                library_name: formData.get('library_name'),
+                library_type: formData.get('library_type'),
+                status: formData.get('status'),
+                library_code: formData.get('library_code'),
+                province: formData.get('province'),
+                city: formData.get('city'),
+                address: formData.get('address'),
+                postal_code: formData.get('postal_code'),
+                coordinates: formData.get('coordinates'),
+                contact_name: formData.get('contact_name'),
+                contact_position: formData.get('contact_position'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                website: formData.get('website'),
+                fax: formData.get('fax'),
+                established_year: formData.get('established_year'),
+                collection_count: formData.get('collection_count'),
+                member_count: formData.get('member_count'),
+                notes: formData.get('notes')
+            };
+            
+            console.log('📊 Registration data:', registrationData);
+            
+            // Show success message
+            showToast('Registrasi berhasil disimpan!', 'success');
+            
+            // Reset button state
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            
+            // Navigate back to registration list
+            setTimeout(() => {
+                showToast('Kembali ke daftar registrasi...', 'info');
+                window.location.href = '/registration';
+            }, 2000);
+            
+        }, 2000);
+    }
+}
+
+/**
+ * Initialize form-specific functionality
+ */
+function initializeFormFeatures() {
+    // Handle registration form submission
+    handleRegistrationFormSubmit();
+    
+    // Initialize form validation
+    initializeFormValidation();
+    
+    // Initialize dynamic form features
+    initializeDynamicFormFeatures();
+}
+
+/**
+ * Initialize form validation
+ */
+function initializeFormValidation() {
+    const form = document.getElementById('registrationForm');
+    if (!form) return;
+    
+    // Add real-time validation
+    const requiredFields = form.querySelectorAll('[required]');
+    requiredFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            validateField(this);
+        });
+        
+        field.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                validateField(this);
+            }
+        });
+    });
+}
+
+/**
+ * Validate individual field
+ */
+function validateField(field) {
+    const value = field.value.trim();
+    const isValid = field.checkValidity() && value !== '';
+    
+    if (isValid) {
+        field.classList.remove('is-invalid');
+        field.classList.add('is-valid');
+    } else {
+        field.classList.remove('is-valid');
+        field.classList.add('is-invalid');
+    }
+    
+    return isValid;
+}
+
+/**
+ * Initialize dynamic form features
+ */
+function initializeDynamicFormFeatures() {
+    // Auto-generate library code based on name and type
+    const libraryNameField = document.querySelector('[name="library_name"]');
+    const libraryTypeField = document.querySelector('[name="library_type"]');
+    const libraryCodeField = document.querySelector('[name="library_code"]');
+    
+    if (libraryNameField && libraryTypeField && libraryCodeField) {
+        function generateLibraryCode() {
+            const name = libraryNameField.value.trim();
+            const type = libraryTypeField.value;
+            
+            if (name && type && !libraryCodeField.value) {
+                const nameCode = name.substring(0, 3).toUpperCase();
+                const typeCode = type.substring(0, 3).toUpperCase();
+                const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                
+                libraryCodeField.value = `${typeCode}-${nameCode}-${randomNum}`;
+            }
+        }
+        
+        libraryNameField.addEventListener('blur', generateLibraryCode);
+        libraryTypeField.addEventListener('change', generateLibraryCode);
+    }
+    
+    // Format phone numbers
+    const phoneFields = document.querySelectorAll('[type="tel"]');
+    phoneFields.forEach(field => {
+        field.addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.startsWith('62')) {
+                value = '+' + value;
+            } else if (value.startsWith('0')) {
+                value = '+62' + value.substring(1);
+            }
+            this.value = value;
+        });
+    });
+}
+
+// Initialize form features when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeFormFeatures();
+});
+
 // Export functions for global access
 window.RegistrationManagement = {
     filterRegistrations,
@@ -659,7 +885,10 @@ window.RegistrationManagement = {
     editRegistration,
     deleteRegistration,
     downloadData,
-    showToast
+    showToast,
+    navigateToAddRegistration,
+    navigateToEditRegistration,
+    submitRegistrationForm
 };
 
 console.log('📦 Registration Management JavaScript loaded successfully');

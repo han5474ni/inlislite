@@ -1,0 +1,405 @@
+/**
+ * Registration View Page Styles - INLISlite v3.0
+ * Bootstrap 5 compatible styles for registration view/detail page
+ */
+
+/* View styling */
+.registration-view-section {
+    margin-top: 2rem;
+}
+
+/* Badge styling */
+.badge-type {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+}
+
+.badge-type.public { 
+    background-color: #0d6efd; 
+    color: white;
+}
+
+.badge-type.academic { 
+    background-color: #6f42c1; 
+    color: white;
+}
+
+.badge-type.school { 
+    background-color: #fd7e14; 
+    color: white;
+}
+
+.badge-type.special { 
+    background-color: #20c997; 
+    color: white;
+}
+
+.badge-status {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+}
+
+.badge-status.active { 
+    background-color: #198754; 
+    color: white;
+}
+
+.badge-status.inactive { 
+    background-color: #6c757d; 
+    color: white;
+}
+
+.badge-status.pending { 
+    background-color: #ffc107; 
+    color: #000;
+}
+
+/* Card styling */
+.card {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 1rem 1.25rem;
+}
+
+.card-title {
+    margin-bottom: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+/* Field styling */
+.form-label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.field-value {
+    color: #495057;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    word-wrap: break-word;
+}
+
+.field-value:last-child {
+    margin-bottom: 0;
+}
+
+.field-value a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.field-value a:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+/* Quick actions card */
+.quick-actions .btn {
+    margin-bottom: 0.5rem;
+}
+
+.quick-actions .btn:last-child {
+    margin-bottom: 0;
+}
+
+/* Registration summary styling */
+.registration-summary .card-body > div {
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.registration-summary .card-body > div:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Status indicators */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+}
+
+.status-dot.active {
+    background-color: #198754;
+}
+
+.status-dot.inactive {
+    background-color: #6c757d;
+}
+
+.status-dot.pending {
+    background-color: #ffc107;
+}
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    flex: 1;
+    min-width: 120px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .registration-view-section {
+        margin-top: 1rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .action-buttons .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .header-right {
+        margin-top: 1rem;
+    }
+    
+    .header-right .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .header-right .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .mobile-menu-btn,
+    .header-right,
+    .quick-actions,
+    .btn {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .page-container {
+        padding: 0 !important;
+    }
+    
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+    
+    .card-header {
+        background-color: #f0f0f0 !important;
+        -webkit-print-color-adjust: exact;
+    }
+}
+
+/* Logout button styling - matching login button style */
+.logout-item {
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+}
+
+.logout-link {
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 0.25rem;
+    margin: 0.25rem;
+    transition: all 0.3s ease;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.logout-link:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    transform: none;
+    box-shadow: none;
+}
+
+.logout-link:hover .nav-icon {
+    transform: translateX(3px);
+}
+
+/* Ensure sidebar nav takes full height and logout stays at bottom */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+    overflow: hidden;
+}
+
+.sidebar-nav .nav-item:not(.logout-item) {
+    flex-shrink: 0;
+}
+
+/* Toast notifications */
+.toast-container {
+    z-index: 1055;
+}
+
+.toast {
+    border: none;
+    border-radius: 0.375rem;
+}
+
+/* Loading states */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading .spinner-border {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Success/Error states */
+.alert {
+    border: none;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.alert-info {
+    background-color: #cff4fc;
+    color: #055160;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+/* Modal styling */
+.modal-content {
+    border-radius: 0.375rem;
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.25rem;
+}
+
+.modal-body {
+    padding: 1.25rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 1.25rem;
+}
+
+/* Animation effects */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover effects */
+.card:hover {
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.btn {
+    transition: all 0.15s ease-in-out;
+}
+
+/* Icon styling */
+.bi {
+    vertical-align: -0.125em;
+}
+
+/* Text utilities */
+.text-muted {
+    color: #6c757d !important;
+}
+
+.fw-semibold {
+    font-weight: 600 !important;
+}
+
+/* Spacing utilities */
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.me-2 {
+    margin-right: 0.5rem !important;
+}
+
+.ms-2 {
+    margin-left: 0.5rem !important;
+}

@@ -96,6 +96,17 @@ class Home extends BaseController
         }
     }
 
+    public function addRegistrationForm(): string
+    {
+        $data = [
+            'title' => 'Add Registration - INLISlite v3.0',
+            'page_title' => 'Add New Registration',
+            'page_subtitle' => 'Register a new library in the system'
+        ];
+        
+        return view('admin/registration_add', $data);
+    }
+
     public function addRegistration()
     {
         try {
@@ -128,6 +139,56 @@ class Home extends BaseController
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    public function editRegistrationForm($id): string
+    {
+        try {
+            $registrationModel = new \App\Models\RegistrationModel();
+            $registration = $registrationModel->find($id);
+            
+            if (!$registration) {
+                throw new \Exception('Registration not found');
+            }
+            
+            $data = [
+                'title' => 'Edit Registration - INLISlite v3.0',
+                'page_title' => 'Edit Registration',
+                'page_subtitle' => 'Update library registration information',
+                'registration' => $registration
+            ];
+            
+            return view('admin/registration_edit', $data);
+        } catch (\Exception $e) {
+            // Redirect back to registration list with error
+            session()->setFlashdata('error', 'Registration not found: ' . $e->getMessage());
+            return redirect()->to('/admin/registration');
+        }
+    }
+
+    public function viewRegistration($id): string
+    {
+        try {
+            $registrationModel = new \App\Models\RegistrationModel();
+            $registration = $registrationModel->find($id);
+            
+            if (!$registration) {
+                throw new \Exception('Registration not found');
+            }
+            
+            $data = [
+                'title' => 'View Registration - INLISlite v3.0',
+                'page_title' => 'Registration Details',
+                'page_subtitle' => 'View library registration information',
+                'registration' => $registration
+            ];
+            
+            return view('admin/registration_view', $data);
+        } catch (\Exception $e) {
+            // Redirect back to registration list with error
+            session()->setFlashdata('error', 'Registration not found: ' . $e->getMessage());
+            return redirect()->to('/admin/registration');
         }
     }
 
