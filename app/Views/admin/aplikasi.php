@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Supporting Applications - INLISlite v3.0' ?></title>
+    <title><?= $title ?? 'Aplikasi Pendukung - INLISlite v3.0' ?></title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
     <!-- Dashboard CSS -->
@@ -70,30 +70,59 @@
                 </a>
                 <div class="nav-tooltip">Profile</div>
             </div>
+            
+            <!-- Logout Button -->
+            <div class="nav-item logout-item">
+                <a href="<?= base_url('admin/secure-logout') ?>" class="nav-link logout-link" onclick="return confirmLogout()">
+                    <i data-feather="log-out" class="nav-icon"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+                <div class="nav-tooltip">Logout</div>
+            </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="page-container">
-            <!-- Page Header -->
-            <div class="page-header">
-                <div class="header-top">
-                    <div class="header-left">
-                        <div class="header-icon">
-                            <i class="bi bi-tools"></i>
-                        </div>
-                        <div>
-                            <h1 class="page-title">Supporting Applications</h1>
-                            <p class="page-subtitle">Download and install supporting tools and modules</p>
+            <!-- Top Navigation -->
+            <nav class="top-nav sticky-top">
+                <div class="container-fluid">
+                    <div class="nav-content">
+                        <div class="nav-left">
+                            <a href="<?= base_url('admin/dashboard') ?>" class="back-btn" title="Kembali ke Dashboard">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+                            <div class="logo-section">
+                                <div class="logo-icon">
+                                    <i class="bi bi-tools"></i>
+                                </div>
+                                <div class="nav-text">
+                                    <h1 class="nav-title">Aplikasi Pendukung</h1>
+                                    <p class="nav-subtitle">Unduh dan instalasi tools pendukung</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <a href="<?= base_url('admin/dashboard') ?>" class="back-btn">
-                        <i class="bi bi-arrow-left"></i>
-                        Kembali
-                    </a>
                 </div>
-            </div>
+            </nav>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="container-fluid">
+                    <!-- Header Section -->
+                    <div class="header-section">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="text-center mb-5">
+                                    <div class="header-icon">
+                                        <i class="bi bi-tools"></i>
+                                    </div>
+                                    <h1 class="header-title">Aplikasi Pendukung INLISLite Versi 3 PHP Opensource</h1>
+                                    <p class="header-subtitle">Kumpulan aplikasi dan tools pendukung untuk meningkatkan fungsionalitas sistem perpustakaan INLISLite v3 dengan berbagai modul terintegrasi.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
             <!-- Alert Messages -->
             <div id="alertContainer"></div>
@@ -565,8 +594,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+                </div>
+            </div>
+        </main>
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1">
@@ -598,22 +628,5 @@
     <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
     <!-- Custom JavaScript -->
     <script src="<?= base_url('assets/js/admin/aplikasi.js') ?>"></script>
-    
-    <script>
-        // Initialize Feather icons after page load
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-            
-            // Clear any active menu state since applications page doesn't have active menu in sidebar
-            sessionStorage.removeItem('activeMenu');
-            
-            // Remove active class from all sidebar links since this page is not in the main navigation
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-        });
-    </script>
 </body>
 </html>

@@ -3,6 +3,11 @@
  * Handles interactions for supporting applications page
  */
 
+// Logout confirmation function
+function confirmLogout() {
+    return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
+}
+
 class SupportingApplicationsManager {
     constructor() {
         this.currentEditingCard = null;
@@ -97,16 +102,16 @@ class SupportingApplicationsManager {
             }, index * 150);
         });
 
-        // Animate page header
-        const pageHeader = document.querySelector('.page-header');
-        if (pageHeader) {
-            pageHeader.style.opacity = '0';
-            pageHeader.style.transform = 'translateY(-20px)';
+        // Animate header section
+        const headerSection = document.querySelector('.header-section');
+        if (headerSection) {
+            headerSection.style.opacity = '0';
+            headerSection.style.transform = 'translateY(-20px)';
 
             setTimeout(() => {
-                pageHeader.style.transition = 'all 0.5s ease';
-                pageHeader.style.opacity = '1';
-                pageHeader.style.transform = 'translateY(0)';
+                headerSection.style.transition = 'all 0.5s ease';
+                headerSection.style.opacity = '1';
+                headerSection.style.transform = 'translateY(0)';
             }, 100);
         }
     }
@@ -362,99 +367,6 @@ class SupportingApplicationsManager {
     }
 
     /**
-     * Highlight element temporarily
-     */
-    highlightElement(element) {
-        if (!element) return;
-
-        const originalBackground = element.style.backgroundColor;
-        element.style.backgroundColor = '#fff3cd';
-        element.style.transition = 'background-color 0.3s ease';
-
-        setTimeout(() => {
-            element.style.backgroundColor = originalBackground;
-        }, 1000);
-    }
-
-    /**
-     * Copy text to clipboard
-     */
-    copyToClipboard(text) {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(text)
-                .then(() => {
-                    this.showNotification('Copied to clipboard', 'success');
-                })
-                .catch(() => {
-                    this.fallbackCopyToClipboard(text);
-                });
-        } else {
-            this.fallbackCopyToClipboard(text);
-        }
-    }
-
-    /**
-     * Fallback copy to clipboard method
-     */
-    fallbackCopyToClipboard(text) {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        try {
-            document.execCommand('copy');
-            this.showNotification('Copied to clipboard', 'success');
-        } catch (err) {
-            this.showNotification('Failed to copy to clipboard', 'error');
-        }
-
-        document.body.removeChild(textArea);
-    }
-
-    /**
-     * Smooth scroll to element
-     */
-    scrollToElement(element) {
-        element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-    }
-
-    /**
-     * Format file size
-     */
-    formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-
-    /**
-     * Debounce function
-     */
-    debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    /**
      * Get application data
      */
     getApplicationData(appId) {
@@ -472,34 +384,24 @@ class SupportingApplicationsManager {
             icon
         };
     }
-
-    /**
-     * Export applications data
-     */
-    exportApplicationsData() {
-        const applications = [];
-        document.querySelectorAll('.application-card').forEach(card => {
-            const appId = card.getAttribute('data-app-id');
-            const data = this.getApplicationData(appId);
-            if (data) {
-                applications.push(data);
-            }
-        });
-
-        const dataStr = JSON.stringify(applications, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(dataBlob);
-        link.download = 'supporting-applications.json';
-        link.click();
-
-        this.showNotification('Applications data exported successfully!', 'success');
-    }
 }
 
 // Initialize when document is ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+    
+    // Clear any active menu state since applications page doesn't have active menu in sidebar
+    sessionStorage.removeItem('activeMenu');
+    
+    // Remove active class from all sidebar links since this page is not in the main navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+
+    // Initialize the applications manager
     window.supportingAppsManager = new SupportingApplicationsManager();
 
     // Add keyboard shortcuts

@@ -170,4 +170,15 @@ class AdminController extends BaseController
         
         return view('admin/panduan', $data);
     }
+    
+    public function dukungan()
+    {
+        $data = [
+            'title' => 'Layanan Dukungan Teknis - INLISLite v3',
+            'page_title' => 'Layanan Dukungan Teknis',
+            'page_subtitle' => 'Pusat bantuan dan dukungan teknis untuk sistem INLISLite v3'
+        ];
+        
+        return view('admin/dukungan', $data);
+    }
 }

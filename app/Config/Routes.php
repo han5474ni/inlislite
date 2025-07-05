@@ -18,8 +18,12 @@ $routes->get('home', 'Public\PublicController::index');
 $routes->get('tentang', 'Public\PublicController::tentang');
 $routes->get('tentang-aplikasi', 'Public\PublicController::tentang');
 $routes->get('about', 'Public\PublicController::tentang');
-$routes->get('panduan', 'Public\PublicController::panduan');
-$routes->get('guide', 'Public\PublicController::panduan');
+$routes->get('panduan', function() {
+    return redirect()->to(base_url('admin/panduan'));
+});
+$routes->get('guide', function() {
+    return redirect()->to(base_url('admin/panduan'));
+});
 $routes->get('aplikasi', 'Public\PublicController::aplikasi');
 $routes->get('supporting-apps', 'Public\PublicController::aplikasi');
 $routes->get('patch', 'Public\PublicController::patch');
@@ -83,8 +87,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('tentang', 'AdminController::tentang');
     // Panduan page
     $routes->get('panduan', 'AdminController::panduan');
+    // Dukungan page
+    $routes->get('dukungan', 'AdminController::dukungan');
     // Patch page
     $routes->get('patch', 'AdminController::patch_updater');
+    $routes->get('patch_updater', function() {
+        return redirect()->to(base_url('admin/patch'));
+    });
     // User Management
     $routes->group('users', function($routes) {
         $routes->get('/', 'UserManagement::index');
@@ -126,6 +135,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     });
     
     // Application Management
+    $routes->get('aplikasi', 'AplikasiPendukung::index');
     $routes->group('applications', function($routes) {
         $routes->get('/', 'AplikasiPendukung::index');
         $routes->get('detail/(:segment)', 'AplikasiPendukung::detail/$1');

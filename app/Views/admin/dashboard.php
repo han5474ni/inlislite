@@ -10,7 +10,7 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
     <!-- Dashboard CSS -->
@@ -128,7 +128,7 @@
             </a>
 
             <!-- Card 5: Aplikasi Pendukung -->
-            <a href="<?= base_url('admin/applications') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
+            <a href="<?= base_url('admin/aplikasi') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="tool"></i>
                 </div>
@@ -147,13 +147,13 @@
             </a>
 
             <!-- Card 7: Dukungan Teknis -->
-            <div class="feature-card loading">
+            <a href="<?= base_url('admin/dukungan') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="headphones"></i>
                 </div>
                 <h3 class="card-title">Dukungan Teknis</h3>
                 <p class="card-description">Tim ahli siap membantu menyelesaikan masalah teknis Anda.</p>
-            </div>
+            </a>
 
             <!-- Card 8: Alat Pengembang -->
             <div class="feature-card loading">

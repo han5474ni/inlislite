@@ -23,9 +23,11 @@ INLISLite v3.0 adalah sistem otomasi perpustakaan modern yang dibangun dengan Co
 - 🔐 **Sistem Autentikasi Aman** dengan enkripsi bcrypt dan validasi password kompleks
 - 👥 **Manajemen User Lengkap** dengan role-based access control
 - 📊 **Dashboard Modern** dengan sidebar responsif dan design yang elegan
+- 📚 **Modul Panduan Lengkap** dengan manajemen dokumentasi terintegrasi
 - 🛡️ **Keamanan Enterprise-Grade** dengan rate limiting dan activity logging
-- 📱 **Responsive Design** yang mobile-friendly
+- 📱 **Responsive Design** yang mobile-friendly dengan font Poppins
 - 🎨 **UI/UX Modern** dengan Bootstrap 5 dan custom styling
+- 🌐 **Bahasa Indonesia** konsisten di seluruh aplikasi
 
 ## 🏗️ **Struktur Project Terorganisir**
 
@@ -75,6 +77,7 @@ php setup/create_test_admin.php
 ```
 🌐 Homepage: http://localhost:8080/
 🔐 Admin Login: http://localhost:8080/admin/secure-login
+📚 Panduan: http://localhost:8080/admin/panduan
 👤 Credentials: admin / password
 ```
 
@@ -187,10 +190,11 @@ php testing/manual/test_auth_filter.php
 
 ### **📱 Modern Design**
 - ✅ **Bootstrap 5** framework
+- ✅ **Poppins Font** untuk tipografi modern
 - ✅ **Responsive design** mobile-first
 - ✅ **Dark/Light theme** support
 - ✅ **Smooth animations** dan transitions
-- ✅ **Feather Icons** integration
+- ✅ **Feather Icons** & **Bootstrap Icons** integration
 
 ### **🎯 User Experience**
 - ✅ **Collapsible sidebar** dengan toggle
@@ -198,6 +202,14 @@ php testing/manual/test_auth_filter.php
 - ✅ **Modal forms** untuk CRUD operations
 - ✅ **Toast notifications** untuk feedback
 - ✅ **Loading states** untuk async operations
+- ✅ **Dokumentasi terintegrasi** dalam modul Panduan
+
+### **📚 Modul Panduan**
+- ✅ **Manajemen dokumentasi** lengkap
+- ✅ **Upload & download** file panduan
+- ✅ **Search & filter** dokumentasi
+- ✅ **Kategori dokumen** terorganisir
+- ✅ **Interface modern** dengan white header
 
 ## 📊 **Technical Specifications**
 
@@ -230,6 +242,22 @@ php testing/manual/test_auth_filter.php
 3. Commit changes (`git commit -m 'Add AmazingFeature'`)
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Open Pull Request
+
+## 🆕 **Recent Updates**
+
+### **v3.0.1 - Latest**
+- ✅ **Modul Panduan** - Sistem manajemen dokumentasi lengkap
+- ✅ **Font Poppins** - Tipografi modern di seluruh aplikasi
+- ✅ **Bahasa Indonesia** - Konsistensi bahasa di semua interface
+- ✅ **White Header** - Design modern untuk halaman Panduan
+- ✅ **Sidebar Optimization** - Navigasi yang lebih clean dan fokus
+- ✅ **Responsive Design** - Optimasi untuk mobile dan desktop
+
+### **v3.0.0 - Base Release**
+- 🔐 **Sistem Autentikasi** dengan keamanan enterprise-grade
+- 👥 **Manajemen User** dengan role-based access control
+- 📊 **Dashboard Modern** dengan sidebar responsif
+- 🛡️ **Security Features** lengkap dengan rate limiting
 
 ## 📄 **License**
 

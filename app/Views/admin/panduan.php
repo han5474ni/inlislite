@@ -10,7 +10,7 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
     <!-- Dashboard CSS -->
@@ -340,7 +340,7 @@
                                     <li>
                                         <i class="bi bi-gear me-2"></i>
                                         <span>Petunjuk instalasi lengkap tersedia di </span>
-                                        <a href="<?= base_url('admin/aplikasi') ?>" class="resource-link">Installer > Platform PHP</a>
+                                        <a href="<?= base_url('admin/aplikasi') ?>" class="resource-link">Aplikasi Pendukung > Platform PHP</a>
                                     </li>
                                     <li>
                                         <i class="bi bi-arrow-up-circle me-2"></i>
