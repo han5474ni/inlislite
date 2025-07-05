@@ -1,0 +1,915 @@
+/* ========================================
+   BIMBINGAN TEKNIS PAGE STYLES - INLISLite v3
+   ======================================== */
+
+/* Root Variables */
+:root {
+    --primary-green: #2DA84D;
+    --primary-blue: #007bff;
+    --light-blue: #e3f2fd;
+    --light-green: #e8f5e8;
+    --border-light: #e9ecef;
+    --text-dark: #2c3e50;
+    --text-muted: #6c757d;
+    --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --border-radius: 12px;
+    --border-radius-small: 8px;
+    --transition: all 0.3s ease;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8f9fa;
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* ========================================
+   MAIN CONTENT LAYOUT
+   ======================================== */
+
+.main-content {
+    margin-left: 280px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* ========================================
+   TOP NAVIGATION
+   ======================================== */
+
+.top-nav {
+    background-color: white;
+    color: var(--text-dark);
+    padding: 1rem 0;
+    box-shadow: var(--shadow-light);
+    z-index: 1030;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.nav-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #f8f9fa;
+    color: var(--text-dark);
+    border-radius: var(--border-radius-small);
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid var(--border-light);
+}
+
+.back-btn:hover {
+    background: #e9ecef;
+    color: var(--text-dark);
+    transform: translateX(-2px);
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-blue);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    border: 1px solid var(--primary-blue);
+}
+
+.nav-text {
+    flex: 1;
+}
+
+.nav-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-dark);
+    line-height: 1.2;
+}
+
+.nav-subtitle {
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.7;
+    color: var(--text-muted);
+}
+
+/* ========================================
+   PAGE CONTENT
+   ======================================== */
+
+.page-content {
+    padding: 2rem 0;
+    min-height: calc(100vh - 120px);
+}
+
+/* ========================================
+   HEADER SECTION
+   ======================================== */
+
+.header-section {
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+    padding: 3rem 0;
+    border-radius: var(--border-radius);
+    margin: 2rem 1rem 3rem 1rem;
+}
+
+.header-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    margin: 0 auto 2rem;
+    box-shadow: var(--shadow-medium);
+    backdrop-filter: blur(10px);
+}
+
+.header-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+}
+
+.header-subtitle {
+    font-size: 1.2rem;
+    color: white;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* ========================================
+   LOGOUT BUTTON STYLING
+   ======================================== */
+
+.logout-item {
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+}
+
+.logout-link {
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 0.25rem;
+    margin: 0.25rem;
+    transition: all 0.3s ease;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.logout-link:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    transform: none;
+    box-shadow: none;
+}
+
+.logout-link:hover .nav-icon {
+    transform: translateX(3px);
+}
+
+/* Ensure sidebar nav takes full height and logout stays at bottom */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+    overflow: hidden;
+}
+
+.sidebar-nav .nav-item:not(.logout-item) {
+    flex-shrink: 0;
+}
+
+/* ========================================
+   BIMBINGAN CONTENT CARDS
+   ======================================== */
+
+.bimbingan-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.bimbingan-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    transition: var(--transition);
+    border: none;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease forwards;
+    position: relative;
+}
+
+.bimbingan-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.bimbingan-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-medium);
+}
+
+.bimbingan-card:hover::before {
+    opacity: 1;
+}
+
+.bimbingan-card:nth-child(1) { animation-delay: 0.1s; }
+.bimbingan-card:nth-child(2) { animation-delay: 0.2s; }
+.bimbingan-card:nth-child(3) { animation-delay: 0.3s; }
+.bimbingan-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Card Header */
+.bimbingan-card .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid var(--border-light);
+    padding: 2rem;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-blue);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.card-title-section {
+    flex: 1;
+}
+
+.card-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1.3;
+    transition: color 0.3s ease;
+}
+
+.bimbingan-card:hover .card-title {
+    color: var(--primary-blue);
+}
+
+.card-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0.5rem 0 0 0;
+}
+
+/* Card Body */
+.bimbingan-card .card-body {
+    padding: 2rem;
+}
+
+.card-description {
+    font-size: 1.1rem;
+    color: #495057;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+/* Info Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: var(--border-radius-small);
+    border-left: 4px solid var(--primary-blue);
+    transition: var(--transition);
+}
+
+.info-item:hover {
+    background: #e9ecef;
+    transform: translateX(4px);
+}
+
+.info-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.info-content {
+    flex: 1;
+}
+
+.info-content strong {
+    display: block;
+    color: var(--text-dark);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+.info-content span {
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: var(--border-radius-small);
+    border: none;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.alert::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.alert-success {
+    background-color: var(--light-green);
+    color: var(--primary-green);
+    border-left: 4px solid var(--primary-green);
+}
+
+.alert-info {
+    background-color: var(--light-blue);
+    color: var(--primary-blue);
+    border-left: 4px solid var(--primary-blue);
+}
+
+.alert i {
+    font-size: 1.1rem;
+}
+
+/* ========================================
+   REQUIREMENTS SECTION
+   ======================================== */
+
+.requirement-section {
+    background: #f8f9fa;
+    border-radius: var(--border-radius-small);
+    padding: 1.5rem;
+    height: 100%;
+    border: 1px solid var(--border-light);
+    transition: var(--transition);
+}
+
+.requirement-section:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-light);
+}
+
+.requirement-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    line-height: 1.4;
+}
+
+.requirement-number {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.requirement-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.requirement-list li {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.requirement-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary-blue);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.requirement-list li:last-child {
+    margin-bottom: 0;
+}
+
+.contact-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.contact-info i {
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+}
+
+.contact-info strong {
+    display: block;
+    color: var(--text-dark);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.contact-info a {
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}
+
+/* ========================================
+   CONTACT CARD
+   ======================================== */
+
+.contact-card {
+    background: linear-gradient(135deg, var(--light-blue) 0%, var(--light-green) 100%);
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    transition: var(--transition);
+    animation: fadeInUp 0.6s ease forwards;
+    animation-delay: 0.5s;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.contact-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-medium);
+}
+
+.contact-card .card-body {
+    padding: 2.5rem;
+}
+
+.contact-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.contact-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.contact-text {
+    font-size: 1rem;
+    color: #495057;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.contact-email {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: var(--transition);
+}
+
+.contact-email:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .nav-title {
+        font-size: 1.25rem;
+    }
+    
+    .nav-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .header-title {
+        font-size: 2rem;
+    }
+    
+    .header-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .page-content {
+        padding: 1rem 0;
+    }
+    
+    .bimbingan-content {
+        gap: 1.5rem;
+        padding: 0 0.5rem;
+    }
+    
+    .bimbingan-card .card-header {
+        padding: 1.5rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .bimbingan-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .card-title {
+        font-size: 1.2rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .info-item {
+        padding: 1rem;
+    }
+    
+    .requirement-section {
+        padding: 1rem;
+    }
+    
+    .contact-card .card-body {
+        padding: 2rem 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .logo-section {
+        gap: 0.75rem;
+    }
+    
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+    
+    .nav-title {
+        font-size: 1.1rem;
+    }
+    
+    .nav-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .header-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+    
+    .header-title {
+        font-size: 1.75rem;
+    }
+    
+    .header-subtitle {
+        font-size: 1rem;
+    }
+    
+    .bimbingan-card .card-header {
+        padding: 1rem;
+    }
+    
+    .bimbingan-card .card-body {
+        padding: 1rem;
+    }
+    
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .card-description {
+        font-size: 1rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .contact-title {
+        font-size: 1.2rem;
+    }
+    
+    .contact-text {
+        font-size: 0.95rem;
+    }
+    
+    .contact-email {
+        font-size: 1rem;
+    }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+/* Hover Effects */
+.bimbingan-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-icon {
+    transition: all 0.3s ease;
+}
+
+.bimbingan-card:hover .card-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+}
+
+.contact-card:hover .contact-icon {
+    transform: scale(1.1) rotate(-5deg);
+    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+}
+
+/* Loading State */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.text-primary {
+    color: var(--primary-blue) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.fw-semibold {
+    font-weight: 600 !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #0056b3, #218838);
+}
+
+/* Selection Styles */
+::selection {
+    background: rgba(0, 123, 255, 0.3);
+    color: #1a1a1a;
+}
+
+::-moz-selection {
+    background: rgba(0, 123, 255, 0.3);
+    color: #1a1a1a;
+}
+
+/* Print Styles */
+@media print {
+    .bimbingan-card {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6 !important;
+        break-inside: avoid;
+    }
+    
+    .back-btn {
+        display: none !important;
+    }
+    
+    .bimbingan-card::before {
+        display: none !important;
+    }
+    
+    .header-section {
+        background: #f8f9fa !important;
+        color: #000 !important;
+    }
+    
+    .header-title,
+    .header-subtitle {
+        color: #000 !important;
+    }
+}
+
+/* Accessibility Improvements */
+.bimbingan-card:focus-within {
+    outline: 2px solid rgba(0, 123, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .bimbingan-card {
+        border: 2px solid #000;
+    }
+    
+    .card-header {
+        border-bottom: 2px solid #000;
+    }
+    
+    .card-icon {
+        background: #000;
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .bimbingan-card,
+    .info-item,
+    .requirement-section,
+    .contact-card {
+        transition: none;
+        animation: none;
+    }
+    
+    .bimbingan-card:hover {
+        transform: none;
+    }
+    
+    .card-icon,
+    .contact-icon {
+        transition: none;
+    }
+    
+    .bimbingan-card:hover .card-icon,
+    .contact-card:hover .contact-icon {
+        transform: none;
+    }
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}

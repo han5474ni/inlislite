@@ -155,14 +155,14 @@
                 <p class="card-description">Tim ahli siap membantu menyelesaikan masalah teknis Anda.</p>
             </a>
 
-            <!-- Card 8: Alat Pengembang -->
-            <div class="feature-card loading">
+            <!-- Card 8: Bimbingan Teknis -->
+            <a href="<?= base_url('admin/bimbingan') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="zap"></i>
                 </div>
-                <h3 class="card-title">Alat Pengembang</h3>
+                <h3 class="card-title">Bimbingan Teknis</h3>
                 <p class="card-description">Tools dan utilities untuk pengembangan dan kustomisasi sistem.</p>
-            </div>
+            </a>
 
             <!-- Card 9: Demo Program -->
             <a href="<?= base_url('admin/demo') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">

@@ -89,6 +89,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('panduan', 'AdminController::panduan');
     // Dukungan page
     $routes->get('dukungan', 'AdminController::dukungan');
+    // Bimbingan page
+    $routes->get('bimbingan', 'AdminController::bimbingan');
     // Patch page
     $routes->get('patch', 'AdminController::patch_updater');
     $routes->get('patch_updater', function() {
