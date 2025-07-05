@@ -119,22 +119,21 @@ function isMenuActive($patterns, $currentPath) {
 }
 
 .logout-link {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
-    color: white !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
     transition: all 0.3s ease;
-    font-weight: 600;
-    /* Remove custom margin and border-radius to match other nav items */
+    font-weight: 400;
     margin: 0 !important;
-    border-radius: 0 !important;
-    /* Remove text transformation to match other nav items */
+    border-radius: 0.25rem !important;
     text-transform: none !important;
     letter-spacing: normal !important;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
 }
 
 .logout-link:hover {
-    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
     color: white !important;
-    /* Remove transform to match other nav items hover behavior */
     transform: none !important;
     box-shadow: none !important;
 }
@@ -148,7 +147,7 @@ function isMenuActive($patterns, $currentPath) {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 120px);
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 .sidebar-nav .nav-item:not(.logout-item) {

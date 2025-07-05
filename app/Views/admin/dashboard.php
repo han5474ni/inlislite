@@ -89,14 +89,14 @@
 
         <div class="cards-grid">
             <!-- Card 1: Tentang InlisLite -->
-            <div class="feature-card loading">
+            <a href="<?= base_url('admin/tentang') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="book"></i>
                 </div>
                 <h3 class="card-title">Tentang InlisLite</h3>
                 <p class="card-description">Sistem manajemen perpustakaan modern dengan fitur terbaru dan teknologi terdepan.</p>
                 <span class="card-badge new">Baru</span>
-            </div>
+            </a>
 
             <!-- Card 2: Features & Program Modules -->
             <div class="feature-card loading">
@@ -109,42 +109,42 @@
             </div>
 
             <!-- Card 3: Installer -->
-            <div class="feature-card loading">
+            <a href="<?= base_url('installer') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="download"></i>
                 </div>
                 <h3 class="card-title">Installer</h3>
                 <p class="card-description">Panduan instalasi sistem langkah demi langkah yang mudah diikuti.</p>
-            </div>
+            </a>
 
             <!-- Card 4: Patch dan Updater -->
-            <div class="feature-card loading">
+            <a href="<?= base_url('admin/patch') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="arrow-up-circle"></i>
                 </div>
                 <h3 class="card-title">Patch dan Updater</h3>
                 <p class="card-description">Sistem pembaruan otomatis untuk menjaga aplikasi tetap terkini.</p>
                 <span class="card-badge auto">Auto Update</span>
-            </div>
+            </a>
 
             <!-- Card 5: Aplikasi Pendukung -->
-            <div class="feature-card loading">
+            <a href="<?= base_url('admin/applications') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="tool"></i>
                 </div>
                 <h3 class="card-title">Aplikasi Pendukung</h3>
                 <p class="card-description">Koleksi aplikasi dan tools pendukung untuk meningkatkan produktivitas.</p>
                 <span class="card-badge support">Dukungan 24/7</span>
-            </div>
+            </a>
 
             <!-- Card 6: Panduan -->
-            <div class="feature-card loading">
+            <a href="<?= base_url('admin/panduan') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="help-circle"></i>
                 </div>
                 <h3 class="card-title">Panduan</h3>
                 <p class="card-description">Dokumentasi lengkap dan panduan penggunaan sistem perpustakaan.</p>
-            </div>
+            </a>
 
             <!-- Card 7: Dukungan Teknis -->
             <div class="feature-card loading">
@@ -165,13 +165,13 @@
             </div>
 
             <!-- Card 9: Demo Program -->
-            <div class="feature-card loading">
+            <a href="<?= base_url('admin/demo') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="bar-chart-2"></i>
                 </div>
                 <h3 class="card-title">Demo Program</h3>
                 <p class="card-description">Demo interaktif untuk memahami fitur-fitur sistem perpustakaan.</p>
-            </div>
+            </a>
         </div>
     </main>
 
@@ -189,20 +189,23 @@
         }
 
         .logout-link {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
-            color: white !important;
-            border-radius: 0.5rem;
-            margin: 0.5rem;
+            background: transparent !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+            border-radius: 0.25rem;
+            margin: 0.25rem;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            font-weight: 400;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
         }
 
         .logout-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 1rem 3rem rgba(220, 53, 69, 0.4);
+            background: rgba(255, 255, 255, 0.1) !important;
             color: white !important;
+            transform: none;
+            box-shadow: none;
         }
 
         .logout-link:hover .nav-icon {
@@ -214,7 +217,7 @@
             display: flex;
             flex-direction: column;
             height: calc(100vh - 120px);
-            overflow-y: auto;
+            overflow: hidden;
         }
 
         .sidebar-nav .nav-item:not(.logout-item) {

@@ -81,6 +81,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('modern-dashboard', 'AdminController::modernDashboard');
     // About page
     $routes->get('tentang', 'AdminController::tentang');
+    // Panduan page
+    $routes->get('panduan', 'AdminController::panduan');
+    // Patch page
+    $routes->get('patch', 'AdminController::patch_updater');
     // User Management
     $routes->group('users', function($routes) {
         $routes->get('/', 'UserManagement::index');
@@ -187,18 +191,7 @@ $routes->get('registration/delete/(:num)', 'Home::deleteRegistration/$1');
 $routes->get('setup/create-registrations-table', 'Setup::createRegistrationsTable');
 $routes->get('debug-database', 'Home::debugDatabase');
 
-// Document management routes
-$routes->get('panduan', 'DocumentController::index');
-$routes->group('documents', function($routes) {
-    $routes->get('/', 'DocumentController::getDocuments');
-    $routes->get('(:num)', 'DocumentController::getDocument/$1');
-    $routes->post('add', 'DocumentController::addDocument');
-    $routes->post('update/(:num)', 'DocumentController::updateDocument/$1');
-    $routes->post('delete/(:num)', 'DocumentController::deleteDocument/$1');
-    $routes->get('download/(:num)', 'DocumentController::downloadDocument/$1');
-    $routes->post('search', 'DocumentController::searchDocuments');
-    $routes->post('setup', 'DocumentController::setupDatabase');
-});
+// Document management routes (removed - using admin routes instead)
 
 // Profile routes
 $routes->get('profile', 'Home::profile', ['filter' => 'adminauth']);
@@ -239,5 +232,4 @@ if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
 }
 
 
-// Additional admin routes
-$routes->get('admin/patch_updater', 'Admin\AdminController::patch_updater', ['filter' => 'adminauth']);
+// Additional admin routes (moved to admin group above)

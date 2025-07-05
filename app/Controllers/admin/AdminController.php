@@ -115,4 +115,59 @@ class AdminController extends BaseController
         
         return view('admin/patch', $data);
     }
+    
+    public function panduan()
+    {
+        $data = [
+            'title' => 'Panduan - INLISLite v3',
+            'page_title' => 'Panduan Penggunaan',
+            'page_subtitle' => 'Dokumentasi dan panduan sistem',
+            'documents' => [
+                [
+                    'id' => 1,
+                    'title' => 'Panduan Instalasi INLISLite v3',
+                    'description' => 'Langkah-langkah lengkap instalasi sistem INLISLite v3 pada server PHP dengan konfigurasi database MySQL.',
+                    'file_size' => '2.5 MB',
+                    'version' => '3.0'
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Konfigurasi Sistem dan Database',
+                    'description' => 'Panduan konfigurasi sistem, pengaturan database, dan optimasi performa untuk instalasi INLISLite v3.',
+                    'file_size' => '1.8 MB',
+                    'version' => '3.0'
+                ],
+                [
+                    'id' => 3,
+                    'title' => 'Manajemen Pengguna dan Hak Akses',
+                    'description' => 'Cara mengelola pengguna sistem, mengatur role dan permission, serta konfigurasi keamanan akses.',
+                    'file_size' => '3.2 MB',
+                    'version' => '3.0'
+                ],
+                [
+                    'id' => 4,
+                    'title' => 'Katalogisasi dan Metadata',
+                    'description' => 'Panduan lengkap katalogisasi bahan pustaka, input metadata, dan standar MARC21 dalam INLISLite v3.',
+                    'file_size' => '4.1 MB',
+                    'version' => '3.0'
+                ],
+                [
+                    'id' => 5,
+                    'title' => 'Sirkulasi dan Peminjaman',
+                    'description' => 'Panduan operasional sirkulasi, peminjaman, pengembalian, dan manajemen denda dalam sistem.',
+                    'file_size' => '2.9 MB',
+                    'version' => '3.0'
+                ],
+                [
+                    'id' => 6,
+                    'title' => 'Laporan dan Statistik',
+                    'description' => 'Cara membuat laporan, analisis statistik, dan export data dalam berbagai format untuk keperluan administrasi.',
+                    'file_size' => '3.7 MB',
+                    'version' => '3.0'
+                ]
+            ]
+        ];
+        
+        return view('admin/panduan', $data);
+    }
 }

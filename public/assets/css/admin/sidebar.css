@@ -131,8 +131,7 @@
 .sidebar-nav-new {
     flex: 1;
     padding: 1rem 0;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .nav-list {
