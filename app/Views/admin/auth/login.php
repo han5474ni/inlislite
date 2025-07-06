@@ -315,11 +315,7 @@
                 </button>
             </form>
             
-            <!-- Register Link -->
-            <div class="register-text">
-                Belum punya akun? <a href="<?= base_url('admin/registration') ?>" class="register-link">Daftar</a>
-            </div>
-        </div>
+                    </div>
     </div>
     
     <!-- Bootstrap 5 JS -->

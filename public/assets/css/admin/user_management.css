@@ -289,41 +289,255 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(28, 110, 196, 0.25);
 }
 
-/* Modal Styles */
-.modal-content {
-    border-radius: 12px;
+/* ===== MODERN MODAL STYLES ===== */
+
+/* Modal Backdrop with Blur Effect */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Modern Modal Container */
+.modern-modal {
     border: none;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(135deg, #A0EACF 0%, #8EC5FC 100%);
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
 }
 
-.modal-header {
-    border-bottom: 1px solid #e9ecef;
-    padding: 1.5rem;
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-.modal-title {
+/* Modern Modal Header */
+.modern-modal-header {
+    background: transparent;
+    border: none;
+    padding: 2rem 2rem 1rem 2rem;
+    position: relative;
+}
+
+.modal-title-section {
+    flex: 1;
+}
+
+.modern-modal .modal-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.75rem;
     font-weight: 700;
     color: #1a1a1a;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
 }
 
-.modal-body {
-    padding: 1.5rem;
+.modal-subtitle {
+    font-size: 1rem;
+    color: #4a5568;
+    margin: 0;
+    font-weight: 400;
+    line-height: 1.4;
 }
 
-.modal-footer {
-    border-top: 1px solid #e9ecef;
-    padding: 1.5rem;
+/* Modern Close Button */
+.modern-btn-close {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4a5568;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
 }
 
-.modal-footer .btn-primary {
-    background: #004AAD;
+.modern-btn-close:hover {
+    background: rgba(255, 255, 255, 1);
+    color: #2d3748;
+    transform: scale(1.05);
+}
+
+/* Modern Modal Body */
+.modern-modal-body {
+    padding: 1rem 2rem 2rem 2rem;
+}
+
+/* Modern Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group:nth-child(3),
+.form-group:nth-child(4) {
+    grid-column: span 1;
+}
+
+.form-group:first-child,
+.form-group:nth-child(2) {
+    grid-column: span 1;
+}
+
+/* Modern Form Labels */
+.modern-form .form-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.025em;
+}
+
+/* Modern Form Inputs */
+.modern-input,
+.modern-select {
+    font-family: 'Inter', sans-serif;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    color: #2d3748;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.modern-input:focus,
+.modern-select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.modern-input::placeholder {
+    color: #a0aec0;
+    font-weight: 400;
+}
+
+/* Modern Modal Footer */
+.modern-modal-footer {
+    background: transparent;
+    border: none;
+    padding: 1rem 2rem 2rem 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* Modern Buttons */
+.btn-cancel {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #4a5568;
+    padding: 0.875rem 1.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: rgba(255, 255, 255, 0.8);
+    color: #2d3748;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-add-user-submit {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
     border: none;
     color: white;
+    padding: 0.875rem 1.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
 }
 
-.modal-footer .btn-primary:hover {
-    background: #003d91;
+.btn-add-user-submit:hover {
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
     color: white;
+}
+
+/* Responsive Design for Modal */
+@media (max-width: 768px) {
+    .modern-modal {
+        margin: 1rem;
+        border-radius: 16px;
+    }
+    
+    .modern-modal-header {
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
+    }
+    
+    .modern-modal .modal-title {
+        font-size: 1.5rem;
+    }
+    
+    .modal-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .modern-modal-body {
+        padding: 1rem 1.5rem 1.5rem 1.5rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    
+    .form-group {
+        grid-column: span 1 !important;
+    }
+    
+    .modern-modal-footer {
+        padding: 1rem 1.5rem 1.5rem 1.5rem;
+        flex-direction: column;
+    }
+    
+    .btn-cancel,
+    .btn-add-user-submit {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .modern-btn-close {
+        top: 1rem;
+        right: 1rem;
+        width: 36px;
+        height: 36px;
+    }
 }
 
 /* Dropdown Menu */

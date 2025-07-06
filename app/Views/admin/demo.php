@@ -155,8 +155,8 @@
                 <div class="tab-content" id="demoTabsContent">
                     <!-- Demo Program Tab -->
                     <div class="tab-pane fade show active" id="demo-program" role="tabpanel" aria-labelledby="demo-program-tab">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-10">
+                        <div class="row">
+                            <div class="col-12">
                                 <div class="demo-cards-grid">
                                     <?php foreach ($demos as $demo): ?>
                                     <div class="demo-card card h-100">

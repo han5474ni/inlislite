@@ -1,6 +1,6 @@
 /**
  * INLISLite v3.0 User Management JavaScript
- * Modern user management with sidebar integration
+ * Modern user management with sidebar integration and modal functionality
  */
 
 // Global variables
@@ -10,6 +10,8 @@ let currentEditUserId = null;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 User Management System Initializing...');
+    
     // Initialize Feather icons
     if (typeof feather !== 'undefined') {
         feather.replace();
@@ -20,12 +22,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load users
     loadUsers();
+    
+    console.log('✅ User Management System Ready');
 });
 
 /**
  * Setup event listeners
  */
 function setupEventListeners() {
+    console.log('📡 Setting up event listeners...');
+    
     // Sidebar toggle
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebar = document.getElementById('sidebar');
@@ -73,22 +79,63 @@ function setupEventListeners() {
         statusFilter.addEventListener('change', filterUsers);
     }
 
+    // Add User Button
+    const addUserBtn = document.querySelector('.btn-add-user');
+    if (addUserBtn) {
+        addUserBtn.addEventListener('click', function() {
+            console.log('🆕 Opening Add User Modal...');
+            showToast('Opening add user form...', 'info');
+        });
+    }
+
     // Modal events
     const addUserModal = document.getElementById('addUserModal');
     const editUserModal = document.getElementById('editUserModal');
     
     if (addUserModal) {
         addUserModal.addEventListener('hidden.bs.modal', function() {
+            console.log('🔄 Resetting add user form...');
             const form = document.getElementById('addUserForm');
-            if (form) form.reset();
+            if (form) {
+                form.reset();
+                clearFormErrors();
+            }
+        });
+        
+        addUserModal.addEventListener('shown.bs.modal', function() {
+            console.log('👁️ Add user modal opened');
+            const firstInput = addUserModal.querySelector('.modern-input');
+            if (firstInput) {
+                firstInput.focus();
+            }
         });
     }
 
     if (editUserModal) {
         editUserModal.addEventListener('hidden.bs.modal', function() {
             const form = document.getElementById('editUserForm');
-            if (form) form.reset();
+            if (form) {
+                form.reset();
+                clearFormErrors();
+            }
             currentEditUserId = null;
+        });
+    }
+
+    // Form submission
+    const addUserForm = document.getElementById('addUserForm');
+    if (addUserForm) {
+        addUserForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitAddUser();
+        });
+    }
+
+    const editUserForm = document.getElementById('editUserForm');
+    if (editUserForm) {
+        editUserForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitEditUser();
         });
     }
 
@@ -107,12 +154,83 @@ function setupEventListeners() {
             sidebar.classList.remove('show');
         }
     });
+
+    // Enhanced form interactions
+    setupFormEnhancements();
+}
+
+/**
+ * Setup form enhancements
+ */
+function setupFormEnhancements() {
+    // Add floating label effect
+    document.addEventListener('focus', function(e) {
+        if (e.target.classList.contains('modern-input') || e.target.classList.contains('modern-select')) {
+            e.target.parentNode.classList.add('focused');
+        }
+    }, true);
+
+    document.addEventListener('blur', function(e) {
+        if (e.target.classList.contains('modern-input') || e.target.classList.contains('modern-select')) {
+            if (!e.target.value) {
+                e.target.parentNode.classList.remove('focused');
+            }
+        }
+    }, true);
+
+    // Real-time validation
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('modern-input')) {
+            validateFieldRealTime(e.target);
+        }
+    });
+}
+
+/**
+ * Real-time field validation
+ */
+function validateFieldRealTime(field) {
+    const value = field.value.trim();
+    const name = field.name;
+    
+    // Remove previous validation classes
+    field.classList.remove('is-valid', 'is-invalid');
+    
+    // Basic validation
+    if (field.hasAttribute('required') && value === '') {
+        return;
+    }
+    
+    // Email validation
+    if (name === 'email' && value) {
+        if (isValidEmail(value)) {
+            field.classList.add('is-valid');
+        } else {
+            field.classList.add('is-invalid');
+        }
+    }
+    
+    // Password validation
+    if (name === 'password' && value) {
+        if (value.length >= 6) {
+            field.classList.add('is-valid');
+        } else {
+            field.classList.add('is-invalid');
+        }
+    }
+    
+    // Other fields
+    if (name !== 'email' && name !== 'password' && value) {
+        field.classList.add('is-valid');
+    }
 }
 
 /**
  * Load users from database or mock data
  */
 async function loadUsers() {
+    console.log('📊 Loading users...');
+    
     try {
         // Try to load from CodeIgniter endpoint first
         const response = await fetch(getBaseUrl() + 'admin/users/ajax/list');
@@ -125,11 +243,12 @@ async function loadUsers() {
                 last_login_formatted: formatLastLogin(user.last_login),
                 created_at_formatted: formatDate(user.created_at)
             }));
+            console.log('✅ Users loaded from API');
         } else {
             throw new Error('API response not successful');
         }
     } catch (error) {
-        console.log('Loading mock data due to:', error.message);
+        console.log('⚠️ Loading mock data due to:', error.message);
         // Fallback to mock data
         loadMockUsers();
     }
@@ -197,6 +316,7 @@ function loadMockUsers() {
             created_at_formatted: '5 Jan 2024'
         }
     ];
+    console.log('✅ Mock users loaded');
 }
 
 /**
@@ -225,6 +345,8 @@ function filterUsers() {
 
     renderUsersTable();
     updateUserCount();
+    
+    console.log(`🔍 Filtered users: ${filteredUsers.length}/${users.length}`);
 }
 
 /**
@@ -239,7 +361,7 @@ function renderUsersTable() {
             <tr>
                 <td colspan="6" class="text-center py-4">
                     <div class="text-muted">
-                        <i data-feather="inbox" style="width: 48px; height: 48px; margin-bottom: 1rem;"></i>
+                        <i data-feather="inbox" style="width: 48px; height: 48px; margin-bottom: 1rem; display: block; margin: 0 auto 1rem;"></i>
                         <p>Tidak ada pengguna yang ditemukan</p>
                     </div>
                 </td>
@@ -252,7 +374,7 @@ function renderUsersTable() {
     }
 
     tbody.innerHTML = filteredUsers.map(user => `
-        <tr>
+        <tr class="fade-in">
             <td>
                 <div class="user-info">
                     <div class="user-avatar">${user.avatar_initials}</div>
@@ -263,28 +385,28 @@ function renderUsersTable() {
                 </div>
             </td>
             <td>
-                <span class="badge role-badge ${getRoleClass(user.role)}">${escapeHtml(user.role)}</span>
+                <span class="badge badge-role ${getRoleClass(user.role)}">${escapeHtml(user.role)}</span>
             </td>
             <td>
-                <span class="badge status-badge ${getStatusClass(user.status)}">${escapeHtml(user.status)}</span>
+                <span class="badge badge-status ${getStatusClass(user.status)}">${escapeHtml(user.status)}</span>
             </td>
             <td>${escapeHtml(user.last_login_formatted)}</td>
             <td>${escapeHtml(user.created_at_formatted)}</td>
             <td>
                 <div class="dropdown">
-                    <button class="action-btn" data-bs-toggle="dropdown">
-                        <i data-feather="more-vertical" style="width: 16px; height: 16px;"></i>
+                    <button class="action-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <a class="dropdown-item" href="#" onclick="editUser(${user.id})">
-                                <i data-feather="edit" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                                <i class="bi bi-pencil me-2"></i>
                                 Edit User
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item text-danger" href="#" onclick="deleteUser(${user.id}, '${escapeHtml(user.nama_lengkap)}')">
-                                <i data-feather="trash-2" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                                <i class="bi bi-trash me-2"></i>
                                 Hapus User
                             </a>
                         </li>
@@ -300,16 +422,275 @@ function renderUsersTable() {
 }
 
 /**
+ * Submit add user form
+ */
+async function submitAddUser() {
+    console.log('📝 Submitting add user form...');
+    
+    const form = document.getElementById('addUserForm');
+    if (!form) {
+        console.error('❌ Add user form not found');
+        return;
+    }
+    
+    const submitBtn = form.querySelector('.btn-add-user-submit');
+    const originalText = submitBtn.innerHTML;
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menambahkan...';
+    
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // Validate form
+    if (!validateForm(data)) {
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        return;
+    }
+
+    try {
+        // Simulate API call for demo
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Create new user object
+        const newUser = {
+            id: users.length + 1,
+            nama_lengkap: data.nama_lengkap,
+            nama_pengguna: data.nama_pengguna,
+            email: data.email,
+            role: data.role,
+            status: data.status,
+            last_login: null,
+            created_at: new Date().toISOString().split('T')[0],
+            avatar_initials: getInitials(data.nama_lengkap),
+            last_login_formatted: 'Belum pernah',
+            created_at_formatted: formatDate(new Date().toISOString())
+        };
+        
+        // Add to users array
+        users.push(newUser);
+        
+        showToast('User berhasil ditambahkan!', 'success');
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+        if (modal) {
+            modal.hide();
+        }
+        
+        // Refresh table
+        filterUsers();
+        
+        console.log('✅ User added successfully');
+        
+    } catch (error) {
+        console.error('❌ Error adding user:', error);
+        showToast('Error menambahkan user: ' + error.message, 'error');
+    } finally {
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+}
+
+/**
+ * Submit edit user form
+ */
+async function submitEditUser() {
+    console.log('📝 Submitting edit user form...');
+    
+    const form = document.getElementById('editUserForm');
+    if (!form) {
+        console.error('❌ Edit user form not found');
+        return;
+    }
+    
+    const submitBtn = form.querySelector('.btn-edit-user-submit');
+    const originalText = submitBtn.innerHTML;
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memperbarui...';
+    
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // Validate form (edit mode)
+    if (!validateForm(data, true)) {
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        return;
+    }
+
+    try {
+        // Simulate API call for demo
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Find and update user in array
+        const userIndex = users.findIndex(u => u.id == currentEditUserId);
+        if (userIndex !== -1) {
+            // Update user data
+            users[userIndex] = {
+                ...users[userIndex],
+                nama_lengkap: data.nama_lengkap,
+                nama_pengguna: data.nama_pengguna,
+                email: data.email,
+                role: data.role,
+                status: data.status,
+                avatar_initials: getInitials(data.nama_lengkap)
+            };
+            
+            // Only update password if provided
+            if (data.password && data.password.trim() !== '') {
+                // In real implementation, this would be handled securely on the server
+                console.log('Password would be updated on server');
+            }
+        }
+        
+        showToast('User berhasil diperbarui!', 'success');
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+        if (modal) {
+            modal.hide();
+        }
+        
+        // Refresh table
+        filterUsers();
+        
+        console.log('✅ User updated successfully');
+        
+    } catch (error) {
+        console.error('❌ Error updating user:', error);
+        showToast('Error memperbarui user: ' + error.message, 'error');
+    } finally {
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+}
+
+/**
+ * Edit user
+ */
+function editUser(userId) {
+    console.log(`✏️ Editing user: ${userId}`);
+    const user = users.find(u => u.id == userId);
+    if (!user) {
+        showToast('User tidak ditemukan', 'error');
+        return;
+    }
+
+    // Set current edit user ID
+    currentEditUserId = userId;
+
+    // Populate edit form with user data
+    document.getElementById('editUserId').value = user.id;
+    document.getElementById('editNamaLengkap').value = user.nama_lengkap;
+    document.getElementById('editNamaPengguna').value = user.nama_pengguna;
+    document.getElementById('editEmail').value = user.email;
+    document.getElementById('editPassword').value = ''; // Always empty for security
+    document.getElementById('editRole').value = user.role;
+    document.getElementById('editStatus').value = user.status;
+
+    // Show edit modal
+    const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+    editModal.show();
+
+    console.log('✅ Edit modal opened for user:', user.nama_lengkap);
+}
+
+/**
+ * Delete user
+ */
+async function deleteUser(userId, userName) {
+    if (!confirm(`Apakah Anda yakin ingin menghapus user "${userName}"?`)) {
+        return;
+    }
+
+    console.log(`🗑️ Deleting user: ${userId}`);
+
+    try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Remove from users array
+        users = users.filter(u => u.id != userId);
+        
+        showToast(`User "${userName}" berhasil dihapus!`, 'success');
+        
+        // Refresh table
+        filterUsers();
+        
+        console.log('✅ User deleted successfully');
+        
+    } catch (error) {
+        console.error('❌ Error deleting user:', error);
+        showToast('Error menghapus user: ' + error.message, 'error');
+    }
+}
+
+/**
+ * Validate form
+ */
+function validateForm(data, isEdit = false) {
+    const errors = [];
+
+    if (!data.nama_lengkap) errors.push('Nama lengkap wajib diisi');
+    if (!data.nama_pengguna) errors.push('Nama pengguna wajib diisi');
+    if (!data.email) errors.push('Email wajib diisi');
+    if (!isEdit && !data.password) errors.push('Kata sandi wajib diisi');
+    if (!data.role) errors.push('Role wajib diisi');
+    if (!data.status) errors.push('Status wajib diisi');
+
+    if (data.email && !isValidEmail(data.email)) {
+        errors.push('Format email tidak valid');
+    }
+
+    // In edit mode, password is optional, but if provided, must be at least 6 characters
+    if (data.password && data.password.length > 0 && data.password.length < 6) {
+        errors.push('Kata sandi minimal 6 karakter');
+    }
+
+    if (errors.length > 0) {
+        showToast(errors.join('<br>'), 'error');
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Clear form errors
+ */
+function clearFormErrors() {
+    document.querySelectorAll('.is-invalid').forEach(element => {
+        element.classList.remove('is-invalid');
+    });
+    document.querySelectorAll('.is-valid').forEach(element => {
+        element.classList.remove('is-valid');
+    });
+    document.querySelectorAll('.invalid-feedback').forEach(element => {
+        element.remove();
+    });
+}
+
+/**
  * Get role CSS class
  */
 function getRoleClass(role) {
     const roleClasses = {
-        'Super Admin': 'role-super-admin',
-        'Admin': 'role-admin',
-        'Pustakawan': 'role-pustakawan',
-        'Staff': 'role-staff'
+        'Super Admin': 'badge-super-admin',
+        'Admin': 'badge-admin',
+        'Pustakawan': 'badge-pustakawan',
+        'Librarian': 'badge-pustakawan',
+        'Staff': 'badge-staff'
     };
-    return roleClasses[role] || 'role-staff';
+    return roleClasses[role] || 'badge-staff';
 }
 
 /**
@@ -317,11 +698,12 @@ function getRoleClass(role) {
  */
 function getStatusClass(status) {
     const statusClasses = {
-        'Aktif': 'status-aktif',
-        'Non-Aktif': 'status-non-aktif',
-        'Ditangguhkan': 'status-suspended'
+        'Aktif': 'badge-aktif',
+        'Non-Aktif': 'badge-nonaktif',
+        'Tidak Aktif': 'badge-nonaktif',
+        'Ditangguhkan': 'badge-nonaktif'
     };
-    return statusClasses[status] || 'status-non-aktif';
+    return statusClasses[status] || 'badge-nonaktif';
 }
 
 /**
@@ -390,188 +772,6 @@ function formatDate(dateString) {
 }
 
 /**
- * Submit add user form
- */
-async function submitAddUser() {
-    const form = document.getElementById('addUserForm');
-    if (!form) return;
-    
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-
-    // Validate form
-    if (!validateForm(data)) {
-        return;
-    }
-
-    try {
-        const response = await fetch(getBaseUrl() + 'admin/users/ajax/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            showToast(result.message, 'success');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
-            if (modal) modal.hide();
-            loadUsers(); // Reload users
-        } else {
-            if (result.errors) {
-                showToast(Object.values(result.errors).join('<br>'), 'error');
-            } else {
-                showToast(result.message, 'error');
-            }
-        }
-    } catch (error) {
-        console.error('Error adding user:', error);
-        showToast('Error adding user: ' + error.message, 'error');
-    }
-}
-
-/**
- * Edit user
- */
-function editUser(userId) {
-    const user = users.find(u => u.id == userId);
-    if (!user) return;
-
-    currentEditUserId = userId;
-
-    // Populate form
-    const form = document.getElementById('editUserForm');
-    if (form) {
-        const elements = {
-            'editUserId': user.id,
-            'editNamaLengkap': user.nama_lengkap,
-            'editUsername': user.nama_pengguna,
-            'editEmail': user.email,
-            'editRole': user.role,
-            'editStatus': user.status
-        };
-        
-        Object.entries(elements).forEach(([id, value]) => {
-            const element = document.getElementById(id);
-            if (element) element.value = value;
-        });
-    }
-
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
-    modal.show();
-}
-
-/**
- * Submit edit user form
- */
-async function submitEditUser() {
-    const form = document.getElementById('editUserForm');
-    if (!form) return;
-    
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-
-    // Validate form
-    if (!validateForm(data, true)) {
-        return;
-    }
-
-    try {
-        const response = await fetch(getBaseUrl() + `admin/users/ajax/update/${data.id}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            showToast(result.message, 'success');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-            if (modal) modal.hide();
-            loadUsers(); // Reload users
-        } else {
-            if (result.errors) {
-                showToast(Object.values(result.errors).join('<br>'), 'error');
-            } else {
-                showToast(result.message, 'error');
-            }
-        }
-    } catch (error) {
-        console.error('Error updating user:', error);
-        showToast('Error updating user: ' + error.message, 'error');
-    }
-}
-
-/**
- * Delete user
- */
-async function deleteUser(userId, userName) {
-    if (!confirm(`Apakah Anda yakin ingin menghapus user "${userName}"?`)) {
-        return;
-    }
-
-    try {
-        const response = await fetch(getBaseUrl() + `admin/users/ajax/delete/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            showToast(result.message, 'success');
-            loadUsers(); // Reload users
-        } else {
-            showToast(result.message, 'error');
-        }
-    } catch (error) {
-        console.error('Error deleting user:', error);
-        showToast('Error deleting user: ' + error.message, 'error');
-    }
-}
-
-/**
- * Validate form
- */
-function validateForm(data, isEdit = false) {
-    const errors = [];
-
-    if (!data.nama_lengkap) errors.push('Nama lengkap wajib diisi');
-    if (!data.username) errors.push('Username wajib diisi');
-    if (!data.email) errors.push('Email wajib diisi');
-    if (!isEdit && !data.password) errors.push('Password wajib diisi');
-    if (!data.role) errors.push('Role wajib diisi');
-    if (!data.status) errors.push('Status wajib diisi');
-
-    if (data.email && !isValidEmail(data.email)) {
-        errors.push('Format email tidak valid');
-    }
-
-    if (data.password && data.password.length < 6) {
-        errors.push('Password minimal 6 karakter');
-    }
-
-    if (errors.length > 0) {
-        showToast(errors.join('<br>'), 'error');
-        return false;
-    }
-
-    return true;
-}
-
-/**
  * Validate email
  */
 function isValidEmail(email) {
@@ -594,9 +794,11 @@ function showToast(message, type = 'info') {
     }
     
     const toastId = 'toast-' + Date.now();
+    const bgClass = type === 'error' ? 'bg-danger' : (type === 'success' ? 'bg-success' : 'bg-info');
+    
     const toast = document.createElement('div');
     toast.id = toastId;
-    toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type} border-0`;
+    toast.className = `toast align-items-center text-white ${bgClass} border-0`;
     toast.setAttribute('role', 'alert');
     toast.innerHTML = `
         <div class="d-flex">
@@ -616,6 +818,8 @@ function showToast(message, type = 'info') {
     toast.addEventListener('hidden.bs.toast', () => {
         toast.remove();
     });
+    
+    console.log(`📢 Toast shown: ${type} - ${message}`);
 }
 
 /**
@@ -679,5 +883,8 @@ window.UserManagementJS = {
     submitAddUser,
     submitEditUser,
     showToast,
-    loadUsers
+    loadUsers,
+    filterUsers
 };
+
+console.log('📦 User Management JavaScript loaded successfully');

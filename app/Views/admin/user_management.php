@@ -250,56 +250,134 @@
             </div>
         </div>
 
-        <!-- Add User Modal -->
-        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addUserModalLabel">Tambah User Baru</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Modern Add User Modal -->
+        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content modern-modal">
+                    <div class="modal-header modern-modal-header">
+                        <div class="modal-title-section">
+                            <h4 class="modal-title" id="addUserModalLabel">Tambahkan pengguna baru</h4>
+                            <p class="modal-subtitle">Buat akun pengguna baru dan tetapkan izin akses.</p>
+                        </div>
+                        <button type="button" class="btn-close modern-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
                     </div>
-                    <div class="modal-body">
-                        <form id="addUserForm">
+                    <div class="modal-body modern-modal-body">
+                        <form id="addUserForm" class="modern-form">
                             <?= csrf_field() ?>
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Nama Lengkap</label>
-                                    <input type="text" class="form-control" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Nama Lengkap</label>
+                                    <input type="text" class="form-control modern-input" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
                                 </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Email</label>
-                                    <input type="email" class="form-control" name="email" placeholder="Masukkan alamat email" required>
+                                <div class="form-group">
+                                    <label class="form-label">Nama Pengguna</label>
+                                    <input type="text" class="form-control modern-input" name="nama_pengguna" placeholder="Masukkan nama pengguna" required>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Role</label>
-                                    <select class="form-select" name="role" required>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control modern-input" name="email" placeholder="Masukkan alamat email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Kata Sandi</label>
+                                    <input type="password" class="form-control modern-input" name="password" placeholder="Masukkan kata sandi" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Role</label>
+                                    <select class="form-select modern-select" name="role" required>
                                         <option value="">Pilih Role</option>
-                                        <option value="Super Admin">Super Admin</option>
-                                        <option value="Admin">Admin</option>
-                                        <option value="Pustakawan">Pustakawan</option>
                                         <option value="Staff">Staff</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Librarian">Librarian</option>
                                     </select>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Status</label>
-                                    <select class="form-select" name="status" required>
+                                <div class="form-group">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select modern-select" name="status" required>
                                         <option value="">Pilih Status</option>
                                         <option value="Aktif">Aktif</option>
-                                        <option value="Non-aktif">Non-aktif</option>
+                                        <option value="Tidak Aktif">Tidak Aktif</option>
                                     </select>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Password</label>
-                                    <input type="password" class="form-control" name="password" placeholder="Masukkan password" required>
                                 </div>
                             </div>
                         </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary btn-add-user" form="addUserForm">
+                    <div class="modal-footer modern-modal-footer">
+                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+                            Batal
+                        </button>
+                        <button type="submit" class="btn btn-add-user-submit" form="addUserForm">
                             <i class="bi bi-plus-lg me-2"></i>
-                            Tambah User
+                            Tambahkan User
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modern Edit User Modal -->
+        <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content modern-modal">
+                    <div class="modal-header modern-modal-header">
+                        <div class="modal-title-section">
+                            <h4 class="modal-title" id="editUserModalLabel">Edit pengguna</h4>
+                            <p class="modal-subtitle">Perbarui informasi pengguna dan izin akses.</p>
+                        </div>
+                        <button type="button" class="btn-close modern-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body modern-modal-body">
+                        <form id="editUserForm" class="modern-form">
+                            <?= csrf_field() ?>
+                            <input type="hidden" id="editUserId" name="id">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Nama Lengkap</label>
+                                    <input type="text" class="form-control modern-input" id="editNamaLengkap" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Nama Pengguna</label>
+                                    <input type="text" class="form-control modern-input" id="editNamaPengguna" name="nama_pengguna" placeholder="Masukkan nama pengguna" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control modern-input" id="editEmail" name="email" placeholder="Masukkan alamat email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Kata Sandi Baru</label>
+                                    <input type="password" class="form-control modern-input" id="editPassword" name="password" placeholder="Kosongkan jika tidak ingin mengubah">
+                                    <small class="form-text text-muted mt-1">Kosongkan jika tidak ingin mengubah kata sandi</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Role</label>
+                                    <select class="form-select modern-select" id="editRole" name="role" required>
+                                        <option value="">Pilih Role</option>
+                                        <option value="Staff">Staff</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Librarian">Librarian</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select modern-select" id="editStatus" name="status" required>
+                                        <option value="">Pilih Status</option>
+                                        <option value="Aktif">Aktif</option>
+                                        <option value="Tidak Aktif">Tidak Aktif</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer modern-modal-footer">
+                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+                            Batal
+                        </button>
+                        <button type="submit" class="btn btn-edit-user-submit" form="editUserForm">
+                            <i class="bi bi-check-lg me-2"></i>
+                            Perbarui User
                         </button>
                     </div>
                 </div>
@@ -312,7 +390,7 @@
     <!-- Dashboard JS -->
     <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
     <!-- Custom JavaScript -->
-    <script src="<?= base_url('assets/js/user_management.js') ?>"></script>
+    <script src="<?= base_url('assets/js/admin/user_management.js') ?>"></script>
     
     <script>
         // Mark that user has visited an admin page
