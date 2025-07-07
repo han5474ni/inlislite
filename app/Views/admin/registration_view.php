@@ -243,7 +243,98 @@
                                     </span>
                                 </div>
                             </div>
+                            <?php if (!empty($registration['contact_position'])): ?>
+                            <div class="contact-item">
+                                <i class="bi bi-briefcase-fill"></i>
+                                <div>
+                                    <label>Jabatan</label>
+                                    <span><?= esc($registration['contact_position']) ?></span>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                            <?php if (!empty($registration['website'])): ?>
+                            <div class="contact-item">
+                                <i class="bi bi-globe"></i>
+                                <div>
+                                    <label>Website</label>
+                                    <span><a href="<?= esc($registration['website']) ?>" target="_blank"><?= esc($registration['website']) ?></a></span>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                            <?php if (!empty($registration['fax'])): ?>
+                            <div class="contact-item">
+                                <i class="bi bi-printer"></i>
+                                <div>
+                                    <label>Fax</label>
+                                    <span><?= esc($registration['fax']) ?></span>
+                                </div>
+                            </div>
+                            <?php endif; ?>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Informasi Detail Section -->
+                <div class="info-card">
+                    <div class="info-header">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <h3>Informasi Detail</h3>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-row">
+                            <div class="info-field">
+                                <label>Kode Perpustakaan</label>
+                                <div class="field-display"><?= esc($registration['library_code'] ?? 'N/A') ?></div>
+                            </div>
+                            <?php if (!empty($registration['established_year'])): ?>
+                            <div class="info-field">
+                                <label>Tahun Berdiri</label>
+                                <div class="field-display"><?= esc($registration['established_year']) ?></div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <?php if (!empty($registration['address'])): ?>
+                        <div class="info-field">
+                            <label>Alamat Lengkap</label>
+                            <div class="field-display"><?= esc($registration['address']) ?></div>
+                        </div>
+                        <?php endif; ?>
+                        <div class="info-row">
+                            <?php if (!empty($registration['postal_code'])): ?>
+                            <div class="info-field">
+                                <label>Kode Pos</label>
+                                <div class="field-display"><?= esc($registration['postal_code']) ?></div>
+                            </div>
+                            <?php endif; ?>
+                            <?php if (!empty($registration['coordinates'])): ?>
+                            <div class="info-field">
+                                <label>Koordinat</label>
+                                <div class="field-display"><?= esc($registration['coordinates']) ?></div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <?php if (!empty($registration['collection_count']) || !empty($registration['member_count'])): ?>
+                        <div class="info-row">
+                            <?php if (!empty($registration['collection_count'])): ?>
+                            <div class="info-field">
+                                <label>Jumlah Koleksi</label>
+                                <div class="field-display"><?= number_format($registration['collection_count']) ?> item</div>
+                            </div>
+                            <?php endif; ?>
+                            <?php if (!empty($registration['member_count'])): ?>
+                            <div class="info-field">
+                                <label>Jumlah Anggota</label>
+                                <div class="field-display"><?= number_format($registration['member_count']) ?> orang</div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($registration['notes'])): ?>
+                        <div class="info-field">
+                            <label>Catatan</label>
+                            <div class="field-display"><?= nl2br(esc($registration['notes'])) ?></div>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup event listeners
     setupEventListeners();
     
-    // Load initial data
-    loadInitialData();
+    // Load data from existing table
+    loadDataFromTable();
     
     console.log('✅ Registration Management System Ready');
 });
@@ -56,27 +56,7 @@ function setupEventListeners() {
         });
     });
 
-    // Modal events
-    const addRegistrationModal = document.getElementById('addRegistrationModal');
-    if (addRegistrationModal) {
-        addRegistrationModal.addEventListener('hidden.bs.modal', function() {
-            const form = document.getElementById('addRegistrationForm');
-            if (form) {
-                form.reset();
-                clearFormErrors();
-            }
-        });
-    }
-
-    // Form submission
-    const addRegistrationForm = document.getElementById('addRegistrationForm');
-    if (addRegistrationForm) {
-        addRegistrationForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitAddRegistration();
-        });
-    }
-
+    
     // Action buttons
     document.addEventListener('click', function(e) {
         if (e.target.closest('.dropdown-item')) {
@@ -94,14 +74,7 @@ function setupEventListeners() {
         }
     });
 
-    // Add Registration button
-    const addRegistrationBtn = document.getElementById('addRegistrationBtn');
-    if (addRegistrationBtn) {
-        addRegistrationBtn.addEventListener('click', function() {
-            navigateToAddRegistration();
-        });
-    }
-
+    
     // Edit Registration button (for detail page)
     const editRegistrationBtn = document.getElementById('editRegistrationBtn');
     if (editRegistrationBtn) {
@@ -112,101 +85,49 @@ function setupEventListeners() {
 }
 
 /**
- * Load initial sample data
+ * Load data from existing table in the DOM
  */
-function loadInitialData() {
-    console.log('📊 Loading initial data...');
+function loadDataFromTable() {
+    console.log('📊 Loading data from existing table...');
     
-    // Sample registration data
-    registrations = [
-        {
-            id: 1,
-            library_name: 'Jakarta Public Library',
-            library_type: 'Public',
-            status: 'Active',
-            location: 'DKI Jakarta',
-            email: 'info@jakartapubliclibrary.id',
-            registration_date: '2024-01-15',
-            last_update: '2024-01-02'
-        },
-        {
-            id: 2,
-            library_name: 'University of Indonesia Library',
-            library_type: 'Academic',
-            status: 'Active',
-            location: 'Jawa Barat',
-            email: 'library@ui.ac.id',
-            registration_date: '2024-01-12',
-            last_update: '2024-01-01'
-        },
-        {
-            id: 3,
-            library_name: 'SMA Negeri 1 Bandung Library',
-            library_type: 'School',
-            status: 'Inactive',
-            location: 'Jawa Barat',
-            email: 'library@sman1bandung.sch.id',
-            registration_date: '2024-01-10',
-            last_update: '2023-12-28'
-        },
-        {
-            id: 4,
-            library_name: 'National Archives Library',
-            library_type: 'Special',
-            status: 'Active',
-            location: 'DKI Jakarta',
-            email: 'library@anri.go.id',
-            registration_date: '2024-01-08',
-            last_update: '2023-12-30'
-        },
-        {
-            id: 5,
-            library_name: 'Surabaya City Library',
-            library_type: 'Public',
-            status: 'Active',
-            location: 'Jawa Timur',
-            email: 'info@surabayalibrary.id',
-            registration_date: '2024-01-05',
-            last_update: '2023-12-25'
-        },
-        {
-            id: 6,
-            library_name: 'Gadjah Mada University Library',
-            library_type: 'Academic',
-            status: 'Inactive',
-            location: 'DI Yogyakarta',
-            email: 'library@ugm.ac.id',
-            registration_date: '2024-01-03',
-            last_update: '2023-12-20'
-        },
-        {
-            id: 7,
-            library_name: 'SMAN 3 Jakarta Library',
-            library_type: 'School',
-            status: 'Active',
-            location: 'DKI Jakarta',
-            email: 'library@sman3jakarta.sch.id',
-            registration_date: '2024-01-01',
-            last_update: '2023-12-15'
-        },
-        {
-            id: 8,
-            library_name: 'Medan Public Library',
-            library_type: 'Public',
-            status: 'Inactive',
-            location: 'Sumatera Utara',
-            email: 'info@medanlibrary.id',
-            registration_date: '2023-12-28',
-            last_update: '2023-12-10'
+    const tableBody = document.getElementById('registrationTableBody');
+    if (!tableBody) {
+        console.error('❌ Registration table body not found');
+        return;
+    }
+    
+    const rows = tableBody.querySelectorAll('tr');
+    registrations = [];
+    
+    rows.forEach((row, index) => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 5) {
+            const libraryInfo = cells[0].querySelector('.library-info');
+            const libraryName = libraryInfo ? libraryInfo.querySelector('h6').textContent.trim() : '';
+            const location = libraryInfo ? libraryInfo.querySelector('small').textContent.trim() : '';
+            
+            const typeSpan = cells[1].querySelector('.badge');
+            const statusSpan = cells[2].querySelector('.badge');
+            
+            const registration = {
+                id: index + 1,
+                library_name: libraryName,
+                library_type: typeSpan ? typeSpan.textContent.trim() : '',
+                status: statusSpan ? statusSpan.textContent.trim() : '',
+                location: location,
+                registration_date: cells[3].textContent.trim(),
+                last_update: cells[4].textContent.trim(),
+                row_element: row // Store reference to the actual DOM row
+            };
+            
+            registrations.push(registration);
         }
-    ];
+    });
     
     filteredRegistrations = [...registrations];
-    renderRegistrationsTable();
     updateRegistrationCount();
-    updateStatistics();
     
-    console.log('✅ Initial data loaded');
+    console.log(`✅ Loaded ${registrations.length} registrations from table`);
 }
 
 /**
@@ -221,31 +142,67 @@ function filterRegistrations() {
     const status = statusFilter ? statusFilter.value : '';
     const type = typeFilter ? typeFilter.value : '';
 
-    filteredRegistrations = registrations.filter(registration => {
-        const matchesSearch = search === '' || 
-            (registration.library_name && registration.library_name.toLowerCase().includes(search)) ||
-            (registration.location && registration.location.toLowerCase().includes(search)) ||
-            (registration.email && registration.email.toLowerCase().includes(search));
-        
-        const matchesStatus = status === '' || registration.status === status;
-        const matchesType = type === '' || registration.library_type === type;
+    const tableBody = document.getElementById('registrationTableBody');
+    if (!tableBody) {
+        console.error('❌ Table body not found');
+        return;
+    }
 
-        return matchesSearch && matchesStatus && matchesType;
+    const rows = tableBody.querySelectorAll('tr');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length < 5) return; // Skip if not a data row
+
+        // Get row data
+        const libraryInfo = cells[0].querySelector('.library-info');
+        const libraryName = libraryInfo ? libraryInfo.querySelector('h6').textContent.trim().toLowerCase() : '';
+        const location = libraryInfo ? libraryInfo.querySelector('small').textContent.trim().toLowerCase() : '';
+        
+        const typeSpan = cells[1].querySelector('.badge');
+        const statusSpan = cells[2].querySelector('.badge');
+        const rowType = typeSpan ? typeSpan.textContent.trim() : '';
+        const rowStatus = statusSpan ? statusSpan.textContent.trim() : '';
+
+        // Check filters
+        const matchesSearch = search === '' || 
+            libraryName.includes(search) ||
+            location.includes(search);
+        
+        const matchesStatus = status === '' || rowStatus === status;
+        const matchesType = type === '' || rowType === type;
+
+        // Show/hide row
+        if (matchesSearch && matchesStatus && matchesType) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
     });
 
-    renderRegistrationsTable();
-    updateRegistrationCount();
+    updateRegistrationCount(visibleCount);
     
-    console.log(`🔍 Filtered registrations: ${filteredRegistrations.length}/${registrations.length}`);
+    console.log(`🔍 Filtered registrations: ${visibleCount}/${rows.length} visible`);
 }
 
 /**
  * Sort table by column
  */
 function sortTable(sortBy) {
-    const isAscending = !document.querySelector(`[data-sort="${sortBy}"]`).classList.contains('asc');
+    console.log(`🔄 Sorting table by: ${sortBy}`);
     
-    // Remove all sort classes
+    const tableBody = document.getElementById('registrationTableBody');
+    if (!tableBody) {
+        console.error('❌ Table body not found');
+        return;
+    }
+    
+    const currentHeader = document.querySelector(`[data-sort="${sortBy}"]`);
+    const isAscending = !currentHeader.classList.contains('asc');
+    
+    // Remove all sort classes and reset icons
     document.querySelectorAll('.sortable').forEach(header => {
         header.classList.remove('asc', 'desc');
         const icon = header.querySelector('i');
@@ -255,36 +212,66 @@ function sortTable(sortBy) {
     });
     
     // Add sort class to current header
-    const currentHeader = document.querySelector(`[data-sort="${sortBy}"]`);
     currentHeader.classList.add(isAscending ? 'asc' : 'desc');
     const icon = currentHeader.querySelector('i');
     if (icon) {
         icon.className = isAscending ? 'bi bi-sort-up' : 'bi bi-sort-down';
     }
     
-    // Sort the data
-    filteredRegistrations.sort((a, b) => {
-        let valueA = a[sortBy];
-        let valueB = b[sortBy];
+    // Get all rows and convert to array
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    
+    // Sort rows based on the column
+    rows.sort((rowA, rowB) => {
+        let valueA, valueB;
         
-        // Handle date sorting
-        if (sortBy.includes('date')) {
-            valueA = new Date(valueA);
-            valueB = new Date(valueB);
-        } else {
-            valueA = valueA.toString().toLowerCase();
-            valueB = valueB.toString().toLowerCase();
+        // Get values based on column
+        switch(sortBy) {
+            case 'library_name':
+                valueA = rowA.querySelector('.library-info h6').textContent.trim();
+                valueB = rowB.querySelector('.library-info h6').textContent.trim();
+                break;
+            case 'library_type':
+                valueA = rowA.querySelectorAll('td')[1].querySelector('.badge').textContent.trim();
+                valueB = rowB.querySelectorAll('td')[1].querySelector('.badge').textContent.trim();
+                break;
+            case 'status':
+                valueA = rowA.querySelectorAll('td')[2].querySelector('.badge').textContent.trim();
+                valueB = rowB.querySelectorAll('td')[2].querySelector('.badge').textContent.trim();
+                break;
+            case 'registration_date':
+            case 'last_update':
+                const colIndex = sortBy === 'registration_date' ? 3 : 4;
+                valueA = rowA.querySelectorAll('td')[colIndex].textContent.trim();
+                valueB = rowB.querySelectorAll('td')[colIndex].textContent.trim();
+                // Convert to Date for proper sorting
+                valueA = new Date(valueA);
+                valueB = new Date(valueB);
+                break;
+            default:
+                valueA = '';
+                valueB = '';
         }
         
+        // Handle string comparison
+        if (typeof valueA === 'string') {
+            valueA = valueA.toLowerCase();
+            valueB = valueB.toLowerCase();
+        }
+        
+        // Sort comparison
         if (isAscending) {
-            return valueA > valueB ? 1 : -1;
+            return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
         } else {
-            return valueA < valueB ? 1 : -1;
+            return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
         }
     });
     
-    renderRegistrationsTable();
-    console.log(`📊 Table sorted by ${sortBy} (${isAscending ? 'ascending' : 'descending'})`);
+    // Clear table body and append sorted rows
+    tableBody.innerHTML = '';
+    rows.forEach(row => tableBody.appendChild(row));
+    
+    console.log(`✅ Table sorted by ${sortBy} (${isAscending ? 'ascending' : 'descending'})`);
 }
 
 /**
@@ -511,7 +498,7 @@ function downloadData() {
     
     // Simulate download process
     setTimeout(() => {
-        generateCSVDownload(filteredRegistrations);
+        generateCSVDownload();
         
         // Reset button state
         downloadBtn.innerHTML = originalText;
@@ -522,36 +509,56 @@ function downloadData() {
 }
 
 /**
- * Generate CSV download
+ * Generate CSV download from current table data
  */
-function generateCSVDownload(data) {
+function generateCSVDownload() {
+    const tableBody = document.getElementById('registrationTableBody');
+    if (!tableBody) {
+        console.error('❌ Table body not found');
+        return;
+    }
+
     // CSV headers
     const headers = [
-        'ID',
         'Library Name',
-        'Library Type',
+        'Library Type', 
         'Status',
         'Location',
-        'Email',
         'Registration Date',
         'Last Update'
     ];
     
-    // Convert data to CSV format
+    // Convert table data to CSV format
     let csvContent = headers.join(',') + '\n';
     
-    data.forEach(registration => {
-        const row = [
-            registration.id,
-            `"${registration.library_name.replace(/"/g, '""')}"`,
-            registration.library_type,
-            registration.status,
-            `"${registration.location.replace(/"/g, '""')}"`,
-            registration.email,
-            registration.registration_date,
-            registration.last_update
-        ];
-        csvContent += row.join(',') + '\n';
+    // Get visible rows only
+    const visibleRows = tableBody.querySelectorAll('tr:not([style*="display: none"])');
+    
+    visibleRows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 5) {
+            const libraryInfo = cells[0].querySelector('.library-info');
+            const libraryName = libraryInfo ? libraryInfo.querySelector('h6').textContent.trim() : '';
+            const location = libraryInfo ? libraryInfo.querySelector('small').textContent.trim() : '';
+            
+            const typeSpan = cells[1].querySelector('.badge');
+            const statusSpan = cells[2].querySelector('.badge');
+            const libraryType = typeSpan ? typeSpan.textContent.trim() : '';
+            const status = statusSpan ? statusSpan.textContent.trim() : '';
+            
+            const registrationDate = cells[3].textContent.trim();
+            const lastUpdate = cells[4].textContent.trim();
+            
+            const row = [
+                `"${libraryName.replace(/"/g, '""')}"`,
+                libraryType,
+                status,
+                `"${location.replace(/"/g, '""')}"`,
+                registrationDate,
+                lastUpdate
+            ];
+            csvContent += row.join(',') + '\n';
+        }
     });
     
     // Create and trigger download
@@ -615,10 +622,19 @@ function getStatusClass(status) {
 }
 
 // Update registration count
-function updateRegistrationCount() {
+function updateRegistrationCount(count = null) {
     const registrationCountElement = document.getElementById('registrationCount');
     if (registrationCountElement) {
-        registrationCountElement.textContent = filteredRegistrations.length;
+        if (count !== null) {
+            registrationCountElement.textContent = count;
+        } else {
+            // Count visible rows
+            const tableBody = document.getElementById('registrationTableBody');
+            if (tableBody) {
+                const visibleRows = tableBody.querySelectorAll('tr:not([style*="display: none"])');
+                registrationCountElement.textContent = visibleRows.length;
+            }
+        }
     }
 }
 

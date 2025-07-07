@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeCopyButtons();
     initializeTabSwitching();
     initializeAnimations();
+    initializeDemoManagement();
     
     /**
      * Initialize demo program buttons
@@ -356,5 +357,101 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeDemoStats();
     initializeResponsiveBehavior();
     
+    /**
+     * Initialize demo management functionality
+     */
+    function initializeDemoManagement() {
+        // Add Demo button
+        const addDemoBtn = document.getElementById('btnAddDemo');
+        if (addDemoBtn) {
+            addDemoBtn.addEventListener('click', function() {
+                showAddDemoModal();
+            });
+        }
+        
+        // Edit buttons
+        const editButtons = document.querySelectorAll('.btn-edit');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const demoName = row.querySelector('.demo-entry-name').textContent;
+                showEditDemoModal(demoName);
+            });
+        });
+        
+        // Delete buttons
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const demoName = row.querySelector('.demo-entry-name').textContent;
+                showDeleteConfirmation(demoName, row);
+            });
+        });
+    }
+    
+    /**
+     * Show Add Demo Modal (placeholder)
+     */
+    function showAddDemoModal() {
+        showAlert('Modal "Tambah Demo" akan dibuka. Fitur ini sedang dalam pengembangan.', 'info');
+        
+        // Placeholder for modal functionality
+        console.log('Add Demo modal would open here');
+        
+        // Future implementation would show a modal with form fields:
+        // - Demo Name
+        // - Platform
+        // - URL
+        // - Username/Password
+        // - Description
+        // - Features
+    }
+    
+    /**
+     * Show Edit Demo Modal (placeholder)
+     */
+    function showEditDemoModal(demoName) {
+        showAlert(`Modal edit untuk "${demoName}" akan dibuka. Fitur ini sedang dalam pengembangan.`, 'info');
+        
+        // Placeholder for modal functionality
+        console.log(`Edit Demo modal for "${demoName}" would open here`);
+        
+        // Future implementation would:
+        // 1. Load existing demo data
+        // 2. Populate form fields
+        // 3. Allow editing
+        // 4. Save changes
+    }
+    
+    /**
+     * Show Delete Confirmation
+     */
+    function showDeleteConfirmation(demoName, row) {
+        const confirmed = confirm(`Apakah Anda yakin ingin menghapus demo "${demoName}"?\n\nTindakan ini tidak dapat dibatalkan.`);
+        
+        if (confirmed) {
+            // Add loading state to row
+            row.style.opacity = '0.5';
+            row.style.pointerEvents = 'none';
+            
+            // Simulate deletion process
+            setTimeout(() => {
+                // Add fade-out animation
+                row.style.transition = 'all 0.3s ease';
+                row.style.transform = 'translateX(-100%)';
+                row.style.opacity = '0';
+                
+                // Remove row after animation
+                setTimeout(() => {
+                    row.remove();
+                    showAlert(`Demo "${demoName}" berhasil dihapus.`, 'success');
+                }, 300);
+            }, 1000);
+            
+            showAlert(`Menghapus demo "${demoName}"...`, 'warning');
+        }
+    }
+
     console.log('Demo Program INLISLite v3.0 - Interactive functionality loaded successfully');
 });

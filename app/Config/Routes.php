@@ -11,6 +11,15 @@ use CodeIgniter\Router\RouteCollection;
 // ============================================================================
 
 // Homepage - Public access
+// Image serving routes (for archive folder images)
+$routes->get('images/profile/(:segment)', 'ImageController::profile/$1');
+$routes->get('images/(:segment)/(:segment)', 'ImageController::serve/$1/$2');
+
+// Test upload route (remove in production)
+$routes->get('test-upload', function() {
+    return view('test_profile_upload');
+});
+
 $routes->get('/', 'Public\PublicController::index');
 $routes->get('home', 'Public\PublicController::index');
 
@@ -129,10 +138,22 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     });
     
     // Profile Management
-    $routes->get('profile', 'AdminController::profile');
-    $routes->post('profile/update', 'AdminController::updateProfile');
-    $routes->post('profile/change-password', 'AdminController::changePassword');
+    $routes->get('profile', '\App\Controllers\ProfileController::index');
+    $routes->post('profile/update', '\App\Controllers\ProfileController::updateProfile');
     $routes->post('profile/upload-photo', '\App\Controllers\ProfileController::uploadPhoto');
+    $routes->get('profile/data', '\App\Controllers\ProfileController::getProfile');
+    $routes->get('profile/data/(:num)', '\App\Controllers\ProfileController::getProfile/$1');
+    $routes->get('profile/activities', '\App\Controllers\ProfileController::getActivityHistory');
+    $routes->get('profile/sync-status', '\App\Controllers\ProfileController::checkSyncStatus');
+    $routes->post('profile/fix-sync', '\App\Controllers\ProfileController::fixSynchronization');
+    
+    // Profile Testing (remove in production)
+    $routes->get('profile-test', 'ProfileTestController::index');
+    $routes->post('profile-test/sync', 'ProfileTestController::testSync');
+    
+    // Profile Debug (remove in production)
+    $routes->get('profile-debug', 'ProfileDebugController::testUpload');
+    $routes->post('profile-debug/upload-photo', 'ProfileDebugController::uploadPhoto');
     
     // Patch Management
     $routes->group('patches', function($routes) {

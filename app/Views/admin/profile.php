@@ -270,12 +270,15 @@
         </div>
     </main>
 
+    <!-- Toast Container -->
+    <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1055;"></div>
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Dashboard JS -->
     <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
     <!-- Custom JavaScript -->
-    <script src="<?= base_url('assets/js/admin/profile-new.js') ?>"></script>
+    <script src="<?= base_url('assets/js/admin/profile.js') ?>"></script>
     
     <style>
         /* Logout button styling - matching login button style */

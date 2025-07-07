@@ -1,436 +1,337 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - INLISLite v3.0</title>
+    <title><?= $title ?? 'Login - INLISLite v3.0' ?></title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --primary-green: #34a853;
-            --primary-blue: #007bff;
-            --gradient-bg: linear-gradient(135deg, #007bff 0%, #34a853 100%);
-            --text-dark: #212529;
-            --text-muted: #6c757d;
-            --border-color: #dee2e6;
-            --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
-            --border-radius: 0.5rem;
-            --transition: all 0.3s ease;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gradient-bg);
+            background: linear-gradient(180deg, #2DA84D 0%, #004AAD 100%);
             min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+            flex-direction: column;
         }
-
-        .login-container {
-            max-width: 450px;
-            width: 100%;
-        }
-
-        .login-card {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
+        
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
         }
-
-        .login-header {
-            background: var(--gradient-bg);
+        
+        .back-arrow {
+            background: none;
+            border: none;
             color: white;
-            padding: 2.5rem 2rem 2rem;
-            text-align: center;
-        }
-
-        .logo-container {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.2);
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 1rem;
+            padding: 0.5rem;
             border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .back-arrow:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-title {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 2rem;
-            color: #ffd700;
+            padding: 6rem 1rem 2rem;
         }
-
-        .login-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .login-subtitle {
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-
-        .login-body {
+        
+        .login-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 350px;
             padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
-
+        
+        .login-title {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            width: 55px;
+            height: 55px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+        
         .form-group {
             margin-bottom: 1.5rem;
         }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
+        
         .form-control {
-            border: 2px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 0.875rem 1rem;
-            font-size: 1rem;
-            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 16px;
             width: 100%;
+            transition: all 0.3s ease;
         }
-
+        
         .form-control:focus {
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
             outline: none;
         }
-
-        .password-wrapper {
+        
+        .form-control::placeholder {
+            color: #6c757d;
+        }
+        
+        .password-field {
             position: relative;
         }
-
+        
         .password-toggle {
             position: absolute;
-            right: 1rem;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: var(--text-muted);
+            color: #6c757d;
             cursor: pointer;
-            padding: 0.25rem;
-            border-radius: 0.25rem;
-            transition: var(--transition);
+            padding: 0;
+            font-size: 1.1rem;
         }
-
+        
         .password-toggle:hover {
-            color: var(--primary-blue);
-            background: rgba(0, 123, 255, 0.1);
+            color: #495057;
         }
-
-        .password-strength {
-            margin-top: 0.5rem;
-            padding: 0.75rem;
-            border-radius: var(--border-radius);
-            background: #f8f9fa;
-            border: 1px solid var(--border-color);
-            display: none;
-        }
-
-        .password-strength.show {
-            display: block;
-        }
-
-        .strength-meter {
-            height: 6px;
-            background: #e9ecef;
-            border-radius: 3px;
-            margin-bottom: 0.5rem;
-            overflow: hidden;
-        }
-
-        .strength-bar {
-            height: 100%;
-            width: 0%;
-            transition: var(--transition);
-            border-radius: 3px;
-        }
-
-        .strength-very-weak { background: #dc3545; }
-        .strength-weak { background: #fd7e14; }
-        .strength-fair { background: #ffc107; }
-        .strength-good { background: #20c997; }
-        .strength-strong { background: #28a745; }
-
-        .strength-text {
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .strength-requirements {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .requirement {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .requirement.met {
-            color: var(--primary-green);
-        }
-
-        .requirement.not-met {
-            color: #dc3545;
-        }
-
-        .btn-login {
-            background: var(--gradient-bg);
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 0.875rem 2rem;
-            font-weight: 600;
-            font-size: 1rem;
+        
+        .login-btn {
+            background: #333333;
             color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 16px;
+            font-weight: bold;
             width: 100%;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
         }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+        
+        .login-btn:hover {
+            background: #222222;
+            transform: translateY(-1px);
         }
-
-        .btn-login:disabled {
-            opacity: 0.6;
+        
+        .login-btn:disabled {
+            opacity: 0.7;
             cursor: not-allowed;
             transform: none;
         }
-
-        .alert {
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .alert-danger {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-            border: 1px solid rgba(220, 53, 69, 0.2);
-        }
-
-        .alert-success {
-            background: rgba(40, 167, 69, 0.1);
-            color: var(--primary-green);
-            border: 1px solid rgba(40, 167, 69, 0.2);
-        }
-
-        .forgot-password {
+        
+        .register-text {
             text-align: center;
-            margin-top: 1.5rem;
+            color: white;
+            font-size: 14px;
         }
-
-        .forgot-password a {
-            color: var(--primary-blue);
+        
+        .register-link {
+            color: #007bff;
             text-decoration: none;
             font-weight: 500;
-            transition: var(--transition);
         }
-
-        .forgot-password a:hover {
+        
+        .register-link:hover {
             text-decoration: underline;
         }
-
-        .loading-spinner {
-            display: none;
-            width: 1rem;
-            height: 1rem;
-            margin-right: 0.5rem;
+        
+        .alert {
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 14px;
         }
-
-        /* Responsive */
+        
+        .invalid-feedback {
+            display: block;
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 0.25rem;
+        }
+        
+        /* Responsive Design */
         @media (max-width: 576px) {
-            .login-container {
-                margin: 1rem;
+            .main-content {
+                padding: 5rem 1rem 1rem;
             }
             
-            .login-header {
-                padding: 2rem 1.5rem 1.5rem;
-            }
-            
-            .login-body {
+            .login-card {
                 padding: 1.5rem;
             }
             
             .login-title {
-                font-size: 1.5rem;
+                font-size: 20px;
             }
+            
+            .top-nav {
+                padding: 0.75rem 1rem;
+            }
+            
+            .nav-title {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Loading spinner */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <button class="back-arrow" onclick="history.back()" title="Back">
+            <i class="bi bi-arrow-left"></i>
+        </button>
+        <h1 class="nav-title">Login</h1>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
         <div class="login-card">
-            <div class="login-header">
-                <div class="logo-container">
-                    <i class="bi bi-star-fill"></i>
-                </div>
-                <h1 class="login-title">INLISLite v3.0</h1>
-                <p class="login-subtitle">Admin Login - Sistem Perpustakaan Digital</p>
+            <h2 class="login-title">Silahkan Login</h2>
+            
+            <!-- Logo -->
+            <div class="logo-container">
+                <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" class="logo">
             </div>
             
-            <div class="login-body">
-                <!-- Alert Messages -->
-                <?php if (session()->getFlashdata('error')): ?>
-                    <div class="alert alert-danger" role="alert">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        <?= session()->getFlashdata('error') ?>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (session()->getFlashdata('success')): ?>
-                    <div class="alert alert-success" role="alert">
-                        <i class="bi bi-check-circle me-2"></i>
-                        <?= session()->getFlashdata('success') ?>
-                    </div>
-                <?php endif; ?>
-                
-                <form id="loginForm" action="<?= base_url('admin/secure-login/authenticate') ?>" method="post">
-                    <?= csrf_field() ?>
-                    
-                    <!-- Username Field -->
-                    <div class="form-group">
-                        <label for="username" class="form-label">
-                            <i class="bi bi-person me-2"></i>Username
-                        </label>
-                        <div class="input-wrapper">
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="username" 
-                                   name="username" 
-                                   placeholder="Masukkan username Anda"
-                                   value="<?= old('username') ?>"
-                                   required
-                                   autocomplete="username">
-                        </div>
-                    </div>
-                    
-                    <!-- Password Field -->
-                    <div class="form-group">
-                        <label for="password" class="form-label">
-                            <i class="bi bi-lock me-2"></i>Password
-                        </label>
-                        <div class="password-wrapper">
-                            <input type="password" 
-                                   class="form-control" 
-                                   id="password" 
-                                   name="password" 
-                                   placeholder="Masukkan password Anda"
-                                   required
-                                   autocomplete="current-password">
-                            <button type="button" class="password-toggle" id="togglePassword">
-                                <i class="bi bi-eye" id="toggleIcon"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- Password Strength Indicator (for new password) -->
-                        <div class="password-strength" id="passwordStrength">
-                            <div class="strength-meter">
-                                <div class="strength-bar" id="strengthBar"></div>
-                            </div>
-                            <div class="strength-text" id="strengthText">Masukkan password</div>
-                            <div class="strength-requirements">
-                                <div class="requirement not-met" id="req-length">
-                                    <i class="bi bi-x-circle"></i>
-                                    <span>Minimal 8 karakter</span>
-                                </div>
-                                <div class="requirement not-met" id="req-lowercase">
-                                    <i class="bi bi-x-circle"></i>
-                                    <span>Huruf kecil (a-z)</span>
-                                </div>
-                                <div class="requirement not-met" id="req-uppercase">
-                                    <i class="bi bi-x-circle"></i>
-                                    <span>Huruf besar (A-Z)</span>
-                                </div>
-                                <div class="requirement not-met" id="req-number">
-                                    <i class="bi bi-x-circle"></i>
-                                    <span>Angka (0-9)</span>
-                                </div>
-                                <div class="requirement not-met" id="req-special">
-                                    <i class="bi bi-x-circle"></i>
-                                    <span>Karakter khusus (@#$%^&*()[]{})</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Remember Me -->
-                    <div class="form-group">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberMe" name="remember_me" value="1">
-                            <label class="form-check-label" for="rememberMe">
-                                Ingat saya selama 30 hari
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <!-- Login Button -->
-                    <button type="submit" class="btn btn-login" id="loginBtn">
-                        <span class="spinner-border spinner-border-sm loading-spinner" role="status"></span>
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        Masuk
-                    </button>
-                </form>
-                
-                <!-- Forgot Password Link -->
-                <div class="forgot-password">
-                    <a href="<?= base_url('admin/forgot-password') ?>">
-                        <i class="bi bi-key me-1"></i>
-                        Lupa password?
-                    </a>
+            <!-- Error/Success Messages -->
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <?= session()->getFlashdata('error') ?>
                 </div>
+            <?php endif; ?>
+            
+            <?php if (session()->getFlashdata('success')): ?>
+                <div class="alert alert-success" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <?= session()->getFlashdata('success') ?>
+                </div>
+            <?php endif; ?>
+            
+            <!-- Login Form -->
+            <form action="<?= base_url('admin/login/authenticate') ?>" method="post" id="loginForm" novalidate>
+                <?= csrf_field() ?>
+                
+                <!-- Username Field -->
+                <div class="form-group">
+                    <input type="text" 
+                           class="form-control <?= isset($validation) && $validation->hasError('username') ? 'is-invalid' : '' ?>" 
+                           id="username" 
+                           name="username" 
+                           placeholder="Username"
+                           value="<?= old('username') ?>"
+                           required
+                           autocomplete="username">
+                    <?php if (isset($validation) && $validation->hasError('username')): ?>
+                        <div class="invalid-feedback">
+                            <?= $validation->getError('username') ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Password Field -->
+                <div class="form-group">
+                    <div class="password-field">
+                        <input type="password" 
+                               class="form-control <?= isset($validation) && $validation->hasError('password') ? 'is-invalid' : '' ?>" 
+                               id="password" 
+                               name="password" 
+                               placeholder="Password"
+                               required
+                               autocomplete="current-password">
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <?php if (isset($validation) && $validation->hasError('password')): ?>
+                        <div class="invalid-feedback">
+                            <?= $validation->getError('password') ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Login Button -->
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" id="loginSpinner" style="display: none;"></span>
+                    Login
+                </button>
+            </form>
+            
+            <!-- Register Link -->
+            <div class="register-text">
+                Belum punya akun? <a href="#" class="register-link">Daftar</a>
             </div>
         </div>
     </div>
-
+    
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const passwordInput = document.getElementById('password');
-            const togglePassword = document.getElementById('togglePassword');
-            const toggleIcon = document.getElementById('toggleIcon');
-            const passwordStrength = document.getElementById('passwordStrength');
-            const strengthBar = document.getElementById('strengthBar');
-            const strengthText = document.getElementById('strengthText');
-            const loginForm = document.getElementById('loginForm');
-            const loginBtn = document.getElementById('loginBtn');
-            const loadingSpinner = document.querySelector('.loading-spinner');
-            
             // Password toggle functionality
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
             togglePassword.addEventListener('click', function() {
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordInput.setAttribute('type', type);
@@ -442,134 +343,64 @@
                 }
             });
             
-            // Password strength checker (only show when typing new password)
-            passwordInput.addEventListener('input', function() {
-                const password = this.value;
-                
-                if (password.length > 0) {
-                    passwordStrength.classList.add('show');
-                    checkPasswordStrength(password);
-                } else {
-                    passwordStrength.classList.remove('show');
-                }
-            });
+            // Form submission handling - simplified
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const loginSpinner = document.getElementById('loginSpinner');
             
-            // Hide password strength on focus out if empty
-            passwordInput.addEventListener('blur', function() {
-                if (this.value.length === 0) {
-                    passwordStrength.classList.remove('show');
-                }
-            });
-            
-            // Form submission
             loginForm.addEventListener('submit', function(e) {
-                const username = document.getElementById('username').value.trim();
-                const password = document.getElementById('password').value;
-                
-                if (!username || !password) {
-                    e.preventDefault();
-                    showAlert('Username dan password harus diisi', 'danger');
-                    return;
-                }
-                
                 // Show loading state
                 loginBtn.disabled = true;
-                loadingSpinner.style.display = 'inline-block';
-                loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
+                loginSpinner.style.display = 'inline-block';
+                loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Logging in...';
+                
+                // Let form submit normally without validation
+                console.log('Form submitting to:', loginForm.action);
             });
             
-            // Password strength checker function
-            function checkPasswordStrength(password) {
-                let score = 0;
-                const requirements = {
-                    length: password.length >= 8,
-                    lowercase: /[a-z]/.test(password),
-                    uppercase: /[A-Z]/.test(password),
-                    number: /[0-9]/.test(password),
-                    special: /[@#$%^&*()[\]{}]/.test(password)
-                };
-                
-                // Update requirement indicators
-                Object.keys(requirements).forEach(req => {
-                    const element = document.getElementById(`req-${req}`);
-                    const icon = element.querySelector('i');
-                    
-                    if (requirements[req]) {
-                        element.classList.remove('not-met');
-                        element.classList.add('met');
-                        icon.className = 'bi bi-check-circle';
-                        score++;
-                    } else {
-                        element.classList.remove('met');
-                        element.classList.add('not-met');
-                        icon.className = 'bi bi-x-circle';
-                    }
-                });
-                
-                // Check for common weak passwords
-                const weakPasswords = [
-                    'password', '123456', '123456789', 'qwerty', 'abc123',
-                    'password123', 'admin', 'administrator', '12345678',
-                    'welcome', 'login', 'root', 'toor', 'pass'
-                ];
-                
-                const isWeak = weakPasswords.some(weak => 
-                    password.toLowerCase().includes(weak.toLowerCase())
-                );
-                
-                if (isWeak) score = Math.max(0, score - 2);
-                
-                // Check for repeated characters
-                if (/(.)\1{2,}/.test(password)) score = Math.max(0, score - 1);
-                
-                // Check for sequential characters
-                if (/123|abc|qwe/i.test(password)) score = Math.max(0, score - 1);
-                
-                // Update strength bar and text
-                updateStrengthDisplay(score, password.length);
-            }
-            
-            function updateStrengthDisplay(score, length) {
-                const strengthLevels = [
-                    { text: 'Sangat Lemah', class: 'strength-very-weak', width: 20 },
-                    { text: 'Lemah', class: 'strength-weak', width: 40 },
-                    { text: 'Cukup', class: 'strength-fair', width: 60 },
-                    { text: 'Baik', class: 'strength-good', width: 80 },
-                    { text: 'Kuat', class: 'strength-strong', width: 100 }
-                ];
-                
-                const level = Math.min(score, strengthLevels.length - 1);
-                const strength = strengthLevels[level];
-                
-                strengthBar.className = `strength-bar ${strength.class}`;
-                strengthBar.style.width = `${strength.width}%`;
-                strengthText.textContent = `Password ${strength.text}`;
-                
-                if (length === 0) {
-                    strengthText.textContent = 'Masukkan password';
-                    strengthBar.style.width = '0%';
-                    strengthBar.className = 'strength-bar';
-                }
+            function resetLoginButton() {
+                loginBtn.disabled = false;
+                loginSpinner.style.display = 'none';
+                loginBtn.innerHTML = 'Login';
             }
             
             function showAlert(message, type) {
                 const alertDiv = document.createElement('div');
-                alertDiv.className = `alert alert-${type}`;
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
                 alertDiv.innerHTML = `
                     <i class="bi bi-exclamation-triangle me-2"></i>
                     ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 `;
                 
-                const loginBody = document.querySelector('.login-body');
-                loginBody.insertBefore(alertDiv, loginBody.firstChild);
+                const loginCard = document.querySelector('.login-card');
+                loginCard.insertBefore(alertDiv, loginCard.querySelector('form'));
                 
+                // Auto-dismiss after 5 seconds
                 setTimeout(() => {
-                    alertDiv.remove();
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
                 }, 5000);
             }
             
             // Auto-focus username field
             document.getElementById('username').focus();
+            
+            // Handle Enter key navigation
+            document.getElementById('username').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('password').focus();
+                }
+            });
+            
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    loginForm.submit();
+                }
+            });
         });
     </script>
 </body>

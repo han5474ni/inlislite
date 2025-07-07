@@ -41,16 +41,23 @@ class Home extends BaseController
 
     public function registration(): string
     {
-        $stats = ['total' => 0, 'verified' => 0, 'pending' => 0];
+        $stats = ['total' => 0, 'active' => 0, 'inactive' => 0, 'pending' => 0];
         $registrations = [];
         
         try {
             $registrationModel = new \App\Models\RegistrationModel();
             $stats = $registrationModel->getTotalStats();
-            $registrations = $registrationModel->findAll();
+            $registrations = $registrationModel->orderBy('created_at', 'DESC')->findAll();
+            
+            // Ensure stats have all required keys
+            if (!isset($stats['active'])) $stats['active'] = 0;
+            if (!isset($stats['inactive'])) $stats['inactive'] = 0;
+            if (!isset($stats['pending'])) $stats['pending'] = 0;
+            
         } catch (\Exception $e) {
             // Table doesn't exist yet, use default values
-            $stats = ['total' => 0, 'verified' => 0, 'pending' => 0];
+            log_message('error', 'Registration table error: ' . $e->getMessage());
+            $stats = ['total' => 0, 'active' => 0, 'inactive' => 0, 'pending' => 0];
             $registrations = [];
         }
         
@@ -112,33 +119,116 @@ class Home extends BaseController
         try {
             $registrationModel = new \App\Models\RegistrationModel();
             
+            // Validation rules
+            $rules = [
+                'library_name' => 'required|min_length[3]|max_length[255]',
+                'library_code' => 'permit_empty|max_length[50]',
+                'library_type' => 'required|in_list[Public,Academic,School,Special]',
+                'province' => 'required|min_length[2]|max_length[100]',
+                'city' => 'required|min_length[2]|max_length[100]',
+                'address' => 'permit_empty|max_length[500]',
+                'postal_code' => 'permit_empty|max_length[10]',
+                'coordinates' => 'permit_empty|max_length[100]',
+                'contact_name' => 'required|min_length[3]|max_length[255]',
+                'contact_position' => 'permit_empty|max_length[100]',
+                'email' => 'required|valid_email|max_length[255]',
+                'phone' => 'required|min_length[6]|max_length[20]',
+                'website' => 'permit_empty|max_length[255]',
+                'fax' => 'permit_empty|max_length[20]',
+                'established_year' => 'permit_empty|max_length[4]',
+                'collection_count' => 'permit_empty|max_length[10]',
+                'member_count' => 'permit_empty|max_length[10]',
+                'notes' => 'permit_empty|max_length[1000]',
+                'status' => 'permit_empty|in_list[Active,Inactive,Pending]'
+            ];
+            
+            // Set custom validation messages
+            $this->validator->setRules($rules, $messages);
+            
+            if (!$this->validate($rules, $messages)) {
+                $errors = $this->validator->getErrors();
+                
+                // Log validation errors for debugging
+                log_message('error', 'Registration update validation failed for ID ' . $id . ': ' . json_encode($errors));
+                
+                // Check if this is an AJAX request
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Please fix the errors before submitting',
+                        'errors' => $errors
+                    ]);
+                }
+                
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Please fix the errors before submitting')
+                    ->with('errors', $errors);
+            }
+            
+            // Process form data with proper handling for empty values
             $data = [
                 'library_name' => $this->request->getPost('library_name'),
+                'library_code' => $this->request->getPost('library_code') ?: null,
+                'library_type' => $this->request->getPost('library_type'),
+                'status' => $this->request->getPost('status') ?: 'Pending',
                 'province' => $this->request->getPost('province'),
                 'city' => $this->request->getPost('city'),
+                'address' => $this->request->getPost('address') ?: null,
+                'postal_code' => $this->request->getPost('postal_code') ?: null,
+                'coordinates' => $this->request->getPost('coordinates') ?: null,
+                'contact_name' => $this->request->getPost('contact_name'),
+                'contact_position' => $this->request->getPost('contact_position') ?: null,
                 'email' => $this->request->getPost('email'),
                 'phone' => $this->request->getPost('phone'),
-                'status' => 'pending'
+                'website' => $this->request->getPost('website') ?: null,
+                'fax' => $this->request->getPost('fax') ?: null,
+                'established_year' => $this->request->getPost('established_year') ?: null,
+                'collection_count' => $this->request->getPost('collection_count') ?: null,
+                'member_count' => $this->request->getPost('member_count') ?: null,
+                'notes' => $this->request->getPost('notes') ?: null,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ];
             
             $result = $registrationModel->insert($data);
             
             if ($result) {
-                return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Registrasi berhasil disimpan!'
-                ]);
+                // Check if this is an AJAX request
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => true,
+                        'message' => 'Registrasi berhasil disimpan!'
+                    ]);
+                }
+                
+                return redirect()->to('/admin/registration')
+                    ->with('success', 'Registrasi berhasil disimpan!');
             } else {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Gagal menyimpan registrasi'
-                ]);
+                // Check if this is an AJAX request
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Gagal menyimpan registrasi'
+                    ]);
+                }
+                
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Gagal menyimpan registrasi');
             }
         } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
+            // Check if this is an AJAX request
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage()
+                ]);
+            }
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error: ' . $e->getMessage());
         }
     }
 
@@ -255,19 +345,136 @@ class Home extends BaseController
         try {
             $registrationModel = new \App\Models\RegistrationModel();
             
-            $data = [
-                'library_name' => $this->request->getPost('library_name'),
-                'province' => $this->request->getPost('province'),
-                'city' => $this->request->getPost('city'),
-                'email' => $this->request->getPost('email'),
-                'phone' => $this->request->getPost('phone'),
-                'status' => $this->request->getPost('status')
+            // Enhanced validation rules with better error handling
+            $rules = [
+                'library_name' => 'required|min_length[3]|max_length[255]',
+                'library_code' => 'permit_empty|max_length[50]',
+                'library_type' => 'required|in_list[Public,Academic,School,Special]',
+                'province' => 'required|min_length[2]|max_length[100]',
+                'city' => 'required|min_length[2]|max_length[100]',
+                'address' => 'permit_empty|max_length[500]',
+                'postal_code' => 'permit_empty|max_length[10]',
+                'coordinates' => 'permit_empty|max_length[100]',
+                'contact_name' => 'required|min_length[3]|max_length[255]',
+                'contact_position' => 'permit_empty|max_length[100]',
+                'email' => 'required|valid_email|max_length[255]',
+                'phone' => 'required|min_length[6]|max_length[20]',
+                'website' => 'permit_empty|valid_url_http|max_length[255]',
+                'fax' => 'permit_empty|max_length[20]',
+                'established_year' => 'permit_empty|integer|greater_than[1800]|less_than_equal_to[' . date('Y') . ']',
+                'collection_count' => 'permit_empty|integer|greater_than_equal_to[0]',
+                'member_count' => 'permit_empty|integer|greater_than_equal_to[0]',
+                'notes' => 'permit_empty|max_length[1000]',
+                'status' => 'required|in_list[Active,Inactive,Pending]'
             ];
             
-            // If status is being changed to verified, add verified_at timestamp
-            if ($data['status'] === 'verified') {
+            // Custom validation messages
+            $messages = [
+                'library_name' => [
+                    'required' => 'Library name is required',
+                    'min_length' => 'Library name must be at least 3 characters long',
+                    'max_length' => 'Library name cannot exceed 255 characters'
+                ],
+                'library_type' => [
+                    'required' => 'Please select a library type',
+                    'in_list' => 'Library type must be one of: Public, Academic, School, Special'
+                ],
+                'province' => [
+                    'required' => 'Province is required',
+                    'min_length' => 'Province must be at least 2 characters long'
+                ],
+                'city' => [
+                    'required' => 'City is required',
+                    'min_length' => 'City must be at least 2 characters long'
+                ],
+                'contact_name' => [
+                    'required' => 'Contact person name is required',
+                    'min_length' => 'Contact name must be at least 3 characters long'
+                ],
+                'email' => [
+                    'required' => 'Email address is required',
+                    'valid_email' => 'Please enter a valid email address'
+                ],
+                'phone' => [
+                    'required' => 'Phone number is required',
+                    'min_length' => 'Phone number must be at least 6 characters long'
+                ],
+                'website' => [
+                    'valid_url_http' => 'Please enter a valid website URL (including http:// or https://)'
+                ],
+                'established_year' => [
+                    'integer' => 'Established year must be a valid year',
+                    'greater_than' => 'Established year must be after 1800',
+                    'less_than_equal_to' => 'Established year cannot be in the future'
+                ],
+                'collection_count' => [
+                    'integer' => 'Collection count must be a number',
+                    'greater_than_equal_to' => 'Collection count cannot be negative'
+                ],
+                'member_count' => [
+                    'integer' => 'Member count must be a number',
+                    'greater_than_equal_to' => 'Member count cannot be negative'
+                ],
+                'status' => [
+                    'required' => 'Please select a status',
+                    'in_list' => 'Status must be one of: Active, Inactive, Pending'
+                ]
+            ];
+            
+            if (!$this->validate($rules)) {
+                $errors = $this->validator->getErrors();
+                
+                // Check if this is an AJAX request
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Data yang dimasukkan tidak valid: ' . implode(', ', $errors),
+                        'errors' => $errors
+                    ]);
+                }
+                
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Data yang dimasukkan tidak valid: ' . implode(', ', $errors))
+                    ->with('errors', $errors);
+            }
+            
+            // Process form data with proper handling for empty values and data types
+            $data = [
+                'library_name' => trim($this->request->getPost('library_name')),
+                'library_code' => $this->request->getPost('library_code') ?: null,
+                'library_type' => $this->request->getPost('library_type'),
+                'status' => $this->request->getPost('status'),
+                'province' => trim($this->request->getPost('province')),
+                'city' => trim($this->request->getPost('city')),
+                'address' => $this->request->getPost('address') ?: null,
+                'postal_code' => $this->request->getPost('postal_code') ?: null,
+                'coordinates' => $this->request->getPost('coordinates') ?: null,
+                'contact_name' => trim($this->request->getPost('contact_name')),
+                'contact_position' => $this->request->getPost('contact_position') ?: null,
+                'email' => trim($this->request->getPost('email')),
+                'phone' => trim($this->request->getPost('phone')),
+                'website' => $this->request->getPost('website') ?: null,
+                'fax' => $this->request->getPost('fax') ?: null,
+                'established_year' => $this->request->getPost('established_year') ? (int)$this->request->getPost('established_year') : null,
+                'collection_count' => $this->request->getPost('collection_count') ? (int)$this->request->getPost('collection_count') : null,
+                'member_count' => $this->request->getPost('member_count') ? (int)$this->request->getPost('member_count') : null,
+                'notes' => $this->request->getPost('notes') ?: null,
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+            
+            // Validate website URL format if provided
+            if (!empty($data['website']) && !filter_var($data['website'], FILTER_VALIDATE_URL)) {
+                // Try to add http:// if missing
+                if (!preg_match('/^https?:\/\//', $data['website'])) {
+                    $data['website'] = 'http://' . $data['website'];
+                }
+            }
+            
+            // If status is being changed to Active, add verified_at timestamp
+            if ($data['status'] === 'Active') {
                 $currentRegistration = $registrationModel->find($id);
-                if ($currentRegistration && $currentRegistration['status'] !== 'verified') {
+                if ($currentRegistration && $currentRegistration['status'] !== 'Active') {
                     $data['verified_at'] = date('Y-m-d H:i:s');
                 }
             }
@@ -275,21 +482,41 @@ class Home extends BaseController
             $result = $registrationModel->update($id, $data);
             
             if ($result) {
-                return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Registrasi berhasil diupdate!'
-                ]);
+                // Check if this is an AJAX request
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => true,
+                        'message' => 'Registrasi berhasil diupdate!'
+                    ]);
+                }
+                
+                return redirect()->to('/admin/registration')
+                    ->with('success', 'Registrasi berhasil diupdate!');
             } else {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Gagal mengupdate registrasi'
-                ]);
+                // Check if this is an AJAX request
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Gagal mengupdate registrasi'
+                    ]);
+                }
+                
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Gagal mengupdate registrasi');
             }
         } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
+            // Check if this is an AJAX request
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage()
+                ]);
+            }
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error: ' . $e->getMessage());
         }
     }
 

@@ -229,67 +229,141 @@
                     <!-- Atur Demo Tab -->
                     <div class="tab-pane fade" id="atur-demo" role="tabpanel" aria-labelledby="atur-demo-tab">
                         <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="demo-settings-card card">
+                            <div class="col-lg-10">
+                                <!-- Kelola Entri Demo Card -->
+                                <div class="demo-management-card card">
                                     <div class="card-header">
-                                        <h5 class="card-title mb-0">
-                                            <i class="bi bi-gear me-2"></i>
-                                            Pengaturan Demo
-                                        </h5>
+                                        <div class="demo-management-header">
+                                            <div class="demo-management-icon">
+                                                <i class="bi bi-gear"></i>
+                                            </div>
+                                            <div class="demo-management-title-section">
+                                                <h5 class="demo-management-title">Kelola Entri Demo</h5>
+                                                <p class="demo-management-subtitle">Tambahkan, edit, dan kelola entri platform demo INLISLite.</p>
+                                            </div>
+                                            <div class="demo-management-action">
+                                                <button class="btn btn-primary btn-add-demo" id="btnAddDemo">
+                                                    <i class="bi bi-plus-circle me-2"></i>
+                                                    Tambah Demo
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="card-body">
-                                        <div class="alert alert-info">
-                                            <i class="bi bi-info-circle me-2"></i>
-                                            Halaman ini akan mengarahkan ke pengaturan demo sistem. Fitur ini sedang dalam pengembangan.
-                                        </div>
-                                        
-                                        <div class="demo-settings-options">
-                                            <div class="setting-item">
-                                                <div class="setting-icon">
-                                                    <i class="bi bi-database"></i>
-                                                </div>
-                                                <div class="setting-content">
-                                                    <h6 class="setting-title">Reset Data Demo</h6>
-                                                    <p class="setting-description">Mengembalikan data demo ke kondisi awal</p>
-                                                </div>
-                                                <div class="setting-action">
-                                                    <button class="btn btn-outline-warning" disabled>
-                                                        <i class="bi bi-arrow-clockwise me-2"></i>
-                                                        Reset
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="setting-item">
-                                                <div class="setting-icon">
-                                                    <i class="bi bi-clock"></i>
-                                                </div>
-                                                <div class="setting-content">
-                                                    <h6 class="setting-title">Jadwal Maintenance</h6>
-                                                    <p class="setting-description">Atur jadwal pemeliharaan sistem demo</p>
-                                                </div>
-                                                <div class="setting-action">
-                                                    <button class="btn btn-outline-primary" disabled>
-                                                        <i class="bi bi-calendar me-2"></i>
-                                                        Atur
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="setting-item">
-                                                <div class="setting-icon">
-                                                    <i class="bi bi-shield-check"></i>
-                                                </div>
-                                                <div class="setting-content">
-                                                    <h6 class="setting-title">Keamanan Demo</h6>
-                                                    <p class="setting-description">Pengaturan keamanan dan akses demo</p>
-                                                </div>
-                                                <div class="setting-action">
-                                                    <button class="btn btn-outline-success" disabled>
-                                                        <i class="bi bi-gear me-2"></i>
-                                                        Kelola
-                                                    </button>
-                                                </div>
+                                        <!-- Demo Entries Table -->
+                                        <div class="demo-table-container">
+                                            <div class="table-responsive">
+                                                <table class="table demo-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Demo</th>
+                                                            <th>Platform</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td data-label="Demo">
+                                                                <div class="demo-entry">
+                                                                    <div class="demo-entry-icon">
+                                                                        <i class="bi bi-code-slash"></i>
+                                                                    </div>
+                                                                    <div class="demo-entry-info">
+                                                                        <div class="demo-entry-name">Demo INLISLite v3 Opensource</div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td data-label="Platform">
+                                                                <span class="badge bg-success">PHP Open Source</span>
+                                                            </td>
+                                                            <td data-label="Aksi">
+                                                                <div class="demo-actions">
+                                                                    <button class="btn btn-sm btn-outline-primary btn-edit" title="Edit Demo">
+                                                                        <i class="bi bi-pencil"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-outline-danger btn-delete" title="Hapus Demo">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td data-label="Demo">
+                                                                <div class="demo-entry">
+                                                                    <div class="demo-entry-icon">
+                                                                        <i class="bi bi-file-earmark-code"></i>
+                                                                    </div>
+                                                                    <div class="demo-entry-info">
+                                                                        <div class="demo-entry-name">Demo INLISLite .NET Framework</div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td data-label="Platform">
+                                                                <span class="badge bg-primary">.NET Framework</span>
+                                                            </td>
+                                                            <td data-label="Aksi">
+                                                                <div class="demo-actions">
+                                                                    <button class="btn btn-sm btn-outline-primary btn-edit" title="Edit Demo">
+                                                                        <i class="bi bi-pencil"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-outline-danger btn-delete" title="Hapus Demo">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td data-label="Demo">
+                                                                <div class="demo-entry">
+                                                                    <div class="demo-entry-icon">
+                                                                        <i class="bi bi-phone"></i>
+                                                                    </div>
+                                                                    <div class="demo-entry-info">
+                                                                        <div class="demo-entry-name">Demo Mobile App INLISLite</div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td data-label="Platform">
+                                                                <span class="badge bg-info">Mobile App</span>
+                                                            </td>
+                                                            <td data-label="Aksi">
+                                                                <div class="demo-actions">
+                                                                    <button class="btn btn-sm btn-outline-primary btn-edit" title="Edit Demo">
+                                                                        <i class="bi bi-pencil"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-outline-danger btn-delete" title="Hapus Demo">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td data-label="Demo">
+                                                                <div class="demo-entry">
+                                                                    <div class="demo-entry-icon">
+                                                                        <i class="bi bi-globe"></i>
+                                                                    </div>
+                                                                    <div class="demo-entry-info">
+                                                                        <div class="demo-entry-name">Demo OPAC Public</div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td data-label="Platform">
+                                                                <span class="badge bg-secondary">Web Public</span>
+                                                            </td>
+                                                            <td data-label="Aksi">
+                                                                <div class="demo-actions">
+                                                                    <button class="btn btn-sm btn-outline-primary btn-edit" title="Edit Demo">
+                                                                        <i class="bi bi-pencil"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-outline-danger btn-delete" title="Hapus Demo">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>

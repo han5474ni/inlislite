@@ -52,13 +52,21 @@ function uploadProfilePhoto(file) {
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
     if (!allowedTypes.includes(file.type)) {
-        showAlert('Tipe file tidak diizinkan. Gunakan JPG, PNG, atau GIF', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Tipe file tidak diizinkan. Gunakan JPG, PNG, atau GIF', 'error');
+        } else {
+            alert('Tipe file tidak diizinkan. Gunakan JPG, PNG, atau GIF');
+        }
         return;
     }
 
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-        showAlert('Ukuran file terlalu besar. Maksimal 2MB', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Ukuran file terlalu besar. Maksimal 2MB', 'error');
+        } else {
+            alert('Ukuran file terlalu besar. Maksimal 2MB');
+        }
         return;
     }
 
@@ -103,18 +111,30 @@ function uploadProfilePhoto(file) {
                 document.getElementById('profileAvatar').appendChild(newImage);
             }
 
-            showAlert(data.message, 'success');
+            if (typeof showToast === 'function') {
+                showToast(data.message, 'success');
+            } else {
+                alert(data.message);
+            }
             
             // Log the successful photo upload
             console.log('Profile photo uploaded successfully:', data.photo_url);
         } else {
-            showAlert(data.message, 'danger');
+            if (typeof showToast === 'function') {
+                showToast(data.message, 'error');
+            } else {
+                alert(data.message);
+            }
             console.error('Photo upload failed:', data.message);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('Terjadi kesalahan saat mengupload foto', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Terjadi kesalahan saat mengupload foto', 'error');
+        } else {
+            alert('Terjadi kesalahan saat mengupload foto');
+        }
     })
     .finally(() => {
         // Reset button state
@@ -150,12 +170,20 @@ function updateName() {
     const namaPengguna = formData.get('nama_pengguna');
     
     if (!namaLengkap || namaLengkap.trim() === '') {
-        showAlert('Nama lengkap harus diisi', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Nama lengkap harus diisi', 'error');
+        } else {
+            alert('Nama lengkap harus diisi');
+        }
         return;
     }
     
     if (!namaPengguna || namaPengguna.trim() === '') {
-        showAlert('Username harus diisi', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Username harus diisi', 'error');
+        } else {
+            alert('Username harus diisi');
+        }
         return;
     }
     
@@ -185,7 +213,11 @@ function updateName() {
                 profileUsername.textContent = '@' + namaPengguna;
             }
 
-            showAlert(data.message, 'success');
+            if (typeof showToast === 'function') {
+                showToast(data.message, 'success');
+            } else {
+                alert(data.message);
+            }
             
             // Log the successful update
             console.log('Profile name updated successfully:', {
@@ -196,13 +228,21 @@ function updateName() {
             if (data.errors) {
                 displayFormErrors(form, data.errors);
             } else {
-                showAlert(data.message, 'danger');
+                if (typeof showToast === 'function') {
+                    showToast(data.message, 'error');
+                } else {
+                    alert(data.message);
+                }
             }
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('Terjadi kesalahan saat mengupdate nama', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Terjadi kesalahan saat mengupdate nama', 'error');
+        } else {
+            alert('Terjadi kesalahan saat mengupdate nama');
+        }
     })
     .finally(() => {
         // Reset button state
@@ -255,22 +295,38 @@ function updatePassword() {
     const confirmPassword = document.getElementById('confirmPassword').value;
     
     if (!currentPassword || currentPassword.trim() === '') {
-        showAlert('Password saat ini harus diisi', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Password saat ini harus diisi', 'error');
+        } else {
+            alert('Password saat ini harus diisi');
+        }
         return;
     }
     
     if (!newPassword || newPassword.trim() === '') {
-        showAlert('Password baru harus diisi', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Password baru harus diisi', 'error');
+        } else {
+            alert('Password baru harus diisi');
+        }
         return;
     }
     
     if (newPassword.length < 6) {
-        showAlert('Password baru minimal 6 karakter', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Password baru minimal 6 karakter', 'error');
+        } else {
+            alert('Password baru minimal 6 karakter');
+        }
         return;
     }
     
     if (newPassword !== confirmPassword) {
-        showAlert('Password baru dan konfirmasi password tidak cocok', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Password baru dan konfirmasi password tidak cocok', 'error');
+        } else {
+            alert('Password baru dan konfirmasi password tidak cocok');
+        }
         return;
     }
 
@@ -291,7 +347,11 @@ function updatePassword() {
         if (data.success) {
             // Clear form
             form.reset();
-            showAlert(data.message, 'success');
+            if (typeof showToast === 'function') {
+                showToast(data.message, 'success');
+            } else {
+                alert(data.message);
+            }
             
             // Log the successful password update
             console.log('Password updated successfully');
@@ -299,13 +359,21 @@ function updatePassword() {
             if (data.errors) {
                 displayFormErrors(form, data.errors);
             } else {
-                showAlert(data.message, 'danger');
+                if (typeof showToast === 'function') {
+                    showToast(data.message, 'error');
+                } else {
+                    alert(data.message);
+                }
             }
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('Terjadi kesalahan saat mengupdate password', 'danger');
+        if (typeof showToast === 'function') {
+            showToast('Terjadi kesalahan saat mengupdate password', 'error');
+        } else {
+            alert('Terjadi kesalahan saat mengupdate password');
+        }
     })
     .finally(() => {
         // Reset button state

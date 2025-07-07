@@ -73,7 +73,7 @@
             
             <!-- Logout Button -->
             <div class="nav-item logout-item">
-                <a href="<?= base_url('admin/secure-logout') ?>" class="nav-link logout-link" onclick="return confirmLogout()">
+                <a href="<?= base_url('admin/logout') ?>" class="nav-link logout-link" onclick="return confirmLogout()">
                     <i data-feather="log-out" class="nav-icon"></i>
                     <span class="nav-text">Logout</span>
                 </a>
@@ -124,76 +124,62 @@
                     </div>
                 </div>
 
-                <!-- Alert Messages -->
-                <div id="alertContainer"></div>
-
+                
                 <!-- Support Content -->
                 <div class="support-content">
-                    <!-- Bagian 1: Tim Sistem Informasi -->
+                    <!-- Tim Sistem Informasi -->
                     <div class="support-section mb-5">
-                        <div class="support-card main-card" data-card-id="tim-sistem-informasi">
-                            <div class="card-header d-flex justify-content-between align-items-start">
+                        <div class="support-card">
+                            <div class="card-header">
                                 <div class="header-info">
                                     <div class="header-icon-wrapper">
                                         <i class="bi bi-headset"></i>
                                     </div>
                                     <div class="header-details">
-                                        <h3 class="card-title editable" data-field="title">Tim Sistem Informasi</h3>
-                                        <p class="card-subtitle editable" data-field="subtitle">Pusat Data dan Informasi – Perpustakaan Nasional Republik Indonesia</p>
+                                        <h3 class="card-title">Tim Sistem Informasi</h3>
+                                        <p class="card-subtitle">Pusat Data dan Informasi – Perpustakaan Nasional Republik Indonesia</p>
                                     </div>
-                                </div>
-                                <div class="dropdown">
-                                    <button class="action-btn btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item add-card" href="#"><i class="bi bi-plus-circle me-2"></i>Add</a></li>
-                                        <li><a class="dropdown-item edit-card" href="#"><i class="bi bi-pencil me-2"></i>Edit</a></li>
-                                        <li><a class="dropdown-item toggle-card" href="#"><i class="bi bi-eye-slash me-2"></i>Hide</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item delete-card text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                                    </ul>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <div class="contact-grid">
-                                    <div class="contact-card editable-contact" data-contact-id="phone">
+                                    <div class="contact-card">
                                         <div class="contact-icon">
                                             <i class="bi bi-telephone"></i>
                                         </div>
                                         <div class="contact-info">
-                                            <h6 class="contact-label editable" data-field="label">Telepon</h6>
-                                            <p class="contact-value editable" data-field="value">(021) 3103554</p>
+                                            <h6 class="contact-label">Telepon</h6>
+                                            <p class="contact-value">(021) 3103554</p>
                                         </div>
                                     </div>
                                     
-                                    <div class="contact-card editable-contact" data-contact-id="email">
+                                    <div class="contact-card">
                                         <div class="contact-icon">
                                             <i class="bi bi-envelope"></i>
                                         </div>
                                         <div class="contact-info">
-                                            <h6 class="contact-label editable" data-field="label">Email</h6>
-                                            <p class="contact-value editable" data-field="value">info@perpusnas.go.id</p>
+                                            <h6 class="contact-label">Email</h6>
+                                            <p class="contact-value">info@perpusnas.go.id</p>
                                         </div>
                                     </div>
                                     
-                                    <div class="contact-card editable-contact" data-contact-id="hours">
+                                    <div class="contact-card">
                                         <div class="contact-icon">
                                             <i class="bi bi-clock"></i>
                                         </div>
                                         <div class="contact-info">
-                                            <h6 class="contact-label editable" data-field="label">Jam Layanan</h6>
-                                            <p class="contact-value editable" data-field="value">Senin–Jumat 08:00–16:00 WIB</p>
+                                            <h6 class="contact-label">Jam Layanan</h6>
+                                            <p class="contact-value">Senin–Jumat 08:00–16:00 WIB</p>
                                         </div>
                                     </div>
                                     
-                                    <div class="contact-card editable-contact" data-contact-id="address">
+                                    <div class="contact-card">
                                         <div class="contact-icon">
                                             <i class="bi bi-geo-alt"></i>
                                         </div>
                                         <div class="contact-info">
-                                            <h6 class="contact-label editable" data-field="label">Alamat</h6>
-                                            <p class="contact-value editable" data-field="value">Jl. Medan Merdeka Selatan No. 11, Jakarta Pusat 10110</p>
+                                            <h6 class="contact-label">Alamat</h6>
+                                            <p class="contact-value">Jl. Medan Merdeka Selatan No. 11, Jakarta Pusat 10110</p>
                                         </div>
                                     </div>
                                 </div>
@@ -201,70 +187,58 @@
                         </div>
                     </div>
 
-                    <!-- Bagian 2: Layanan Dukungan yang Tersedia -->
+                    <!-- Layanan Dukungan yang Tersedia -->
                     <div class="support-section mb-5">
-                        <div class="support-card" data-card-id="layanan-dukungan">
-                            <div class="card-header d-flex justify-content-between align-items-start">
+                        <div class="support-card">
+                            <div class="card-header">
                                 <div class="header-info">
                                     <div class="header-icon-wrapper green">
                                         <i class="bi bi-tools"></i>
                                     </div>
                                     <div class="header-details">
-                                        <h3 class="card-title editable" data-field="title">Layanan Dukungan yang Tersedia</h3>
+                                        <h3 class="card-title">Layanan Dukungan yang Tersedia</h3>
                                     </div>
-                                </div>
-                                <div class="dropdown">
-                                    <button class="action-btn btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item add-card" href="#"><i class="bi bi-plus-circle me-2"></i>Add</a></li>
-                                        <li><a class="dropdown-item edit-card" href="#"><i class="bi bi-pencil me-2"></i>Edit</a></li>
-                                        <li><a class="dropdown-item toggle-card" href="#"><i class="bi bi-eye-slash me-2"></i>Hide</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item delete-card text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                                    </ul>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <div class="services-list">
-                                    <div class="service-item editable-service" data-service-id="installation">
+                                    <div class="service-item">
                                         <div class="service-bullet"></div>
                                         <div class="service-content">
-                                            <h6 class="service-title editable" data-field="title">Dukungan Instalasi</h6>
-                                            <p class="service-description editable" data-field="description">Bantuan dalam instalasi dan konfigurasi perangkat lunak</p>
+                                            <h6 class="service-title">Dukungan Instalasi</h6>
+                                            <p class="service-description">Bantuan dalam instalasi dan konfigurasi perangkat lunak</p>
                                         </div>
                                     </div>
                                     
-                                    <div class="service-item editable-service" data-service-id="troubleshooting">
+                                    <div class="service-item">
                                         <div class="service-bullet"></div>
                                         <div class="service-content">
-                                            <h6 class="service-title editable" data-field="title">Pemecahan Masalah Teknis</h6>
-                                            <p class="service-description editable" data-field="description">Diagnosa dan penyelesaian masalah teknis</p>
+                                            <h6 class="service-title">Pemecahan Masalah Teknis</h6>
+                                            <p class="service-description">Diagnosa dan penyelesaian masalah teknis</p>
                                         </div>
                                     </div>
                                     
-                                    <div class="service-item editable-service" data-service-id="training">
+                                    <div class="service-item">
                                         <div class="service-bullet"></div>
                                         <div class="service-content">
-                                            <h6 class="service-title editable" data-field="title">Pelatihan Pengguna</h6>
-                                            <p class="service-description editable" data-field="description">Sesi pelatihan untuk administrator sistem</p>
+                                            <h6 class="service-title">Pelatihan Pengguna</h6>
+                                            <p class="service-description">Sesi pelatihan untuk administrator sistem</p>
                                         </div>
                                     </div>
                                     
-                                    <div class="service-item editable-service" data-service-id="remote">
+                                    <div class="service-item">
                                         <div class="service-bullet"></div>
                                         <div class="service-content">
-                                            <h6 class="service-title editable" data-field="title">Bantuan Jarak Jauh</h6>
-                                            <p class="service-description editable" data-field="description">Dukungan teknis jarak jauh melalui remote desktop</p>
+                                            <h6 class="service-title">Bantuan Jarak Jauh</h6>
+                                            <p class="service-description">Dukungan teknis jarak jauh melalui remote desktop</p>
                                         </div>
                                     </div>
                                     
-                                    <div class="service-item editable-service" data-service-id="documentation">
+                                    <div class="service-item">
                                         <div class="service-bullet"></div>
                                         <div class="service-content">
-                                            <h6 class="service-title editable" data-field="title">Dokumentasi & Panduan</h6>
-                                            <p class="service-description editable" data-field="description">Dokumen dan buku panduan pengguna</p>
+                                            <h6 class="service-title">Dokumentasi & Panduan</h6>
+                                            <p class="service-description">Dokumen dan buku panduan pengguna</p>
                                         </div>
                                     </div>
                                 </div>
@@ -272,86 +246,74 @@
                         </div>
                     </div>
 
-                    <!-- Bagian 3: Cara Meminta Bantuan Teknis -->
+                    <!-- Cara Meminta Bantuan Teknis -->
                     <div class="support-section">
-                        <div class="support-card request-card" data-card-id="cara-meminta-bantuan">
-                            <div class="card-header blue-header d-flex justify-content-between align-items-start">
+                        <div class="support-card request-card">
+                            <div class="card-header blue-header">
                                 <div class="header-info">
                                     <div class="header-icon-wrapper blue">
                                         <i class="bi bi-question-circle"></i>
                                     </div>
                                     <div class="header-details">
-                                        <h3 class="card-title editable" data-field="title">Cara Meminta Bantuan Teknis</h3>
-                                        <p class="card-subtitle editable" data-field="subtitle">Ikuti langkah-langkah berikut untuk mendapatkan dukungan teknis yang Anda butuhkan</p>
+                                        <h3 class="card-title">Cara Meminta Bantuan Teknis</h3>
+                                        <p class="card-subtitle">Ikuti langkah-langkah berikut untuk mendapatkan dukungan teknis yang Anda butuhkan</p>
                                     </div>
-                                </div>
-                                <div class="dropdown">
-                                    <button class="action-btn btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item add-card" href="#"><i class="bi bi-plus-circle me-2"></i>Add</a></li>
-                                        <li><a class="dropdown-item edit-card" href="#"><i class="bi bi-pencil me-2"></i>Edit</a></li>
-                                        <li><a class="dropdown-item toggle-card" href="#"><i class="bi bi-eye-slash me-2"></i>Hide</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item delete-card text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                                    </ul>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <div class="request-grid">
-                                    <!-- Card 1: Dukungan Langsung -->
-                                    <div class="request-card editable-request" data-request-id="direct">
+                                    <!-- Dukungan Langsung -->
+                                    <div class="request-card">
                                         <div class="request-header">
                                             <div class="request-icon red">
                                                 <i class="bi bi-telephone-fill"></i>
                                             </div>
-                                            <h5 class="request-title editable" data-field="title">Untuk Dukungan Langsung</h5>
+                                            <h5 class="request-title">Untuk Dukungan Langsung</h5>
                                         </div>
                                         <div class="request-steps">
-                                            <div class="step-item editable-step" data-step-id="direct-1">
+                                            <div class="step-item">
                                                 <div class="step-number">1</div>
-                                                <p class="step-text editable" data-field="text">Hubungi nomor telepon (021) 3103554 pada jam kerja</p>
+                                                <p class="step-text">Hubungi nomor telepon (021) 3103554 pada jam kerja</p>
                                             </div>
-                                            <div class="step-item editable-step" data-step-id="direct-2">
+                                            <div class="step-item">
                                                 <div class="step-number">2</div>
-                                                <p class="step-text editable" data-field="text">Jelaskan masalah yang Anda hadapi dengan detail</p>
+                                                <p class="step-text">Jelaskan masalah yang Anda hadapi dengan detail</p>
                                             </div>
-                                            <div class="step-item editable-step" data-step-id="direct-3">
+                                            <div class="step-item">
                                                 <div class="step-number">3</div>
-                                                <p class="step-text editable" data-field="text">Siapkan informasi sistem dan versi INLISLite yang digunakan</p>
+                                                <p class="step-text">Siapkan informasi sistem dan versi INLISLite yang digunakan</p>
                                             </div>
-                                            <div class="step-item editable-step" data-step-id="direct-4">
+                                            <div class="step-item">
                                                 <div class="step-number">4</div>
-                                                <p class="step-text editable" data-field="text">Tim teknis akan memberikan solusi atau jadwal kunjungan</p>
+                                                <p class="step-text">Tim teknis akan memberikan solusi atau jadwal kunjungan</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Card 2: Dukungan Email -->
-                                    <div class="request-card editable-request" data-request-id="email">
+                                    <!-- Dukungan Email -->
+                                    <div class="request-card">
                                         <div class="request-header">
                                             <div class="request-icon red">
                                                 <i class="bi bi-envelope-fill"></i>
                                             </div>
-                                            <h5 class="request-title editable" data-field="title">Untuk Dukungan Email</h5>
+                                            <h5 class="request-title">Untuk Dukungan Email</h5>
                                         </div>
                                         <div class="request-steps">
-                                            <div class="step-item editable-step" data-step-id="email-1">
+                                            <div class="step-item">
                                                 <div class="step-number">1</div>
-                                                <p class="step-text editable" data-field="text">Kirim email ke info@perpusnas.go.id</p>
+                                                <p class="step-text">Kirim email ke info@perpusnas.go.id</p>
                                             </div>
-                                            <div class="step-item editable-step" data-step-id="email-2">
+                                            <div class="step-item">
                                                 <div class="step-number">2</div>
-                                                <p class="step-text editable" data-field="text">Sertakan detail lembaga dan kontak</p>
+                                                <p class="step-text">Sertakan detail lembaga dan kontak</p>
                                             </div>
-                                            <div class="step-item editable-step" data-step-id="email-3">
+                                            <div class="step-item">
                                                 <div class="step-number">3</div>
-                                                <p class="step-text editable" data-field="text">Jelaskan jenis bantuan yang dibutuhkan</p>
+                                                <p class="step-text">Jelaskan jenis bantuan yang dibutuhkan</p>
                                             </div>
-                                            <div class="step-item editable-step" data-step-id="email-4">
+                                            <div class="step-item">
                                                 <div class="step-number">4</div>
-                                                <p class="step-text editable" data-field="text">Tunggu respon 1–2 hari kerja</p>
+                                                <p class="step-text">Tunggu respon 1–2 hari kerja</p>
                                             </div>
                                         </div>
                                     </div>
@@ -364,47 +326,7 @@
         </div>
     </main>
 
-    <!-- Add Card Modal -->
-    <div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCardModalLabel">Add New Card</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addCardForm">
-                        <div class="mb-3">
-                            <label for="cardType" class="form-label">Card Type</label>
-                            <select class="form-select" id="cardType" required>
-                                <option value="">Select card type...</option>
-                                <option value="contact">Contact Information</option>
-                                <option value="service">Service Item</option>
-                                <option value="support">Support Section</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="cardTitle" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="cardTitle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="cardSubtitle" class="form-label">Subtitle (optional)</label>
-                            <input type="text" class="form-control" id="cardSubtitle">
-                        </div>
-                        <div class="mb-3">
-                            <label for="cardContent" class="form-label">Content</label>
-                            <textarea class="form-control" id="cardContent" rows="4" required></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveNewCard">Add Card</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Dashboard JS -->

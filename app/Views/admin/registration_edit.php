@@ -108,6 +108,36 @@
                 </div>
             </div>
 
+            <!-- Flash Messages -->
+            <?php if (session()->getFlashdata('success')): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <?= session()->getFlashdata('success') ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <?= session()->getFlashdata('error') ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (session()->has('errors')): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Please fix the following errors:</strong>
+                    <ul class="mb-0 mt-2">
+                        <?php foreach (session('errors') as $field => $error): ?>
+                            <li><strong><?= ucfirst(str_replace('_', ' ', $field)) ?>:</strong> <?= esc($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+
             <!-- Registration Form -->
             <div class="registration-form-section">
                 <div class="registration-form-container">
@@ -128,30 +158,43 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Library Name <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="library_name" value="<?= esc($registration['library_name'] ?? '') ?>" placeholder="Enter library name" required>
+                                            <input type="text" class="form-control <?= session('errors.library_name') ? 'is-invalid' : '' ?>" name="library_name" value="<?= esc(old('library_name', $registration['library_name'] ?? '')) ?>" placeholder="Enter library name" required>
+                                            <?php if (session('errors.library_name')): ?>
+                                                <div class="invalid-feedback"><?= esc(session('errors.library_name')) ?></div>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Library Code</label>
-                                            <input type="text" class="form-control" name="library_code" value="<?= esc($registration['library_code'] ?? '') ?>" placeholder="Auto-generated or enter manually">
+                                            <input type="text" class="form-control" name="library_code" value="<?= esc(old('library_code', $registration['library_code'] ?? '')) ?>" placeholder="Auto-generated or enter manually">
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Library Type <span class="text-danger">*</span></label>
-                                            <select class="form-select" name="library_type" required>
+                                            <select class="form-select <?= session('errors.library_type') ? 'is-invalid' : '' ?>" name="library_type" id="libraryTypeSelect" required>
                                                 <option value="">Select Type</option>
-                                                <option value="Public" <?= ($registration['library_type'] ?? '') === 'Public' ? 'selected' : '' ?>>Public Library</option>
-                                                <option value="Academic" <?= ($registration['library_type'] ?? '') === 'Academic' ? 'selected' : '' ?>>Academic Library</option>
-                                                <option value="School" <?= ($registration['library_type'] ?? '') === 'School' ? 'selected' : '' ?>>School Library</option>
-                                                <option value="Special" <?= ($registration['library_type'] ?? '') === 'Special' ? 'selected' : '' ?>>Special Library</option>
+                                                <?php $selectedType = old('library_type', $registration['library_type'] ?? ''); ?>
+                                                <option value="Public" <?= $selectedType === 'Public' ? 'selected' : '' ?>>Public Library</option>
+                                                <option value="Academic" <?= $selectedType === 'Academic' ? 'selected' : '' ?>>Academic Library</option>
+                                                <option value="School" <?= $selectedType === 'School' ? 'selected' : '' ?>>School Library</option>
+                                                <option value="Special" <?= $selectedType === 'Special' ? 'selected' : '' ?>>Special Library</option>
                                             </select>
+                                            <?php if (session('errors.library_type')): ?>
+                                                <div class="invalid-feedback"><?= esc(session('errors.library_type')) ?></div>
+                                            <?php else: ?>
+                                                <small class="text-muted">Current: <?= esc($registration['library_type'] ?? 'Not set') ?></small>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
-                                            <select class="form-select" name="status" required>
+                                            <select class="form-select <?= session('errors.status') ? 'is-invalid' : '' ?>" name="status" required>
                                                 <option value="">Select Status</option>
-                                                <option value="Active" <?= ($registration['status'] ?? '') === 'Active' ? 'selected' : '' ?>>Active</option>
-                                                <option value="Inactive" <?= ($registration['status'] ?? '') === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
-                                                <option value="Pending" <?= ($registration['status'] ?? '') === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                                <?php $selectedStatus = old('status', $registration['status'] ?? ''); ?>
+                                                <option value="Active" <?= $selectedStatus === 'Active' ? 'selected' : '' ?>>Active</option>
+                                                <option value="Inactive" <?= $selectedStatus === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
+                                                <option value="Pending" <?= $selectedStatus === 'Pending' ? 'selected' : '' ?>>Pending</option>
                                             </select>
+                                            <?php if (session('errors.status')): ?>
+                                                <div class="invalid-feedback"><?= esc(session('errors.status')) ?></div>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
@@ -197,11 +240,11 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
-                                            <input type="email" class="form-control" name="email" value="<?= esc($registration['email'] ?? '') ?>" placeholder="Enter email address" required>
+                                            <input type="email" class="form-control" name="email" value="<?= esc(old('email', $registration['email'] ?? '')) ?>" placeholder="Enter email address" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Phone <span class="text-danger">*</span></label>
-                                            <input type="tel" class="form-control" name="phone" value="<?= esc($registration['phone'] ?? '') ?>" placeholder="Enter phone number" required>
+                                            <input type="tel" class="form-control" name="phone" value="<?= esc(old('phone', $registration['phone'] ?? '')) ?>" placeholder="Enter phone number" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold">Website</label>
@@ -266,5 +309,68 @@
     <script src="<?= base_url('assets/js/admin/registration.js') ?>"></script>
     <!-- Registration Edit JS -->
     <script src="<?= base_url('assets/js/admin/registration_edit.js') ?>"></script>
+    
+    <!-- Debug Script -->
+    <script>
+        // Logout confirmation function
+        function confirmLogout() {
+            return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
+        }
+
+        // Debug library type select
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+            
+            const libraryTypeSelect = document.getElementById('libraryTypeSelect');
+            if (libraryTypeSelect) {
+                console.log('🔍 Library Type Select Debug:');
+                console.log('- Current value:', libraryTypeSelect.value);
+                console.log('- Disabled:', libraryTypeSelect.disabled);
+                console.log('- ReadOnly:', libraryTypeSelect.readOnly);
+                console.log('- Options:', Array.from(libraryTypeSelect.options).map(opt => ({
+                    value: opt.value,
+                    text: opt.text,
+                    selected: opt.selected
+                })));
+                
+                // Add change event listener
+                libraryTypeSelect.addEventListener('change', function() {
+                    console.log('✅ Library type changed to:', this.value);
+                    
+                    // Show visual feedback
+                    const currentDisplay = this.parentNode.querySelector('.text-muted');
+                    if (currentDisplay) {
+                        currentDisplay.textContent = 'Current: ' + this.value + ' (Changed - Ready to Save)';
+                        currentDisplay.style.color = '#28a745';
+                        currentDisplay.style.fontWeight = 'bold';
+                    }
+                });
+                
+                // Test if select is working
+                setTimeout(() => {
+                    console.log('🧪 Testing select functionality...');
+                    const originalValue = libraryTypeSelect.value;
+                    
+                    // Try to change to a different value
+                    const testValue = originalValue === 'Public' ? 'Academic' : 'Public';
+                    libraryTypeSelect.value = testValue;
+                    
+                    if (libraryTypeSelect.value === testValue) {
+                        console.log('✅ Select is working - can change values programmatically');
+                    } else {
+                        console.log('❌ Select is NOT working - cannot change values');
+                    }
+                    
+                    // Change it back
+                    libraryTypeSelect.value = originalValue;
+                }, 1000);
+            } else {
+                console.log('❌ Library type select not found!');
+            }
+        });
+    </script>
 </body>
 </html>

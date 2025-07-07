@@ -96,8 +96,8 @@
         }
         
         .logo {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 8px;
             object-fit: contain;
         }
@@ -276,7 +276,7 @@
                            class="form-control <?= isset($validation) && $validation->hasError('username') ? 'is-invalid' : '' ?>" 
                            id="username" 
                            name="username" 
-                           placeholder="Username atau Email"
+                           placeholder="Username"
                            value="<?= old('username') ?>"
                            required
                            autocomplete="username">
@@ -315,7 +315,11 @@
                 </button>
             </form>
             
-                    </div>
+            <!-- Register Link -->
+            <div class="register-text">
+                Belum punya akun? <a href="#" class="register-link">Daftar</a>
+            </div>
+        </div>
     </div>
     
     <!-- Bootstrap 5 JS -->

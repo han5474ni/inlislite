@@ -73,65 +73,47 @@ function setupEventListeners() {
  * Handle form submission
  */
 function handleFormSubmit(e) {
-    e.preventDefault();
-    
-    if (isFormSubmitting) {
-        return;
-    }
-    
     console.log('📝 Submitting registration edit form...');
     
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
+    
+    // Prevent double submission
+    if (isFormSubmitting) {
+        e.preventDefault();
+        return;
+    }
     
     // Validate form
     if (!validateForm(form)) {
+        e.preventDefault();
         showToast('Please fix the errors before submitting', 'error');
         return;
     }
     
-    // Show loading state
-    isFormSubmitting = true;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
-    
     // Clear previous errors
     clearFormErrors();
     
-    // Get form data
-    const formData = new FormData(form);
+    // Set submitting state
+    isFormSubmitting = true;
     
-    // Submit form via AJAX
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+    // Show loading state
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
+    }
+    
+    // Add a timeout to reset the form state in case of server errors
+    setTimeout(() => {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Update Registration';
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showToast('Registration updated successfully!', 'success');
-            
-            // Redirect after short delay
-            setTimeout(() => {
-                window.location.href = '/admin/registration';
-            }, 1500);
-        } else {
-            throw new Error(data.message || 'Failed to update registration');
-        }
-    })
-    .catch(error => {
-        console.error('Error updating registration:', error);
-        showToast(error.message || 'Failed to update registration', 'error');
-        
-        // Reset button state
         isFormSubmitting = false;
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-    });
+    }, 10000); // 10 seconds timeout
+    
+    // Let the form submit normally (no preventDefault)
+    // The form will submit to the server and handle redirect/response there
 }
 
 /**
@@ -167,6 +149,10 @@ function validateForm(form) {
     let isValid = true;
     const requiredFields = form.querySelectorAll('[required]');
     
+    // Clear all previous errors
+    clearFormErrors();
+    
+    // Validate required fields
     requiredFields.forEach(field => {
         if (!validateField(field)) {
             isValid = false;
@@ -182,8 +168,67 @@ function validateForm(form) {
     
     const phoneField = form.querySelector('[name="phone"]');
     if (phoneField && phoneField.value && !isValidPhone(phoneField.value)) {
-        showFieldError(phoneField, 'Please enter a valid phone number');
+        showFieldError(phoneField, 'Please enter a valid phone number (minimum 6 characters)');
         isValid = false;
+    }
+    
+    const websiteField = form.querySelector('[name="website"]');
+    if (websiteField && websiteField.value && !isValidUrl(websiteField.value)) {
+        showFieldError(websiteField, 'Please enter a valid website URL');
+        isValid = false;
+    }
+    
+    const libraryTypeField = form.querySelector('[name="library_type"]');
+    if (libraryTypeField && !libraryTypeField.value) {
+        showFieldError(libraryTypeField, 'Please select a library type');
+        isValid = false;
+    }
+    
+    const statusField = form.querySelector('[name="status"]');
+    if (statusField && !statusField.value) {
+        showFieldError(statusField, 'Please select a status');
+        isValid = false;
+    }
+    
+    const establishedYearField = form.querySelector('[name="established_year"]');
+    if (establishedYearField && establishedYearField.value) {
+        const year = parseInt(establishedYearField.value);
+        const currentYear = new Date().getFullYear();
+        if (isNaN(year) || year < 1800 || year > currentYear) {
+            showFieldError(establishedYearField, `Please enter a valid year between 1800 and ${currentYear}`);
+            isValid = false;
+        }
+    }
+    
+    const collectionCountField = form.querySelector('[name="collection_count"]');
+    if (collectionCountField && collectionCountField.value) {
+        const count = parseInt(collectionCountField.value);
+        if (isNaN(count) || count < 0) {
+            showFieldError(collectionCountField, 'Collection count must be a positive number');
+            isValid = false;
+        }
+    }
+    
+    const memberCountField = form.querySelector('[name="member_count"]');
+    if (memberCountField && memberCountField.value) {
+        const count = parseInt(memberCountField.value);
+        if (isNaN(count) || count < 0) {
+            showFieldError(memberCountField, 'Member count must be a positive number');
+            isValid = false;
+        }
+    }
+    
+    // Show summary if there are errors
+    if (!isValid) {
+        const errorCount = form.querySelectorAll('.is-invalid').length;
+        showToast(`Please fix ${errorCount} error${errorCount > 1 ? 's' : ''} before submitting`, 'error');
+        
+        // Scroll to first error
+        const firstError = form.querySelector('.is-invalid');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+        }
     }
     
     return isValid;
@@ -356,11 +401,20 @@ function isValidPhone(phone) {
 }
 
 function isValidUrl(url) {
+    if (!url) return true; // Empty URLs are valid (optional field)
+    
+    // Try to validate as-is first
     try {
         new URL(url);
         return true;
     } catch {
-        return false;
+        // If it fails, try adding http:// prefix
+        try {
+            new URL('http://' + url);
+            return true;
+        } catch {
+            return false;
+        }
     }
 }
 

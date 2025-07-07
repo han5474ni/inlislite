@@ -100,6 +100,23 @@
                 </div>
             </div>
 
+            <!-- Flash Messages -->
+            <?php if (session()->getFlashdata('success')): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <?= session()->getFlashdata('success') ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <?= session()->getFlashdata('error') ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+
             <!-- Statistics Section -->
             <div class="statistics-section">
                 <div class="row g-3">
@@ -152,6 +169,7 @@
                             <option value="">All</option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
+                            <option value="Pending">Pending</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -171,10 +189,10 @@
                         </button>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-primary w-100" id="addRegistrationBtn">
+                        <a href="<?= base_url('admin/registration/add') ?>" class="btn btn-primary w-100" id="addRegistrationBtn">
                             <i class="bi bi-plus-lg me-2"></i>
                             Add Registration
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -182,7 +200,7 @@
             <!-- Registration Data Table -->
             <div class="registration-list-section">
                 <div class="section-header">
-                    <h2 class="section-title">Registration Data (<span id="registrationCount">8</span>)</h2>
+                    <h2 class="section-title">Registration Data (<span id="registrationCount"><?= count($registrations ?? []) ?></span>)</h2>
                     <p class="section-subtitle">Complete list of library registrations with detailed information</p>
                 </div>
                 
@@ -209,94 +227,51 @@
                             </tr>
                         </thead>
                         <tbody id="registrationTableBody">
-                            <!-- Sample Data -->
-                            <tr data-library-type="Public" data-status="Active">
-                                <td>
-                                    <div class="library-info">
-                                        <h6>Jakarta Public Library</h6>
-                                        <small>DKI Jakarta</small>
-                                    </div>
-                                </td>
-                                <td><span class="badge badge-type badge-public">Public</span></td>
-                                <td><span class="badge badge-status badge-active">Active</span></td>
-                                <td>15 Jan 2024</td>
-                                <td>2 Jan 2024</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button class="action-btn" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item view-registration" href="#" data-id="1"><i class="bi bi-eye me-2"></i>View</a></li>
-                                            <li><a class="dropdown-item edit-registration" href="#" data-id="1"><i class="bi bi-pencil me-2"></i>Edit</a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- Additional sample data rows would go here -->
+                            <?php if (!empty($registrations)): ?>
+                                <?php foreach ($registrations as $registration): ?>
+                                    <tr data-library-type="<?= esc($registration['library_type']) ?>" data-status="<?= esc($registration['status']) ?>">
+                                        <td>
+                                            <div class="library-info">
+                                                <h6><?= esc($registration['library_name']) ?></h6>
+                                                <small><?= esc($registration['province']) ?></small>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-type badge-<?= strtolower($registration['library_type']) ?>"><?= esc($registration['library_type']) ?></span></td>
+                                        <td><span class="badge badge-status badge-<?= strtolower($registration['status']) ?>"><?= esc($registration['status']) ?></span></td>
+                                        <td><?= date('d M Y', strtotime($registration['created_at'])) ?></td>
+                                        <td><?= date('d M Y', strtotime($registration['updated_at'])) ?></td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="action-btn" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li><a class="dropdown-item view-registration" href="<?= base_url('admin/registration/view/' . $registration['id']) ?>"><i class="bi bi-eye me-2"></i>View</a></li>
+                                                    <li><a class="dropdown-item edit-registration" href="<?= base_url('admin/registration/edit/' . $registration['id']) ?>"><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item text-danger delete-registration" href="#" data-id="<?= $registration['id'] ?>"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                            <p>No registration data found</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Add Registration Modal -->
-        <div class="modal fade" id="addRegistrationModal" tabindex="-1" aria-labelledby="addRegistrationModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addRegistrationModalLabel">Add New Registration</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="addRegistrationForm">
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Library Name</label>
-                                    <input type="text" class="form-control" name="library_name" placeholder="Enter library name" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Library Type</label>
-                                    <select class="form-select" name="library_type" required>
-                                        <option value="">Select Type</option>
-                                        <option value="Public">Public</option>
-                                        <option value="Academic">Academic</option>
-                                        <option value="School">School</option>
-                                        <option value="Special">Special</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Status</label>
-                                    <select class="form-select" name="status" required>
-                                        <option value="">Select Status</option>
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Location</label>
-                                    <input type="text" class="form-control" name="location" placeholder="Enter location" required>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Contact Email</label>
-                                    <input type="email" class="form-control" name="email" placeholder="Enter contact email" required>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" form="addRegistrationForm">
-                            <i class="bi bi-plus-lg me-2"></i>
-                            Add Registration
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+            </main>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -347,6 +322,43 @@
 
         .sidebar-nav .nav-item:not(.logout-item) {
             flex-shrink: 0;
+        }
+
+        /* Sortable table headers */
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+
+        .sortable:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        .sortable i {
+            margin-left: 0.5rem;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+        }
+
+        .sortable:hover i {
+            opacity: 1;
+        }
+
+        .sortable.asc i,
+        .sortable.desc i {
+            opacity: 1;
+            color: #007bff;
+        }
+
+        /* Table row animations */
+        .registration-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .registration-table tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
         }
     </style>
 

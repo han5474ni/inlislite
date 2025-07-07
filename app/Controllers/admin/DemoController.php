@@ -22,10 +22,10 @@ class DemoController extends BaseController
     {
         $data = [
             'title' => 'Demo Program - INLISLite v3',
-            'demos' => $this->getDemoData()
+            'demos' => $this->getDemoProgramData()
         ];
         
-        return view('admin/demo/index', $data);
+        return view('admin/demo', $data);
     }
     
     public function cataloging()

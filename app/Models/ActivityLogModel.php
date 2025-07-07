@@ -6,36 +6,37 @@ use CodeIgniter\Model;
 
 class ActivityLogModel extends Model
 {
-    protected $table = 'activity_log';
+    protected $table = 'activity_logs';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
-        'user_id', 'activity_type', 'activity_description', 'ip_address', 
-        'user_agent', 'old_values', 'new_values'
+        'user_id', 'action', 'description', 'ip_address', 
+        'user_agent', 'old_data', 'new_data'
     ];
 
-    protected $useTimestamps = false; // We handle created_at manually
+    protected $useTimestamps = true;
     protected $dateFormat = 'datetime';
+    protected $createdField = 'created_at';
+    protected $updatedField = '';
 
     /**
      * Log user activity
      */
-    public function logActivity($userId, $activityType, $description, $oldValues = null, $newValues = null)
+    public function logActivity($userId, $action, $description, $oldData = null, $newData = null)
     {
         $request = \Config\Services::request();
         
         $data = [
             'user_id' => $userId,
-            'activity_type' => $activityType,
-            'activity_description' => $description,
+            'action' => $action,
+            'description' => $description,
             'ip_address' => $request->getIPAddress(),
             'user_agent' => $request->getUserAgent()->getAgentString(),
-            'old_values' => $oldValues ? json_encode($oldValues) : null,
-            'new_values' => $newValues ? json_encode($newValues) : null,
-            'created_at' => date('Y-m-d H:i:s')
+            'old_data' => $oldData ? json_encode($oldData) : null,
+            'new_data' => $newData ? json_encode($newData) : null
         ];
         
         return $this->insert($data);
@@ -64,16 +65,16 @@ class ActivityLogModel extends Model
             $activity['created_at_formatted'] = $this->formatDate($activity['created_at']);
             
             // Decode JSON values
-            if ($activity['old_values']) {
-                $activity['old_values_decoded'] = json_decode($activity['old_values'], true);
+            if ($activity['old_data']) {
+                $activity['old_data_decoded'] = json_decode($activity['old_data'], true);
             }
-            if ($activity['new_values']) {
-                $activity['new_values_decoded'] = json_decode($activity['new_values'], true);
+            if ($activity['new_data']) {
+                $activity['new_data_decoded'] = json_decode($activity['new_data'], true);
             }
             
             // Add activity icon and color
-            $activity['icon'] = $this->getActivityIcon($activity['activity_type']);
-            $activity['color'] = $this->getActivityColor($activity['activity_type']);
+            $activity['icon'] = $this->getActivityIcon($activity['action']);
+            $activity['color'] = $this->getActivityColor($activity['action']);
         }
         
         return $activities;
@@ -104,14 +105,14 @@ class ActivityLogModel extends Model
         
         $builder->where('created_at >=', date('Y-m-d H:i:s', strtotime("-{$days} days")));
         
-        $stats = $builder->select('activity_type, COUNT(*) as count')
-                        ->groupBy('activity_type')
+        $stats = $builder->select('action, COUNT(*) as count')
+                        ->groupBy('action')
                         ->get()
                         ->getResultArray();
         
         $result = [];
         foreach ($stats as $stat) {
-            $result[$stat['activity_type']] = $stat['count'];
+            $result[$stat['action']] = $stat['count'];
         }
         
         return $result;
@@ -157,7 +158,7 @@ class ActivityLogModel extends Model
     /**
      * Get activity icon
      */
-    private function getActivityIcon($activityType)
+    private function getActivityIcon($action)
     {
         $icons = [
             'login' => 'bi-box-arrow-in-right',
@@ -171,13 +172,13 @@ class ActivityLogModel extends Model
             'system_access' => 'bi-gear'
         ];
         
-        return $icons[$activityType] ?? 'bi-activity';
+        return $icons[$action] ?? 'bi-activity';
     }
 
     /**
      * Get activity color
      */
-    private function getActivityColor($activityType)
+    private function getActivityColor($action)
     {
         $colors = [
             'login' => 'success',
@@ -191,6 +192,6 @@ class ActivityLogModel extends Model
             'system_access' => 'info'
         ];
         
-        return $colors[$activityType] ?? 'secondary';
+        return $colors[$action] ?? 'secondary';
     }
 }
