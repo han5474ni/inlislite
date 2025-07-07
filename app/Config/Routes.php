@@ -20,23 +20,25 @@ $routes->get('test-upload', function() {
     return view('test_profile_upload');
 });
 
-$routes->get('/', 'Public\PublicController::index');
-$routes->get('home', 'Public\PublicController::index');
+$routes->get('/', 'PublicController::index');
+$routes->get('home', 'PublicController::index');
 
 // Public pages
-$routes->get('tentang', 'Public\PublicController::tentang');
-$routes->get('tentang-aplikasi', 'Public\PublicController::tentang');
-$routes->get('about', 'Public\PublicController::tentang');
-$routes->get('panduan', function() {
-    return redirect()->to(base_url('admin/panduan'));
-});
-$routes->get('guide', function() {
-    return redirect()->to(base_url('admin/panduan'));
-});
-$routes->get('aplikasi', 'Public\PublicController::aplikasi');
-$routes->get('supporting-apps', 'Public\PublicController::aplikasi');
-$routes->get('patch', 'Public\PublicController::patch');
-$routes->get('updates', 'Public\PublicController::patch');
+$routes->get('tentang', 'PublicController::tentang');
+$routes->get('tentang-aplikasi', 'PublicController::tentang');
+$routes->get('about', 'PublicController::tentang');
+$routes->get('panduan', 'PublicController::panduan');
+$routes->get('guide', 'PublicController::panduan');
+$routes->get('aplikasi', 'PublicController::aplikasi');
+$routes->get('supporting-apps', 'PublicController::aplikasi');
+$routes->get('patch', 'PublicController::patch');
+$routes->get('updates', 'PublicController::patch');
+$routes->get('dukungan', 'PublicController::dukungan');
+$routes->get('support', 'PublicController::dukungan');
+$routes->get('bimbingan', 'PublicController::bimbingan');
+$routes->get('training', 'PublicController::bimbingan');
+$routes->get('demo', 'PublicController::demo');
+$routes->get('demo-program', 'PublicController::demo');
 
 // Demo routes (Public for testing - REMOVE IN PRODUCTION)
 $routes->get('modern-dashboard', 'Admin\AdminController::modernDashboard');
