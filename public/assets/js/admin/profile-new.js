@@ -1,9 +1,11 @@
 /**
- * Profile Page JavaScript
+ * Profile Page JavaScript - New Implementation
  * Handles profile photo upload, name update, and password change
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Profile page loaded');
+    
     // Initialize components
     initializePhotoUpload();
     initializeNameForm();
@@ -18,18 +20,21 @@ function initializePhotoUpload() {
     const avatarInput = document.getElementById('avatarInput');
     const changePhotoBtn = document.getElementById('changePhotoBtn');
     const avatarUpload = document.getElementById('avatarUpload');
-    const profileAvatar = document.getElementById('profileAvatar');
 
     // Trigger file input when button is clicked
     if (changePhotoBtn) {
-        changePhotoBtn.addEventListener('click', function() {
+        changePhotoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Change photo button clicked');
             avatarInput.click();
         });
     }
 
     // Trigger file input when avatar overlay is clicked
     if (avatarUpload) {
-        avatarUpload.addEventListener('click', function() {
+        avatarUpload.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Avatar overlay clicked');
             avatarInput.click();
         });
     }
@@ -38,6 +43,8 @@ function initializePhotoUpload() {
     if (avatarInput) {
         avatarInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
+            console.log('File selected:', file);
+            
             if (file) {
                 uploadProfilePhoto(file);
             }
@@ -49,16 +56,19 @@ function initializePhotoUpload() {
  * Upload profile photo
  */
 function uploadProfilePhoto(file) {
+    console.log('Starting photo upload for file:', file.name);
+    
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
     if (!allowedTypes.includes(file.type)) {
-        showAlert('Tipe file tidak diizinkan. Gunakan JPG, PNG, atau GIF', 'danger');
+        showAlert('File type not allowed. Please use JPG, PNG, or GIF', 'danger');
         return;
     }
 
     // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-        showAlert('Ukuran file terlalu besar. Maksimal 2MB', 'danger');
+    const maxSize = 2 * 1024 * 1024; // 2MB
+    if (file.size > maxSize) {
+        showAlert('File size too large. Maximum 2MB allowed', 'danger');
         return;
     }
 
@@ -71,56 +81,100 @@ function uploadProfilePhoto(file) {
     // Create FormData
     const formData = new FormData();
     formData.append('profile_photo', file);
+    
+    // Add CSRF token if available
+    const csrfToken = document.querySelector('input[name="csrf_token"]');
+    if (csrfToken) {
+        formData.append('csrf_token', csrfToken.value);
+    }
 
-    // Upload file
-    fetch('/admin/profile/upload-photo', {
+    console.log('Uploading file:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified
+    });
+
+    // Upload file (using test route for now)
+    fetch('/test-upload-photo', {
         method: 'POST',
         body: formData,
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response received:', {
+            status: response.status,
+            statusText: response.statusText,
+            ok: response.ok
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return response.json();
+    })
     .then(data => {
+        console.log('Upload response:', data);
+        
         if (data.success) {
             // Update avatar image
-            const avatarImage = document.getElementById('avatarImage');
-            const avatarInitials = document.getElementById('avatarInitials');
-            
-            if (avatarInitials) {
-                avatarInitials.style.display = 'none';
-            }
-            
-            if (avatarImage) {
-                avatarImage.src = data.photo_url;
-                avatarImage.style.display = 'block';
-            } else {
-                // Create new image element
-                const newImage = document.createElement('img');
-                newImage.id = 'avatarImage';
-                newImage.src = data.photo_url;
-                newImage.alt = 'Profile Picture';
-                document.getElementById('profileAvatar').appendChild(newImage);
-            }
-
+            updateAvatarDisplay(data.photo_url);
             showAlert(data.message, 'success');
-            
-            // Log the successful photo upload
-            console.log('Profile photo uploaded successfully:', data.photo_url);
+            console.log('Photo upload successful:', data.photo_url);
         } else {
-            showAlert(data.message, 'danger');
-            console.error('Photo upload failed:', data.message);
+            showAlert(data.message || 'Upload failed', 'danger');
+            console.error('Upload failed:', data.message);
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showAlert('Terjadi kesalahan saat mengupload foto', 'danger');
+        console.error('Upload error:', error);
+        showAlert('Upload failed: ' + error.message, 'danger');
     })
     .finally(() => {
         // Reset button state
         changePhotoBtn.innerHTML = originalText;
         changePhotoBtn.disabled = false;
+        
+        // Clear file input
+        document.getElementById('avatarInput').value = '';
     });
+}
+
+/**
+ * Update avatar display with new photo
+ */
+function updateAvatarDisplay(photoUrl) {
+    const avatarImage = document.getElementById('avatarImage');
+    const avatarInitials = document.getElementById('avatarInitials');
+    const profileAvatar = document.getElementById('profileAvatar');
+    
+    // Hide initials if they exist
+    if (avatarInitials) {
+        avatarInitials.style.display = 'none';
+    }
+    
+    // Update or create image element
+    if (avatarImage) {
+        avatarImage.src = photoUrl + '?t=' + Date.now(); // Add timestamp to prevent caching
+        avatarImage.style.display = 'block';
+    } else {
+        // Create new image element
+        const newImage = document.createElement('img');
+        newImage.id = 'avatarImage';
+        newImage.src = photoUrl + '?t=' + Date.now();
+        newImage.alt = 'Profile Picture';
+        newImage.style.width = '100%';
+        newImage.style.height = '100%';
+        newImage.style.objectFit = 'cover';
+        newImage.style.borderRadius = '50%';
+        
+        if (profileAvatar) {
+            profileAvatar.appendChild(newImage);
+        }
+    }
 }
 
 /**
@@ -150,12 +204,12 @@ function updateName() {
     const namaPengguna = formData.get('nama_pengguna');
     
     if (!namaLengkap || namaLengkap.trim() === '') {
-        showAlert('Nama lengkap harus diisi', 'danger');
+        showAlert('Full name is required', 'danger');
         return;
     }
     
     if (!namaPengguna || namaPengguna.trim() === '') {
-        showAlert('Username harus diisi', 'danger');
+        showAlert('Username is required', 'danger');
         return;
     }
     
@@ -186,12 +240,7 @@ function updateName() {
             }
 
             showAlert(data.message, 'success');
-            
-            // Log the successful update
-            console.log('Profile name updated successfully:', {
-                nama_lengkap: namaLengkap,
-                nama_pengguna: namaPengguna
-            });
+            console.log('Profile name updated successfully');
         } else {
             if (data.errors) {
                 displayFormErrors(form, data.errors);
@@ -202,7 +251,7 @@ function updateName() {
     })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('Terjadi kesalahan saat mengupdate nama', 'danger');
+        showAlert('Failed to update name', 'danger');
     })
     .finally(() => {
         // Reset button state
@@ -231,7 +280,7 @@ function initializePasswordForm() {
     if (confirmPassword) {
         confirmPassword.addEventListener('input', function() {
             if (newPassword.value !== confirmPassword.value) {
-                confirmPassword.setCustomValidity('Password tidak cocok');
+                confirmPassword.setCustomValidity('Passwords do not match');
                 confirmPassword.classList.add('is-invalid');
             } else {
                 confirmPassword.setCustomValidity('');
@@ -249,28 +298,28 @@ function updatePassword() {
     const formData = new FormData(form);
     const updateBtn = document.getElementById('updatePasswordBtn');
     
-    // Validate password confirmation
+    // Validate password fields
     const currentPassword = document.getElementById('currentPassword').value;
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
     
     if (!currentPassword || currentPassword.trim() === '') {
-        showAlert('Password saat ini harus diisi', 'danger');
+        showAlert('Current password is required', 'danger');
         return;
     }
     
     if (!newPassword || newPassword.trim() === '') {
-        showAlert('Password baru harus diisi', 'danger');
+        showAlert('New password is required', 'danger');
         return;
     }
     
     if (newPassword.length < 6) {
-        showAlert('Password baru minimal 6 karakter', 'danger');
+        showAlert('New password must be at least 6 characters', 'danger');
         return;
     }
     
     if (newPassword !== confirmPassword) {
-        showAlert('Password baru dan konfirmasi password tidak cocok', 'danger');
+        showAlert('New password and confirmation do not match', 'danger');
         return;
     }
 
@@ -279,7 +328,7 @@ function updatePassword() {
     updateBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Updating...';
     updateBtn.disabled = true;
 
-    fetch('/admin/profile/update', {
+    fetch('/admin/profile/change-password', {
         method: 'POST',
         body: formData,
         headers: {
@@ -292,8 +341,6 @@ function updatePassword() {
             // Clear form
             form.reset();
             showAlert(data.message, 'success');
-            
-            // Log the successful password update
             console.log('Password updated successfully');
         } else {
             if (data.errors) {
@@ -305,7 +352,7 @@ function updatePassword() {
     })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('Terjadi kesalahan saat mengupdate password', 'danger');
+        showAlert('Failed to update password', 'danger');
     })
     .finally(() => {
         // Reset button state

@@ -29,7 +29,7 @@
         <div class="sidebar-header">
             <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
                 <div class="sidebar-logo-icon">
-                    <i data-feather="star"></i>
+                    <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
                 </div>
                 <div class="sidebar-title">
                     INLISlite v3.0<br>
@@ -90,7 +90,7 @@
                 <div class="header-top">
                     <div class="header-left">
                         <div class="header-icon">
-                            <i class="bi bi-person"></i>
+                            <i class="bi bi-person-circle"></i>
                         </div>
                         <div>
                             <h1 class="page-title">User Profile</h1>
@@ -117,161 +117,154 @@
                 </div>
             <?php endif; ?>
 
-            <div class="row g-4">
-                <!-- Profile Card Section -->
-                <div class="col-lg-4">
-                    <div class="profile-card">
-                        <div class="profile-header">
-                            <div class="profile-avatar-container">
-                                <div class="profile-avatar" id="profileAvatar">
-                                    <?php if (isset($user['avatar']) && !empty($user['avatar'])): ?>
-                                        <img src="<?= base_url('uploads/avatars/' . $user['avatar']) ?>" alt="Profile Picture" id="avatarImage">
-                                    <?php else: ?>
-                                        <div class="avatar-initials" id="avatarInitials">
-                                            <?= strtoupper(substr($user['nama_lengkap'] ?? 'A', 0, 2)) ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="avatar-upload-overlay" id="avatarUpload">
-                                    <i class="bi bi-camera"></i>
-                                    <span>Change Photo</span>
+            <!-- Profile Information Section -->
+            <div class="profile-info-section">
+                <div class="section-header">
+                    <h2 class="section-title">Profile Information</h2>
+                    <p class="section-subtitle">View and manage your account details</p>
+                </div>
+                
+                <div class="profile-info-container">
+                    <div class="row g-4">
+                        <!-- Profile Photo Section -->
+                        <div class="col-md-4 text-center">
+                            <div class="profile-photo-section">
+                                <div class="profile-avatar-container">
+                                    <div class="profile-avatar" id="profileAvatar">
+                                        <?php if (isset($user['foto_url']) && !empty($user['foto_url'])): ?>
+                                            <img src="<?= $user['foto_url'] ?>" alt="Profile Picture" id="avatarImage">
+                                        <?php else: ?>
+                                            <div class="avatar-initials" id="avatarInitials">
+                                                <?= $user['avatar_initials'] ?? 'AD' ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="avatar-upload-overlay" id="avatarUpload">
+                                        <i class="bi bi-camera"></i>
+                                        <span>Change</span>
+                                    </div>
                                 </div>
                                 <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                                <button class="btn btn-change-photo" id="changePhotoBtn">
+                                    <i class="bi bi-camera me-2"></i>
+                                    Change Photo
+                                </button>
                             </div>
-                            
+                        </div>
+
+                        <!-- Profile Info Section -->
+                        <div class="col-md-8">
                             <div class="profile-info">
-                                <h3 class="profile-name"><?= esc($user['nama_lengkap'] ?? 'Administrator') ?></h3>
+                                <h4 class="profile-name"><?= esc($user['nama_lengkap'] ?? 'Administrator') ?></h4>
                                 <p class="profile-username">@<?= esc($user['nama_pengguna'] ?? 'admin') ?></p>
-                                <div class="profile-badges">
-                                    <span class="badge badge-role <?= getRoleBadgeClass($user['role'] ?? 'Super Admin') ?>">
+                                <div class="profile-badges mb-3">
+                                    <span class="badge badge-role badge-super-admin">
                                         <?= esc($user['role'] ?? 'Super Admin') ?>
                                     </span>
-                                    <span class="badge badge-status <?= getStatusBadgeClass($user['status'] ?? 'Aktif') ?>">
+                                    <span class="badge badge-status badge-aktif">
                                         <?= esc($user['status'] ?? 'Aktif') ?>
                                     </span>
                                 </div>
+                                <div class="profile-details">
+                                    <div class="detail-item">
+                                        <i class="bi bi-envelope me-2"></i>
+                                        <span><?= esc($user['email'] ?? 'admin@inlislite.com') ?></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="bi bi-clock me-2"></i>
+                                        <span>Last login: <?= $user['last_login_formatted'] ?? 'Belum pernah login' ?></span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="profile-actions">
-                            <button class="btn btn-primary w-100" id="changePhotoBtn">
-                                <i class="bi bi-camera me-2"></i>
-                                Change Profile Picture
-                            </button>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Account Information & Password Change -->
-                <div class="col-lg-8">
-                    <!-- Account Information Section -->
-                    <div class="info-card mb-4">
-                        <div class="card-header">
-                            <h5 class="card-title">
-                                <i class="bi bi-info-circle me-2"></i>
-                                Account Information
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <label class="info-label">Email Address</label>
-                                        <div class="info-value">
-                                            <i class="bi bi-envelope me-2"></i>
-                                            <?= esc($user['email'] ?? 'admin@inlislite.com') ?>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <label class="info-label">Created Account</label>
-                                        <div class="info-value">
-                                            <i class="bi bi-calendar-plus me-2"></i>
-                                            <?= date('d M Y', strtotime($user['created_at'] ?? date('Y-m-d'))) ?>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <label class="info-label">Last Login</label>
-                                        <div class="info-value">
-                                            <i class="bi bi-clock me-2"></i>
-                                            <?= isset($user['last_login']) ? date('d M Y, H:i', strtotime($user['last_login'])) : 'Never' ?>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <label class="info-label">Account Status</label>
-                                        <div class="info-value">
-                                            <span class="badge badge-status <?= getStatusBadgeClass($user['status'] ?? 'Aktif') ?>">
-                                                <?= esc($user['status'] ?? 'Aktif') ?>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
+            <!-- Edit Name Section -->
+            <div class="edit-name-section">
+                <div class="section-header">
+                    <h2 class="section-title">Edit Name</h2>
+                    <p class="section-subtitle">Update your display name and username</p>
+                </div>
+                
+                <div class="edit-name-container">
+                    <form id="nameForm" class="modern-form">
+                        <?= csrf_field() ?>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control modern-input" name="nama_lengkap" value="<?= esc($user['nama_lengkap'] ?? '') ?>" placeholder="Enter your full name" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control modern-input" name="nama_pengguna" value="<?= esc($user['nama_pengguna'] ?? '') ?>" placeholder="Enter your username" required>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                    </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-update-name" id="updateNameBtn">
+                                <i class="bi bi-check-lg me-2"></i>
+                                Update Name
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-                    <!-- Change Password Section -->
-                    <div class="password-card">
-                        <div class="card-header">
-                            <h5 class="card-title">
-                                <i class="bi bi-shield-lock me-2"></i>
-                                Change Password
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <form id="passwordForm">
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <label class="form-label fw-semibold">Current Password</label>
-                                        <div class="password-input-group">
-                                            <input type="password" class="form-control" id="currentPassword" name="current_password" required>
-                                            <button type="button" class="password-toggle" data-target="currentPassword">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        </div>
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold">New Password</label>
-                                        <div class="password-input-group">
-                                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
-                                            <button type="button" class="password-toggle" data-target="newPassword">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        </div>
-                                        <div class="password-strength" id="passwordStrength"></div>
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold">Confirm New Password</label>
-                                        <div class="password-input-group">
-                                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
-                                            <button type="button" class="password-toggle" data-target="confirmPassword">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        </div>
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-actions">
-                                    <button type="button" class="btn btn-secondary" id="resetPasswordForm">
-                                        <i class="bi bi-arrow-clockwise me-2"></i>
-                                        Reset
-                                    </button>
-                                    <button type="submit" class="btn btn-primary" id="updatePasswordBtn">
-                                        <i class="bi bi-shield-check me-2"></i>
-                                        Update Password
+            <!-- Change Password Section -->
+            <div class="password-section">
+                <div class="section-header">
+                    <h2 class="section-title">Change Password</h2>
+                    <p class="section-subtitle">Update your account password for security</p>
+                </div>
+                
+                <div class="password-container">
+                    <form id="passwordForm" class="modern-form">
+                        <?= csrf_field() ?>
+                        <div class="form-grid">
+                            <div class="form-group form-group-full">
+                                <label class="form-label">Current Password</label>
+                                <div class="password-input-group">
+                                    <input type="password" class="form-control modern-input" id="currentPassword" name="current_password" placeholder="Enter current password" required>
+                                    <button type="button" class="password-toggle" data-target="currentPassword">
+                                        <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
-                            </form>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">New Password</label>
+                                <div class="password-input-group">
+                                    <input type="password" class="form-control modern-input" id="newPassword" name="kata_sandi" placeholder="Enter new password" required>
+                                    <button type="button" class="password-toggle" data-target="newPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength" id="passwordStrength"></div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm New Password</label>
+                                <div class="password-input-group">
+                                    <input type="password" class="form-control modern-input" id="confirmPassword" name="confirm_password" placeholder="Confirm new password" required>
+                                    <button type="button" class="password-toggle" data-target="confirmPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback"></div>
+                            </div>
                         </div>
-                    </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-update-password" id="updatePasswordBtn">
+                                <i class="bi bi-shield-check me-2"></i>
+                                Update Password
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -282,7 +275,7 @@
     <!-- Dashboard JS -->
     <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
     <!-- Custom JavaScript -->
-    <script src="<?= base_url('assets/js/admin/profile.js') ?>"></script>
+    <script src="<?= base_url('assets/js/admin/profile-new.js') ?>"></script>
     
     <style>
         /* Logout button styling - matching login button style */
@@ -344,35 +337,3 @@
     </script>
 </body>
 </html>
-
-<?php
-// Helper functions for badge classes
-function getRoleBadgeClass($role) {
-    switch (strtolower($role)) {
-        case 'super admin':
-            return 'badge-super-admin';
-        case 'admin':
-            return 'badge-admin';
-        case 'pustakawan':
-        case 'librarian':
-            return 'badge-librarian';
-        case 'staff':
-            return 'badge-staff';
-        default:
-            return 'badge-admin';
-    }
-}
-
-function getStatusBadgeClass($status) {
-    switch (strtolower($status)) {
-        case 'aktif':
-        case 'active':
-            return 'badge-active';
-        case 'non-aktif':
-        case 'inactive':
-            return 'badge-inactive';
-        default:
-            return 'badge-active';
-    }
-}
-?>

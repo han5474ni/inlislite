@@ -37,11 +37,18 @@ function initializeSidebar() {
         const isCollapsed = sidebar.classList.contains('collapsed');
         localStorage.setItem('inlislite_sidebar_collapsed', isCollapsed);
         
+        // Update toggle icon based on new state
+        updateToggleIcon(sidebarToggle, isCollapsed);
+        
         // Trigger resize event for any charts or responsive elements
         setTimeout(() => {
             window.dispatchEvent(new Event('resize'));
         }, 300);
     });
+    
+    // Initialize toggle icon on page load
+    const isInitiallyCollapsed = sidebar.classList.contains('collapsed');
+    updateToggleIcon(sidebarToggle, isInitiallyCollapsed);
     
     // Handle keyboard navigation
     sidebarToggle.addEventListener('keydown', function(e) {
@@ -50,6 +57,41 @@ function initializeSidebar() {
             this.click();
         }
     });
+}
+
+/**
+ * Update toggle icon based on sidebar state with enhanced UI feedback
+ * @param {HTMLElement} toggleButton - The toggle button element
+ * @param {boolean} isCollapsed - Whether sidebar is collapsed
+ */
+function updateToggleIcon(toggleButton, isCollapsed) {
+    const icon = toggleButton.querySelector('i[data-feather]');
+    if (icon) {
+        if (isCollapsed) {
+            // When collapsed (narrow), show >> to indicate "expand" action
+            icon.setAttribute('data-feather', 'chevrons-right');
+            toggleButton.setAttribute('title', 'Expand sidebar');
+            toggleButton.setAttribute('aria-label', 'Expand sidebar');
+            toggleButton.classList.add('collapsed');
+        } else {
+            // When expanded (wide), show << to indicate "collapse" action
+            icon.setAttribute('data-feather', 'chevrons-left');
+            toggleButton.setAttribute('title', 'Collapse sidebar');
+            toggleButton.setAttribute('aria-label', 'Collapse sidebar');
+            toggleButton.classList.remove('collapsed');
+        }
+        
+        // Add visual feedback animation
+        toggleButton.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            toggleButton.style.transform = 'scale(1)';
+        }, 150);
+        
+        // Re-initialize feather icons to update the display
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
 }
 
 /**

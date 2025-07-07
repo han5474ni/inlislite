@@ -467,7 +467,7 @@
         
         <div class="sidebar-header">
             <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
-                <i data-feather="star"></i>
+                <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
                 <div class="sidebar-title">
                     INLISlite v3.0<br>
                     <small style="font-size: 0.8rem; opacity: 0.8;">Dashboard</small>

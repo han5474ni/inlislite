@@ -15,8 +15,6 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <!-- Dashboard CSS -->
     <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
-    <!-- Registration CSS -->
-    <link href="<?= base_url('assets/css/admin/registration.css') ?>" rel="stylesheet">
     <!-- Registration View CSS -->
     <link href="<?= base_url('assets/css/admin/registration_view.css') ?>" rel="stylesheet">
 </head>
@@ -31,7 +29,7 @@
         <div class="sidebar-header">
             <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
                 <div class="sidebar-logo-icon">
-                    <i data-feather="star"></i>
+                    <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
                 </div>
                 <div class="sidebar-title">
                     INLISlite v3.0<br>
@@ -92,266 +90,157 @@
                 <div class="header-top">
                     <div class="header-left">
                         <div class="header-icon">
-                            <i class="bi bi-eye"></i>
+                            <i class="bi bi-book"></i>
                         </div>
                         <div>
-                            <h1 class="page-title"><?= $page_title ?? 'Registration Details' ?></h1>
-                            <p class="page-subtitle"><?= $page_subtitle ?? 'View library registration information' ?></p>
+                            <h1 class="page-title">Registrasi Inlislite</h1>
+                            <p class="page-subtitle">Kelola pengguna sistem dan hak aksesnya</p>
                         </div>
                     </div>
                     <div class="header-right">
-                        <a href="<?= base_url('admin/registration/edit/' . ($registration['id'] ?? '')) ?>" class="btn btn-primary me-2">
-                            <i class="bi bi-pencil me-2"></i>
-                            Edit
-                        </a>
-                        <a href="<?= base_url('admin/registration') ?>" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-2"></i>
-                            Back to List
+                        <a href="<?= base_url('admin/registration') ?>" class="back-btn">
+                            <i class="bi bi-arrow-left"></i>
+                            Kembali
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Registration Details -->
-            <div class="registration-view-section">
-                <div class="row">
-                    <div class="col-lg-8">
-                        <!-- Basic Information -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-building me-2"></i>
-                                    Basic Information
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Library Name</label>
-                                        <p class="field-value"><?= esc($registration['library_name'] ?? 'N/A') ?></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Library Code</label>
-                                        <p class="field-value"><?= esc($registration['library_code'] ?? 'N/A') ?></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Library Type</label>
-                                        <p class="field-value">
-                                            <?php if (isset($registration['library_type'])): ?>
-                                                <span class="badge badge-type <?= strtolower($registration['library_type']) ?>"><?= esc($registration['library_type']) ?></span>
-                                            <?php else: ?>
-                                                N/A
-                                            <?php endif; ?>
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Status</label>
-                                        <p class="field-value">
-                                            <?php if (isset($registration['status'])): ?>
-                                                <span class="badge badge-status <?= strtolower($registration['status']) ?>"><?= esc($registration['status']) ?></span>
-                                            <?php else: ?>
-                                                N/A
-                                            <?php endif; ?>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Library Main Card -->
+            <div class="library-main-card">
+                <div class="library-card-content">
+                    <div class="library-info">
+                        <h2 class="library-name"><?= esc($registration['library_name'] ?? 'Library Name') ?></h2>
+                        <p class="library-province"><?= esc($registration['province'] ?? 'Province') ?></p>
+                    </div>
+                    <div class="library-badges">
+                        <span class="badge badge-type badge-<?= strtolower($registration['library_type'] ?? 'public') ?>">
+                            <?= esc($registration['library_type'] ?? 'Perpustakaan Publik') ?>
+                        </span>
+                        <span class="badge badge-status badge-<?= strtolower($registration['status'] ?? 'active') ?>">
+                            <?php 
+                            $status = $registration['status'] ?? 'Active';
+                            echo $status === 'Active' ? 'Aktif' : 'Nonaktif';
+                            ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
 
-                        <!-- Location Information -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-geo-alt me-2"></i>
-                                    Location Information
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Province</label>
-                                        <p class="field-value"><?= esc($registration['province'] ?? 'N/A') ?></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">City</label>
-                                        <p class="field-value"><?= esc($registration['city'] ?? 'N/A') ?></p>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label fw-semibold text-muted">Address</label>
-                                        <p class="field-value"><?= esc($registration['address'] ?? 'N/A') ?></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Postal Code</label>
-                                        <p class="field-value"><?= esc($registration['postal_code'] ?? 'N/A') ?></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Coordinates</label>
-                                        <p class="field-value"><?= esc($registration['coordinates'] ?? 'N/A') ?></p>
-                                    </div>
-                                </div>
-                            </div>
+            <!-- Information Sections -->
+            <div class="info-sections">
+                <!-- Informasi Perpustakaan Section -->
+                <div class="info-card">
+                    <div class="info-header">
+                        <i class="bi bi-building"></i>
+                        <h3>Informasi Perpustakaan</h3>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-field">
+                            <label>Nama Perpustakaan</label>
+                            <div class="field-display"><?= esc($registration['library_name'] ?? 'N/A') ?></div>
                         </div>
-
-                        <!-- Contact Information -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-person-lines-fill me-2"></i>
-                                    Contact Information
-                                </h5>
+                        <div class="info-row">
+                            <div class="info-field">
+                                <label>Tipe</label>
+                                <div class="field-display"><?= esc($registration['library_type'] ?? 'N/A') ?></div>
                             </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Contact Person</label>
-                                        <p class="field-value"><?= esc($registration['contact_name'] ?? 'N/A') ?></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Position</label>
-                                        <p class="field-value"><?= esc($registration['contact_position'] ?? 'N/A') ?></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Email</label>
-                                        <p class="field-value">
-                                            <?php if (!empty($registration['email'])): ?>
-                                                <a href="mailto:<?= esc($registration['email']) ?>"><?= esc($registration['email']) ?></a>
-                                            <?php else: ?>
-                                                N/A
-                                            <?php endif; ?>
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Phone</label>
-                                        <p class="field-value">
-                                            <?php if (!empty($registration['phone'])): ?>
-                                                <a href="tel:<?= esc($registration['phone']) ?>"><?= esc($registration['phone']) ?></a>
-                                            <?php else: ?>
-                                                N/A
-                                            <?php endif; ?>
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Website</label>
-                                        <p class="field-value">
-                                            <?php if (!empty($registration['website'])): ?>
-                                                <a href="<?= esc($registration['website']) ?>" target="_blank"><?= esc($registration['website']) ?></a>
-                                            <?php else: ?>
-                                                N/A
-                                            <?php endif; ?>
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold text-muted">Fax</label>
-                                        <p class="field-value"><?= esc($registration['fax'] ?? 'N/A') ?></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Additional Information -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    Additional Information
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-semibold text-muted">Established Year</label>
-                                        <p class="field-value"><?= esc($registration['established_year'] ?? 'N/A') ?></p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-semibold text-muted">Collection Count</label>
-                                        <p class="field-value"><?= isset($registration['collection_count']) ? number_format($registration['collection_count']) : 'N/A' ?></p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-semibold text-muted">Member Count</label>
-                                        <p class="field-value"><?= isset($registration['member_count']) ? number_format($registration['member_count']) : 'N/A' ?></p>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label fw-semibold text-muted">Notes</label>
-                                        <p class="field-value"><?= esc($registration['notes'] ?? 'N/A') ?></p>
-                                    </div>
+                            <div class="info-field">
+                                <label>Status</label>
+                                <div class="field-display">
+                                    <span class="status-indicator status-<?= strtolower($registration['status'] ?? 'active') ?>">
+                                        <?php 
+                                        $status = $registration['status'] ?? 'Active';
+                                        echo $status === 'Active' ? 'Aktif' : 'Nonaktif';
+                                        ?>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-lg-4">
-                        <!-- Registration Summary -->
-                        <div class="card mb-4 registration-summary">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-calendar-check me-2"></i>
-                                    Registration Summary
-                                </h5>
+                <!-- Lokasi dan Linimasa Section -->
+                <div class="info-card">
+                    <div class="info-header">
+                        <i class="bi bi-geo-alt"></i>
+                        <h3>Lokasi dan Linimasa</h3>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-row">
+                            <div class="info-field">
+                                <label><i class="bi bi-geo-alt-fill me-2"></i>Lokasi</label>
+                                <div class="field-display"><?= esc($registration['city'] ?? 'N/A') ?></div>
                             </div>
-                            <div class="card-body">
-                                <div>
-                                    <label class="form-label fw-semibold text-muted">Registration ID</label>
-                                    <p class="field-value">#<?= esc($registration['id'] ?? 'N/A') ?></p>
-                                </div>
-                                <div>
-                                    <label class="form-label fw-semibold text-muted">Registration Date</label>
-                                    <p class="field-value">
-                                        <?php if (isset($registration['created_at'])): ?>
-                                            <?= date('d M Y, H:i', strtotime($registration['created_at'])) ?>
-                                        <?php else: ?>
-                                            N/A
-                                        <?php endif; ?>
-                                    </p>
-                                </div>
-                                <div>
-                                    <label class="form-label fw-semibold text-muted">Last Updated</label>
-                                    <p class="field-value">
-                                        <?php if (isset($registration['updated_at'])): ?>
-                                            <?= date('d M Y, H:i', strtotime($registration['updated_at'])) ?>
-                                        <?php else: ?>
-                                            N/A
-                                        <?php endif; ?>
-                                    </p>
-                                </div>
-                                <?php if (isset($registration['verified_at']) && !empty($registration['verified_at'])): ?>
-                                <div>
-                                    <label class="form-label fw-semibold text-muted">Verified Date</label>
-                                    <p class="field-value"><?= date('d M Y, H:i', strtotime($registration['verified_at'])) ?></p>
-                                </div>
-                                <?php endif; ?>
+                            <div class="info-field">
+                                <label><i class="bi bi-map me-2"></i>Provinsi</label>
+                                <div class="field-display"><?= esc($registration['province'] ?? 'N/A') ?></div>
                             </div>
                         </div>
-
-                        <!-- Quick Actions -->
-                        <div class="card quick-actions">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-lightning me-2"></i>
-                                    Quick Actions
-                                </h5>
+                        <div class="info-row">
+                            <div class="info-field">
+                                <label><i class="bi bi-calendar-plus me-2"></i>Tanggal Registrasi</label>
+                                <div class="field-display">
+                                    <?php if (isset($registration['created_at'])): ?>
+                                        <?= date('d M Y', strtotime($registration['created_at'])) ?>
+                                    <?php else: ?>
+                                        N/A
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="d-grid gap-2">
-                                    <a href="<?= base_url('admin/registration/edit/' . ($registration['id'] ?? '')) ?>" class="btn btn-primary">
-                                        <i class="bi bi-pencil me-2"></i>
-                                        Edit Registration
-                                    </a>
-                                    <button class="btn btn-outline-success" onclick="changeStatus('verified')">
-                                        <i class="bi bi-check-circle me-2"></i>
-                                        Mark as Verified
-                                    </button>
-                                    <button class="btn btn-outline-warning" onclick="changeStatus('pending')">
-                                        <i class="bi bi-clock me-2"></i>
-                                        Mark as Pending
-                                    </button>
-                                    <button class="btn btn-outline-secondary" onclick="exportRegistrationData('json')">
-                                        <i class="bi bi-download me-2"></i>
-                                        Export Data
-                                    </button>
-                                    <button class="btn btn-outline-danger" onclick="deleteRegistration()">
-                                        <i class="bi bi-trash me-2"></i>
-                                        Delete Registration
-                                    </button>
+                            <div class="info-field">
+                                <label><i class="bi bi-clock me-2"></i>Update Terakhir</label>
+                                <div class="field-display">
+                                    <?php if (isset($registration['updated_at'])): ?>
+                                        <?= date('d M Y', strtotime($registration['updated_at'])) ?>
+                                    <?php else: ?>
+                                        N/A
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informasi Kontak Section -->
+                <div class="info-card">
+                    <div class="info-header">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <h3>Informasi Kontak</h3>
+                    </div>
+                    <div class="info-content">
+                        <div class="contact-list">
+                            <div class="contact-item">
+                                <i class="bi bi-person-fill"></i>
+                                <div>
+                                    <label>Penanggung Jawab</label>
+                                    <span><?= esc($registration['contact_name'] ?? 'N/A') ?></span>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="bi bi-envelope-fill"></i>
+                                <div>
+                                    <label>Email</label>
+                                    <span>
+                                        <?php if (!empty($registration['email'])): ?>
+                                            <a href="mailto:<?= esc($registration['email']) ?>"><?= esc($registration['email']) ?></a>
+                                        <?php else: ?>
+                                            N/A
+                                        <?php endif; ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="bi bi-telephone-fill"></i>
+                                <div>
+                                    <label>Telepon</label>
+                                    <span>
+                                        <?php if (!empty($registration['phone'])): ?>
+                                            <a href="tel:<?= esc($registration['phone']) ?>"><?= esc($registration['phone']) ?></a>
+                                        <?php else: ?>
+                                            N/A
+                                        <?php endif; ?>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -363,10 +252,8 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Dashboard JS -->
+    <!-- Dashboard JS (for sidebar functionality) -->
     <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
-    <!-- Registration JS -->
-    <script src="<?= base_url('assets/js/admin/registration.js') ?>"></script>
     <!-- Registration View JS -->
     <script src="<?= base_url('assets/js/admin/registration_view.js') ?>"></script>
 </body>

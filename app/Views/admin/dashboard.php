@@ -27,7 +27,7 @@
         <div class="sidebar-header">
             <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
                 <div class="sidebar-logo-icon">
-                    <i data-feather="star"></i>
+                    <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
                 </div>
                 <div class="sidebar-title">
                     INLISlite v3.0<br>

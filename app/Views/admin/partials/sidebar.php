@@ -22,25 +22,25 @@ $menuItems = [
         'title' => 'Dashboard',
         'icon' => 'home',
         'url' => 'admin/dashboard',
-        'active_patterns' => ['admin/dashboard', 'admin$']
+        'active_patterns' => ['admin/dashboard', 'admin$', 'dashboard']
     ],
     [
         'title' => 'Manajemen User',
         'icon' => 'users',
         'url' => 'admin/users',
-        'active_patterns' => ['admin/users', 'admin/user_management', 'usermanagement', 'user-management']
+        'active_patterns' => ['admin/users', 'admin/user_management', 'usermanagement', 'user-management', 'user_management']
     ],
     [
         'title' => 'Registrasi',
         'icon' => 'book',
         'url' => 'admin/registration',
-        'active_patterns' => ['admin/registration']
+        'active_patterns' => ['admin/registration', 'registration']
     ],
     [
         'title' => 'Profile',
         'icon' => 'user',
         'url' => 'admin/profile',
-        'active_patterns' => ['admin/profile']
+        'active_patterns' => ['admin/profile', 'profile']
     ]
 ];
 
@@ -69,7 +69,7 @@ function isMenuActive($patterns, $currentPath) {
     <div class="sidebar-header">
         <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
             <div class="sidebar-logo-icon">
-                <i data-feather="star"></i>
+                <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
             </div>
             <div class="sidebar-title">
                 INLISlite v3.0<br>
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } else if (linkPath === 'admin/registration') {
                 // Registration handling
-                if (targetPath.includes('admin/registration')) {
+                if (targetPath.includes('admin/registration') || targetPath.includes('registration')) {
                     link.classList.add('active');
                 }
             } else if (linkPath === 'admin/profile') {

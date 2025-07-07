@@ -34,6 +34,18 @@ $routes->get('modern-dashboard', 'Admin\AdminController::modernDashboard');
 $routes->get('user-management-demo', 'Admin\UserManagement::index');
 $routes->get('profile-demo', 'Home::profile');
 
+// Test registration view (REMOVE IN PRODUCTION)
+$routes->get('test-registration-view/(:num)', 'Home::viewRegistration/$1');
+
+// Debug routes (REMOVE IN PRODUCTION)
+$routes->get('test-user-management-debug', function() {
+    return file_get_contents(FCPATH . 'test_user_management_debug.php');
+});
+
+// Temporary upload routes for testing (REMOVE IN PRODUCTION)
+$routes->get('test-upload-photo', 'ProfileController::index');
+$routes->post('test-upload-photo', 'ProfileController::uploadPhoto');
+
 // ============================================================================
 // LOGIN & AUTHENTICATION ROUTES (Public accessible)
 // ============================================================================
@@ -121,8 +133,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     });
     
     // Profile Management
-    $routes->get('profile', '\App\Controllers\Home::profile');
-    $routes->post('profile/update', '\App\Controllers\Home::updateProfile');
+    $routes->get('profile', 'AdminController::profile');
+    $routes->post('profile/update', 'AdminController::updateProfile');
+    $routes->post('profile/change-password', 'AdminController::changePassword');
+    $routes->post('profile/upload-photo', '\App\Controllers\ProfileController::uploadPhoto');
     
     // Patch Management
     $routes->group('patches', function($routes) {
