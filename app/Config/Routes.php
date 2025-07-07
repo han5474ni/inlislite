@@ -50,40 +50,36 @@ $routes->post('test-upload-photo', 'ProfileController::uploadPhoto');
 // LOGIN & AUTHENTICATION ROUTES (Public accessible)
 // ============================================================================
 
-// Login page routes
-$routes->get('loginpage', 'Admin\LoginController::index');
-$routes->post('loginpage/authenticate', 'Admin\LoginController::authenticate');
+// Main login routes - using secure authentication
+$routes->get('login', 'Admin\AuthController::login');
+$routes->post('login/authenticate', 'Admin\AuthController::authenticate');
+$routes->get('logout', 'Admin\AuthController::logout');
+$routes->post('check-password-strength', 'Admin\AuthController::checkPasswordStrength');
 
-// Forgot Password routes
-$routes->get('forgot-password', 'Admin\LoginController::forgotPassword');
-$routes->post('forgot-password/send', 'Admin\LoginController::sendResetLink');
-$routes->get('reset-password/(:segment)', 'Admin\LoginController::resetPassword/$1');
-$routes->post('reset-password/update', 'Admin\LoginController::updatePassword');
+// Legacy login page routes (redirect to main login)
+$routes->get('loginpage', function() {
+    return redirect()->to(base_url('login'));
+});
 
-// Alternative admin login routes
+// Admin group routes
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($routes) {
     // Login routes (accessible without authentication)
-    $routes->get('login', 'LoginController::index');
-    $routes->post('login/authenticate', 'LoginController::authenticate');
-    $routes->get('login/test-redirect', 'LoginController::testRedirect');
-    $routes->get('logout', 'LoginController::logout');
-    $routes->post('logout', 'LoginController::logout');
-    $routes->post('check-password-strength', 'LoginController::checkPasswordStrength');
+    $routes->get('login', 'AuthController::login');
+    $routes->post('login/authenticate', 'AuthController::authenticate');
+    $routes->get('logout', 'AuthController::logout');
+    $routes->post('logout', 'AuthController::logout');
+    $routes->post('check-password-strength', 'AuthController::checkPasswordStrength');
     
     // Registration routes (accessible without authentication)
     $routes->get('registration', '\App\Controllers\Home::registration');
     
-    // Secure login routes
-    $routes->get('secure-login', 'SecureAuthController::login');
-    $routes->post('secure-login/authenticate', 'SecureAuthController::authenticate');
-    $routes->get('secure-logout', 'SecureAuthController::logout');
-    $routes->post('secure-check-password-strength', 'SecureAuthController::checkPasswordStrength');
-    
-    // Forgot Password routes
-    $routes->get('forgot-password', 'LoginController::forgotPassword');
-    $routes->post('forgot-password/send', 'LoginController::sendResetLink');
-    $routes->get('reset-password/(:segment)', 'LoginController::resetPassword/$1');
-    $routes->post('reset-password/update', 'LoginController::updatePassword');
+    // Legacy secure routes (redirect to main login)
+    $routes->get('secure-login', function() {
+        return redirect()->to(base_url('admin/login'));
+    });
+    $routes->get('secure-logout', function() {
+        return redirect()->to(base_url('admin/logout'));
+    });
 });
 
 // ============================================================================
@@ -245,13 +241,6 @@ if (file_exists(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
 }
 
 
-// Simple login routes (for testing CSRF issues)
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($routes) {
-    $routes->get('simple-login', 'SimpleLoginController::index');
-    $routes->post('simple-login/authenticate', 'SimpleLoginController::authenticate');
-    $routes->get('simple-logout', 'SimpleLoginController::logout');
-    $routes->get('simple-dashboard', 'SimpleLoginController::dashboard');
-});
 
 // Database Sync Testing Routes
 $routes->get('test_database_sync', function() {

@@ -5,7 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 
-class SecureAuthController extends BaseController
+class AuthController extends BaseController
 {
     protected $db;
     protected $session;
@@ -31,7 +31,7 @@ class SecureAuthController extends BaseController
             'title' => 'Login Admin - INLISLite v3.0'
         ];
 
-        return view('admin/auth/secure_login', $data);
+        return view('admin/auth/main_login', $data);
     }
 
     /**
