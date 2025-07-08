@@ -1,109 +1,99 @@
     <!-- Footer -->
-    <footer style="background: var(--dark-gradient); color: white; padding: 3rem 0 1rem; margin-top: 4rem;">
-        <div class="container">
-            <div class="row">
+    <footer class="footer-modern" style="background: #012B5E !important;">
+        <div class="container py-4">
+            <!-- Top Section -->
+            <div class="row g-4 mb-4 footer-animate">
+                <!-- Logo Section -->
                 <div class="col-lg-4 col-md-6">
-                    <div style="margin-bottom: 2rem;">
-                        <h5 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #ecf0f1;">
-                            <i class="bi bi-book me-2"></i>
-                            INLISLite v3
-                        </h5>
-                        <p style="color: #bdc3c7; margin-bottom: 1rem;">
-                            Sistem otomasi perpustakaan modern yang dirancang untuk memenuhi kebutuhan perpustakaan masa kini dengan teknologi terdepan dan fitur yang komprehensif.
+                    <div class="footer-logo-container d-flex align-items-start gap-3">
+                        <!-- Book Icon in Green-Blue Square -->
+                        <div class="footer-logo-icon">
+                            <i class="bi bi-book-fill text-white" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h4 class="footer-logo-text">
+                                    Inlis<span class="footer-logo-lite">Lite</span>
+                                </h4>
+                                <span class="footer-version-badge">v3</span>
+                            </div>
+                            <p class="footer-subtitle">
+                                Sistem Manajemen Perpustakaan Digital
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unit Description -->
+                <div class="col-lg-8 col-md-6">
+                    <div class="text-center text-md-start">
+                        <p class="footer-unit-description">
+                            Sub Kelompok Kerja Pengembangan Sistem Informasi Perpustakaan Nasional RI
                         </p>
-                        <div class="mt-3">
-                            <a href="<?= base_url('admin/login') ?>" style="background: var(--primary-gradient); border: none; border-radius: 8px; padding: 10px 25px; color: white; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; transition: var(--transition); box-shadow: 0 2px 8px rgba(28, 110, 196, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(28, 110, 196, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(28, 110, 196, 0.3)'">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>
-                                Admin Login
-                            </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="row g-4 mb-4 footer-animate">
+                <div class="col-12">
+                    <h5 class="footer-contact-title">Informasi Kontak</h5>
+                </div>
+                
+                <!-- Left Column - Email & Facebook -->
+                <div class="col-lg-6 col-md-6">
+                    <div class="d-flex flex-column gap-3">
+                        <!-- Email Section -->
+                        <div class="footer-contact-item">
+                            <i class="bi bi-envelope-fill footer-contact-icon"></i>
+                            <div>
+                                <span class="footer-contact-label">Email</span>
+                                <a href="mailto:info@perpusnas.go.id" class="footer-contact-link">
+                                    info@perpusnas.go.id
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Facebook Section -->
+                        <div class="footer-contact-item">
+                            <i class="bi bi-facebook footer-contact-icon"></i>
+                            <div>
+                                <p class="footer-contact-value">
+                                    InlisLite Perpustakaan Indonesia
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-lg-2 col-md-6">
-                    <div style="margin-bottom: 2rem;">
-                        <h5 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #ecf0f1;">Produk</h5>
-                        <a href="<?= base_url('tentang') ?>" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-info-circle me-2"></i>Tentang Kami
-                        </a>
-                        <a href="<?= base_url('panduan') ?>" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-book me-2"></i>Panduan
-                        </a>
-                        <a href="<?= base_url('aplikasi') ?>" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-app me-2"></i>Aplikasi
-                        </a>
-                        <a href="<?= base_url('patch') ?>" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-arrow-clockwise me-2"></i>Update
-                        </a>
-                        <a href="<?= base_url('demo') ?>" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-play-circle me-2"></i>Demo
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6">
-                    <div style="margin-bottom: 2rem;">
-                        <h5 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #ecf0f1;">Dukungan</h5>
-                        <a href="<?= base_url('dukungan') ?>" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-headset me-2"></i>Dukungan Teknis
-                        </a>
-                        <a href="<?= base_url('bimbingan') ?>" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-mortarboard me-2"></i>Bimbingan Teknis
-                        </a>
-                        <a href="#" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-file-text me-2"></i>Dokumentasi
-                        </a>
-                        <a href="#" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-people me-2"></i>Forum Komunitas
-                        </a>
-                        <a href="#" style="color: #bdc3c7; text-decoration: none; transition: var(--transition); display: block; margin-bottom: 0.5rem; padding: 0.25rem 0;" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(5px)'" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'">
-                            <i class="bi bi-question-circle me-2"></i>FAQ
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6">
-                    <div style="margin-bottom: 2rem;">
-                        <h5 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #ecf0f1;">Kontak</h5>
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-envelope me-2"></i>
-                            <a href="mailto:support@inlislite.perpusnas.go.id" style="color: #bdc3c7; text-decoration: none; transition: var(--transition);" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'">
-                                support@inlislite.perpusnas.go.id
-                            </a>
-                        </div>
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-telephone me-2"></i>
-                            <span style="color: #bdc3c7;">+62-21-xxxx-xxxx</span>
-                        </div>
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-geo-alt me-2"></i>
-                            <span style="color: #bdc3c7;">Jakarta, Indonesia</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-globe me-2"></i>
-                            <a href="https://www.perpusnas.go.id" style="color: #bdc3c7; text-decoration: none; transition: var(--transition);" target="_blank" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'">
-                                www.perpusnas.go.id
-                            </a>
+
+                <!-- Right Column - Address -->
+                <div class="col-lg-6 col-md-6">
+                    <div class="footer-contact-item">
+                        <i class="bi bi-geo-alt-fill footer-contact-icon location"></i>
+                        <div>
+                            <span class="footer-contact-label">Alamat</span>
+                            <p class="footer-contact-value">
+                                Jl. Medan Merdeka Selatan No. 11 Jakarta 10110
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <hr style="margin: 2rem 0; border-color: #34495e;">
-            
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <p style="color: #bdc3c7; margin-bottom: 0;">
-                        &copy; 2024 INLISLite v3 - Perpustakaan Nasional RI. All rights reserved.
-                    </p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="d-flex justify-content-md-end gap-3 mt-2 mt-md-0">
-                        <a href="#" style="color: #bdc3c7; text-decoration: none; transition: var(--transition);" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'">Privacy Policy</a>
-                        <a href="#" style="color: #bdc3c7; text-decoration: none; transition: var(--transition);" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'">Terms of Service</a>
-                        <a href="#" style="color: #bdc3c7; text-decoration: none; transition: var(--transition);" onmouseover="this.style.color='#3498db'" onmouseout="this.style.color='#bdc3c7'">Sitemap</a>
-                    </div>
-                </div>
+
+            <!-- Admin Login Button -->
+            <div class="text-center mb-4 footer-animate">
+                <a href="<?= base_url('admin/login') ?>" class="footer-admin-btn">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span>Admin Login</span>
+                </a>
+            </div>
+
+            <!-- Bottom Bar -->
+            <hr class="footer-separator">
+            <div class="text-center footer-animate">
+                <p class="footer-copyright">
+                    © 2016 | Perpustakaan Nasional Republik Indonesia
+                </p>
             </div>
         </div>
     </footer>
@@ -113,6 +103,7 @@
     
     <!-- Public JS -->
     <script src="<?= base_url('assets/js/public/main.js') ?>"></script>
+    <script src="<?= base_url('assets/js/public/footer.js') ?>"></script>
     
     <!-- Page specific JS -->
     <?php if (isset($page_js)): ?>

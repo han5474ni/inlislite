@@ -1,0 +1,395 @@
+/* Modern Footer Styles for InlisLite v3 */
+
+/* Footer Base Styles */
+.footer-modern {
+    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+    color: white;
+    padding: 3rem 0 1.5rem;
+    margin-top: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"%3E%3Cpolygon fill="rgba(255,255,255,0.02)" points="0,1000 1000,0 1000,1000"/%3E%3C/svg%3E');
+    background-size: cover;
+    pointer-events: none;
+}
+
+/* Logo Section */
+.footer-logo-container {
+    position: relative;
+    z-index: 2;
+}
+
+.footer-logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+}
+
+.footer-logo-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.footer-logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+.footer-logo-lite {
+    color: #10b981;
+}
+
+.footer-version-badge {
+    background-color: #10b981;
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.footer-subtitle {
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Unit Description */
+.footer-unit-description {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: white;
+    margin: 0;
+}
+
+/* Contact Information */
+.footer-contact-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+.footer-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.footer-contact-item:hover {
+    transform: translateX(5px);
+}
+
+.footer-contact-icon {
+    font-size: 1.25rem;
+    color: white;
+    min-width: 20px;
+    margin-top: 2px;
+}
+
+.footer-contact-icon.location {
+    color: #10b981;
+}
+
+.footer-contact-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.footer-contact-value {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: white;
+    margin: 0;
+}
+
+.footer-contact-link {
+    color: #60a5fa;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.footer-contact-link:hover {
+    color: #93c5fd;
+    text-decoration: underline;
+}
+
+/* Admin Login Button */
+.footer-admin-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    border-radius: 50px;
+    padding: 12px 30px;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    font-size: 0.9rem;
+}
+
+.footer-admin-btn:hover {
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.footer-admin-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* Bottom Bar */
+.footer-separator {
+    border: none;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 2rem 0 1.5rem;
+    opacity: 0.5;
+}
+
+.footer-copyright {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .footer-modern {
+        padding: 2rem 0 1rem;
+    }
+    
+    .footer-logo-container {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+    
+    .footer-logo-container .d-flex {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .footer-logo-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .footer-logo-text {
+        font-size: 1.25rem;
+    }
+    
+    .footer-unit-description {
+        font-size: 0.9rem;
+        text-align: center !important;
+        margin-top: 1rem;
+    }
+    
+    .footer-contact-title {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+    
+    .footer-contact-item {
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .footer-contact-item .footer-contact-icon {
+        margin-bottom: 0.5rem;
+    }
+    
+    .footer-admin-btn {
+        padding: 10px 25px;
+        font-size: 0.85rem;
+    }
+    
+    /* Center all contact sections on mobile */
+    .footer-modern .col-lg-6 {
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-modern {
+        padding: 1.5rem 0 1rem;
+    }
+    
+    .footer-logo-text {
+        font-size: 1.1rem;
+    }
+    
+    .footer-unit-description {
+        font-size: 0.85rem;
+        padding: 0 1rem;
+    }
+    
+    .footer-contact-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .footer-contact-item {
+        margin-bottom: 1.5rem;
+        padding: 0 1rem;
+    }
+    
+    .footer-contact-label,
+    .footer-contact-value {
+        font-size: 0.8rem;
+    }
+    
+    .footer-admin-btn {
+        padding: 8px 20px;
+        font-size: 0.8rem;
+    }
+    
+    .footer-copyright {
+        font-size: 0.8rem;
+        padding: 0 1rem;
+    }
+    
+    /* Ensure proper spacing on very small screens */
+    .footer-modern .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Extra small devices (landscape phones) */
+@media (max-width: 480px) {
+    .footer-logo-container .d-flex {
+        gap: 0.5rem;
+    }
+    
+    .footer-logo-text {
+        font-size: 1rem;
+    }
+    
+    .footer-version-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    .footer-unit-description {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    
+    .footer-contact-item {
+        margin-bottom: 1rem;
+    }
+    
+    .footer-admin-btn {
+        padding: 6px 16px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Animation Effects */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.footer-animate {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Accessibility Improvements */
+.footer-contact-link:focus,
+.footer-admin-btn:focus {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .footer-modern {
+        background: #1e3a8a;
+        border-top: 2px solid #10b981;
+    }
+    
+    .footer-contact-link {
+        color: #93c5fd;
+        text-decoration: underline;
+    }
+    
+    .footer-logo-lite {
+        color: #34d399;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .footer-logo-icon,
+    .footer-contact-item,
+    .footer-admin-btn {
+        transition: none;
+    }
+    
+    .footer-animate {
+        animation: none;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .footer-modern {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+    
+    .footer-admin-btn {
+        display: none !important;
+    }
+    
+    .footer-contact-link {
+        color: black !important;
+        text-decoration: underline !important;
+    }
+}

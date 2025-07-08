@@ -17,6 +17,7 @@
     
     <!-- Public CSS -->
     <link href="<?= base_url('assets/css/public/main.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/public/footer.css') ?>" rel="stylesheet">
     
     <!-- Page specific CSS -->
     <?php if (isset($page_css)): ?>
@@ -60,9 +61,9 @@
             min-height: 100vh;
         }
         
-        /* Navigation Styles - Matching Admin Sidebar */
+        /* Navigation Styles - Modern Design */
         .navbar-public {
-            background: var(--secondary-gradient);
+            background: #046BB5;
             backdrop-filter: blur(10px);
             transition: var(--transition);
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
@@ -71,9 +72,9 @@
         }
         
         .navbar-public.scrolled {
-            background: rgba(45, 168, 77, 0.98);
+            background: rgba(4, 107, 181, 0.98);
             box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
-            padding: 0.5rem 0;
+            padding: 0.75rem 0;
         }
         
         .navbar-brand {
@@ -83,47 +84,85 @@
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
         
         .navbar-brand:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
             color: white !important;
+        }
+        
+        .navbar-brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6FD09A 0%, #046BB5 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(111, 208, 154, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(111, 208, 154, 0.4);
+        }
+        
+        .navbar-brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        
+        .navbar-brand-main {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .navbar-brand-lite {
+            color: #6FD09A;
+        }
+        
+        .navbar-brand-version {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 500;
+            margin-top: -2px;
         }
         
         .nav-link {
             color: rgba(255,255,255,0.9) !important;
-            font-weight: 500;
+            font-weight: 600;
             transition: var(--transition);
             position: relative;
-            padding: 0.75rem 1rem !important;
+            padding: 0.75rem 1.25rem !important;
             border-radius: 8px;
             margin: 0 0.25rem;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
         }
         
         .nav-link:hover,
         .nav-link.active {
             color: white !important;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-1px);
+            background: linear-gradient(135deg, #6FD09A 0%, #046BB5 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(111, 208, 154, 0.3);
         }
         
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: white;
-            transition: var(--transition);
-            transform: translateX(-50%);
+        .nav-link.dropdown-toggle::after {
+            margin-left: 0.5rem;
+            border-top: 0.3em solid;
+            border-right: 0.3em solid transparent;
+            border-bottom: 0;
+            border-left: 0.3em solid transparent;
+            transition: transform 0.3s ease;
         }
         
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 80%;
+        .nav-link.dropdown-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
         }
         
         /* Dropdown Menu */
@@ -149,9 +188,9 @@
             transform: translateX(5px);
         }
         
-        /* Page Header Styles - Matching Admin */
+        /* Page Header Styles - Modern Clean Design */
         .page-header {
-            background: var(--primary-gradient);
+            background: linear-gradient(180deg, #6FD09A 0%, #046BB5 100%);
             color: white;
             padding: 8rem 0 4rem;
             position: relative;
@@ -166,8 +205,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"%3E%3Cpolygon fill="rgba(255,255,255,0.1)" points="0,1000 1000,0 1000,1000"/%3E%3C/svg%3E');
-            background-size: cover;
+            background: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"%3E%3Ccircle cx=\"50\" cy=\"50\" r=\"1\" fill=\"rgba(255,255,255,0.1)\"/%3E%3C/svg%3E');
+            background-size: 50px 50px;
+            opacity: 0.3;
+            pointer-events: none;
         }
         
         .page-header-content {
@@ -179,29 +220,33 @@
             font-size: 3rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
             animation: slideUp 0.8s ease-out;
+            color: #FFFFFF;
+            font-family: 'Poppins', sans-serif;
         }
         
         .page-subtitle {
             font-size: 1.2rem;
-            opacity: 0.9;
+            color: #F0F0F0;
             margin-bottom: 2rem;
             animation: slideUp 0.8s ease-out 0.2s both;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            font-family: 'Poppins', sans-serif;
         }
         
         .page-icon {
             font-size: 4rem;
             margin-bottom: 2rem;
-            opacity: 0.8;
+            color: rgba(255, 255, 255, 0.9);
             animation: slideUp 0.8s ease-out 0.1s both;
         }
         
         /* Breadcrumb Styles */
         .breadcrumb-section {
-            background: #f8f9fa;
+            background: linear-gradient(180deg, #046BB5 0%, #024D96 100%);
             padding: 1rem 0;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .breadcrumb {
@@ -211,42 +256,50 @@
         }
         
         .breadcrumb-item a {
-            color: var(--medium-blue);
+            color: #F0F0F0;
             text-decoration: none;
             transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
         }
         
         .breadcrumb-item a:hover {
-            color: var(--dark-blue);
+            color: #FFFFFF;
+            text-decoration: underline;
         }
         
         .breadcrumb-item.active {
-            color: #6c757d;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: rgba(255, 255, 255, 0.7);
         }
         
         /* Content Styles */
         .main-content {
             padding: 4rem 0;
             min-height: 60vh;
-            background: #f8f9fa;
+            background: linear-gradient(180deg, #024D96 0%, #f8f9fa 30%);
         }
         
         .content-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border: none;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(255, 255, 255, 0.1) inset;
             transition: var(--transition);
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
         
         .content-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(255, 255, 255, 0.15) inset;
+            background: rgba(255, 255, 255, 0.98);
         }
         
         .content-card .card-header {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #6FD09A 0%, #046BB5 100%);
             color: white;
             border: none;
             padding: 1.5rem;
@@ -256,80 +309,89 @@
             padding: 2rem;
         }
         
-        /* Button Styles - Matching Admin */
+        /* Button Styles - Modern Clean Design */
         .btn-primary-gradient {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #6FD09A 0%, #046BB5 100%);
             border: none;
             color: white;
             font-weight: 600;
             padding: 12px 30px;
-            border-radius: 8px;
+            border-radius: 1.25rem;
             transition: var(--transition);
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(28, 110, 196, 0.3);
+            box-shadow: 0 4px 16px rgba(111, 208, 154, 0.3);
+            font-family: 'Poppins', sans-serif;
         }
         
         .btn-primary-gradient:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(28, 110, 196, 0.4);
+            box-shadow: 0 6px 20px rgba(111, 208, 154, 0.4);
             color: white;
-            background: var(--info-gradient);
+            background: linear-gradient(135deg, #046BB5 0%, #024D96 100%);
         }
         
         .btn-secondary-gradient {
-            background: var(--secondary-gradient);
+            background: linear-gradient(135deg, #046BB5 0%, #024D96 100%);
             border: none;
             color: white;
             font-weight: 600;
             padding: 12px 30px;
-            border-radius: 8px;
+            border-radius: 1.25rem;
             transition: var(--transition);
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(45, 168, 77, 0.3);
+            box-shadow: 0 4px 16px rgba(4, 107, 181, 0.3);
+            font-family: 'Poppins', sans-serif;
         }
         
         .btn-secondary-gradient:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(45, 168, 77, 0.4);
+            box-shadow: 0 6px 20px rgba(4, 107, 181, 0.4);
             color: white;
-            background: var(--success-gradient);
+            background: linear-gradient(135deg, #6FD09A 0%, #046BB5 100%);
         }
         
         /* Form Styles */
         .form-control {
-            border-radius: 8px;
-            border: 2px solid #e9ecef;
+            border-radius: 1.25rem;
+            border: 2px solid rgba(111, 208, 154, 0.3);
             padding: 12px 15px;
             transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+            background: rgba(255, 255, 255, 0.9);
         }
         
         .form-control:focus {
-            border-color: var(--medium-blue);
-            box-shadow: 0 0 0 0.2rem rgba(28, 110, 196, 0.25);
+            border-color: #6FD09A;
+            box-shadow: 0 0 0 0.2rem rgba(111, 208, 154, 0.25);
+            background: rgba(255, 255, 255, 1);
         }
         
         .form-select {
-            border-radius: 8px;
-            border: 2px solid #e9ecef;
+            border-radius: 1.25rem;
+            border: 2px solid rgba(111, 208, 154, 0.3);
             padding: 12px 15px;
             transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+            background: rgba(255, 255, 255, 0.9);
         }
         
         .form-select:focus {
-            border-color: var(--medium-blue);
-            box-shadow: 0 0 0 0.2rem rgba(28, 110, 196, 0.25);
+            border-color: #6FD09A;
+            box-shadow: 0 0 0 0.2rem rgba(111, 208, 154, 0.25);
+            background: rgba(255, 255, 255, 1);
         }
         
         .form-label {
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 0.5rem;
+            font-family: 'Poppins', sans-serif;
         }
         
         /* Animation */
@@ -357,6 +419,20 @@
         
         /* Responsive Design */
         @media (max-width: 768px) {
+            .navbar-brand-main {
+                font-size: 1.25rem;
+            }
+            
+            .navbar-brand-icon {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 1rem !important;
+                font-size: 0.95rem;
+            }
+            
             .page-header {
                 padding: 6rem 0 3rem;
             }
@@ -383,6 +459,25 @@
         }
         
         @media (max-width: 576px) {
+            .navbar-brand-main {
+                font-size: 1.1rem;
+            }
+            
+            .navbar-brand-version {
+                font-size: 0.7rem;
+            }
+            
+            .navbar-brand-icon {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 0.75rem !important;
+                font-size: 0.9rem;
+                margin: 0.1rem;
+            }
+            
             .page-header {
                 padding: 5rem 0 2rem;
             }
@@ -400,9 +495,17 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-public" id="mainNavbar">
-        <div class="container"<a class="navbar-brand" href="<?= base_url('/') ?>">
-                <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 32px; height: 32px;">
-                INLISLite v3
+        <div class="container">
+            <a class="navbar-brand" href="<?= base_url('/') ?>">
+                <div class="navbar-brand-icon">
+                    <i class="bi bi-star-fill text-white" style="font-size: 1.2rem;"></i>
+                </div>
+                <div class="navbar-brand-text">
+                    <div class="navbar-brand-main">
+                        Inlis<span class="navbar-brand-lite">Lite</span>
+                    </div>
+                    <div class="navbar-brand-version">v3.0</div>
+                </div>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -413,26 +516,12 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link <?= ($page_title === 'Home') ? 'active' : '' ?>" href="<?= base_url('/') ?>">
-                            <i class="bi bi-house me-1"></i>
-                            Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= ($page_title === 'Tentang Kami') ? 'active' : '' ?>" href="<?= base_url('tentang') ?>">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Tentang Kami
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= ($page_title === 'Panduan') ? 'active' : '' ?>" href="<?= base_url('panduan') ?>">
-                            <i class="bi bi-book me-1"></i>
-                            Panduan
+                            Beranda
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-grid-3x3-gap me-1"></i>
-                            Layanan
+                        <a class="nav-link dropdown-toggle" href="#" id="fiturDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Fitur
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?= base_url('aplikasi') ?>">
@@ -444,7 +533,21 @@
                             <li><a class="dropdown-item" href="<?= base_url('demo') ?>">
                                 <i class="bi bi-play-circle me-2"></i>Demo Program
                             </a></li>
-                            <li><hr class="dropdown-divider"></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= ($page_title === 'Tentang') ? 'active' : '' ?>" href="<?= base_url('tentang') ?>">
+                            Tentang
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="bantuanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Bantuan
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="<?= base_url('panduan') ?>">
+                                <i class="bi bi-book me-2"></i>Panduan
+                            </a></li>
                             <li><a class="dropdown-item" href="<?= base_url('dukungan') ?>">
                                 <i class="bi bi-headset me-2"></i>Dukungan Teknis
                             </a></li>
@@ -453,7 +556,12 @@
                             </a></li>
                         </ul>
                     </li>
-                                    </ul>
+                    <li class="nav-item">
+                        <a class="nav-link <?= ($page_title === 'Kontak') ? 'active' : '' ?>" href="<?= base_url('bimbingan') ?>">
+                            Kontak
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>

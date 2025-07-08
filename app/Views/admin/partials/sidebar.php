@@ -11,7 +11,6 @@ $currentSegments = $uri->getSegments();
 
 // Debug information (remove in production)
 if (ENVIRONMENT === 'development') {
-    // Log current path for debugging
     log_message('debug', 'Sidebar - Current Path: ' . $currentPath);
     log_message('debug', 'Sidebar - Current Segments: ' . implode('/', $currentSegments));
 }
@@ -37,6 +36,48 @@ $menuItems = [
         'active_patterns' => ['admin/registration', 'registration']
     ],
     [
+        'title' => 'Tentang',
+        'icon' => 'info',
+        'url' => 'admin/tentang',
+        'active_patterns' => ['admin/tentang', 'tentang']
+    ],
+    [
+        'title' => 'Demo Program',
+        'icon' => 'play-circle',
+        'url' => 'admin/demo',
+        'active_patterns' => ['admin/demo', 'demo']
+    ],
+    [
+        'title' => 'Aplikasi',
+        'icon' => 'grid',
+        'url' => 'admin/aplikasi',
+        'active_patterns' => ['admin/aplikasi', 'aplikasi']
+    ],
+    [
+        'title' => 'Panduan',
+        'icon' => 'book-open',
+        'url' => 'admin/panduan',
+        'active_patterns' => ['admin/panduan', 'panduan']
+    ],
+    [
+        'title' => 'Dukungan',
+        'icon' => 'headphones',
+        'url' => 'admin/dukungan',
+        'active_patterns' => ['admin/dukungan', 'dukungan']
+    ],
+    [
+        'title' => 'Bimbingan',
+        'icon' => 'graduation-cap',
+        'url' => 'admin/bimbingan',
+        'active_patterns' => ['admin/bimbingan', 'bimbingan']
+    ],
+    [
+        'title' => 'Patch & Updater',
+        'icon' => 'download',
+        'url' => 'admin/patch',
+        'active_patterns' => ['admin/patch', 'patch', 'admin/patch_updater']
+    ],
+    [
         'title' => 'Profile',
         'icon' => 'user',
         'url' => 'admin/profile',
@@ -53,10 +94,18 @@ function isMenuActive($patterns, $currentPath) {
         // Normalize the pattern
         $pattern = trim($pattern, '/');
         
-        // Check for exact match or if current path starts with pattern
-        if ($currentPath === $pattern || 
-            strpos($currentPath, $pattern) === 0 ||
-            preg_match('#' . preg_quote($pattern, '#') . '#i', $currentPath)) {
+        // Check for exact match
+        if ($currentPath === $pattern) {
+            return true;
+        }
+        
+        // Check if current path starts with pattern
+        if (strpos($currentPath, $pattern) === 0) {
+            return true;
+        }
+        
+        // Check for pattern matching
+        if (preg_match('#^' . preg_quote($pattern, '#') . '($|/)#i', $currentPath)) {
             return true;
         }
     }
@@ -86,12 +135,16 @@ function isMenuActive($patterns, $currentPath) {
             <?php 
             $isActive = isMenuActive($item['active_patterns'], $currentPath);
             // Debug output for development
-            if (ENVIRONMENT === 'development' && $item['title'] === 'Manajemen User') {
-                echo "<!-- Debug: User Management - Current Path: $currentPath, Is Active: " . ($isActive ? 'true' : 'false') . " -->";
+            if (ENVIRONMENT === 'development') {
+                echo "<!-- Debug: {$item['title']} - Current Path: $currentPath, Is Active: " . ($isActive ? 'true' : 'false') . " -->";
             }
             ?>
             <div class="nav-item">
-                <a href="<?= base_url($item['url']) ?>" class="nav-link <?= $isActive ? 'active' : '' ?>" data-page="<?= $item['url'] ?>" data-patterns="<?= implode(',', $item['active_patterns']) ?>">
+                <a href="<?= base_url($item['url']) ?>" 
+                   class="nav-link <?= $isActive ? 'active' : '' ?>" 
+                   data-page="<?= $item['url'] ?>" 
+                   data-patterns="<?= implode(',', $item['active_patterns']) ?>"
+                   data-title="<?= $item['title'] ?>">
                     <i data-feather="<?= $item['icon'] ?>" class="nav-icon"></i>
                     <span class="nav-text"><?= $item['title'] ?></span>
                 </a>
@@ -111,6 +164,184 @@ function isMenuActive($patterns, $currentPath) {
 </nav>
 
 <style>
+/* Enhanced Sidebar Styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    background: linear-gradient(135deg, #2DA84D 0%, #0B8F1C 100%);
+    color: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar-header {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 80px;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.sidebar-logo:hover {
+    color: white;
+    transform: scale(1.02);
+}
+
+.sidebar-logo-icon {
+    flex-shrink: 0;
+}
+
+.sidebar-title {
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed .sidebar-title {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem 0;
+}
+
+.nav-item {
+    position: relative;
+    margin: 0.25rem 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 0;
+    margin: 0 0.5rem;
+    border-radius: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.nav-link.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: white;
+    border-radius: 0 2px 2px 0;
+}
+
+.nav-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover .nav-icon {
+    transform: scale(1.1);
+}
+
+.nav-text {
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    font-weight: 500;
+}
+
+.sidebar.collapsed .nav-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.nav-tooltip {
+    position: absolute;
+    left: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1001;
+    pointer-events: none;
+}
+
+.sidebar.collapsed .nav-item:hover .nav-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
 /* Logout button styling */
 .logout-item {
     margin-top: auto;
@@ -123,91 +354,129 @@ function isMenuActive($patterns, $currentPath) {
     color: rgba(255, 255, 255, 0.8) !important;
     transition: all 0.3s ease;
     font-weight: 400;
-    margin: 0 !important;
-    border-radius: 0.25rem !important;
-    text-transform: none !important;
-    letter-spacing: normal !important;
-    font-size: 0.875rem;
-    padding: 0.5rem 0.75rem;
+    margin: 0 0.5rem !important;
+    border-radius: 0.5rem !important;
 }
 
 .logout-link:hover {
     background: rgba(255, 255, 255, 0.1) !important;
     color: white !important;
-    transform: none !important;
-    box-shadow: none !important;
+    transform: translateX(5px) !important;
 }
 
 .logout-link:hover .nav-icon {
-    transform: translateX(3px);
+    transform: translateX(3px) scale(1.1);
 }
 
-/* Ensure sidebar nav takes full height and logout stays at bottom */
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 120px);
-    overflow: hidden;
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .sidebar.collapsed {
+        width: 280px;
+    }
 }
 
-.sidebar-nav .nav-item:not(.logout-item) {
-    flex-shrink: 0;
+/* Scrollbar styling */
+.sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 </style>
 
 <script>
-// Logout confirmation function
-function confirmLogout() {
-    return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
-}
-
-// Enhanced sidebar navigation with persistent active state
+// Enhanced sidebar navigation with proper error handling
 document.addEventListener('DOMContentLoaded', function() {
-    const navLinks = document.querySelectorAll('.nav-link');
+    initializeSidebarNavigation();
+});
+
+function initializeSidebarNavigation() {
+    const navLinks = document.querySelectorAll('.nav-link:not(.logout-link)');
     const currentPath = window.location.pathname;
+    
+    console.log('Initializing sidebar navigation for path:', currentPath);
     
     // Function to set active menu item
     function setActiveMenuItem(targetPath) {
+        // Remove active class from all links
         navLinks.forEach(link => {
             link.classList.remove('active');
+        });
+        
+        // Find and activate the correct menu item
+        let activeFound = false;
+        
+        navLinks.forEach(link => {
             const linkPath = link.getAttribute('data-page');
+            const patterns = link.getAttribute('data-patterns');
+            const title = link.getAttribute('data-title');
             
-            // Check if current path matches this menu item
-            if (linkPath === 'admin/users') {
-                // Special handling for user management - check multiple possible URLs
-                const patterns = link.getAttribute('data-patterns');
-                console.log('Checking user management patterns:', patterns, 'against path:', targetPath);
+            if (!linkPath || !patterns) return;
+            
+            const patternArray = patterns.split(',');
+            
+            // Check if any pattern matches the current path
+            const isMatch = patternArray.some(pattern => {
+                const normalizedPattern = pattern.trim().replace(/^\/+|\/+$/g, '');
+                const normalizedPath = targetPath.replace(/^\/+|\/+$/g, '');
                 
-                if (targetPath.includes('admin/users') || 
-                    targetPath.includes('usermanagement') || 
-                    targetPath.includes('user-management') ||
-                    targetPath.includes('user_management')) {
-                    link.classList.add('active');
-                    console.log('User management menu activated');
+                // Exact match
+                if (normalizedPath === normalizedPattern) {
+                    return true;
                 }
-            } else if (linkPath === 'admin/dashboard') {
-                // Dashboard handling
-                if (targetPath.includes('admin/dashboard') || 
-                    targetPath === '/admin' || 
-                    targetPath === '/admin/' ||
-                    targetPath.includes('dashboard')) {
-                    link.classList.add('active');
+                
+                // Path starts with pattern
+                if (normalizedPath.startsWith(normalizedPattern + '/') || 
+                    normalizedPath.startsWith(normalizedPattern)) {
+                    return true;
                 }
-            } else if (linkPath === 'admin/registration') {
-                // Registration handling
-                if (targetPath.includes('admin/registration') || targetPath.includes('registration')) {
-                    link.classList.add('active');
+                
+                // Special cases
+                if (normalizedPattern === 'admin' && normalizedPath === 'admin') {
+                    return true;
                 }
-            } else if (linkPath === 'admin/profile') {
-                // Profile handling
-                if (targetPath.includes('admin/profile') || targetPath.includes('profile')) {
-                    link.classList.add('active');
-                }
-            } else if (targetPath.includes(linkPath)) {
-                // General matching for other menu items
+                
+                return false;
+            });
+            
+            if (isMatch && !activeFound) {
                 link.classList.add('active');
+                activeFound = true;
+                console.log(`Activated menu: ${title} for path: ${targetPath}`);
+                
+                // Store active menu in sessionStorage
+                sessionStorage.setItem('activeMenu', linkPath);
             }
         });
+        
+        // If no match found, try to activate dashboard for admin root
+        if (!activeFound && (targetPath === '/admin' || targetPath === '/admin/')) {
+            const dashboardLink = document.querySelector('[data-page="admin/dashboard"]');
+            if (dashboardLink) {
+                dashboardLink.classList.add('active');
+                sessionStorage.setItem('activeMenu', 'admin/dashboard');
+                console.log('Activated dashboard as fallback');
+            }
+        }
     }
     
     // Set active menu on page load
@@ -216,21 +485,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle navigation clicks
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
+            // Don't prevent default - let the navigation happen
+            
             // Remove active class from all links
             navLinks.forEach(l => l.classList.remove('active'));
+            
             // Add active class to clicked link
             this.classList.add('active');
             
-            // Store active menu in sessionStorage for consistency
+            // Store active menu in sessionStorage
             const targetPage = this.getAttribute('data-page');
-            sessionStorage.setItem('activeMenu', targetPage);
+            if (targetPage) {
+                sessionStorage.setItem('activeMenu', targetPage);
+                console.log('Stored active menu:', targetPage);
+            }
         });
     });
     
-    // Restore active menu from sessionStorage if available
+    // Restore active menu from sessionStorage if available and no active menu found
     const storedActiveMenu = sessionStorage.getItem('activeMenu');
-    if (storedActiveMenu) {
-        setActiveMenuItem(storedActiveMenu);
+    if (storedActiveMenu && !document.querySelector('.nav-link.active')) {
+        const storedLink = document.querySelector(`[data-page="${storedActiveMenu}"]`);
+        if (storedLink) {
+            storedLink.classList.add('active');
+            console.log('Restored active menu from storage:', storedActiveMenu);
+        }
+    }
+}
+
+// Logout confirmation function
+function confirmLogout() {
+    return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
+}
+
+// Initialize feather icons when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof feather !== 'undefined') {
+        feather.replace();
     }
 });
 </script>

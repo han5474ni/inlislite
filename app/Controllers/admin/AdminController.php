@@ -116,6 +116,11 @@ class AdminController extends BaseController
         return view('admin/patch', $data);
     }
     
+    public function patch()
+    {
+        return $this->patch_updater();
+    }
+    
     public function panduan()
     {
         $data = [
@@ -193,51 +198,83 @@ class AdminController extends BaseController
         return view('admin/bimbingan', $data);
     }
     
+    public function demo()
+    {
+        $data = [
+            'title' => 'Demo Program - INLISlite v3.0',
+            'page_title' => 'Demo Program',
+            'page_subtitle' => 'Explore INLISLite features and modules through online demo'
+        ];
+        
+        return view('admin/demo', $data);
+    }
+    
+    public function aplikasi()
+    {
+        $data = [
+            'title' => 'Aplikasi Pendukung - INLISlite v3.0',
+            'page_title' => 'Aplikasi Pendukung',
+            'page_subtitle' => 'Supporting applications and tools for INLISLite system'
+        ];
+        
+        return view('admin/aplikasi', $data);
+    }
+    
+    public function registration()
+    {
+        // Sample registration data
+        $registrations = [
+            [
+                'id' => 1,
+                'library_name' => 'Perpustakaan Nasional RI',
+                'library_type' => 'National',
+                'province' => 'DKI Jakarta',
+                'status' => 'Active',
+                'created_at' => '2024-01-15 10:30:00',
+                'updated_at' => '2024-01-15 10:30:00'
+            ],
+            [
+                'id' => 2,
+                'library_name' => 'Perpustakaan Universitas Indonesia',
+                'library_type' => 'Academic',
+                'province' => 'Jawa Barat',
+                'status' => 'Active',
+                'created_at' => '2024-01-14 14:20:00',
+                'updated_at' => '2024-01-14 14:20:00'
+            ],
+            [
+                'id' => 3,
+                'library_name' => 'Perpustakaan Kota Bandung',
+                'library_type' => 'Public',
+                'province' => 'Jawa Barat',
+                'status' => 'Pending',
+                'created_at' => '2024-01-13 09:15:00',
+                'updated_at' => '2024-01-13 09:15:00'
+            ]
+        ];
+        
+        // Calculate statistics
+        $stats = [
+            'total' => count($registrations),
+            'active' => count(array_filter($registrations, fn($r) => $r['status'] === 'Active')),
+            'inactive' => count(array_filter($registrations, fn($r) => $r['status'] === 'Inactive')),
+            'pending' => count(array_filter($registrations, fn($r) => $r['status'] === 'Pending'))
+        ];
+        
+        $data = [
+            'title' => 'Inlislite Registration - INLISlite v3.0',
+            'page_title' => 'Inlislite Registration',
+            'page_subtitle' => 'Manage and monitor library registration data',
+            'registrations' => $registrations,
+            'stats' => $stats
+        ];
+        
+        return view('admin/registration', $data);
+    }
+    
     public function profile()
     {
         try {
-            // Load ProfileModel
-            $profileModel = new \App\Models\ProfileModel();
-            
-            // Get current user profile (for now, get admin profile)
-            // In a real application, you would get this from session
-            $currentProfile = $profileModel->getByUsername('admin');
-            
-            if (!$currentProfile) {
-                // If no profile found, create a default one
-                $currentProfile = [
-                    'id' => 1,
-                    'nama' => 'Administrator',
-                    'nama_lengkap' => 'Administrator Sistem',
-                    'nama_pengguna' => 'admin',
-                    'username' => 'admin',
-                    'email' => 'admin@inlislite.com',
-                    'role' => 'Super Admin',
-                    'status' => 'Aktif',
-                    'foto' => null,
-                    'last_login' => null,
-                    'phone' => null,
-                    'address' => null,
-                    'bio' => null,
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s')
-                ];
-            }
-            
-            // Format the profile data
-            $formattedProfile = $profileModel->getFormattedProfile($currentProfile['id']);
-            
-            $data = [
-                'title' => 'User Profile - INLISLite v3.0',
-                'page_title' => 'User Profile',
-                'page_subtitle' => 'Manage your account information and settings',
-                'user' => $formattedProfile ?: $currentProfile
-            ];
-            
-        } catch (\Exception $e) {
-            // Handle database errors gracefully (e.g., table doesn't exist)
-            log_message('error', 'Profile page error: ' . $e->getMessage());
-            
             // Create default profile data when database is not available
             $defaultProfile = [
                 'id' => 1,
@@ -265,160 +302,26 @@ class AdminController extends BaseController
                 'title' => 'User Profile - INLISLite v3.0',
                 'page_title' => 'User Profile',
                 'page_subtitle' => 'Manage your account information and settings',
-                'user' => $defaultProfile,
+                'user' => $defaultProfile
+            ];
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Profile page error: ' . $e->getMessage());
+            
+            $data = [
+                'title' => 'User Profile - INLISLite v3.0',
+                'page_title' => 'User Profile',
+                'page_subtitle' => 'Manage your account information and settings',
+                'user' => [
+                    'id' => 1,
+                    'nama' => 'Administrator',
+                    'email' => 'admin@inlislite.com',
+                    'role' => 'Super Admin'
+                ],
                 'database_error' => true
             ];
         }
         
         return view('admin/profile', $data);
-    }
-    
-    public function updateProfile()
-    {
-        try {
-            $profileModel = new \App\Models\ProfileModel();
-            
-            // Get current user profile
-            $currentProfile = $profileModel->getByUsername('admin');
-            
-            if (!$currentProfile) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Profile not found'
-                ]);
-            }
-            
-            // Get form data
-            $nama_lengkap = $this->request->getPost('nama_lengkap');
-            $nama_pengguna = $this->request->getPost('nama_pengguna');
-            
-            // Validate input
-            if (empty($nama_lengkap) || empty($nama_pengguna)) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'All fields are required'
-                ]);
-            }
-            
-            // Check if username is unique (excluding current user)
-            $existingUser = $profileModel->where('username', $nama_pengguna)
-                                       ->where('id !=', $currentProfile['id'])
-                                       ->first();
-            
-            if ($existingUser) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Username already exists'
-                ]);
-            }
-            
-            // Update profile
-            $updateData = [
-                'nama' => $nama_lengkap,
-                'nama_lengkap' => $nama_lengkap,
-                'username' => $nama_pengguna,
-                'nama_pengguna' => $nama_pengguna,
-                'updated_at' => date('Y-m-d H:i:s')
-            ];
-            
-            $result = $profileModel->update($currentProfile['id'], $updateData);
-            
-            if ($result) {
-                return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Profile updated successfully'
-                ]);
-            } else {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Failed to update profile'
-                ]);
-            }
-            
-        } catch (\Exception $e) {
-            log_message('error', 'Update profile error: ' . $e->getMessage());
-            
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Database error: Profile table not available. Please contact administrator.'
-            ]);
-        }
-    }
-    
-    public function changePassword()
-    {
-        try {
-            $profileModel = new \App\Models\ProfileModel();
-            
-            // Get current user profile
-            $currentProfile = $profileModel->getByUsername('admin');
-            
-            if (!$currentProfile) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Profile not found'
-                ]);
-            }
-            
-            // Get form data
-            $currentPassword = $this->request->getPost('current_password');
-            $newPassword = $this->request->getPost('kata_sandi');
-            $confirmPassword = $this->request->getPost('confirm_password');
-            
-            // Validate input
-            if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'All password fields are required'
-                ]);
-            }
-            
-            // Check if new passwords match
-            if ($newPassword !== $confirmPassword) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'New passwords do not match'
-                ]);
-            }
-            
-            // Verify current password
-            if (!$profileModel->verifyPassword($currentProfile['id'], $currentPassword)) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Current password is incorrect'
-                ]);
-            }
-            
-            // Validate new password strength
-            if (strlen($newPassword) < 6) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'New password must be at least 6 characters long'
-                ]);
-            }
-            
-            // Update password
-            $result = $profileModel->changePassword($currentProfile['id'], $newPassword);
-            
-            if ($result) {
-                return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Password changed successfully'
-                ]);
-            } else {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Failed to change password'
-                ]);
-            }
-            
-        } catch (\Exception $e) {
-            log_message('error', 'Change password error: ' . $e->getMessage());
-            
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Database error: Profile table not available. Please contact administrator.'
-            ]);
-        }
     }
 }

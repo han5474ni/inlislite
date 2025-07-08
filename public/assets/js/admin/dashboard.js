@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add smooth scrolling for better UX
     document.documentElement.style.scrollBehavior = 'smooth';
+    
+    // Initialize feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
 });
 
 /**
@@ -154,8 +159,10 @@ function initializeCards() {
     
     cards.forEach(card => {
         card.addEventListener('click', function() {
-            const title = this.querySelector('.card-title').textContent;
-            handleCardClick(title, this);
+            const title = this.querySelector('.card-title')?.textContent;
+            if (title) {
+                handleCardClick(title, this);
+            }
         });
         
         // Add keyboard navigation
@@ -169,7 +176,8 @@ function initializeCards() {
         // Make cards focusable and add ARIA attributes
         card.setAttribute('tabindex', '0');
         card.setAttribute('role', 'button');
-        card.setAttribute('aria-label', `Akses ${card.querySelector('.card-title').textContent}`);
+        const cardTitle = card.querySelector('.card-title')?.textContent || 'Card';
+        card.setAttribute('aria-label', `Akses ${cardTitle}`);
     });
 }
 
@@ -190,22 +198,22 @@ function handleCardClick(title, cardElement) {
     // Route to appropriate pages based on card title
     switch (title) {
         case 'Tentang InlisLite':
-            navigateToPage('/admin/tentang');
+            navigateToPage(getBaseUrl() + 'admin/tentang');
             break;
         case 'Features & Program Modules':
-            navigateToPage('/admin/demo');
+            navigateToPage(getBaseUrl() + 'admin/demo');
             break;
         case 'Installer':
-            navigateToPage('/installer');
+            navigateToPage(getBaseUrl() + 'installer');
             break;
         case 'Patch dan Updater':
-            navigateToPage('/admin/patch_updater');
+            navigateToPage(getBaseUrl() + 'admin/patch');
             break;
         case 'Aplikasi Pendukung':
-            navigateToPage('/admin/applications');
+            navigateToPage(getBaseUrl() + 'admin/aplikasi');
             break;
         case 'Panduan':
-            navigateToPage('/panduan');
+            navigateToPage(getBaseUrl() + 'admin/panduan');
             break;
         case 'Dukungan Teknis':
             showSupportModal();
@@ -214,7 +222,16 @@ function handleCardClick(title, cardElement) {
             showDeveloperTools();
             break;
         case 'Demo Program':
-            navigateToPage('/admin/demo');
+            navigateToPage(getBaseUrl() + 'admin/demo');
+            break;
+        case 'Bimbingan Teknis':
+            navigateToPage(getBaseUrl() + 'admin/bimbingan');
+            break;
+        case 'Manajemen User':
+            navigateToPage(getBaseUrl() + 'admin/users');
+            break;
+        case 'Registrasi':
+            navigateToPage(getBaseUrl() + 'admin/registration');
             break;
         default:
             console.log('No specific action defined for:', title);
@@ -222,23 +239,64 @@ function handleCardClick(title, cardElement) {
 }
 
 /**
- * Navigate to a specific page
+ * Get base URL for navigation
+ */
+function getBaseUrl() {
+    // Try to get base URL from meta tag or construct it
+    const baseElement = document.querySelector('base');
+    if (baseElement) {
+        return baseElement.href;
+    }
+    
+    // Fallback: construct from current location
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const pathname = window.location.pathname;
+    
+    // Extract base path (everything before /admin or /public)
+    let basePath = '/';
+    if (pathname.includes('/admin')) {
+        basePath = pathname.substring(0, pathname.indexOf('/admin') + 1);
+    } else if (pathname.includes('/public')) {
+        basePath = pathname.substring(0, pathname.indexOf('/public') + 1);
+    }
+    
+    return `${protocol}//${host}${basePath}`;
+}
+
+/**
+ * Navigate to a specific page with proper error handling
  * @param {string} url - Target URL
  */
 function navigateToPage(url) {
-    // Add loading state
-    showLoadingState();
-    
-    // Navigate after short delay for better UX
-    setTimeout(() => {
-        window.location.href = url;
-    }, 200);
+    try {
+        // Add loading state
+        showLoadingState();
+        
+        // Store the target URL for navigation tracking
+        sessionStorage.setItem('navigationTarget', url);
+        
+        // Navigate after short delay for better UX
+        setTimeout(() => {
+            window.location.href = url;
+        }, 200);
+    } catch (error) {
+        console.error('Navigation error:', error);
+        hideLoadingState();
+        showToast('Terjadi kesalahan saat navigasi', 'error');
+    }
 }
 
 /**
  * Show loading state
  */
 function showLoadingState() {
+    // Remove existing loading overlay
+    const existingOverlay = document.querySelector('.loading-overlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+    
     const loadingOverlay = document.createElement('div');
     loadingOverlay.className = 'loading-overlay';
     loadingOverlay.innerHTML = `
@@ -266,6 +324,16 @@ function showLoadingState() {
     `;
     
     document.body.appendChild(loadingOverlay);
+}
+
+/**
+ * Hide loading state
+ */
+function hideLoadingState() {
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.remove();
+    }
 }
 
 /**
@@ -305,13 +373,26 @@ function showSupportModal() {
     `;
     
     document.body.appendChild(modal);
-    const bootstrapModal = new bootstrap.Modal(modal);
-    bootstrapModal.show();
     
-    // Remove modal from DOM after hiding
-    modal.addEventListener('hidden.bs.modal', () => {
-        modal.remove();
-    });
+    // Initialize Bootstrap modal if available
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
+        
+        // Remove modal from DOM after hiding
+        modal.addEventListener('hidden.bs.modal', () => {
+            modal.remove();
+        });
+    } else {
+        // Fallback: show modal without Bootstrap
+        modal.style.display = 'block';
+        modal.classList.add('show');
+        
+        // Add close functionality
+        modal.querySelector('.btn-close, .btn-secondary').addEventListener('click', () => {
+            modal.remove();
+        });
+    }
 }
 
 /**
@@ -378,13 +459,26 @@ function showDeveloperTools() {
     `;
     
     document.body.appendChild(modal);
-    const bootstrapModal = new bootstrap.Modal(modal);
-    bootstrapModal.show();
     
-    // Remove modal from DOM after hiding
-    modal.addEventListener('hidden.bs.modal', () => {
-        modal.remove();
-    });
+    // Initialize Bootstrap modal if available
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
+        
+        // Remove modal from DOM after hiding
+        modal.addEventListener('hidden.bs.modal', () => {
+            modal.remove();
+        });
+    } else {
+        // Fallback: show modal without Bootstrap
+        modal.style.display = 'block';
+        modal.classList.add('show');
+        
+        // Add close functionality
+        modal.querySelector('.btn-close, .btn-secondary').addEventListener('click', () => {
+            modal.remove();
+        });
+    }
 }
 
 /**
@@ -393,22 +487,31 @@ function showDeveloperTools() {
 function initializeAnimations() {
     const cards = document.querySelectorAll('.feature-card');
     
-    // Animate cards on load using Intersection Observer
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
+    // Only initialize if Intersection Observer is supported
+    if ('IntersectionObserver' in window) {
+        // Animate cards on load using Intersection Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
         });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
-    
-    cards.forEach(card => {
-        observer.observe(card);
-    });
+        
+        cards.forEach(card => {
+            observer.observe(card);
+        });
+    } else {
+        // Fallback for browsers without Intersection Observer
+        cards.forEach(card => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        });
+    }
 }
 
 /**
@@ -433,13 +536,22 @@ function showToast(message, type = 'info') {
     
     toastContainer.appendChild(toast);
     
-    const bootstrapToast = new bootstrap.Toast(toast);
-    bootstrapToast.show();
-    
-    // Remove toast from DOM after hiding
-    toast.addEventListener('hidden.bs.toast', () => {
-        toast.remove();
-    });
+    // Initialize Bootstrap toast if available
+    if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+        const bootstrapToast = new bootstrap.Toast(toast);
+        bootstrapToast.show();
+        
+        // Remove toast from DOM after hiding
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    } else {
+        // Fallback: show toast without Bootstrap
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    }
 }
 
 /**
@@ -486,5 +598,6 @@ window.DashboardJS = {
     showSupportModal,
     showDeveloperTools,
     getSidebarState,
-    setSidebarState
+    setSidebarState,
+    getBaseUrl
 };
