@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\InstallerModel;
 use App\Models\InstallerSettingsModel;
+use App\Models\InstallerCardModel;
 use Config\Database;
 
 class InstallerController extends BaseController
@@ -12,12 +13,14 @@ class InstallerController extends BaseController
     protected $db;
     protected $installerModel;
     protected $settingsModel;
+    protected $cardModel;
     
     public function __construct()
     {
         $this->db = Database::connect();
         $this->installerModel = new InstallerModel();
         $this->settingsModel = new InstallerSettingsModel();
+        $this->cardModel = new InstallerCardModel();
     }
     
     public function index()
@@ -27,6 +30,18 @@ class InstallerController extends BaseController
         ];
         
         return view('admin/installer', $data);
+    }
+
+    /**
+     * Show installer edit page
+     */
+    public function edit()
+    {
+        $data = [
+            'title' => 'Kelola Kartu Installer - INLISlite v3.0'
+        ];
+        
+        return view('admin/installer-edit', $data);
     }
 
     /**
@@ -212,6 +227,212 @@ class InstallerController extends BaseController
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Failed to update settings'
+            ]);
+        }
+    }
+
+    /**
+     * Get all installer cards
+     */
+    public function getCards()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $cards = $this->cardModel->orderBy('sort_order', 'ASC')
+                                   ->orderBy('created_at', 'DESC')
+                                   ->findAll();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'cards' => $cards
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to get installer cards: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to load installer cards'
+            ]);
+        }
+    }
+
+    /**
+     * Create new installer card
+     */
+    public function createCard()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $input = $this->request->getJSON(true);
+            
+            // Validate required fields
+            if (empty($input['package_name']) || empty($input['version'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Nama paket dan versi harus diisi'
+                ]);
+            }
+
+            // Prepare card data
+            $cardData = [
+                'package_name' => $input['package_name'],
+                'version' => $input['version'],
+                'release_date' => $input['release_date'] ?: null,
+                'file_size' => $input['file_size'] ?: null,
+                'download_link' => $input['download_link'] ?: null,
+                'description' => $input['description'] ?: null,
+                'requirements' => $input['requirements'] ?: null,
+                'default_username' => $input['default_username'] ?: null,
+                'default_password' => $input['default_password'] ?: null,
+                'card_type' => $input['card_type'] ?: 'source',
+                'status' => $input['status'] ?: 'active'
+            ];
+
+            $cardId = $this->cardModel->insert($cardData);
+
+            if ($cardId) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Kartu installer berhasil ditambahkan',
+                    'card_id' => $cardId
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Gagal menambahkan kartu installer'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to create installer card: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menambahkan kartu'
+            ]);
+        }
+    }
+
+    /**
+     * Update installer card
+     */
+    public function updateCard()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $input = $this->request->getJSON(true);
+            
+            // Validate required fields
+            if (empty($input['id']) || empty($input['package_name']) || empty($input['version'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'ID, nama paket dan versi harus diisi'
+                ]);
+            }
+
+            // Check if card exists
+            $existingCard = $this->cardModel->find($input['id']);
+            if (!$existingCard) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Kartu tidak ditemukan'
+                ]);
+            }
+
+            // Prepare card data
+            $cardData = [
+                'package_name' => $input['package_name'],
+                'version' => $input['version'],
+                'release_date' => $input['release_date'] ?: null,
+                'file_size' => $input['file_size'] ?: null,
+                'download_link' => $input['download_link'] ?: null,
+                'description' => $input['description'] ?: null,
+                'requirements' => $input['requirements'] ?: null,
+                'default_username' => $input['default_username'] ?: null,
+                'default_password' => $input['default_password'] ?: null,
+                'card_type' => $input['card_type'] ?: 'source',
+                'status' => $input['status'] ?: 'active'
+            ];
+
+            $updated = $this->cardModel->update($input['id'], $cardData);
+
+            if ($updated) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Kartu installer berhasil diperbarui'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Gagal memperbarui kartu installer'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to update installer card: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui kartu'
+            ]);
+        }
+    }
+
+    /**
+     * Delete installer card
+     */
+    public function deleteCard()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $input = $this->request->getJSON(true);
+            
+            // Validate required fields
+            if (empty($input['id'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'ID kartu harus diisi'
+                ]);
+            }
+
+            // Check if card exists
+            $existingCard = $this->cardModel->find($input['id']);
+            if (!$existingCard) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Kartu tidak ditemukan'
+                ]);
+            }
+
+            $deleted = $this->cardModel->delete($input['id']);
+
+            if ($deleted) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Kartu installer berhasil dihapus'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Gagal menghapus kartu installer'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to delete installer card: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus kartu'
             ]);
         }
     }

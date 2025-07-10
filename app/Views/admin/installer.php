@@ -104,6 +104,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="nav-right">
+                        <a href="<?= base_url('admin/installer-edit') ?>" class="btn btn-management" title="Kelola Kartu Installer">
+                            <i class="bi bi-gear-fill me-2"></i>
+                            Manajemen Card
+                        </a>
+                    </div>
                 </div>
             </div>
         </nav>

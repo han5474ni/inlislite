@@ -264,26 +264,29 @@ class UserManagement extends BaseController
     public function addUserAjax()
     {
         if ($this->request->isAJAX()) {
+            // Get JSON input
+            $input = $this->request->getJSON(true);
+            
             $rules = [
                 'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
                 'nama_pengguna' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
                 'email'         => 'required|valid_email|is_unique[users.email]',
-                'kata_sandi'    => 'required|min_length[6]',
+                'password'      => 'required|min_length[6]',
                 'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
-                'status'        => 'required|in_list[Aktif,Non-aktif]',
+                'status'        => 'required|in_list[Aktif,Non-Aktif]',
             ];
 
-            if (!$this->validate($rules)) {
+            if (!$this->validate($rules, $input)) {
                 return $this->response->setJSON(['success' => false, 'errors' => $this->validator->getErrors()]);
             }
 
             $data = [
-                'nama_lengkap'  => $this->request->getPost('nama_lengkap'),
-                'username'      => $this->request->getPost('nama_pengguna'),
-                'email'         => $this->request->getPost('email'),
-                'password'      => password_hash($this->request->getPost('kata_sandi'), PASSWORD_DEFAULT),
-                'role'          => $this->request->getPost('role'),
-                'status'        => $this->request->getPost('status'),
+                'nama_lengkap'  => $input['nama_lengkap'],
+                'username'      => $input['nama_pengguna'],
+                'email'         => $input['email'],
+                'password'      => password_hash($input['password'], PASSWORD_DEFAULT),
+                'role'          => $input['role'],
+                'status'        => $input['status'],
                 'created_at'    => date('Y-m-d H:i:s'),
                 'last_login'    => null,
             ];
@@ -323,30 +326,32 @@ class UserManagement extends BaseController
                 return $this->response->setJSON(['success' => false, 'message' => 'ID pengguna tidak valid.']);
             }
 
+            // Get JSON input
+            $input = $this->request->getJSON(true);
+
             $rules = [
                 'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
                 'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.username,id,{$id}]",
                 'email'         => "required|valid_email|is_unique[users.email,id,{$id}]",
                 'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
-                'status'        => 'required|in_list[Aktif,Non-aktif]',
+                'status'        => 'required|in_list[Aktif,Non-Aktif]',
             ];
 
-            if (!$this->validate($rules)) {
+            if (!$this->validate($rules, $input)) {
                 return $this->response->setJSON(['success' => false, 'errors' => $this->validator->getErrors()]);
             }
 
             $data = [
-                'nama_lengkap'  => $this->request->getPost('nama_lengkap'),
-                'username'      => $this->request->getPost('nama_pengguna'),
-                'email'         => $this->request->getPost('email'),
-                'role'          => $this->request->getPost('role'),
-                'status'        => $this->request->getPost('status'),
+                'nama_lengkap'  => $input['nama_lengkap'],
+                'username'      => $input['nama_pengguna'],
+                'email'         => $input['email'],
+                'role'          => $input['role'],
+                'status'        => $input['status'],
             ];
 
             // Update password if provided
-            $kataSandi = $this->request->getPost('kata_sandi');
-            if (!empty($kataSandi)) {
-                $data['password'] = password_hash($kataSandi, PASSWORD_DEFAULT);
+            if (!empty($input['password'])) {
+                $data['password'] = password_hash($input['password'], PASSWORD_DEFAULT);
             }
 
             try {
@@ -505,6 +510,71 @@ class UserManagement extends BaseController
                 'data' => []
             ]);
         }
+    }
+
+    /**
+     * Get user statistics for chart
+     */
+    public function getUserStatistics()
+    {
+        if ($this->request->isAJAX()) {
+            try {
+                $builder = $this->db->table('users');
+                $users = $builder->select('role, created_at')->get()->getResultArray();
+                
+                $currentYear = date('Y');
+                $years = [];
+                $statistics = [
+                    'Super Admin' => [],
+                    'Admin' => [],
+                    'Pustakawan' => [],
+                    'Staff' => []
+                ];
+                
+                // Generate years (current year and 4 previous years)
+                for ($i = 4; $i >= 0; $i--) {
+                    $year = $currentYear - $i;
+                    $years[] = $year;
+                    
+                    // Initialize counts for each role
+                    foreach ($statistics as $role => &$data) {
+                        $data[] = 0;
+                    }
+                }
+                
+                // Process users data
+                foreach ($users as $user) {
+                    if (!empty($user['created_at'])) {
+                        $userYear = date('Y', strtotime($user['created_at']));
+                        $yearIndex = array_search($userYear, $years);
+                        
+                        if ($yearIndex !== false && isset($statistics[$user['role']])) {
+                            $statistics[$user['role']][$yearIndex]++;
+                        }
+                    }
+                }
+                
+                return $this->response->setJSON([
+                    'success' => true,
+                    'data' => [
+                        'years' => $years,
+                        'superAdmin' => $statistics['Super Admin'],
+                        'admin' => $statistics['Admin'],
+                        'pustakawan' => $statistics['Pustakawan'],
+                        'staff' => $statistics['Staff']
+                    ]
+                ]);
+                
+            } catch (\Exception $e) {
+                log_message('error', 'Error fetching user statistics: ' . $e->getMessage());
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage()
+                ]);
+            }
+        }
+        
+        return redirect()->to('/admin/users');
     }
 
     /**

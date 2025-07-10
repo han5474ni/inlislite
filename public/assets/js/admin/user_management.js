@@ -7,6 +7,8 @@
 let users = [];
 let filteredUsers = [];
 let currentEditUserId = null;
+let userChart = null;
+let userStatistics = {};
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -22,6 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load users
     loadUsers();
+    
+    // Initialize chart
+    initializeChart();
     
     console.log('✅ User Management System Ready');
 });
@@ -256,6 +261,11 @@ async function loadUsers() {
     filteredUsers = [...users];
     renderUsersTable();
     updateUserCount();
+    
+    // Refresh chart after loading users
+    if (userChart) {
+        refreshChart();
+    }
 }
 
 /**
@@ -452,39 +462,51 @@ async function submitAddUser() {
     }
 
     try {
-        // Simulate API call for demo
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Make real API call to add user
+        const response = await fetch(getBaseUrl() + 'admin/users/ajax/create', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
         
-        // Create new user object
-        const newUser = {
-            id: users.length + 1,
-            nama_lengkap: data.nama_lengkap,
-            nama_pengguna: data.nama_pengguna,
-            email: data.email,
-            role: data.role,
-            status: data.status,
-            last_login: null,
-            created_at: new Date().toISOString().split('T')[0],
-            avatar_initials: getInitials(data.nama_lengkap),
-            last_login_formatted: 'Belum pernah',
-            created_at_formatted: formatDate(new Date().toISOString())
-        };
+        const result = await response.json();
         
-        // Add to users array
-        users.push(newUser);
-        
-        showToast('User berhasil ditambahkan!', 'success');
-        
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
-        if (modal) {
-            modal.hide();
+        if (result.success) {
+            // Add new user to local array
+            const newUser = {
+                ...result.data,
+                avatar_initials: getInitials(result.data.nama_lengkap || result.data.nama_pengguna),
+                last_login_formatted: formatLastLogin(result.data.last_login),
+                created_at_formatted: formatDate(result.data.created_at)
+            };
+            
+            users.push(newUser);
+            
+            showToast(result.message || 'User berhasil ditambahkan!', 'success');
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+            if (modal) {
+                modal.hide();
+            }
+            
+            // Refresh table and chart
+            filterUsers();
+            refreshChart();
+            
+            console.log('✅ User added successfully:', newUser);
+        } else {
+            // Handle validation errors
+            if (result.errors) {
+                const errorMessages = Object.values(result.errors).join('<br>');
+                showToast(errorMessages, 'error');
+            } else {
+                showToast(result.message || 'Gagal menambahkan user', 'error');
+            }
         }
-        
-        // Refresh table
-        filterUsers();
-        
-        console.log('✅ User added successfully');
         
     } catch (error) {
         console.error('❌ Error adding user:', error);
@@ -527,42 +549,52 @@ async function submitEditUser() {
     }
 
     try {
-        // Simulate API call for demo
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Make real API call to update user
+        const response = await fetch(getBaseUrl() + `admin/users/ajax/update/${currentEditUserId}`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
         
-        // Find and update user in array
-        const userIndex = users.findIndex(u => u.id == currentEditUserId);
-        if (userIndex !== -1) {
-            // Update user data
-            users[userIndex] = {
-                ...users[userIndex],
-                nama_lengkap: data.nama_lengkap,
-                nama_pengguna: data.nama_pengguna,
-                email: data.email,
-                role: data.role,
-                status: data.status,
-                avatar_initials: getInitials(data.nama_lengkap)
-            };
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update user in local array
+            const userIndex = users.findIndex(u => u.id == currentEditUserId);
+            if (userIndex !== -1) {
+                users[userIndex] = {
+                    ...result.data,
+                    avatar_initials: getInitials(result.data.nama_lengkap || result.data.nama_pengguna),
+                    last_login_formatted: formatLastLogin(result.data.last_login),
+                    created_at_formatted: formatDate(result.data.created_at)
+                };
+            }
             
-            // Only update password if provided
-            if (data.password && data.password.trim() !== '') {
-                // In real implementation, this would be handled securely on the server
-                console.log('Password would be updated on server');
+            showToast(result.message || 'User berhasil diperbarui!', 'success');
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+            if (modal) {
+                modal.hide();
+            }
+            
+            // Refresh table and chart
+            filterUsers();
+            refreshChart();
+            
+            console.log('✅ User updated successfully:', result.data);
+        } else {
+            // Handle validation errors
+            if (result.errors) {
+                const errorMessages = Object.values(result.errors).join('<br>');
+                showToast(errorMessages, 'error');
+            } else {
+                showToast(result.message || 'Gagal memperbarui user', 'error');
             }
         }
-        
-        showToast('User berhasil diperbarui!', 'success');
-        
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-        if (modal) {
-            modal.hide();
-        }
-        
-        // Refresh table
-        filterUsers();
-        
-        console.log('✅ User updated successfully');
         
     } catch (error) {
         console.error('❌ Error updating user:', error);
@@ -615,18 +647,31 @@ async function deleteUser(userId, userName) {
     console.log(`🗑️ Deleting user: ${userId}`);
 
     try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Make real API call to delete user
+        const response = await fetch(getBaseUrl() + `admin/users/ajax/delete/${userId}`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json',
+            }
+        });
         
-        // Remove from users array
-        users = users.filter(u => u.id != userId);
+        const result = await response.json();
         
-        showToast(`User "${userName}" berhasil dihapus!`, 'success');
-        
-        // Refresh table
-        filterUsers();
-        
-        console.log('✅ User deleted successfully');
+        if (result.success) {
+            // Remove from users array
+            users = users.filter(u => u.id != userId);
+            
+            showToast(result.message || `User "${userName}" berhasil dihapus!`, 'success');
+            
+            // Refresh table and chart
+            filterUsers();
+            refreshChart();
+            
+            console.log('✅ User deleted successfully');
+        } else {
+            showToast(result.message || 'Gagal menghapus user', 'error');
+        }
         
     } catch (error) {
         console.error('❌ Error deleting user:', error);
@@ -887,5 +932,292 @@ window.UserManagementJS = {
     filterUsers
 };
 
+/**
+ * Initialize Chart
+ */
+function initializeChart() {
+    console.log('📊 Initializing user statistics chart...');
+    
+    const ctx = document.getElementById('userChart');
+    if (!ctx) {
+        console.warn('⚠️ Chart canvas not found');
+        return;
+    }
+
+    // Destroy existing chart if it exists
+    if (userChart) {
+        userChart.destroy();
+    }
+
+    // Generate chart data
+    const chartData = generateChartData();
+    
+    userChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.years,
+            datasets: [
+                {
+                    label: 'Super Admin',
+                    data: chartData.superAdmin,
+                    backgroundColor: '#004AAD',
+                    borderColor: '#004AAD',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                },
+                {
+                    label: 'Admin',
+                    data: chartData.admin,
+                    backgroundColor: '#1C6EC4',
+                    borderColor: '#1C6EC4',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                },
+                {
+                    label: 'Pustakawan',
+                    data: chartData.pustakawan,
+                    backgroundColor: '#2DA84D',
+                    borderColor: '#2DA84D',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                },
+                {
+                    label: 'Staff',
+                    data: chartData.staff,
+                    backgroundColor: '#0B8F1C',
+                    borderColor: '#0B8F1C',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false // We use custom legend
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#ddd',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: true,
+                    callbacks: {
+                        title: function(context) {
+                            return `Year ${context[0].label}`;
+                        },
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y} users`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#6c757d',
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#f1f3f4',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: '#6c757d',
+                        font: {
+                            size: 12
+                        },
+                        stepSize: 1
+                    }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeInOutQuart'
+            }
+        }
+    });
+
+    // Update legend counts
+    updateLegendCounts(chartData);
+    
+    // Setup year filter
+    setupYearFilter(chartData.years);
+    
+    console.log('✅ Chart initialized successfully');
+}
+
+/**
+ * Generate chart data from users
+ */
+function generateChartData() {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    const roleData = {
+        'Super Admin': [],
+        'Admin': [],
+        'Pustakawan': [],
+        'Staff': []
+    };
+
+    // Generate years (current year and 4 previous years)
+    for (let i = 4; i >= 0; i--) {
+        years.push(currentYear - i);
+    }
+
+    // Initialize data arrays
+    years.forEach(() => {
+        roleData['Super Admin'].push(0);
+        roleData['Admin'].push(0);
+        roleData['Pustakawan'].push(0);
+        roleData['Staff'].push(0);
+    });
+
+    // Process users data
+    users.forEach(user => {
+        if (user.created_at) {
+            const userYear = new Date(user.created_at).getFullYear();
+            const yearIndex = years.indexOf(userYear);
+            
+            if (yearIndex !== -1 && roleData[user.role]) {
+                roleData[user.role][yearIndex]++;
+            }
+        }
+    });
+
+    // Add some mock data if no real data exists
+    if (users.length === 0) {
+        // Generate sample data for demonstration
+        years.forEach((year, index) => {
+            roleData['Super Admin'][index] = Math.floor(Math.random() * 3) + 1;
+            roleData['Admin'][index] = Math.floor(Math.random() * 5) + 2;
+            roleData['Pustakawan'][index] = Math.floor(Math.random() * 8) + 3;
+            roleData['Staff'][index] = Math.floor(Math.random() * 12) + 5;
+        });
+    }
+
+    return {
+        years: years,
+        superAdmin: roleData['Super Admin'],
+        admin: roleData['Admin'],
+        pustakawan: roleData['Pustakawan'],
+        staff: roleData['Staff']
+    };
+}
+
+/**
+ * Update legend counts
+ */
+function updateLegendCounts(chartData) {
+    const totalCounts = {
+        superAdmin: chartData.superAdmin.reduce((a, b) => a + b, 0),
+        admin: chartData.admin.reduce((a, b) => a + b, 0),
+        pustakawan: chartData.pustakawan.reduce((a, b) => a + b, 0),
+        staff: chartData.staff.reduce((a, b) => a + b, 0)
+    };
+
+    // Update legend count elements
+    const superAdminCount = document.getElementById('superAdminCount');
+    const adminCount = document.getElementById('adminCount');
+    const pustakawaCount = document.getElementById('pustakawaCount');
+    const staffCount = document.getElementById('staffCount');
+
+    if (superAdminCount) superAdminCount.textContent = totalCounts.superAdmin;
+    if (adminCount) adminCount.textContent = totalCounts.admin;
+    if (pustakawaCount) pustakawaCount.textContent = totalCounts.pustakawan;
+    if (staffCount) staffCount.textContent = totalCounts.staff;
+}
+
+/**
+ * Setup year filter dropdown
+ */
+function setupYearFilter(years) {
+    const yearFilter = document.getElementById('yearFilter');
+    if (!yearFilter) return;
+
+    // Clear existing options except "All Years"
+    yearFilter.innerHTML = '<option value="all">All Years</option>';
+    
+    // Add year options
+    years.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearFilter.appendChild(option);
+    });
+
+    // Add event listener for year filter
+    yearFilter.addEventListener('change', function() {
+        filterChartByYear(this.value);
+    });
+}
+
+/**
+ * Filter chart by year
+ */
+function filterChartByYear(selectedYear) {
+    if (!userChart) return;
+
+    const chartData = generateChartData();
+    
+    if (selectedYear === 'all') {
+        // Show all years
+        userChart.data.labels = chartData.years;
+        userChart.data.datasets[0].data = chartData.superAdmin;
+        userChart.data.datasets[1].data = chartData.admin;
+        userChart.data.datasets[2].data = chartData.pustakawan;
+        userChart.data.datasets[3].data = chartData.staff;
+    } else {
+        // Show only selected year
+        const yearIndex = chartData.years.indexOf(parseInt(selectedYear));
+        if (yearIndex !== -1) {
+            userChart.data.labels = [selectedYear];
+            userChart.data.datasets[0].data = [chartData.superAdmin[yearIndex]];
+            userChart.data.datasets[1].data = [chartData.admin[yearIndex]];
+            userChart.data.datasets[2].data = [chartData.pustakawan[yearIndex]];
+            userChart.data.datasets[3].data = [chartData.staff[yearIndex]];
+        }
+    }
+
+    userChart.update('active');
+    updateLegendCounts(chartData);
+}
+
+/**
+ * Refresh chart data
+ */
+function refreshChart() {
+    if (userChart) {
+        const chartData = generateChartData();
+        userChart.data.labels = chartData.years;
+        userChart.data.datasets[0].data = chartData.superAdmin;
+        userChart.data.datasets[1].data = chartData.admin;
+        userChart.data.datasets[2].data = chartData.pustakawan;
+        userChart.data.datasets[3].data = chartData.staff;
+        userChart.update();
+        updateLegendCounts(chartData);
+    }
+}
+
 console.log('📦 User Management JavaScript loaded successfully');
-// ...existing code...

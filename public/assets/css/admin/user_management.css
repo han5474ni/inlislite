@@ -643,6 +643,83 @@ body {
     }
 }
 
+/* Chart Styles */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 1rem;
+}
+
+.chart-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.chart-legend {
+    border-top: 1px solid #e9ecef;
+    padding-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.legend-item:hover {
+    background-color: #f8f9fa;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.legend-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #495057;
+    flex: 1;
+}
+
+.legend-count {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #212529;
+    background: #f8f9fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    min-width: 24px;
+    text-align: center;
+}
+
+/* Statistics Section */
+.statistics-section {
+    margin-bottom: 2rem;
+}
+
+.statistics-section .card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.statistics-section .card-header {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.5rem;
+}
+
+.statistics-section .card-body {
+    padding: 1.5rem;
+}
+
 /* Animation Classes */
 .fade-in {
     animation: fadeIn 0.3s ease-in-out;

@@ -104,6 +104,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('modern-dashboard', 'AdminController::modernDashboard');
     // About page
     $routes->get('tentang', 'AdminController::tentang');
+    $routes->get('tentang-edit', 'AdminController::tentangEdit');
+    $routes->group('tentang', function($routes) {
+        $routes->get('getCards', 'AdminController::getTentangCards');
+        $routes->post('createCard', 'AdminController::createTentangCard');
+        $routes->post('updateCard', 'AdminController::updateTentangCard');
+        $routes->post('deleteCard', 'AdminController::deleteTentangCard');
+    });
     // Panduan page
     $routes->get('panduan', 'AdminController::panduan');
     // Dukungan page
@@ -136,6 +143,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('ajax/update/(:num)', 'UserManagement::editUserAjax/$1');
         $routes->post('ajax/delete/(:num)', 'UserManagement::deleteUserAjax/$1');
         $routes->get('ajax/list', 'UserManagement::getUsersAjax');
+        $routes->get('ajax/statistics', 'UserManagement::getUserStatistics');
         $routes->get('reloadUsers', 'UserManagement::reloadUsers');
     });
     
@@ -203,12 +211,17 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     
     // Installer Management
     $routes->get('installer', 'InstallerController::index');
+    $routes->get('installer-edit', 'InstallerController::edit');
     $routes->group('installer', function($routes) {
         $routes->get('getData', 'InstallerController::getData');
         $routes->post('saveDownload', 'InstallerController::saveDownload');
         $routes->get('getDownloadStats', 'InstallerController::getDownloadStats');
         $routes->get('getRecentDownloads', 'InstallerController::getRecentDownloads');
         $routes->post('updateSettings', 'InstallerController::updateSettings');
+        $routes->get('getCards', 'InstallerController::getCards');
+        $routes->post('createCard', 'InstallerController::createCard');
+        $routes->post('updateCard', 'InstallerController::updateCard');
+        $routes->post('deleteCard', 'InstallerController::deleteCard');
     });
 });
 

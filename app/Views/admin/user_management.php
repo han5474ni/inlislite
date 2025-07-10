@@ -133,14 +133,53 @@
             <!-- Statistics Chart Section -->
             <div class="statistics-section">
                 <div class="card shadow-sm">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-bar-chart-fill me-2"></i>
                             User Statistics by Year
                         </h5>
+                        <div class="chart-controls">
+                            <select class="form-select form-select-sm" id="yearFilter" style="width: auto;">
+                                <option value="all">All Years</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <canvas id="userChart" width="400" height="200"></canvas>
+                        <div class="chart-container">
+                            <canvas id="userChart" width="400" height="200"></canvas>
+                        </div>
+                        <div class="chart-legend mt-3">
+                            <div class="row">
+                                <div class="col-6 col-md-3">
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background-color: #004AAD;"></span>
+                                        <span class="legend-label">Super Admin</span>
+                                        <span class="legend-count" id="superAdminCount">0</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background-color: #1C6EC4;"></span>
+                                        <span class="legend-label">Admin</span>
+                                        <span class="legend-count" id="adminCount">0</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background-color: #2DA84D;"></span>
+                                        <span class="legend-label">Pustakawan</span>
+                                        <span class="legend-count" id="pustakawaCount">0</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background-color: #0B8F1C;"></span>
+                                        <span class="legend-label">Staff</span>
+                                        <span class="legend-count" id="staffCount">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -177,7 +216,7 @@
                         </button>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <button class="btn btn-primary w-100 btn-add-user" data-bs-toggle="modal" data-bs-target="#addUserModal">
                             <i class="bi bi-plus-lg me-2"></i>
                             Add User
                         </button>
@@ -265,7 +304,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Kata Sandi</label>
-                                    <input type="password" class="form-control modern-input" name="kata_sandi" placeholder="Masukkan kata sandi" required>
+                                    <input type="password" class="form-control modern-input" name="password" placeholder="Masukkan kata sandi" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Role</label>
@@ -333,7 +372,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Kata Sandi Baru</label>
-                                    <input type="password" class="form-control modern-input" id="editPassword" name="kata_sandi" placeholder="Kosongkan jika tidak ingin mengubah">
+                                    <input type="password" class="form-control modern-input" id="editPassword" name="password" placeholder="Kosongkan jika tidak ingin mengubah">
                                     <small class="form-text text-muted mt-1">Kosongkan jika tidak ingin mengubah kata sandi</small>
                                 </div>
                                 <div class="form-group">
@@ -373,6 +412,8 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Dashboard JS -->
     <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
     <!-- Custom JavaScript -->

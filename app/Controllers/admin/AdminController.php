@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\TentangCardModel;
 
 class AdminController extends BaseController
 {
@@ -323,5 +324,221 @@ class AdminController extends BaseController
         }
         
         return view('admin/profile', $data);
+    }
+
+    /**
+     * Show tentang edit page
+     */
+    public function tentangEdit()
+    {
+        $data = [
+            'title' => 'Kelola Kartu Tentang - INLISlite v3.0'
+        ];
+        
+        return view('admin/tentang-edit', $data);
+    }
+
+    /**
+     * Get all tentang cards
+     */
+    public function getTentangCards()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $cardModel = new TentangCardModel();
+            $cards = $cardModel->orderBy('sort_order', 'ASC')
+                             ->orderBy('created_at', 'DESC')
+                             ->findAll();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'cards' => $cards
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to get tentang cards: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to load tentang cards'
+            ]);
+        }
+    }
+
+    /**
+     * Create new tentang card
+     */
+    public function createTentangCard()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $input = $this->request->getJSON(true);
+            
+            // Validate required fields
+            if (empty($input['title']) || empty($input['content'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Judul dan konten kartu harus diisi'
+                ]);
+            }
+
+            // Prepare card data
+            $cardData = [
+                'title' => $input['title'],
+                'subtitle' => $input['subtitle'] ?: null,
+                'content' => $input['content'],
+                'category' => $input['category'] ?: 'overview',
+                'icon' => $input['icon'] ?: null,
+                'status' => $input['status'] ?: 'active',
+                'sort_order' => $input['sort_order'] ?: 1
+            ];
+
+            $cardModel = new TentangCardModel();
+            $cardId = $cardModel->insert($cardData);
+
+            if ($cardId) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Kartu tentang berhasil ditambahkan',
+                    'card_id' => $cardId
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Gagal menambahkan kartu tentang'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to create tentang card: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menambahkan kartu'
+            ]);
+        }
+    }
+
+    /**
+     * Update tentang card
+     */
+    public function updateTentangCard()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $input = $this->request->getJSON(true);
+            
+            // Validate required fields
+            if (empty($input['id']) || empty($input['title']) || empty($input['content'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'ID, judul dan konten kartu harus diisi'
+                ]);
+            }
+
+            $cardModel = new TentangCardModel();
+            
+            // Check if card exists
+            $existingCard = $cardModel->find($input['id']);
+            if (!$existingCard) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Kartu tidak ditemukan'
+                ]);
+            }
+
+            // Prepare card data
+            $cardData = [
+                'title' => $input['title'],
+                'subtitle' => $input['subtitle'] ?: null,
+                'content' => $input['content'],
+                'category' => $input['category'] ?: 'overview',
+                'icon' => $input['icon'] ?: null,
+                'status' => $input['status'] ?: 'active',
+                'sort_order' => $input['sort_order'] ?: 1
+            ];
+
+            $updated = $cardModel->update($input['id'], $cardData);
+
+            if ($updated) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Kartu tentang berhasil diperbarui'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Gagal memperbarui kartu tentang'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to update tentang card: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui kartu'
+            ]);
+        }
+    }
+
+    /**
+     * Delete tentang card
+     */
+    public function deleteTentangCard()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $input = $this->request->getJSON(true);
+            
+            // Validate required fields
+            if (empty($input['id'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'ID kartu harus diisi'
+                ]);
+            }
+
+            $cardModel = new TentangCardModel();
+            
+            // Check if card exists
+            $existingCard = $cardModel->find($input['id']);
+            if (!$existingCard) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Kartu tidak ditemukan'
+                ]);
+            }
+
+            $deleted = $cardModel->delete($input['id']);
+
+            if ($deleted) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Kartu tentang berhasil dihapus'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Gagal menghapus kartu tentang'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to delete tentang card: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus kartu'
+            ]);
+        }
     }
 }
