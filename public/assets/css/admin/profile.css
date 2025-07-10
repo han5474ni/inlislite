@@ -573,3 +573,45 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 }
+        /* Logout button styling - matching login button style */
+        .logout-item {
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+
+        .logout-link {
+            background: transparent !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+            border-radius: 0.25rem;
+            margin: 0.25rem;
+            transition: all 0.3s ease;
+            text-transform: none;
+            letter-spacing: normal;
+            font-weight: 400;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .logout-link:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .logout-link:hover .nav-icon {
+            transform: translateX(3px);
+        }
+
+        /* Ensure sidebar nav takes full height and logout stays at bottom */
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+            overflow: hidden;
+        }
+
+        .sidebar-nav .nav-item:not(.logout-item) {
+            flex-shrink: 0;
+        }

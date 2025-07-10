@@ -888,3 +888,4 @@ window.UserManagementJS = {
 };
 
 console.log('📦 User Management JavaScript loaded successfully');
+// ...existing code...

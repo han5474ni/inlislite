@@ -460,3 +460,14 @@ function showAlert(message, type) {
         }
     }, 5000);
 }
+// Logout confirmation function
+        function confirmLogout() {
+            return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
+        }
+
+        // Initialize Feather icons after page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });

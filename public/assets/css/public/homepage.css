@@ -1,0 +1,218 @@
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Feature Cards Hover Effects */
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(255, 255, 255, 0.15) inset;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.feature-card:hover .feature-icon {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(111, 208, 154, 0.4);
+}
+
+.feature-card:hover .feature-icon i {
+    transform: scale(1.05);
+}
+
+/* Hero card hover effect */
+.hero-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 3px 12px rgba(255, 255, 255, 0.15) inset;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Animation for scroll-triggered elements */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.animate-on-scroll.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title-welcome {
+        font-size: 2.2rem !important;
+    }
+    
+    .hero-title-main {
+        font-size: 2.8rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .hero-description {
+        font-size: 1.1rem !important;
+    }
+    
+    .hero-card {
+        padding: 3rem 2rem !important;
+    }
+    
+    .features-title {
+        font-size: 2.5rem !important;
+    }
+    
+    .feature-card {
+        padding: 2.5rem 1.5rem !important;
+    }
+    
+    .feature-icon {
+        width: 70px !important;
+        height: 70px !important;
+    }
+    
+    .feature-icon i {
+        font-size: 2rem !important;
+    }
+    
+    .feature-title {
+        font-size: 1.1rem !important;
+    }
+    
+    .feature-description {
+        font-size: 0.9rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-title-welcome {
+        font-size: 1.8rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .hero-title-main {
+        font-size: 2.2rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .hero-description {
+        font-size: 1rem !important;
+    }
+    
+    .hero-card {
+        padding: 2rem 1.5rem !important;
+        border-radius: 1rem !important;
+    }
+    
+    .features-title {
+        font-size: 2rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .feature-card {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .feature-icon {
+        width: 60px !important;
+        height: 60px !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .feature-icon i {
+        font-size: 1.8rem !important;
+    }
+    
+    .feature-title {
+        font-size: 1rem !important;
+    }
+    
+    .feature-description {
+        font-size: 0.85rem !important;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .hero-title-welcome {
+        font-size: 1.5rem !important;
+    }
+    
+    .hero-title-main {
+        font-size: 1.9rem !important;
+    }
+    
+    .hero-description {
+        font-size: 0.95rem !important;
+    }
+    
+    .hero-card {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .features-title {
+        font-size: 1.8rem !important;
+    }
+    
+    .feature-card {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .feature-icon {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    
+    .feature-icon i {
+        font-size: 1.5rem !important;
+    }
+    
+    .feature-title {
+        font-size: 0.95rem !important;
+    }
+    
+    .feature-description {
+        font-size: 0.8rem !important;
+    }
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) {
+    .feature-card:hover {
+        transform: none;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-card:hover .feature-icon {
+        transform: none;
+    }
+    
+    .feature-card:hover .feature-icon i {
+        transform: none;
+    }
+    
+    .feature-card:hover > div:first-child {
+        opacity: 0.1;
+        transform: none;
+    }
+}
+
+/* Additional styling for better visual hierarchy */
+.container {
+    padding: 0 1rem;
+}
+
+/* Ensure cards have equal height on desktop */
+@media (min-width: 992px) {
+    .row.g-4 {
+        display: flex;
+        align-items: stretch;
+    }
+}

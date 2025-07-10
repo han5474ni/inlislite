@@ -36,48 +36,6 @@ $menuItems = [
         'active_patterns' => ['admin/registration', 'registration']
     ],
     [
-        'title' => 'Tentang',
-        'icon' => 'info',
-        'url' => 'admin/tentang',
-        'active_patterns' => ['admin/tentang', 'tentang']
-    ],
-    [
-        'title' => 'Demo Program',
-        'icon' => 'play-circle',
-        'url' => 'admin/demo',
-        'active_patterns' => ['admin/demo', 'demo']
-    ],
-    [
-        'title' => 'Aplikasi',
-        'icon' => 'grid',
-        'url' => 'admin/aplikasi',
-        'active_patterns' => ['admin/aplikasi', 'aplikasi']
-    ],
-    [
-        'title' => 'Panduan',
-        'icon' => 'book-open',
-        'url' => 'admin/panduan',
-        'active_patterns' => ['admin/panduan', 'panduan']
-    ],
-    [
-        'title' => 'Dukungan',
-        'icon' => 'headphones',
-        'url' => 'admin/dukungan',
-        'active_patterns' => ['admin/dukungan', 'dukungan']
-    ],
-    [
-        'title' => 'Bimbingan',
-        'icon' => 'graduation-cap',
-        'url' => 'admin/bimbingan',
-        'active_patterns' => ['admin/bimbingan', 'bimbingan']
-    ],
-    [
-        'title' => 'Patch & Updater',
-        'icon' => 'download',
-        'url' => 'admin/patch',
-        'active_patterns' => ['admin/patch', 'patch', 'admin/patch_updater']
-    ],
-    [
         'title' => 'Profile',
         'icon' => 'user',
         'url' => 'admin/profile',
