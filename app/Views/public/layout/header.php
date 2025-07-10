@@ -30,9 +30,11 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-public" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand" href="<?= base_url('/') ?>">
-                <div class="navbar-brand-icon">
-                    <i class="bi bi-star-fill text-white" style="font-size: 1.2rem;"></i>
+                <div class="navbar-brand-icon me-2">
+                    <img src="<?= base_url('assets/images/logo-perpusnas.png') ?>" alt="Logo" style="height: 100px; background: none; box-shadow: none;">
                 </div>
+
+
                 <div class="navbar-brand-text">
                     <div class="navbar-brand-main">
                         Inlis<span class="navbar-brand-lite">Lite</span>
