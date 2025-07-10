@@ -200,6 +200,16 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->get('opac', 'DemoController::opac');
         $routes->post('generate-sample', 'DemoController::generateSampleData');
     });
+    
+    // Installer Management
+    $routes->get('installer', 'InstallerController::index');
+    $routes->group('installer', function($routes) {
+        $routes->get('getData', 'InstallerController::getData');
+        $routes->post('saveDownload', 'InstallerController::saveDownload');
+        $routes->get('getDownloadStats', 'InstallerController::getDownloadStats');
+        $routes->get('getRecentDownloads', 'InstallerController::getRecentDownloads');
+        $routes->post('updateSettings', 'InstallerController::updateSettings');
+    });
 });
 
 // ============================================================================

@@ -1,292 +1,68 @@
-# 🌟 INLISLite v3.0 - Sistem Perpustakaan Digital Modern
-
-<div align="center">
+# CodeIgniter 4 Application Starter
 
-![INLISLite Logo](https://img.shields.io/badge/INLISLite-v3.0-blue?style=for-the-badge&logo=star)
-![PHP](https://img.shields.io/badge/PHP-8.0+-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![CodeIgniter](https://img.shields.io/badge/CodeIgniter-4.x-EF4223?style=for-the-badge&logo=codeigniter&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
-
-**Sistem Otomasi Perpustakaan Modern dengan Keamanan Enterprise-Grade**
-
-[📖 Dokumentasi](#-dokumentasi) • [🚀 Quick Start](#-quick-start) • [🎮 Demo](#-demo) • [🔧 Setup](#-setup) • [🧪 Testing](#-testing)
-
-</div>
+## What is CodeIgniter?
 
----
-
-## 📋 **Deskripsi Project**
+CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
+More information can be found at the [official site](https://codeigniter.com).
 
-INLISLite v3.0 adalah sistem otomasi perpustakaan modern yang dibangun dengan CodeIgniter 4, menampilkan:
-
-- 🔐 **Sistem Autentikasi Aman** dengan enkripsi bcrypt dan validasi password kompleks
-- 👥 **Manajemen User Lengkap** dengan role-based access control
-- 📊 **Dashboard Modern** dengan sidebar responsif dan design yang elegan
-- 📚 **Modul Panduan Lengkap** dengan manajemen dokumentasi terintegrasi
-- 🛡️ **Keamanan Enterprise-Grade** dengan rate limiting dan activity logging
-- 📱 **Responsive Design** yang mobile-friendly dengan font Poppins
-- 🎨 **UI/UX Modern** dengan Bootstrap 5 dan custom styling
-- 🌐 **Bahasa Indonesia** konsisten di seluruh aplikasi
-
-## 🏗️ **Struktur Project Terorganisir**
+This repository holds a composer-installable app starter.
+It has been built from the
+[development repository](https://github.com/codeigniter4/CodeIgniter4).
 
-```
-📁 inlislite/
-├── 📁 app/                    # CodeIgniter 4 Application
-├── 📁 public/                 # Web accessible files
-├── 📁 docs/                   # 📚 Dokumentasi lengkap
-├── 📁 database/               # 🗃️ Database files & migrations
-├── 📁 setup/                  # ⚙️ Setup & installation scripts
-├── 📁 testing/                # 🧪 Testing files & demos
-├── 📁 tools/                  # 🛠️ Development tools
-├── 📁 demo/                   # 🎮 Demo files
-└── 📁 archive/                # 📦 Legacy files
-```
+More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
 
-> 📖 **Lihat struktur lengkap**: [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
+You can read the [user guide](https://codeigniter.com/user_guide/)
+corresponding to the latest version of the framework.
 
-## 🚀 **Quick Start**
+## Installation & updates
 
-### **1. Clone Repository**
-```bash
-git clone <repository-url>
-cd inlislite
-```
+`composer create-project codeigniter4/appstarter` then `composer update` whenever
+there is a new release of the framework.
 
-### **2. Install Dependencies**
-```bash
-composer install
-```
+When updating, check the release notes to see if there are any changes you might need to apply
+to your `app` folder. The affected files can be copied or merged from
+`vendor/codeigniter4/framework/app`.
 
-### **3. Setup Database**
-```bash
-# Quick setup (recommended)
-php setup/setup_simple.php
+## Setup
 
-# Or full setup wizard
-php setup/setup_database.php
-```
+Copy `env` to `.env` and tailor for your app, specifically the baseURL
+and any database settings.
 
-### **4. Create Admin User**
-```bash
-php setup/create_test_admin.php
-```
+## Important Change with index.php
 
-### **5. Access Application**
-```
-🌐 Homepage: http://localhost:8080/
-🔐 Admin Login: http://localhost:8080/admin/secure-login
-📚 Panduan: http://localhost:8080/admin/panduan
-👤 Credentials: admin / password
-```
+`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
+for better security and separation of components.
 
-## 📚 **Dokumentasi**
+This means that you should configure your web server to "point" to your project's *public* folder, and
+not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
+framework are exposed.
 
-### **📖 Panduan Utama**
-- [🔐 Security Features Guide](docs/guides/SECURITY_FEATURES_GUIDE.md) - Fitur keamanan lengkap
-- [👥 User Management Guide](docs/guides/USER_MANAGEMENT_GUIDE.md) - Panduan manajemen user
-- [🗺️ Project Analysis & Navigation](docs/guides/PROJECT_ANALYSIS_AND_NAVIGATION.md) - Analisis project lengkap
-
-### **🔧 Troubleshooting**
-- [🔧 Authentication Fix Guide](docs/guides/AUTHENTICATION_FIX_GUIDE.md) - Perbaikan autentikasi
-- [🐛 Login Issues Analysis](docs/guides/LOGIN_ISSUES_ANALYSIS.md) - Analisis masalah login
-
-### **🎨 UI/UX Guides**
-- [📱 Sidebar Documentation](docs/guides/NEW_SIDEBAR_DOCUMENTATION.md) - Dokumentasi sidebar
-- [📊 Dashboard Structure](docs/guides/DASHBOARD_STRUCTURE.md) - Struktur dashboard
-
-### **📁 Dokumentasi Lengkap**
-> 📖 **Semua dokumentasi**: [docs/README.md](docs/README.md)
-
-## 🎮 **Demo**
-
-### **🌐 Online Demo**
-- **Navigation Hub**: [demo/main_index.php](demo/main_index.php)
-- **Standalone Demo**: [demo/standalone/index.html](demo/standalone/index.html)
-
-### **🧪 Testing Pages**
-- **Auth Filter Test**: [testing/manual/test_auth_filter.php](testing/manual/test_auth_filter.php)
-- **Dashboard Test**: [testing/manual/test_dashboard_access.php](testing/manual/test_dashboard_access.php)
-- **Login System Test**: [testing/manual/test_login_system.php](testing/manual/test_login_system.php)
-
-## ⚙️ **Setup & Installation**
-
-### **🎯 Quick Setup (Recommended)**
-```bash
-# 1. Setup database dan admin user
-php setup/setup_simple.php
-
-# 2. Test login system
-php setup/fix_login_issues.php
-
-# 3. Access application
-# http://localhost:8080/admin/secure-login
-```
-
-### **🔧 Manual Setup**
-1. **Database Setup**: [setup/setup_database.php](setup/setup_database.php)
-2. **Create Admin**: [setup/create_test_admin.php](setup/create_test_admin.php)
-3. **Fix Issues**: [setup/fix_login_issues.php](setup/fix_login_issues.php)
-
-> 📖 **Setup Guide Lengkap**: [setup/README.md](setup/README.md)
-
-## 🧪 **Testing**
-
-### **🔍 Manual Testing**
-```bash
-# Test authentication system
-php testing/manual/test_login_system.php
-
-# Test dashboard access
-php testing/manual/test_dashboard_access.php
-
-# Test auth filter
-php testing/manual/test_auth_filter.php
-```
-
-### **🎮 Demo Testing**
-- **CRUD Demo**: [testing/demo/test_crud.html](testing/demo/test_crud.html)
-- **Dashboard Demo**: [testing/demo/test_modern_dashboard.html](testing/demo/test_modern_dashboard.html)
-- **Document CRUD**: [testing/demo/test_document_crud.html](testing/demo/test_document_crud.html)
-
-> 📖 **Testing Guide**: [testing/README.md](testing/README.md)
-
-## 🛠️ **Tools & Utilities**
-
-### **🗃️ Database Tools**
-- **Add User**: [tools/database/add_user.php](tools/database/add_user.php)
-- **Update User**: [tools/database/update_user.php](tools/database/update_user.php)
-- **Delete User**: [tools/database/delete_user.php](tools/database/delete_user.php)
-- **Fetch Users**: [tools/database/fetch_users.php](tools/database/fetch_users.php)
-
-> 📖 **Tools Guide**: [tools/README.md](tools/README.md)
-
-## 🔐 **Fitur Keamanan**
-
-### **🛡️ Authentication System**
-- ✅ **Bcrypt Password Hashing** dengan cost factor 12
-- ✅ **Rate Limiting** - 5 percobaan per 15 menit
-- ✅ **Account Lockout** protection
-- ✅ **Session Security** dengan timeout management
-- ✅ **CSRF Protection** di semua form
-- ✅ **Activity Logging** untuk monitoring
-
-### **🔒 Password Policy**
-- ✅ **Minimum 8 karakter**
-- ✅ **Huruf besar & kecil** wajib
-- ✅ **Angka** wajib
-- ✅ **Karakter khusus** wajib (@#$%^&*()[]{}))
-- ✅ **Filter password lemah** dan umum
-- ✅ **Real-time strength indicator**
-
-### **👥 Role-Based Access**
-- 🔴 **Super Admin** - Full access
-- 🔵 **Admin** - Administrative access
-- 🟢 **Pustakawan** - Library operations
-- 🟠 **Staff** - Limited access
-
-## 🎨 **UI/UX Features**
-
-### **📱 Modern Design**
-- ✅ **Bootstrap 5** framework
-- ✅ **Poppins Font** untuk tipografi modern
-- ✅ **Responsive design** mobile-first
-- ✅ **Dark/Light theme** support
-- ✅ **Smooth animations** dan transitions
-- ✅ **Feather Icons** & **Bootstrap Icons** integration
-
-### **🎯 User Experience**
-- ✅ **Collapsible sidebar** dengan toggle
-- ✅ **Real-time search** dan filtering
-- ✅ **Modal forms** untuk CRUD operations
-- ✅ **Toast notifications** untuk feedback
-- ✅ **Loading states** untuk async operations
-- ✅ **Dokumentasi terintegrasi** dalam modul Panduan
-
-### **📚 Modul Panduan**
-- ✅ **Manajemen dokumentasi** lengkap
-- ✅ **Upload & download** file panduan
-- ✅ **Search & filter** dokumentasi
-- ✅ **Kategori dokumen** terorganisir
-- ✅ **Interface modern** dengan white header
-
-## 📊 **Technical Specifications**
-
-### **🔧 Requirements**
-- **PHP**: 8.0 atau lebih tinggi
-- **MySQL**: 8.0 atau lebih tinggi
-- **Web Server**: Apache/Nginx
-- **Composer**: Latest version
-
-### **🏗️ Architecture**
-- **Framework**: CodeIgniter 4.x
-- **Database**: MySQL dengan InnoDB engine
-- **Frontend**: Bootstrap 5 + Custom CSS/JS
-- **Security**: Enterprise-grade implementation
-
-### **📦 Dependencies**
-```json
-{
-    "php": "^8.0",
-    "codeigniter4/framework": "^4.0",
-    "bootstrap": "^5.3",
-    "feather-icons": "^4.29"
-}
-```
-
-## 🤝 **Contributing**
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
-## 🆕 **Recent Updates**
-
-### **v3.0.1 - Latest**
-- ✅ **Modul Panduan** - Sistem manajemen dokumentasi lengkap
-- ✅ **Font Poppins** - Tipografi modern di seluruh aplikasi
-- ✅ **Bahasa Indonesia** - Konsistensi bahasa di semua interface
-- ✅ **White Header** - Design modern untuk halaman Panduan
-- ✅ **Sidebar Optimization** - Navigasi yang lebih clean dan fokus
-- ✅ **Responsive Design** - Optimasi untuk mobile dan desktop
-
-### **v3.0.0 - Base Release**
-- 🔐 **Sistem Autentikasi** dengan keamanan enterprise-grade
-- 👥 **Manajemen User** dengan role-based access control
-- 📊 **Dashboard Modern** dengan sidebar responsif
-- 🛡️ **Security Features** lengkap dengan rate limiting
-
-## 📄 **License**
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 **Support**
-
-### **📞 Getting Help**
-- 📖 **Documentation**: [docs/README.md](docs/README.md)
-- 🔧 **Troubleshooting**: [docs/guides/AUTHENTICATION_FIX_GUIDE.md](docs/guides/AUTHENTICATION_FIX_GUIDE.md)
-- 🧪 **Testing**: [testing/README.md](testing/README.md)
-
-### **🐛 Reporting Issues**
-1. Check existing documentation
-2. Run diagnostic scripts in `/setup/`
-3. Create detailed issue report
-
-### **💡 Feature Requests**
-- Submit feature requests with detailed use cases
-- Include mockups or examples if applicable
-
----
-
-<div align="center">
-
-**🌟 INLISLite v3.0 - Modern Library Management System**
-
-Made with ❤️ for Indonesian Libraries
-
-[⬆️ Back to Top](#-inlislite-v30---sistem-perpustakaan-digital-modern)
-
-</div>
+**Please** read the user guide for a better explanation of how CI4 works!
+
+## Repository Management
+
+We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
+We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
+FEATURE REQUESTS.
+
+This repository is a "distribution" one, built by our release preparation script.
+Problems with it can be raised on our forum, or as issues in the main repository.
+
+## Server Requirements
+
+PHP version 8.1 or higher is required, with the following extensions installed:
+
+- [intl](http://php.net/manual/en/intl.requirements.php)
+- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+
+> [!WARNING]
+> - The end of life date for PHP 7.4 was November 28, 2022.
+> - The end of life date for PHP 8.0 was November 26, 2023.
+> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
+> - The end of life date for PHP 8.1 will be December 31, 2025.
+
+Additionally, make sure that the following extensions are enabled in your PHP:
+
+- json (enabled by default - don't turn it off)
+- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
+- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library

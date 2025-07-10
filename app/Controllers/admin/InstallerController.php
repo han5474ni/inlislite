@@ -3,18 +3,221 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\InstallerModel;
+use App\Models\InstallerSettingsModel;
 use Config\Database;
 
 class InstallerController extends BaseController
 {
     protected $db;
+    protected $installerModel;
+    protected $settingsModel;
     
     public function __construct()
     {
         $this->db = Database::connect();
+        $this->installerModel = new InstallerModel();
+        $this->settingsModel = new InstallerSettingsModel();
     }
     
     public function index()
+    {
+        $data = [
+            'title' => 'Installer - INLISlite v3.0'
+        ];
+        
+        return view('admin/installer', $data);
+    }
+
+    /**
+     * Get installer data for the page
+     */
+    public function getData()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $settings = $this->settingsModel->getAllSettings();
+            $downloadStats = $this->installerModel->getDownloadStats();
+
+            $data = [
+                'success' => true,
+                'version' => $settings['installer_version'] ?? '3.2',
+                'revisionDate' => $settings['installer_revision_date'] ?? '10 Februari 2021',
+                'fileSizes' => [
+                    'source' => $settings['source_package_size'] ?? '25 MB',
+                    'php' => $settings['php_package_size'] ?? '20 MB',
+                    'sql' => $settings['sql_package_size'] ?? '2 MB'
+                ],
+                'downloadStats' => $downloadStats,
+                'systemRequirements' => $settings['system_requirements'] ?? [],
+                'defaultCredentials' => $settings['default_credentials'] ?? [],
+                'installationSteps' => $settings['installation_steps'] ?? []
+            ];
+
+            return $this->response->setJSON($data);
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to get installer data: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to load installer data'
+            ]);
+        }
+    }
+
+    /**
+     * Save download record to database
+     */
+    public function saveDownload()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $input = $this->request->getJSON(true);
+            
+            // Validate required fields
+            if (!isset($input['package_type']) || !isset($input['filename'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Missing required fields'
+                ]);
+            }
+
+            // Prepare download data
+            $downloadData = [
+                'package_type' => $input['package_type'],
+                'filename' => $input['filename'],
+                'file_size' => $input['file_size'] ?? null,
+                'description' => $input['description'] ?? null,
+                'download_date' => $input['download_date'] ?? date('Y-m-d H:i:s'),
+                'user_agent' => $input['user_agent'] ?? $this->request->getUserAgent(),
+                'ip_address' => $input['ip_address'] ?? $this->request->getIPAddress(),
+                'session_id' => session_id(),
+                'referrer' => $this->request->getServer('HTTP_REFERER')
+            ];
+
+            // Record the download
+            $downloadId = $this->installerModel->recordDownload($downloadData);
+
+            // Update download statistics
+            $this->settingsModel->updateDownloadStats($input['package_type']);
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Download recorded successfully',
+                'download_id' => $downloadId
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to save download: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to record download'
+            ]);
+        }
+    }
+
+    /**
+     * Get download statistics
+     */
+    public function getDownloadStats()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $packageType = $this->request->getGet('package_type');
+            $stats = $this->installerModel->getDownloadStats($packageType);
+
+            return $this->response->setJSON([
+                'success' => true,
+                'stats' => $stats
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to get download stats: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to get download statistics'
+            ]);
+        }
+    }
+
+    /**
+     * Get recent downloads
+     */
+    public function getRecentDownloads()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $limit = $this->request->getGet('limit') ?? 10;
+            $downloads = $this->installerModel->getRecentDownloads($limit);
+
+            return $this->response->setJSON([
+                'success' => true,
+                'downloads' => $downloads
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to get recent downloads: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to get recent downloads'
+            ]);
+        }
+    }
+
+    /**
+     * Update installer settings
+     */
+    public function updateSettings()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->response->setStatusCode(403);
+        }
+
+        try {
+            $input = $this->request->getJSON(true);
+            
+            foreach ($input as $key => $value) {
+                $type = 'string';
+                
+                // Determine data type
+                if (is_array($value) || is_object($value)) {
+                    $type = 'json';
+                } elseif (is_bool($value)) {
+                    $type = 'boolean';
+                } elseif (is_numeric($value)) {
+                    $type = 'integer';
+                }
+
+                $this->settingsModel->setSetting($key, $value, $type);
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Settings updated successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to update settings: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to update settings'
+            ]);
+        }
+    }
+
+    // Legacy installer methods for backward compatibility
+    public function setup()
     {
         // Check if system is already installed
         if ($this->isSystemInstalled()) {
