@@ -40,6 +40,12 @@ $menuItems = [
         'icon' => 'user',
         'url' => 'admin/profile',
         'active_patterns' => ['admin/profile', 'profile']
+    ],
+    [
+        'title' => 'Database Replication',
+        'icon' => 'database',
+        'url' => 'admin/replication',
+        'active_patterns' => ['admin/replication', 'replication']
     ]
 ];
 

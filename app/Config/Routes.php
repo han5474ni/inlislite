@@ -197,6 +197,15 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->get('delete/(:num)', '\App\Controllers\Home::deleteRegistration/$1');
     });
     
+    // Database Replication Management
+    $routes->group('replication', function($routes) {
+        $routes->get('/', 'ReplicationController::index');
+        $routes->get('settings', 'ReplicationController::settings');
+        $routes->post('update-settings', 'ReplicationController::updateSettings');
+        $routes->get('check-status', 'ReplicationController::checkStatus');
+        $routes->post('test-connection', 'ReplicationController::testConnection');
+    });
+    
     // Demo Program
     $routes->get('demo_program', 'DemoController::demo_program');
     $routes->group('demo', function($routes) {

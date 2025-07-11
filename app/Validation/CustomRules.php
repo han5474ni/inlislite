@@ -170,4 +170,27 @@ class CustomRules
         
         return true;
     }
+    
+    /**
+     * Validate URL with http/https protocol
+     * 
+     * @param string $str
+     * @param string $fields
+     * @param array $data
+     * @return bool
+     */
+    public function valid_url_http(string $str, string $fields, array $data): bool
+    {
+        if (empty($str)) {
+            return true; // Empty URLs are valid if the field is optional
+        }
+        
+        // Check if URL has http:// or https:// protocol
+        if (!preg_match('/^https?:\/\//i', $str)) {
+            // Try to prepend http:// and validate
+            $str = 'http://' . $str;
+        }
+        
+        return filter_var($str, FILTER_VALIDATE_URL) !== false;
+    }
 }
