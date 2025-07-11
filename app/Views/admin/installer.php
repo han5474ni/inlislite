@@ -137,7 +137,7 @@
 
                 <!-- Main Installer Section -->
                 <div class="row justify-content-center mb-5">
-                    <div class="col-lg-10">
+                    <div class="col-12">
                         <div class="installer-main-card card">
                             <div class="card-header">
                                 <div class="installer-header">
@@ -265,7 +265,7 @@
 
                 <!-- Installation Steps Section -->
                 <div class="row justify-content-center mb-5">
-                    <div class="col-lg-10">
+                    <div class="col-12">
                         <div class="installation-steps-card card">
                             <div class="card-header">
                                 <div class="steps-header">
@@ -366,7 +366,7 @@
 
                 <!-- Additional Source Code & SQL Section -->
                 <div class="row justify-content-center">
-                    <div class="col-lg-10">
+                    <div class="col-12">
                         <div class="additional-packages-card card">
                             <div class="card-header">
                                 <div class="additional-header">

@@ -131,7 +131,7 @@
 
                 <!-- Action Section -->
                 <div class="row justify-content-center mb-4">
-                    <div class="col-lg-10">
+                    <div class="col-12">
                         <div class="action-section">
                             <button class="btn btn-add-card" id="btnAddCard">
                                 <i class="bi bi-plus-circle me-2"></i>
@@ -143,7 +143,7 @@
 
                 <!-- Cards List Section -->
                 <div class="row justify-content-center">
-                    <div class="col-lg-10">
+                    <div class="col-12">
                         <div class="cards-management-section card">
                             <div class="card-header">
                                 <div class="management-header">
