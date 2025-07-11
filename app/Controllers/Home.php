@@ -143,13 +143,53 @@ class Home extends BaseController
             ];
             
             // Set custom validation messages
+            $messages = [
+                'library_name' => [
+                    'required' => 'Library name is required',
+                    'min_length' => 'Library name must be at least 3 characters long',
+                    'max_length' => 'Library name cannot exceed 255 characters'
+                ],
+                'library_type' => [
+                    'required' => 'Library type is required',
+                    'in_list' => 'Please select a valid library type'
+                ],
+                'province' => [
+                    'required' => 'Province is required',
+                    'min_length' => 'Province must be at least 2 characters long',
+                    'max_length' => 'Province cannot exceed 100 characters'
+                ],
+                'city' => [
+                    'required' => 'City is required',
+                    'min_length' => 'City must be at least 2 characters long',
+                    'max_length' => 'City cannot exceed 100 characters'
+                ],
+                'contact_name' => [
+                    'required' => 'Contact name is required',
+                    'min_length' => 'Contact name must be at least 3 characters long',
+                    'max_length' => 'Contact name cannot exceed 255 characters'
+                ],
+                'email' => [
+                    'required' => 'Email is required',
+                    'valid_email' => 'Please enter a valid email address',
+                    'max_length' => 'Email cannot exceed 255 characters'
+                ],
+                'phone' => [
+                    'required' => 'Phone number is required',
+                    'min_length' => 'Phone number must be at least 6 characters long',
+                    'max_length' => 'Phone number cannot exceed 20 characters'
+                ],
+                'status' => [
+                    'in_list' => 'Please select a valid status'
+                ]
+            ];
+            
             $this->validator->setRules($rules, $messages);
             
             if (!$this->validate($rules, $messages)) {
                 $errors = $this->validator->getErrors();
                 
                 // Log validation errors for debugging
-                log_message('error', 'Registration update validation failed for ID ' . $id . ': ' . json_encode($errors));
+                log_message('error', 'Registration add validation failed: ' . json_encode($errors));
                 
                 // Check if this is an AJAX request
                 if ($this->request->isAJAX()) {
