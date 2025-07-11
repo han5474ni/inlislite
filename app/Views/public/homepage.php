@@ -10,12 +10,36 @@
                 <div class="text-center">
                     <div class="hero-card" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border-radius: 1.5rem; padding: 4rem 3rem; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(255, 255, 255, 0.1) inset; max-width: 100%; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
                         <div class="hero-headline mb-4">
-                            <h1 class="hero-title-welcome" style="font-size: 3rem; font-weight: 600; color: #FFFFFF; margin-bottom: 0.5rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); animation: slideUp 0.8s ease-out; line-height: 1.2; font-family: 'Poppins', sans-serif;">
-                                Selamat datang di
+                            <h1 class="hero-title-welcome"
+                             style="
+                              font-size: 3rem;
+                              font-weight: 600;
+                            margin-bottom: 0.5rem;
+                            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+                             animation: slideUp 0.8s ease-out;
+                            line-height: 1.2;
+                            font-family: 'Poppins', sans-serif;
+                            background: linear-gradient(135deg, #002557, #004AAD, #1C6EC4);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            ">
+                            Selamat datang di
                             </h1>
-                            <h1 class="hero-title-main" style="font-size: 4rem; font-weight: 700; color: #FFFFFF; margin-bottom: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); animation: slideUp 0.8s ease-out 0.1s both; line-height: 1.1; font-family: 'Poppins', sans-serif;">
-                                InlisLite V3
-                            </h1>
+                            <h1 class="hero-title-main"
+                            style="
+                            font-size: 4rem;
+                            font-weight: 700;
+                            margin-bottom: 2rem;
+                            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                            animation: slideUp 0.8s ease-out 0.1s both;
+                            line-height: 1.1;
+                            font-family: 'Poppins', sans-serif;
+                            background: linear-gradient(135deg, #002557, #004AAD, #1C6EC4);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            ">
+                         InlisLite V3
+                        </h1>
                         </div>
                         <div class="hero-body">
                             <p class="hero-description" style="font-size: 1.25rem; color: #F0F0F0; margin-bottom: 0; animation: slideUp 0.8s ease-out 0.2s both; line-height: 1.6; font-weight: 400; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); font-family: 'Poppins', sans-serif;">
