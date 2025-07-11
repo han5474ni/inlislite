@@ -59,9 +59,10 @@ function setupEventListeners() {
     
     // Action buttons
     document.addEventListener('click', function(e) {
-        if (e.target.closest('.dropdown-item')) {
-            const action = e.target.textContent.trim();
-            const row = e.target.closest('tr');
+        const dropdownItem = e.target.closest('.dropdown-item');
+        if (dropdownItem) {
+            const action = dropdownItem.textContent.trim();
+            const row = dropdownItem.closest('tr');
             const libraryName = row.querySelector('.library-info h6').textContent;
             
             if (action === 'View') {
@@ -69,7 +70,9 @@ function setupEventListeners() {
             } else if (action === 'Edit') {
                 editRegistration(libraryName);
             } else if (action === 'Delete') {
-                deleteRegistration(libraryName);
+                // Get library ID from the data-id attribute of the delete button
+                const libraryId = dropdownItem.getAttribute('data-id');
+                deleteRegistration(libraryId, libraryName);
             }
         }
     });
@@ -364,48 +367,59 @@ function submitAddRegistration() {
     // Show loading state
     if (submitBtn) {
         submitBtn.disabled = true;
+        const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Adding...';
     }
     
     clearFormErrors();
 
-    // Simulate form submission
-    setTimeout(() => {
-        const registrationData = {
-            id: registrations.length + 1,
-            library_name: formData.get('library_name'),
-            library_type: formData.get('library_type'),
-            status: formData.get('status'),
-            location: formData.get('location'),
-            email: formData.get('email'),
-            registration_date: new Date().toISOString().split('T')[0],
-            last_update: new Date().toISOString().split('T')[0]
-        };
-
-        // Add to registrations array
-        registrations.push(registrationData);
-        
-        // Show success message
-        showToast('Registration added successfully!', 'success');
-        
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addRegistrationModal'));
-        if (modal) {
-            modal.hide();
+    // Send form data to server
+    fetch('/admin/registration/add', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
         }
-        
-        // Refresh table and statistics
-        filterRegistrations();
-        updateStatistics();
-        
-        console.log('✅ Registration added successfully');
-        
-        // Reset button state
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            showToast('Registration added successfully!', 'success');
+            
+            // Reset form
+            form.reset();
+            
+            // Redirect to registrations list
+            setTimeout(() => {
+                window.location.href = '/admin/registration';
+            }, 1000);
+        } else {
+            // Show error message
+            showToast(data.message || 'Failed to add registration. Please try again.', 'error');
+            
+            // Display field errors if any
+            if (data.errors) {
+                Object.keys(data.errors).forEach(field => {
+                    const fieldElement = form.querySelector(`[name="${field}"]`);
+                    if (fieldElement) {
+                        showFieldError(fieldElement, data.errors[field]);
+                    }
+                });
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error adding registration:', error);
+        showToast('An error occurred while adding. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Restore button
         if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="bi bi-plus-lg me-2"></i>Add Registration';
+            submitBtn.innerHTML = originalText;
         }
-    }, 1000);
+    });
 }
 
 /**
@@ -447,6 +461,9 @@ function viewRegistration(libraryName) {
         setTimeout(() => {
             window.location.href = `/admin/registration/view/${registration.id}`;
         }, 500);
+    } else {
+        console.error(`Registration not found: ${libraryName}`);
+        showToast('Error: Registration not found', 'error');
     }
 }
 
@@ -458,29 +475,54 @@ function editRegistration(libraryName) {
     const registration = registrations.find(r => r.library_name === libraryName);
     if (registration) {
         navigateToEditRegistration(registration.id);
+    } else {
+        console.error(`Registration not found: ${libraryName}`);
+        showToast('Error: Registration not found', 'error');
     }
 }
 
 /**
  * Delete registration
  */
-function deleteRegistration(libraryName) {
+function deleteRegistration(libraryId, libraryName) {
     if (!confirm(`Are you sure you want to delete "${libraryName}"?`)) {
         return;
     }
 
     console.log(`🗑️ Deleting registration: ${libraryName}`);
-
-    // Remove from registrations array
-    registrations = registrations.filter(r => r.library_name !== libraryName);
     
-    showToast(`Registration "${libraryName}" deleted successfully!`, 'success');
+    // Show loading toast
+    showToast(`Deleting registration "${libraryName}"...`, 'info');
     
-    // Refresh table and statistics
-    filterRegistrations();
-    updateStatistics();
-    
-    console.log('✅ Registration deleted successfully');
+    // Send delete request to server
+    fetch(`/admin/registration/delete/${libraryId}`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remove from registrations array
+            registrations = registrations.filter(r => r.id !== libraryId);
+            
+            showToast(`Registration "${libraryName}" deleted successfully!`, 'success');
+            
+            // Refresh table and statistics
+            filterRegistrations();
+            updateStatistics();
+            
+            console.log('✅ Registration deleted successfully');
+        } else {
+            showToast(data.message || 'Failed to delete registration', 'error');
+            console.error('❌ Failed to delete registration:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting registration:', error);
+        showToast('An error occurred while deleting. Please try again.', 'error');
+    });
 }
 
 /**
@@ -660,6 +702,34 @@ function clearFormErrors() {
     });
 }
 
+function showFieldError(field, message) {
+    field.classList.remove('is-valid');
+    field.classList.add('is-invalid');
+    
+    // Remove existing feedback
+    const existingFeedback = field.parentNode.querySelector('.invalid-feedback');
+    if (existingFeedback) {
+        existingFeedback.remove();
+    }
+    
+    // Add error message
+    const feedback = document.createElement('div');
+    feedback.className = 'invalid-feedback';
+    feedback.textContent = message;
+    field.parentNode.appendChild(feedback);
+}
+
+function showFieldSuccess(field) {
+    field.classList.remove('is-invalid');
+    field.classList.add('is-valid');
+    
+    // Remove error feedback
+    const existingFeedback = field.parentNode.querySelector('.invalid-feedback');
+    if (existingFeedback) {
+        existingFeedback.remove();
+    }
+}
+
 // Show toast notification
 function showToast(message, type = 'info') {
     // Create toast container if it doesn't exist
@@ -748,47 +818,55 @@ function submitRegistrationForm() {
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
         
-        // Simulate form submission
-        setTimeout(() => {
-            // Get form data
-            const registrationData = {
-                library_name: formData.get('library_name'),
-                library_type: formData.get('library_type'),
-                status: formData.get('status'),
-                library_code: formData.get('library_code'),
-                province: formData.get('province'),
-                city: formData.get('city'),
-                address: formData.get('address'),
-                postal_code: formData.get('postal_code'),
-                coordinates: formData.get('coordinates'),
-                contact_name: formData.get('contact_name'),
-                contact_position: formData.get('contact_position'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                website: formData.get('website'),
-                fax: formData.get('fax'),
-                established_year: formData.get('established_year'),
-                collection_count: formData.get('collection_count'),
-                member_count: formData.get('member_count'),
-                notes: formData.get('notes')
-            };
-            
-            console.log('📊 Registration data:', registrationData);
-            
-            // Show success message
-            showToast('Registrasi berhasil disimpan!', 'success');
-            
-            // Reset button state
+        // Clear previous errors
+        clearFormErrors();
+        
+        // Send form data to server
+        fetch('/admin/registration/add', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                showToast('Registrasi berhasil disimpan!', 'success');
+                
+                // Reset form
+                form.reset();
+                
+                // Redirect to registrations list
+                setTimeout(() => {
+                    showToast('Kembali ke daftar registrasi...', 'info');
+                    window.location.href = '/admin/registration';
+                }, 2000);
+            } else {
+                // Show error message
+                showToast(data.message || 'Gagal menyimpan registrasi. Silakan coba lagi.', 'error');
+                
+                // Display field errors if any
+                if (data.errors) {
+                    Object.keys(data.errors).forEach(field => {
+                        const fieldElement = form.querySelector(`[name="${field}"]`);
+                        if (fieldElement) {
+                            showFieldError(fieldElement, data.errors[field]);
+                        }
+                    });
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error saving registration:', error);
+            showToast('Terjadi kesalahan saat menyimpan. Silakan coba lagi.', 'error');
+        })
+        .finally(() => {
+            // Restore button
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
-            
-            // Navigate back to registration list
-            setTimeout(() => {
-                showToast('Kembali ke daftar registrasi...', 'info');
-                window.location.href = '/registration';
-            }, 2000);
-            
-        }, 2000);
+        });
     }
 }
 

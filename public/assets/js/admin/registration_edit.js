@@ -74,19 +74,18 @@ function setupEventListeners() {
  */
 function handleFormSubmit(e) {
     console.log('📝 Submitting registration edit form...');
+    e.preventDefault();
     
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
     
     // Prevent double submission
     if (isFormSubmitting) {
-        e.preventDefault();
         return;
     }
     
     // Validate form
     if (!validateForm(form)) {
-        e.preventDefault();
         showToast('Please fix the errors before submitting', 'error');
         return;
     }
@@ -100,8 +99,64 @@ function handleFormSubmit(e) {
     // Show loading state
     if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
     }
+    
+    // Get form data
+    const formData = new FormData(form);
+    const registrationId = window.location.pathname.split('/').pop();
+    
+    // Send form data to server
+    fetch(`/admin/registration/edit/${registrationId}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            showToast('Registration updated successfully!', 'success');
+            
+            // Mark form as clean
+            markFormAsClean();
+            
+            // Redirect to registrations list
+            setTimeout(() => {
+                window.location.href = '/admin/registration';
+            }, 1000);
+        } else {
+            // Show error message
+            showToast(data.message || 'Failed to update registration. Please try again.', 'error');
+            
+            // Display field errors if any
+            if (data.errors) {
+                Object.keys(data.errors).forEach(field => {
+                    const fieldElement = form.querySelector(`[name="${field}"]`);
+                    if (fieldElement) {
+                        showFieldError(fieldElement, data.errors[field]);
+                    }
+                });
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error updating registration:', error);
+        showToast('An error occurred while updating. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Reset submitting state
+        isFormSubmitting = false;
+        
+        // Restore button
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
     
     // Add a timeout to reset the form state in case of server errors
     setTimeout(() => {

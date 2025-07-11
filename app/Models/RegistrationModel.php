@@ -13,7 +13,10 @@ class RegistrationModel extends Model
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
-        'library_name', 'province', 'city', 'email', 'phone', 'status', 'verified_at'
+        'library_name', 'library_code', 'library_type', 'province', 'city', 'address', 
+        'postal_code', 'coordinates', 'contact_name', 'contact_position', 'email', 
+        'phone', 'website', 'fax', 'established_year', 'collection_count', 
+        'member_count', 'notes', 'status', 'verified_at'
     ];
 
     protected $useTimestamps = true;
