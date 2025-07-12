@@ -99,17 +99,17 @@
             </a>
 
             <!-- Card 2: Features & Program Modules -->
-            <div class="feature-card loading">
+            <a href="<?= base_url('admin/fitur') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="grid"></i>
                 </div>
                 <h3 class="card-title">Features & Program Modules</h3>
                 <p class="card-description">Akses ke semua modul dan fitur lengkap sistem perpustakaan.</p>
                 <span class="card-badge modules">15 Modul</span>
-            </div>
+            </a>
 
             <!-- Card 3: Installer -->
-            <a href="<?= base_url('installer') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
+            <a href="<?= base_url('admin/installer') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
                     <i data-feather="download"></i>
                 </div>

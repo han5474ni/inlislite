@@ -1,457 +1,466 @@
 /**
- * INLISLite v3.0 Demo Program Page JavaScript
- * Interactive functionality for demo program page
+ * INLISLite v3.0 Demo Program Page
+ * JavaScript for content management and UI interactions
  */
 
+// Global variables
+let contentItems = [];
+let filteredItems = [];
+
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all functionality
-    initializeDemoButtons();
-    initializeCopyButtons();
-    initializeTabSwitching();
-    initializeAnimations();
-    initializeDemoManagement();
+    initializeApp();
+});
+
+/**
+ * Initialize the application
+ */
+function initializeApp() {
+    loadContent();
+    initializeEventListeners();
+    initializeSearch();
+}
+
+/**
+ * Initialize event listeners
+ */
+function initializeEventListeners() {
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearch);
+    }
     
-    /**
-     * Initialize demo program buttons
-     */
-    function initializeDemoButtons() {
-        const demoButtons = document.querySelectorAll('.btn-demo');
-        
-        demoButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const url = this.getAttribute('data-url');
-                
-                if (url) {
-                    // Add loading state
-                    this.classList.add('loading');
-                    this.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Membuka Demo...';
-                    
-                    // Show confirmation alert
-                    showAlert('Demo program akan dibuka di tab baru. Pastikan popup blocker tidak aktif.', 'info');
-                    
-                    // Open demo in new tab
-                    setTimeout(() => {
-                        window.open(url, '_blank', 'noopener,noreferrer');
-                        
-                        // Reset button state
-                        this.classList.remove('loading');
-                        this.innerHTML = '<i class="bi bi-play-circle me-2"></i>Demo Program';
-                        
-                        showAlert('Demo program berhasil dibuka di tab baru!', 'success');
-                    }, 1000);
-                } else {
-                    showAlert('URL demo tidak tersedia.', 'warning');
-                }
-            });
+    // Modal form submissions
+    const addItemForm = document.getElementById('addItemForm');
+    const editForm = document.getElementById('editForm');
+    
+    if (addItemForm) {
+        addItemForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveItem();
         });
     }
     
-    /**
-     * Initialize copy to clipboard functionality
-     */
-    function initializeCopyButtons() {
-        const copyButtons = document.querySelectorAll('.copy-btn');
-        
-        copyButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const textToCopy = this.getAttribute('data-copy');
-                
-                if (textToCopy) {
-                    // Use modern clipboard API if available
-                    if (navigator.clipboard && window.isSecureContext) {
-                        navigator.clipboard.writeText(textToCopy).then(() => {
-                            showCopySuccess(this);
-                        }).catch(err => {
-                            console.error('Failed to copy text: ', err);
-                            fallbackCopyTextToClipboard(textToCopy, this);
-                        });
-                    } else {
-                        // Fallback for older browsers
-                        fallbackCopyTextToClipboard(textToCopy, this);
-                    }
-                }
-            });
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            updateItem();
         });
     }
-    
-    /**
-     * Fallback copy method for older browsers
-     */
-    function fallbackCopyTextToClipboard(text, button) {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
+}
+
+/**
+ * Initialize search functionality
+ */
+function initializeSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
         
-        // Avoid scrolling to bottom
-        textArea.style.top = '0';
-        textArea.style.left = '0';
-        textArea.style.position = 'fixed';
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    }
+}
+
+/**
+ * Load content from API
+ */
+async function loadContent() {
+    try {
+        showLoading();
         
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        
-        try {
-            const successful = document.execCommand('copy');
-            if (successful) {
-                showCopySuccess(button);
-            } else {
-                showAlert('Gagal menyalin teks. Silakan salin manual.', 'warning');
+        // Sample data for Demo Program
+        const sampleContent = [
+            {
+                id: 1,
+                title: "Sample Demo Program Item 1",
+                subtitle: "Contoh item pertama",
+                description: "Deskripsi lengkap untuk item pertama dalam kategori Demo Program. Item ini menunjukkan bagaimana konten ditampilkan dalam sistem.",
+                category: "general",
+                priority: "high"
+            },
+            {
+                id: 2,
+                title: "Sample Demo Program Item 2", 
+                subtitle: "Contoh item kedua",
+                description: "Deskripsi untuk item kedua yang memberikan informasi tambahan tentang fitur dan fungsi yang tersedia.",
+                category: "technical",
+                priority: "medium"
+            },
+            {
+                id: 3,
+                title: "Sample Demo Program Item 3",
+                subtitle: "Contoh item ketiga",
+                description: "Item ketiga ini menampilkan variasi konten yang dapat dikelola dalam sistem manajemen Demo Program.",
+                category: "tutorial",
+                priority: "low"
             }
-        } catch (err) {
-            console.error('Fallback: Oops, unable to copy', err);
-            showAlert('Gagal menyalin teks. Silakan salin manual.', 'warning');
-        }
-        
-        document.body.removeChild(textArea);
-    }
-    
-    /**
-     * Show copy success feedback
-     */
-    function showCopySuccess(button) {
-        const originalClass = button.className;
-        const originalContent = button.innerHTML;
-        
-        // Add success styling
-        button.classList.add('copy-success');
-        button.innerHTML = '<i class="bi bi-check"></i>';
-        
-        // Show success message
-        showAlert('Teks berhasil disalin ke clipboard!', 'success', 2000);
-        
-        // Reset button after 2 seconds
-        setTimeout(() => {
-            button.className = originalClass;
-            button.innerHTML = originalContent;
-        }, 2000);
-    }
-    
-    /**
-     * Initialize tab switching functionality
-     */
-    function initializeTabSwitching() {
-        const tabButtons = document.querySelectorAll('[data-bs-toggle="pill"]');
-        
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const targetTab = this.getAttribute('data-bs-target');
-                
-                // Add fade-in animation to tab content
-                setTimeout(() => {
-                    const targetContent = document.querySelector(targetTab);
-                    if (targetContent) {
-                        targetContent.classList.add('fade-in');
-                        
-                        // Remove animation class after animation completes
-                        setTimeout(() => {
-                            targetContent.classList.remove('fade-in');
-                        }, 500);
-                    }
-                }, 150);
-                
-                // Track tab switching
-                if (targetTab === '#atur-demo') {
-                    showAlert('Fitur pengaturan demo sedang dalam pengembangan.', 'info');
-                }
-            });
-        });
-    }
-    
-    /**
-     * Initialize scroll animations
-     */
-    function initializeAnimations() {
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                    entry.target.classList.add('fade-in');
-                }
-            });
-        }, observerOptions);
-        
-        // Observe demo cards
-        const demoCards = document.querySelectorAll('.demo-card');
-        demoCards.forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'all 0.6s ease';
-            observer.observe(card);
-        });
-        
-        // Observe setting items
-        const settingItems = document.querySelectorAll('.setting-item');
-        settingItems.forEach(item => {
-            item.style.opacity = '0';
-            item.style.transform = 'translateY(20px)';
-            item.style.transition = 'all 0.6s ease';
-            observer.observe(item);
-        });
-    }
-    
-    /**
-     * Enhanced alert system with auto-dismiss and icons
-     */
-    function showAlert(message, type = 'info', duration = 5000) {
-        const alertContainer = document.getElementById('alertContainer');
-        const alertId = 'alert-' + Date.now();
-        
-        const alertHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert" id="${alertId}">
-                <i class="bi bi-${getAlertIcon(type)} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        `;
-        
-        alertContainer.insertAdjacentHTML('beforeend', alertHTML);
-        
-        // Auto-dismiss
-        setTimeout(() => {
-            const alert = document.getElementById(alertId);
-            if (alert) {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }
-        }, duration);
-    }
-    
-    /**
-     * Get appropriate icon for alert type
-     */
-    function getAlertIcon(type) {
-        const icons = {
-            success: 'check-circle-fill',
-            danger: 'exclamation-triangle-fill',
-            warning: 'exclamation-triangle-fill',
-            info: 'info-circle-fill'
-        };
-        return icons[type] || 'info-circle-fill';
-    }
-    
-    /**
-     * Initialize keyboard shortcuts
-     */
-    function initializeKeyboardShortcuts() {
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + D to open first demo
-            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-                e.preventDefault();
-                const firstDemoButton = document.querySelector('.btn-demo');
-                if (firstDemoButton) {
-                    firstDemoButton.click();
-                }
-            }
-            
-            // Ctrl/Cmd + C to copy first username
-            if ((e.ctrlKey || e.metaKey) && e.key === 'c' && e.shiftKey) {
-                e.preventDefault();
-                const firstCopyButton = document.querySelector('.copy-btn');
-                if (firstCopyButton) {
-                    firstCopyButton.click();
-                }
-            }
-        });
-    }
-    
-    /**
-     * Initialize tooltips for better UX
-     */
-    function initializeTooltips() {
-        // Add tooltips to demo buttons
-        const tooltips = [
-            { selector: '.btn-demo', title: 'Buka demo program di tab baru (Ctrl+D)' },
-            { selector: '.copy-btn', title: 'Salin ke clipboard' }
         ];
         
-        tooltips.forEach(tooltip => {
-            document.querySelectorAll(tooltip.selector).forEach(element => {
-                element.setAttribute('title', tooltip.title);
-                element.setAttribute('data-bs-toggle', 'tooltip');
-            });
-        });
+        contentItems = sampleContent;
+        filteredItems = [...contentItems];
+        renderContent();
         
-        // Initialize Bootstrap tooltips
-        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        }
+    } catch (error) {
+        console.error('Error loading content:', error);
+        showError('Gagal memuat konten');
+    } finally {
+        hideLoading();
     }
-    
-    /**
-     * Handle demo card hover effects
-     */
-    function initializeHoverEffects() {
-        const demoCards = document.querySelectorAll('.demo-card');
-        
-        demoCards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.classList.add('pulse');
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.classList.remove('pulse');
-            });
-        });
-    }
-    
-    /**
-     * Initialize demo statistics (if needed)
-     */
-    function initializeDemoStats() {
-        // This could be used to track demo usage statistics
-        const demoButtons = document.querySelectorAll('.btn-demo');
-        
-        demoButtons.forEach((button, index) => {
-            button.addEventListener('click', function() {
-                // Track demo access
-                console.log(`Demo ${index + 1} accessed at ${new Date().toISOString()}`);
-                
-                // Could send analytics data here
-                // trackDemoAccess(index + 1);
-            });
-        });
-    }
-    
-    /**
-     * Initialize responsive behavior
-     */
-    function initializeResponsiveBehavior() {
-        function handleResize() {
-            const width = window.innerWidth;
-            const demoCards = document.querySelectorAll('.demo-card');
-            
-            if (width < 768) {
-                // Mobile optimizations
-                demoCards.forEach(card => {
-                    card.classList.add('mobile-optimized');
-                });
-            } else {
-                // Desktop optimizations
-                demoCards.forEach(card => {
-                    card.classList.remove('mobile-optimized');
-                });
-            }
-        }
-        
-        // Initial check
-        handleResize();
-        
-        // Listen for resize events
-        window.addEventListener('resize', handleResize);
-    }
-    
-    // Initialize additional features
-    initializeKeyboardShortcuts();
-    initializeTooltips();
-    initializeHoverEffects();
-    initializeDemoStats();
-    initializeResponsiveBehavior();
-    
-    /**
-     * Initialize demo management functionality
-     */
-    function initializeDemoManagement() {
-        // Add Demo button
-        const addDemoBtn = document.getElementById('btnAddDemo');
-        if (addDemoBtn) {
-            addDemoBtn.addEventListener('click', function() {
-                showAddDemoModal();
-            });
-        }
-        
-        // Edit buttons
-        const editButtons = document.querySelectorAll('.btn-edit');
-        editButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const demoName = row.querySelector('.demo-entry-name').textContent;
-                showEditDemoModal(demoName);
-            });
-        });
-        
-        // Delete buttons
-        const deleteButtons = document.querySelectorAll('.btn-delete');
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const demoName = row.querySelector('.demo-entry-name').textContent;
-                showDeleteConfirmation(demoName, row);
-            });
-        });
-    }
-    
-    /**
-     * Show Add Demo Modal (placeholder)
-     */
-    function showAddDemoModal() {
-        showAlert('Modal "Tambah Demo" akan dibuka. Fitur ini sedang dalam pengembangan.', 'info');
-        
-        // Placeholder for modal functionality
-        console.log('Add Demo modal would open here');
-        
-        // Future implementation would show a modal with form fields:
-        // - Demo Name
-        // - Platform
-        // - URL
-        // - Username/Password
-        // - Description
-        // - Features
-    }
-    
-    /**
-     * Show Edit Demo Modal (placeholder)
-     */
-    function showEditDemoModal(demoName) {
-        showAlert(`Modal edit untuk "${demoName}" akan dibuka. Fitur ini sedang dalam pengembangan.`, 'info');
-        
-        // Placeholder for modal functionality
-        console.log(`Edit Demo modal for "${demoName}" would open here`);
-        
-        // Future implementation would:
-        // 1. Load existing demo data
-        // 2. Populate form fields
-        // 3. Allow editing
-        // 4. Save changes
-    }
-    
-    /**
-     * Show Delete Confirmation
-     */
-    function showDeleteConfirmation(demoName, row) {
-        const confirmed = confirm(`Apakah Anda yakin ingin menghapus demo "${demoName}"?\n\nTindakan ini tidak dapat dibatalkan.`);
-        
-        if (confirmed) {
-            // Add loading state to row
-            row.style.opacity = '0.5';
-            row.style.pointerEvents = 'none';
-            
-            // Simulate deletion process
-            setTimeout(() => {
-                // Add fade-out animation
-                row.style.transition = 'all 0.3s ease';
-                row.style.transform = 'translateX(-100%)';
-                row.style.opacity = '0';
-                
-                // Remove row after animation
-                setTimeout(() => {
-                    row.remove();
-                    showAlert(`Demo "${demoName}" berhasil dihapus.`, 'success');
-                }, 300);
-            }, 1000);
-            
-            showAlert(`Menghapus demo "${demoName}"...`, 'warning');
-        }
-    }
+}
 
-    console.log('Demo Program INLISLite v3.0 - Interactive functionality loaded successfully');
-});
+/**
+ * Render content to the DOM
+ */
+function renderContent() {
+    const container = document.getElementById('contentContainer');
+    if (!container) return;
+    
+    if (filteredItems.length === 0) {
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h3>Tidak ada konten ditemukan</h3>
+                    <p>Belum ada konten yang tersedia atau sesuai dengan pencarian Anda.</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filteredItems.map(item => `
+        <div class="col-lg-6 col-md-12">
+            <div class="content-card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="bi bi-${getCategoryIcon(item.category)}"></i>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action edit" onclick="editItem(${item.id})" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-action delete" onclick="deleteItem(${item.id})" title="Hapus">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">${item.title}</h3>
+                    ${item.subtitle ? `<p class="card-subtitle">${item.subtitle}</p>` : ''}
+                    <div class="card-description">${item.description}</div>
+                    <div class="mt-3">
+                        <span class="badge bg-${getPriorityColor(item.priority)} me-2">${item.priority}</span>
+                        <span class="badge bg-secondary">${item.category}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Get icon for category
+ */
+function getCategoryIcon(category) {
+    const icons = {
+        'general': 'info-circle',
+        'technical': 'gear',
+        'tutorial': 'book',
+        'update': 'arrow-up-circle',
+        'default': 'file-text'
+    };
+    return icons[category] || icons.default;
+}
+
+/**
+ * Get color for priority
+ */
+function getPriorityColor(priority) {
+    const colors = {
+        'high': 'danger',
+        'medium': 'warning',
+        'low': 'success'
+    };
+    return colors[priority] || 'secondary';
+}
+
+/**
+ * Handle search functionality
+ */
+function handleSearch() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    filteredItems = contentItems.filter(item => 
+        item.title.toLowerCase().includes(searchTerm) ||
+        item.subtitle.toLowerCase().includes(searchTerm) ||
+        item.description.toLowerCase().includes(searchTerm) ||
+        item.category.toLowerCase().includes(searchTerm)
+    );
+    
+    renderContent();
+}
+
+/**
+ * Save new item
+ */
+async function saveItem() {
+    try {
+        const title = document.getElementById('itemTitle').value;
+        const subtitle = document.getElementById('itemSubtitle').value;
+        const description = document.getElementById('itemDescription').value;
+        const category = document.getElementById('itemCategory').value;
+        const priority = document.getElementById('itemPriority').value;
+        
+        if (!title || !description) {
+            showError('Judul dan deskripsi harus diisi');
+            return;
+        }
+        
+        showLoading();
+        
+        const newItem = {
+            id: Date.now(),
+            title,
+            subtitle,
+            description,
+            category,
+            priority
+        };
+        
+        contentItems.push(newItem);
+        filteredItems = [...contentItems];
+        renderContent();
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addItemModal'));
+        modal.hide();
+        document.getElementById('addItemForm').reset();
+        
+        showSuccess('Item berhasil ditambahkan');
+        
+    } catch (error) {
+        console.error('Error saving item:', error);
+        showError('Gagal menyimpan item');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Edit item
+ */
+function editItem(id) {
+    const item = contentItems.find(i => i.id === id);
+    
+    if (!item) {
+        showError('Item tidak ditemukan');
+        return;
+    }
+    
+    document.getElementById('editId').value = id;
+    document.getElementById('editTitle').value = item.title;
+    document.getElementById('editSubtitle').value = item.subtitle || '';
+    document.getElementById('editDescription').value = item.description;
+    document.getElementById('editCategory').value = item.category;
+    document.getElementById('editPriority').value = item.priority;
+    
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+}
+
+/**
+ * Update item
+ */
+async function updateItem() {
+    try {
+        const id = parseInt(document.getElementById('editId').value);
+        const title = document.getElementById('editTitle').value;
+        const subtitle = document.getElementById('editSubtitle').value;
+        const description = document.getElementById('editDescription').value;
+        const category = document.getElementById('editCategory').value;
+        const priority = document.getElementById('editPriority').value;
+        
+        if (!title || !description) {
+            showError('Judul dan deskripsi harus diisi');
+            return;
+        }
+        
+        showLoading();
+        
+        const index = contentItems.findIndex(i => i.id === id);
+        if (index !== -1) {
+            contentItems[index] = {
+                ...contentItems[index],
+                title,
+                subtitle,
+                description,
+                category,
+                priority
+            };
+            filteredItems = [...contentItems];
+            renderContent();
+        }
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+        modal.hide();
+        
+        showSuccess('Item berhasil diperbarui');
+        
+    } catch (error) {
+        console.error('Error updating item:', error);
+        showError('Gagal memperbarui item');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Delete item
+ */
+async function deleteItem(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+        return;
+    }
+    
+    try {
+        showLoading();
+        
+        contentItems = contentItems.filter(i => i.id !== id);
+        filteredItems = [...contentItems];
+        renderContent();
+        
+        showSuccess('Item berhasil dihapus');
+        
+    } catch (error) {
+        console.error('Error deleting item:', error);
+        showError('Gagal menghapus item');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Refresh content
+ */
+function refreshContent() {
+    loadContent();
+    showSuccess('Konten berhasil diperbarui');
+}
+
+/**
+ * Show loading spinner
+ */
+function showLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'flex';
+    }
+}
+
+/**
+ * Hide loading spinner
+ */
+function hideLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'none';
+    }
+}
+
+/**
+ * Show success message
+ */
+function showSuccess(message) {
+    showToast(message, 'success');
+}
+
+/**
+ * Show error message
+ */
+function showError(message) {
+    showToast(message, 'error');
+}
+
+/**
+ * Show toast notification
+ */
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="bi bi-x"></i>
+        </button>
+    `;
+    
+    if (!document.querySelector('#toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            .toast-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 300px;
+                animation: slideInRight 0.3s ease-out;
+                border-left: 4px solid #6b7280;
+            }
+            .toast-success { border-left-color: #059669; }
+            .toast-error { border-left-color: #dc2626; }
+            .toast-content {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex: 1;
+            }
+            .toast-close {
+                background: none;
+                border: none;
+                color: #6b7280;
+                cursor: pointer;
+                padding: 0.25rem;
+                border-radius: 4px;
+            }
+            .toast-close:hover {
+                background-color: #f3f4f6;
+            }
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
+}
+
+// Export functions for global access
+window.saveItem = saveItem;
+window.editItem = editItem;
+window.updateItem = updateItem;
+window.deleteItem = deleteItem;
+window.refreshContent = refreshContent;

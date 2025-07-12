@@ -25,11 +25,160 @@ class InstallerController extends BaseController
     
     public function index()
     {
-        $data = [
-            'title' => 'Installer - INLISlite v3.0'
-        ];
+        // Check if this is being accessed from public route or admin route
+        $uri = service('uri');
+        $isPublicAccess = !$uri->getSegment(1) || $uri->getSegment(1) !== 'admin';
         
-        return view('admin/installer', $data);
+        if ($isPublicAccess) {
+            // Public installer page - similar to tentang page
+            $data = [
+                'title' => 'Installer INLISLite - INLISLite v3.0',
+                'page_title' => 'Installer INLISLite',
+                'meta_description' => 'Download installer dan paket instalasi INLISLite v3 untuk sistem otomasi perpustakaan modern.',
+                'installer_data' => $this->getPublicInstallerData()
+            ];
+            
+            return view('public/installer', $data);
+        } else {
+            // Admin installer page
+            $data = [
+                'title' => 'Installer - INLISlite v3.0'
+            ];
+            
+            return view('admin/installer', $data);
+        }
+    }
+    
+    /**
+     * Get public installer data
+     */
+    private function getPublicInstallerData()
+    {
+        return [
+            'main_installer' => [
+                'version' => '3.2',
+                'revision_date' => '10 Februari 2021',
+                'description' => 'Paket instalasi lengkap sistem manajemen perpustakaan digital terpadu untuk kebutuhan perpustakaan modern dengan teknologi terdepan.',
+                'packages' => [
+                    [
+                        'id' => 1,
+                        'name' => 'Paket Source Code',
+                        'type' => 'source',
+                        'description' => 'File sumber PHP lengkap dengan dokumentasi dan panduan instalasi.',
+                        'size' => '25 MB',
+                        'features' => [
+                            'Seluruh file aplikasi PHP',
+                            'Dokumentasi dan panduan',
+                            'Template konfigurasi',
+                            'Struktur database'
+                        ],
+                        'icon' => 'bi-code-slash',
+                        'color' => 'blue'
+                    ],
+                    [
+                        'id' => 2,
+                        'name' => 'Paket Installer Windows',
+                        'type' => 'installer',
+                        'description' => 'Installer otomatis untuk sistem operasi Windows dengan wizard instalasi.',
+                        'size' => '45 MB',
+                        'features' => [
+                            'Installer otomatis',
+                            'Wizard instalasi',
+                            'Auto-configuration',
+                            'Service installer'
+                        ],
+                        'icon' => 'bi-windows',
+                        'color' => 'green'
+                    ]
+                ]
+            ],
+            'additional_packages' => [
+                [
+                    'id' => 3,
+                    'name' => 'Source Code PHP',
+                    'type' => 'source',
+                    'description' => 'File sumber lengkap aplikasi PHP untuk pengembangan dan kustomisasi.',
+                    'size' => '20 MB',
+                    'icon' => 'bi-filetype-php',
+                    'color' => 'purple'
+                ],
+                [
+                    'id' => 4,
+                    'name' => 'Database Kosong',
+                    'type' => 'database',
+                    'description' => 'File SQL database kosong untuk instalasi fresh.',
+                    'size' => '2 MB',
+                    'icon' => 'bi-database',
+                    'color' => 'orange'
+                ],
+                [
+                    'id' => 5,
+                    'name' => 'Dokumentasi',
+                    'type' => 'documentation',
+                    'description' => 'Panduan lengkap instalasi, konfigurasi, dan penggunaan sistem.',
+                    'size' => '15 MB',
+                    'icon' => 'bi-book',
+                    'color' => 'blue'
+                ]
+            ],
+            'system_requirements' => [
+                'server' => [
+                    'os' => 'Windows 7/8/10/11 atau Linux',
+                    'processor' => 'Intel Pentium 4 atau setara',
+                    'memory' => 'Minimal 2 GB RAM',
+                    'storage' => 'Rekomendasi 500 MB ruang kosong',
+                    'webserver' => 'Apache/Nginx',
+                    'database' => 'MySQL 5.7+ atau PostgreSQL 9.6+',
+                    'php' => 'PHP 8.0 atau lebih tinggi'
+                ],
+                'client' => [
+                    'browser' => 'Chrome, Firefox, Safari, Edge (latest)',
+                    'javascript' => 'Enabled',
+                    'connection' => 'Stable broadband internet'
+                ]
+            ],
+            'installation_steps' => [
+                [
+                    'step' => 1,
+                    'title' => 'Ekstrak File ZIP',
+                    'description' => 'Ekstrak file ZIP ke direktori yang diinginkan'
+                ],
+                [
+                    'step' => 2,
+                    'title' => 'Jalankan Installer',
+                    'description' => 'Jalankan file installer (.exe) sebagai Administrator'
+                ],
+                [
+                    'step' => 3,
+                    'title' => 'Ikuti Wizard',
+                    'description' => 'Ikuti petunjuk pada wizard instalasi'
+                ],
+                [
+                    'step' => 4,
+                    'title' => 'Pilih Direktori',
+                    'description' => 'Pilih direktori instalasi (default: C:\INLISLite)'
+                ],
+                [
+                    'step' => 5,
+                    'title' => 'Tunggu Proses',
+                    'description' => 'Tunggu hingga proses instalasi selesai'
+                ],
+                [
+                    'step' => 6,
+                    'title' => 'Akses Browser',
+                    'description' => 'Akses aplikasi melalui browser'
+                ],
+                [
+                    'step' => 7,
+                    'title' => 'Login Sistem',
+                    'description' => 'Login dengan kredensial bawaan'
+                ]
+            ],
+            'default_credentials' => [
+                'username' => 'inlislite',
+                'password' => 'inlislite'
+            ]
+        ];
     }
 
     /**
@@ -41,7 +190,7 @@ class InstallerController extends BaseController
             'title' => 'Kelola Kartu Installer - INLISlite v3.0'
         ];
         
-        return view('admin/installer-edit', $data);
+        return view("admin/installer-edit", $data);
     }
 
     /**

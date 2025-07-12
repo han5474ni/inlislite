@@ -1,16 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Login - INLISLite v3.0' ?></title>
+    <title><?= $title ?? 'Login Admin - INLISLite v3.0' ?></title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            /* Modern Color Palette - Solid Colors */
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --secondary-green: #059669;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --danger-color: #dc2626;
+            --success-color: #059669;
+            
+            /* Design System */
+            --border-radius: 16px;
+            --border-radius-small: 8px;
+            --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -18,76 +42,28 @@
         }
         
         body {
-            background: linear-gradient(180deg, #2DA84D 0%, #004AAD 100%);
+            background-color: var(--primary-blue);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Top Navigation Bar */
-        .top-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .back-arrow {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            margin-right: 1rem;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
-        }
-        
-        .back-arrow:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .nav-title {
-            color: white;
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin: 0;
-        }
-        
-        /* Main Content */
-        .main-content {
-            flex: 1;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 6rem 1rem 2rem;
+            padding: 1rem;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
         }
         
         .login-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 350px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        
-        .login-title {
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 1.5rem;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--box-shadow-lg);
+            border: 1px solid var(--gray-200);
         }
         
         .logo-container {
@@ -96,34 +72,59 @@
         }
         
         .logo {
-            width: 55px;
-            height: 55px;
-            border-radius: 8px;
+            width: 64px;
+            height: 64px;
+            border-radius: var(--border-radius-small);
             object-fit: contain;
+            margin-bottom: 1rem;
+        }
+        
+        .login-title {
+            color: var(--gray-800);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-subtitle {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            text-align: center;
+            margin-bottom: 2rem;
         }
         
         .form-group {
             margin-bottom: 1.5rem;
         }
         
+        .form-label {
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
         .form-control {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 8px;
+            background-color: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-small);
             padding: 0.75rem 1rem;
-            font-size: 16px;
+            font-size: 1rem;
             width: 100%;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            color: var(--gray-800);
         }
         
         .form-control:focus {
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
             outline: none;
         }
         
         .form-control::placeholder {
-            color: #6c757d;
+            color: var(--gray-600);
         }
         
         .password-field {
@@ -137,91 +138,117 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #6c757d;
+            color: var(--gray-600);
             cursor: pointer;
-            padding: 0;
-            font-size: 1.1rem;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: var(--transition);
         }
         
         .password-toggle:hover {
-            color: #495057;
+            color: var(--gray-800);
+            background-color: var(--gray-100);
         }
         
         .login-btn {
-            background: #333333;
-            color: white;
+            background-color: var(--primary-blue);
+            color: var(--white);
             border: none;
-            border-radius: 8px;
-            padding: 0.75rem;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: var(--border-radius-small);
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
             width: 100%;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 1rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         
         .login-btn:hover {
-            background: #222222;
+            background-color: var(--primary-blue-dark);
             transform: translateY(-1px);
         }
         
         .login-btn:disabled {
-            opacity: 0.7;
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
         
-        .register-text {
-            text-align: center;
-            color: white;
-            font-size: 14px;
-        }
-        
-        .register-link {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .register-link:hover {
-            text-decoration: underline;
-        }
-        
         .alert {
             border: none;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-size: 14px;
+            border-radius: var(--border-radius-small);
+            margin-bottom: 1.5rem;
+            padding: 0.875rem 1rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .alert-danger {
+            background-color: #fef2f2;
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .alert-success {
+            background-color: #f0fdf4;
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
         }
         
         .invalid-feedback {
             display: block;
-            color: #ff6b6b;
-            font-size: 12px;
+            color: var(--danger-color);
+            font-size: 0.75rem;
             margin-top: 0.25rem;
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-small);
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+        
+        .back-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
         }
         
         /* Responsive Design */
         @media (max-width: 576px) {
-            .main-content {
-                padding: 5rem 1rem 1rem;
+            body {
+                padding: 0.5rem;
             }
             
             .login-card {
-                padding: 1.5rem;
+                padding: 2rem 1.5rem;
             }
             
             .login-title {
-                font-size: 20px;
+                font-size: 1.25rem;
             }
             
-            .top-nav {
-                padding: 0.75rem 1rem;
-            }
-            
-            .nav-title {
-                font-size: 1.1rem;
+            .back-link {
+                top: 1rem;
+                left: 1rem;
+                font-size: 0.8rem;
+                padding: 0.375rem 0.75rem;
             }
         }
         
@@ -229,39 +256,47 @@
         .spinner-border-sm {
             width: 1rem;
             height: 1rem;
+            border-width: 0.125rem;
+        }
+        
+        /* Focus styles for accessibility */
+        .form-control:focus,
+        .login-btn:focus,
+        .password-toggle:focus,
+        .back-link:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
-    <!-- Top Navigation Bar -->
-    <div class="top-nav">
-        <button class="back-arrow" onclick="history.back()" title="Back">
-            <i class="bi bi-arrow-left"></i>
-        </button>
-        <h1 class="nav-title">Login</h1>
-    </div>
+    <!-- Back Link -->
+    <a href="<?= base_url('/') ?>" class="back-link">
+        <i class="bi bi-arrow-left"></i>
+        Kembali ke Beranda
+    </a>
     
-    <!-- Main Content -->
-    <div class="main-content">
+    <!-- Login Container -->
+    <div class="login-container">
         <div class="login-card">
-            <h2 class="login-title">Silahkan Login</h2>
-            
-            <!-- Logo -->
+            <!-- Logo and Title -->
             <div class="logo-container">
-                <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" class="logo">
+                <img src="<?= base_url('assets/images/logo-perpusnas.png') ?>" alt="INLISLite Logo" class="logo">
+                <h1 class="login-title">Admin Login</h1>
+                <p class="login-subtitle">Masuk ke panel administrasi INLISLite</p>
             </div>
             
             <!-- Error/Success Messages -->
             <?php if (session()->getFlashdata('error')): ?>
                 <div class="alert alert-danger" role="alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <i class="bi bi-exclamation-triangle"></i>
                     <?= session()->getFlashdata('error') ?>
                 </div>
             <?php endif; ?>
             
             <?php if (session()->getFlashdata('success')): ?>
                 <div class="alert alert-success" role="alert">
-                    <i class="bi bi-check-circle me-2"></i>
+                    <i class="bi bi-check-circle"></i>
                     <?= session()->getFlashdata('success') ?>
                 </div>
             <?php endif; ?>
@@ -272,11 +307,12 @@
                 
                 <!-- Username Field -->
                 <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
                     <input type="text" 
                            class="form-control <?= isset($validation) && $validation->hasError('username') ? 'is-invalid' : '' ?>" 
                            id="username" 
                            name="username" 
-                           placeholder="Username"
+                           placeholder="Masukkan username Anda"
                            value="<?= old('username') ?>"
                            required
                            autocomplete="username">
@@ -289,15 +325,16 @@
                 
                 <!-- Password Field -->
                 <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
                     <div class="password-field">
                         <input type="password" 
                                class="form-control <?= isset($validation) && $validation->hasError('password') ? 'is-invalid' : '' ?>" 
                                id="password" 
                                name="password" 
-                               placeholder="Password"
+                               placeholder="Masukkan password Anda"
                                required
                                autocomplete="current-password">
-                        <button type="button" class="password-toggle" id="togglePassword">
+                        <button type="button" class="password-toggle" id="togglePassword" title="Tampilkan/Sembunyikan Password">
                             <i class="bi bi-eye" id="toggleIcon"></i>
                         </button>
                     </div>
@@ -310,15 +347,10 @@
                 
                 <!-- Login Button -->
                 <button type="submit" class="login-btn" id="loginBtn">
-                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" id="loginSpinner" style="display: none;"></span>
-                    Login
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loginSpinner" style="display: none;"></span>
+                    <span id="loginText">Masuk</span>
                 </button>
             </form>
-            
-            <!-- Register Link -->
-            <div class="register-text">
-                Belum punya akun? <a href="#" class="register-link">Daftar</a>
-            </div>
         </div>
     </div>
     
@@ -343,46 +375,21 @@
                 }
             });
             
-            // Form submission handling - simplified
+            // Form submission handling
             const loginForm = document.getElementById('loginForm');
             const loginBtn = document.getElementById('loginBtn');
             const loginSpinner = document.getElementById('loginSpinner');
+            const loginText = document.getElementById('loginText');
             
             loginForm.addEventListener('submit', function(e) {
                 // Show loading state
                 loginBtn.disabled = true;
                 loginSpinner.style.display = 'inline-block';
-                loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Logging in...';
+                loginText.textContent = 'Memproses...';
                 
-                // Let form submit normally without validation
+                // Let form submit normally
                 console.log('Form submitting to:', loginForm.action);
             });
-            
-            function resetLoginButton() {
-                loginBtn.disabled = false;
-                loginSpinner.style.display = 'none';
-                loginBtn.innerHTML = 'Login';
-            }
-            
-            function showAlert(message, type) {
-                const alertDiv = document.createElement('div');
-                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-                alertDiv.innerHTML = `
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-                
-                const loginCard = document.querySelector('.login-card');
-                loginCard.insertBefore(alertDiv, loginCard.querySelector('form'));
-                
-                // Auto-dismiss after 5 seconds
-                setTimeout(() => {
-                    if (alertDiv.parentNode) {
-                        alertDiv.remove();
-                    }
-                }, 5000);
-            }
             
             // Auto-focus username field
             document.getElementById('username').focus();
@@ -401,6 +408,13 @@
                     loginForm.submit();
                 }
             });
+            
+            // Reset form state if there's an error
+            if (document.querySelector('.alert-danger')) {
+                loginBtn.disabled = false;
+                loginSpinner.style.display = 'none';
+                loginText.textContent = 'Masuk';
+            }
         });
     </script>
 </body>

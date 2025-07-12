@@ -1,472 +1,738 @@
 /**
- * INLISLite v3.0 Installer Edit Page JavaScript
- * Handles CRUD operations for installer cards
+ * INLISLite v3.0 Installer Edit Page
+ * CRUD management for installer packages with DataTables integration
  */
 
-class InstallerCardManager {
-    constructor() {
-        this.currentCardId = null;
-        this.cards = [];
-        this.init();
-        this.bindEvents();
-        this.loadCards();
-    }
-
-    init() {
-        // Initialize modals
-        this.cardModal = new bootstrap.Modal(document.getElementById('cardModal'));
-        this.deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-        
-        // Add fade-in animation to elements
-        this.addFadeInAnimation();
-    }
-
-    addFadeInAnimation() {
-        const elements = document.querySelectorAll('.card, .action-section');
-        elements.forEach((element, index) => {
-            setTimeout(() => {
-                element.classList.add('fade-in');
-            }, index * 100);
-        });
-    }
-
-    bindEvents() {
-        // Add card buttons
-        document.getElementById('btnAddCard').addEventListener('click', () => this.showAddCardModal());
-        document.getElementById('btnAddFirstCard').addEventListener('click', () => this.showAddCardModal());
-        
-        // Save card button
-        document.getElementById('saveCardBtn').addEventListener('click', () => this.saveCard());
-        
-        // Confirm delete button
-        document.getElementById('confirmDeleteBtn').addEventListener('click', () => this.deleteCard());
-        
-        // Form validation
-        document.getElementById('cardForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.saveCard();
-        });
-
-        // Modal events
-        document.getElementById('cardModal').addEventListener('hidden.bs.modal', () => {
-            this.resetForm();
-        });
-    }
-
-    async loadCards() {
-        try {
-            this.showLoadingState();
-            
-            const response = await fetch(`${window.location.origin}/admin/installer/getCards`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    this.cards = result.cards || [];
-                    this.renderCards();
-                } else {
-                    this.showError('Gagal memuat data kartu: ' + result.message);
-                }
-            } else {
-                this.showError('Gagal memuat data kartu');
-            }
-        } catch (error) {
-            console.error('Error loading cards:', error);
-            this.showError('Terjadi kesalahan saat memuat data');
-        } finally {
-            this.hideLoadingState();
-        }
-    }
-
-    renderCards() {
-        const tableBody = document.getElementById('cardsTableBody');
-        const cardsTable = document.getElementById('cardsTable');
-        const emptyState = document.getElementById('emptyState');
-
-        if (this.cards.length === 0) {
-            cardsTable.style.display = 'none';
-            emptyState.style.display = 'block';
-            return;
-        }
-
-        cardsTable.style.display = 'block';
-        emptyState.style.display = 'none';
-
-        tableBody.innerHTML = this.cards.map(card => this.createCardRow(card)).join('');
-        
-        // Add event listeners to action buttons
-        this.bindCardActions();
-    }
-
-    createCardRow(card) {
-        const iconClass = this.getCardIconClass(card.card_type);
-        const statusBadge = card.status === 'active' ? 
-            '<span class="status-badge active">Aktif</span>' : 
-            '<span class="status-badge inactive">Tidak Aktif</span>';
-
-        return `
-            <tr data-card-id="${card.id}" class="slide-in">
-                <td data-label="Kartu">
-                    <div class="card-entry">
-                        <div class="card-entry-icon ${card.card_type}">
-                            <i class="bi ${iconClass}"></i>
-                        </div>
-                        <div class="card-entry-info">
-                            <div class="card-entry-name">${this.escapeHtml(card.package_name)}</div>
-                            <div class="card-entry-description">${this.escapeHtml(card.description || '')}</div>
-                        </div>
-                    </div>
-                </td>
-                <td data-label="Versi">
-                    <span class="version-badge">${this.escapeHtml(card.version)}</span>
-                </td>
-                <td data-label="Ukuran">
-                    <span class="file-size">${this.escapeHtml(card.file_size || '-')}</span>
-                </td>
-                <td data-label="Status">
-                    ${statusBadge}
-                </td>
-                <td data-label="Aksi">
-                    <div class="card-actions">
-                        <button class="btn btn-sm btn-outline-primary btn-edit" data-card-id="${card.id}" title="Edit Kartu">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger btn-delete" data-card-id="${card.id}" title="Hapus Kartu">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }
-
-    bindCardActions() {
-        // Edit buttons
-        document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const cardId = e.target.closest('.btn-edit').dataset.cardId;
-                this.showEditCardModal(cardId);
-            });
-        });
-
-        // Delete buttons
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const cardId = e.target.closest('.btn-delete').dataset.cardId;
-                this.showDeleteConfirmation(cardId);
-            });
-        });
-    }
-
-    showAddCardModal() {
-        this.currentCardId = null;
-        this.resetForm();
-        document.getElementById('cardModalLabel').textContent = 'Tambah Card Installer';
-        this.cardModal.show();
-    }
-
-    showEditCardModal(cardId) {
-        const card = this.cards.find(c => c.id == cardId);
-        if (!card) {
-            this.showError('Kartu tidak ditemukan');
-            return;
-        }
-
-        this.currentCardId = cardId;
-        this.populateForm(card);
-        document.getElementById('cardModalLabel').textContent = 'Edit Card Installer';
-        this.cardModal.show();
-    }
-
-    populateForm(card) {
-        document.getElementById('cardId').value = card.id;
-        document.getElementById('packageName').value = card.package_name;
-        document.getElementById('version').value = card.version;
-        document.getElementById('releaseDate').value = card.release_date || '';
-        document.getElementById('fileSize').value = card.file_size || '';
-        document.getElementById('downloadLink').value = card.download_link || '';
-        document.getElementById('description').value = card.description || '';
-        document.getElementById('defaultUsername').value = card.default_username || '';
-        document.getElementById('defaultPassword').value = card.default_password || '';
-        document.getElementById('cardType').value = card.card_type || 'source';
-        document.getElementById('status').value = card.status || 'active';
-
-        // Handle requirements checkboxes
-        const requirements = card.requirements ? JSON.parse(card.requirements) : [];
-        document.querySelectorAll('input[name="requirements[]"]').forEach(checkbox => {
-            checkbox.checked = requirements.includes(checkbox.value);
-        });
-    }
-
-    resetForm() {
-        document.getElementById('cardForm').reset();
-        document.getElementById('cardId').value = '';
-        this.currentCardId = null;
-        
-        // Uncheck all requirements
-        document.querySelectorAll('input[name="requirements[]"]').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-    }
-
-    async saveCard() {
-        const form = document.getElementById('cardForm');
-        const formData = new FormData(form);
-        
-        // Validate required fields
-        if (!this.validateForm()) {
-            return;
-        }
-
-        // Collect requirements
-        const requirements = [];
-        document.querySelectorAll('input[name="requirements[]"]:checked').forEach(checkbox => {
-            requirements.push(checkbox.value);
-        });
-
-        const cardData = {
-            id: this.currentCardId,
-            package_name: formData.get('package_name'),
-            version: formData.get('version'),
-            release_date: formData.get('release_date'),
-            file_size: formData.get('file_size'),
-            download_link: formData.get('download_link'),
-            description: formData.get('description'),
-            requirements: JSON.stringify(requirements),
-            default_username: formData.get('default_username'),
-            default_password: formData.get('default_password'),
-            card_type: formData.get('card_type'),
-            status: formData.get('status')
-        };
-
-        try {
-            this.setLoadingState(document.getElementById('saveCardBtn'), true);
-
-            const url = this.currentCardId ? 
-                `${window.location.origin}/admin/installer/updateCard` : 
-                `${window.location.origin}/admin/installer/createCard`;
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(cardData)
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    this.cardModal.hide();
-                    this.showSuccess(this.currentCardId ? 'Kartu berhasil diperbarui' : 'Kartu berhasil ditambahkan');
-                    await this.loadCards();
-                } else {
-                    this.showError('Gagal menyimpan kartu: ' + result.message);
-                }
-            } else {
-                this.showError('Gagal menyimpan kartu');
-            }
-        } catch (error) {
-            console.error('Error saving card:', error);
-            this.showError('Terjadi kesalahan saat menyimpan kartu');
-        } finally {
-            this.setLoadingState(document.getElementById('saveCardBtn'), false);
-        }
-    }
-
-    showDeleteConfirmation(cardId) {
-        this.currentCardId = cardId;
-        this.deleteModal.show();
-    }
-
-    async deleteCard() {
-        if (!this.currentCardId) return;
-
-        try {
-            this.setLoadingState(document.getElementById('confirmDeleteBtn'), true);
-
-            const response = await fetch(`${window.location.origin}/admin/installer/deleteCard`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({ id: this.currentCardId })
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    this.deleteModal.hide();
-                    this.showSuccess('Kartu berhasil dihapus');
-                    await this.loadCards();
-                } else {
-                    this.showError('Gagal menghapus kartu: ' + result.message);
-                }
-            } else {
-                this.showError('Gagal menghapus kartu');
-            }
-        } catch (error) {
-            console.error('Error deleting card:', error);
-            this.showError('Terjadi kesalahan saat menghapus kartu');
-        } finally {
-            this.setLoadingState(document.getElementById('confirmDeleteBtn'), false);
-            this.currentCardId = null;
-        }
-    }
-
-    validateForm() {
-        const packageName = document.getElementById('packageName').value.trim();
-        const version = document.getElementById('version').value.trim();
-
-        if (!packageName) {
-            this.showError('Nama paket harus diisi');
-            document.getElementById('packageName').focus();
-            return false;
-        }
-
-        if (!version) {
-            this.showError('Versi harus diisi');
-            document.getElementById('version').focus();
-            return false;
-        }
-
-        return true;
-    }
-
-    getCardIconClass(cardType) {
-        const iconMap = {
-            source: 'bi-code-slash',
-            installer: 'bi-box-seam',
-            database: 'bi-database',
-            documentation: 'bi-file-text'
-        };
-        return iconMap[cardType] || 'bi-box';
-    }
-
-    showLoadingState() {
-        document.getElementById('loadingState').style.display = 'block';
-        document.getElementById('cardsTable').style.display = 'none';
-        document.getElementById('emptyState').style.display = 'none';
-    }
-
-    hideLoadingState() {
-        document.getElementById('loadingState').style.display = 'none';
-    }
-
-    setLoadingState(button, isLoading) {
-        if (isLoading) {
-            button.disabled = true;
-            button.dataset.originalText = button.innerHTML;
-            button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Menyimpan...';
-        } else {
-            button.disabled = false;
-            button.innerHTML = button.dataset.originalText || button.innerHTML;
-        }
-    }
-
-    showSuccess(message) {
-        this.showAlert(message, 'success');
-    }
-
-    showError(message) {
-        this.showAlert(message, 'danger');
-    }
-
-    showAlert(message, type) {
-        const alertHtml = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        `;
-        
-        const alertContainer = document.getElementById('alertContainer');
-        alertContainer.innerHTML = alertHtml;
-        
-        // Auto dismiss after 5 seconds
-        setTimeout(() => {
-            const alert = alertContainer.querySelector('.alert');
-            if (alert) {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }
-        }, 5000);
-
-        // Scroll to top to show alert
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-}
-
-// Utility functions
-const InstallerEditUtils = {
-    formatDate(dateString) {
-        if (!dateString) return '-';
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('id-ID', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }).format(date);
-    },
-
-    validateUrl(url) {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
-    },
-
-    generateSlug(text) {
-        return text
-            .toLowerCase()
-            .replace(/[^a-z0-9 -]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')
-            .trim('-');
-    },
-
-    showConfirmation(message, callback) {
-        if (confirm(message)) {
-            callback();
-        }
-    }
-};
+// Global variables
+let installersTable;
+let currentEditId = null;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize card manager
-    window.installerCardManager = new InstallerCardManager();
-    
-    // Add global error handler
-    window.addEventListener('error', function(e) {
-        console.error('Installer edit page error:', e.error);
-    });
-    
-    // Add unhandled promise rejection handler
-    window.addEventListener('unhandledrejection', function(e) {
-        console.error('Unhandled promise rejection:', e.reason);
-    });
-    
-    console.log('Installer edit page initialized successfully');
+    initializeApp();
 });
 
-// Export for use in other scripts
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { InstallerCardManager, InstallerEditUtils };
+/**
+ * Initialize the application
+ */
+function initializeApp() {
+    initializeDataTable();
+    initializeEventListeners();
+    loadStatistics();
+    loadInstallers();
 }
+
+/**
+ * Initialize DataTables
+ */
+function initializeDataTable() {
+    installersTable = $('#installersTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        order: [[0, 'desc']], // Sort by ID column
+        columnDefs: [
+            { orderable: false, targets: [1, 7] }, // Disable sorting for icon and actions
+            { searchable: false, targets: [1, 7] }, // Disable search for icon and actions
+            { width: "60px", targets: [0] }, // ID column width
+            { width: "80px", targets: [1] }, // Icon column width
+            { width: "100px", targets: [3] }, // Type column width
+            { width: "100px", targets: [6] }, // Status column width
+            { width: "120px", targets: [7] } // Actions column width
+        ],
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
+        },
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+             '<"row"<"col-sm-12"tr>>' +
+             '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+        drawCallback: function() {
+            // Re-initialize tooltips after table redraw
+            initializeTooltips();
+        }
+    });
+}
+
+/**
+ * Initialize event listeners
+ */
+function initializeEventListeners() {
+    // Icon preview functionality
+    document.getElementById('packageIcon').addEventListener('input', function() {
+        updateIconPreview(this.value, 'packageIconPreview');
+    });
+    
+    document.getElementById('editPackageIcon').addEventListener('input', function() {
+        updateIconPreview(this.value, 'editPackageIconPreview');
+    });
+    
+    // Form submissions
+    document.getElementById('addInstallerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveInstaller();
+    });
+    
+    document.getElementById('editInstallerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        updateInstaller();
+    });
+    
+    // Modal events
+    document.getElementById('addInstallerModal').addEventListener('hidden.bs.modal', function() {
+        resetAddForm();
+    });
+    
+    document.getElementById('editInstallerModal').addEventListener('hidden.bs.modal', function() {
+        resetEditForm();
+    });
+}
+
+/**
+ * Initialize tooltips
+ */
+function initializeTooltips() {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+}
+
+/**
+ * Load statistics
+ */
+async function loadStatistics() {
+    try {
+        // Sample statistics - replace with actual API call
+        const stats = {
+            total_installers: 6,
+            active_installers: 5,
+            source_packages: 2,
+            total_downloads: 1247
+        };
+        
+        updateStatistics(stats);
+        
+    } catch (error) {
+        console.error('Error loading statistics:', error);
+        showError('Gagal memuat statistik');
+    }
+}
+
+/**
+ * Update statistics display
+ */
+function updateStatistics(stats) {
+    document.getElementById('totalInstallers').textContent = stats.total_installers || 0;
+    document.getElementById('activeInstallers').textContent = stats.active_installers || 0;
+    document.getElementById('sourcePackages').textContent = stats.source_packages || 0;
+    document.getElementById('totalDownloads').textContent = stats.total_downloads || 0;
+}
+
+/**
+ * Load installers data
+ */
+async function loadInstallers() {
+    try {
+        showLoading();
+        
+        // Sample data - replace with actual API call
+        const sampleInstallers = [
+            {
+                id: 1,
+                package_name: "INLISLite v3.0 Full Package",
+                subtitle: "Complete Installation Package",
+                description: "Paket lengkap instalasi INLISLite v3.0 dengan semua fitur dan dokumentasi",
+                package_type: "installer",
+                icon: "bi-box-seam",
+                version: "3.0.0",
+                file_size: "25 MB",
+                status: "active",
+                release_date: "2024-01-15",
+                download_url: "https://example.com/inlislite-v3-full.zip",
+                default_username: "admin",
+                default_password: "admin123",
+                requirements: ["php", "database", "docs", "config"],
+                sort_order: 1,
+                created_at: "2024-01-15 10:30:00"
+            },
+            {
+                id: 2,
+                package_name: "INLISLite v3.0 Source Code",
+                subtitle: "Source Code Only",
+                description: "Source code INLISLite v3.0 untuk developer dan customization",
+                package_type: "source",
+                icon: "bi-code-slash",
+                version: "3.0.0",
+                file_size: "15 MB",
+                status: "active",
+                release_date: "2024-01-15",
+                download_url: "https://example.com/inlislite-v3-source.zip",
+                default_username: "",
+                default_password: "",
+                requirements: ["php", "config"],
+                sort_order: 2,
+                created_at: "2024-01-15 10:35:00"
+            },
+            {
+                id: 3,
+                package_name: "Database Structure",
+                subtitle: "Database Schema & Sample Data",
+                description: "Struktur database dan data sample untuk INLISLite v3.0",
+                package_type: "database",
+                icon: "bi-database",
+                version: "3.0.0",
+                file_size: "5 MB",
+                status: "active",
+                release_date: "2024-01-15",
+                download_url: "https://example.com/inlislite-v3-db.sql",
+                default_username: "",
+                default_password: "",
+                requirements: ["database"],
+                sort_order: 3,
+                created_at: "2024-01-15 10:40:00"
+            },
+            {
+                id: 4,
+                package_name: "Documentation Package",
+                subtitle: "Complete User Manual",
+                description: "Dokumentasi lengkap penggunaan dan instalasi INLISLite v3.0",
+                package_type: "documentation",
+                icon: "bi-book",
+                version: "3.0.0",
+                file_size: "8 MB",
+                status: "active",
+                release_date: "2024-01-15",
+                download_url: "https://example.com/inlislite-v3-docs.pdf",
+                default_username: "",
+                default_password: "",
+                requirements: ["docs"],
+                sort_order: 4,
+                created_at: "2024-01-15 10:45:00"
+            },
+            {
+                id: 5,
+                package_name: "OPAC Add-on",
+                subtitle: "Enhanced OPAC Module",
+                description: "Modul OPAC tambahan dengan fitur pencarian advanced",
+                package_type: "addon",
+                icon: "bi-search",
+                version: "1.2.0",
+                file_size: "3 MB",
+                status: "active",
+                release_date: "2024-01-20",
+                download_url: "https://example.com/opac-addon.zip",
+                default_username: "",
+                default_password: "",
+                requirements: ["php"],
+                sort_order: 5,
+                created_at: "2024-01-20 14:20:00"
+            },
+            {
+                id: 6,
+                package_name: "Legacy Installer v2.5",
+                subtitle: "Previous Version",
+                description: "Installer untuk INLISLite versi 2.5 (legacy support)",
+                package_type: "installer",
+                icon: "bi-archive",
+                version: "2.5.0",
+                file_size: "20 MB",
+                status: "inactive",
+                release_date: "2023-12-01",
+                download_url: "https://example.com/inlislite-v2.5.zip",
+                default_username: "admin",
+                default_password: "admin",
+                requirements: ["php", "database"],
+                sort_order: 6,
+                created_at: "2023-12-01 09:15:00"
+            }
+        ];
+        
+        populateTable(sampleInstallers);
+        
+    } catch (error) {
+        console.error('Error loading installers:', error);
+        showError('Gagal memuat data installer');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Populate DataTable with installers data
+ */
+function populateTable(installers) {
+    installersTable.clear();
+    
+    installers.forEach(installer => {
+        const row = [
+            installer.id,
+            `<div class="text-center">
+                <i class="${installer.icon}" style="font-size: 1.5rem; color: var(--primary-blue);"></i>
+            </div>`,
+            `<div>
+                <div class="fw-semibold">${installer.package_name}</div>
+                ${installer.subtitle ? `<small class="text-muted">${installer.subtitle}</small>` : ''}
+            </div>`,
+            `<span class="type-badge ${installer.package_type}">${getTypeLabel(installer.package_type)}</span>`,
+            installer.version || '-',
+            installer.file_size || '-',
+            `<span class="status-badge ${installer.status}">${getStatusLabel(installer.status)}</span>`,
+            `<div class="d-flex justify-content-center">
+                <button class="btn-action edit" onclick="editInstaller(${installer.id})" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn-action delete" onclick="deleteInstaller(${installer.id})" title="Hapus">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>`
+        ];
+        
+        installersTable.row.add(row);
+    });
+    
+    installersTable.draw();
+}
+
+/**
+ * Get type label
+ */
+function getTypeLabel(type) {
+    const labels = {
+        'source': 'Source Code',
+        'installer': 'Installer',
+        'database': 'Database',
+        'documentation': 'Dokumentasi',
+        'addon': 'Add-on'
+    };
+    return labels[type] || type;
+}
+
+/**
+ * Get status label
+ */
+function getStatusLabel(status) {
+    const labels = {
+        'active': 'Aktif',
+        'inactive': 'Tidak Aktif',
+        'maintenance': 'Maintenance'
+    };
+    return labels[status] || status;
+}
+
+/**
+ * Update icon preview
+ */
+function updateIconPreview(iconClass, previewId) {
+    const preview = document.getElementById(previewId);
+    const iconElement = preview.querySelector('i');
+    
+    if (iconClass && iconClass.trim()) {
+        // Ensure bi- prefix
+        const formattedIcon = iconClass.startsWith('bi-') ? iconClass : `bi-${iconClass}`;
+        iconElement.className = formattedIcon;
+        preview.classList.add('valid');
+    } else {
+        iconElement.className = 'bi bi-question-circle';
+        preview.classList.remove('valid');
+    }
+}
+
+/**
+ * Save new installer
+ */
+async function saveInstaller() {
+    try {
+        const formData = {
+            package_name: document.getElementById('packageName').value,
+            subtitle: document.getElementById('packageSubtitle').value,
+            description: document.getElementById('packageDescription').value,
+            package_type: document.getElementById('packageType').value,
+            icon: document.getElementById('packageIcon').value,
+            version: document.getElementById('packageVersion').value,
+            file_size: document.getElementById('packageSize').value,
+            status: document.getElementById('packageStatus').value,
+            release_date: document.getElementById('packageReleaseDate').value,
+            download_url: document.getElementById('packageDownloadUrl').value,
+            default_username: document.getElementById('defaultUsername').value,
+            default_password: document.getElementById('defaultPassword').value,
+            sort_order: parseInt(document.getElementById('packageSortOrder').value),
+            requirements: getSelectedRequirements()
+        };
+        
+        // Validate required fields
+        if (!formData.package_name || !formData.description || !formData.package_type) {
+            showError('Harap lengkapi semua field yang wajib diisi');
+            return;
+        }
+        
+        // Ensure icon has bi- prefix
+        if (formData.icon && !formData.icon.startsWith('bi-')) {
+            formData.icon = `bi-${formData.icon}`;
+        }
+        
+        showLoading();
+        
+        // TODO: Replace with actual API call
+        console.log('Saving installer:', formData);
+        
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Close modal and refresh data
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addInstallerModal'));
+        modal.hide();
+        
+        showSuccess('Installer berhasil ditambahkan');
+        loadInstallers();
+        loadStatistics();
+        
+    } catch (error) {
+        console.error('Error saving installer:', error);
+        showError('Gagal menyimpan installer');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Get selected requirements
+ */
+function getSelectedRequirements() {
+    const requirements = [];
+    if (document.getElementById('reqPhp').checked) requirements.push('php');
+    if (document.getElementById('reqDatabase').checked) requirements.push('database');
+    if (document.getElementById('reqDocs').checked) requirements.push('docs');
+    if (document.getElementById('reqConfig').checked) requirements.push('config');
+    return requirements;
+}
+
+/**
+ * Edit installer
+ */
+function editInstaller(id) {
+    // Sample data - replace with actual API call
+    const sampleInstallers = [
+        {
+            id: 1,
+            package_name: "INLISLite v3.0 Full Package",
+            subtitle: "Complete Installation Package",
+            description: "Paket lengkap instalasi INLISLite v3.0 dengan semua fitur dan dokumentasi",
+            package_type: "installer",
+            icon: "bi-box-seam",
+            version: "3.0.0",
+            file_size: "25 MB",
+            status: "active",
+            release_date: "2024-01-15",
+            download_url: "https://example.com/inlislite-v3-full.zip",
+            default_username: "admin",
+            default_password: "admin123",
+            requirements: ["php", "database", "docs", "config"],
+            sort_order: 1
+        },
+        {
+            id: 2,
+            package_name: "INLISLite v3.0 Source Code",
+            subtitle: "Source Code Only",
+            description: "Source code INLISLite v3.0 untuk developer dan customization",
+            package_type: "source",
+            icon: "bi-code-slash",
+            version: "3.0.0",
+            file_size: "15 MB",
+            status: "active",
+            release_date: "2024-01-15",
+            download_url: "https://example.com/inlislite-v3-source.zip",
+            default_username: "",
+            default_password: "",
+            requirements: ["php", "config"],
+            sort_order: 2
+        }
+    ];
+    
+    const installer = sampleInstallers.find(i => i.id === id);
+    
+    if (!installer) {
+        showError('Installer tidak ditemukan');
+        return;
+    }
+    
+    // Populate edit form
+    currentEditId = id;
+    document.getElementById('editInstallerId').value = id;
+    document.getElementById('editPackageName').value = installer.package_name;
+    document.getElementById('editPackageSubtitle').value = installer.subtitle || '';
+    document.getElementById('editPackageDescription').value = installer.description;
+    document.getElementById('editPackageType').value = installer.package_type;
+    document.getElementById('editPackageIcon').value = installer.icon;
+    document.getElementById('editPackageVersion').value = installer.version || '';
+    document.getElementById('editPackageSize').value = installer.file_size || '';
+    document.getElementById('editPackageStatus').value = installer.status;
+    document.getElementById('editPackageReleaseDate').value = installer.release_date || '';
+    document.getElementById('editPackageDownloadUrl').value = installer.download_url || '';
+    document.getElementById('editDefaultUsername').value = installer.default_username || '';
+    document.getElementById('editDefaultPassword').value = installer.default_password || '';
+    document.getElementById('editPackageSortOrder').value = installer.sort_order;
+    
+    // Set requirements checkboxes
+    document.getElementById('editReqPhp').checked = installer.requirements.includes('php');
+    document.getElementById('editReqDatabase').checked = installer.requirements.includes('database');
+    document.getElementById('editReqDocs').checked = installer.requirements.includes('docs');
+    document.getElementById('editReqConfig').checked = installer.requirements.includes('config');
+    
+    // Update icon preview
+    updateIconPreview(installer.icon, 'editPackageIconPreview');
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editInstallerModal'));
+    modal.show();
+}
+
+/**
+ * Update installer
+ */
+async function updateInstaller() {
+    try {
+        const formData = {
+            id: currentEditId,
+            package_name: document.getElementById('editPackageName').value,
+            subtitle: document.getElementById('editPackageSubtitle').value,
+            description: document.getElementById('editPackageDescription').value,
+            package_type: document.getElementById('editPackageType').value,
+            icon: document.getElementById('editPackageIcon').value,
+            version: document.getElementById('editPackageVersion').value,
+            file_size: document.getElementById('editPackageSize').value,
+            status: document.getElementById('editPackageStatus').value,
+            release_date: document.getElementById('editPackageReleaseDate').value,
+            download_url: document.getElementById('editPackageDownloadUrl').value,
+            default_username: document.getElementById('editDefaultUsername').value,
+            default_password: document.getElementById('editDefaultPassword').value,
+            sort_order: parseInt(document.getElementById('editPackageSortOrder').value),
+            requirements: getSelectedEditRequirements()
+        };
+        
+        // Validate required fields
+        if (!formData.package_name || !formData.description || !formData.package_type) {
+            showError('Harap lengkapi semua field yang wajib diisi');
+            return;
+        }
+        
+        // Ensure icon has bi- prefix
+        if (formData.icon && !formData.icon.startsWith('bi-')) {
+            formData.icon = `bi-${formData.icon}`;
+        }
+        
+        showLoading();
+        
+        // TODO: Replace with actual API call
+        console.log('Updating installer:', formData);
+        
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Close modal and refresh data
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editInstallerModal'));
+        modal.hide();
+        
+        showSuccess('Installer berhasil diperbarui');
+        loadInstallers();
+        loadStatistics();
+        
+    } catch (error) {
+        console.error('Error updating installer:', error);
+        showError('Gagal memperbarui installer');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Get selected edit requirements
+ */
+function getSelectedEditRequirements() {
+    const requirements = [];
+    if (document.getElementById('editReqPhp').checked) requirements.push('php');
+    if (document.getElementById('editReqDatabase').checked) requirements.push('database');
+    if (document.getElementById('editReqDocs').checked) requirements.push('docs');
+    if (document.getElementById('editReqConfig').checked) requirements.push('config');
+    return requirements;
+}
+
+/**
+ * Delete installer
+ */
+async function deleteInstaller(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus installer ini?')) {
+        return;
+    }
+    
+    try {
+        showLoading();
+        
+        // TODO: Replace with actual API call
+        console.log('Deleting installer:', id);
+        
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        showSuccess('Installer berhasil dihapus');
+        loadInstallers();
+        loadStatistics();
+        
+    } catch (error) {
+        console.error('Error deleting installer:', error);
+        showError('Gagal menghapus installer');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Reset add form
+ */
+function resetAddForm() {
+    document.getElementById('addInstallerForm').reset();
+    document.getElementById('packageSortOrder').value = 1;
+    updateIconPreview('', 'packageIconPreview');
+    
+    // Reset checkboxes
+    document.getElementById('reqPhp').checked = false;
+    document.getElementById('reqDatabase').checked = false;
+    document.getElementById('reqDocs').checked = false;
+    document.getElementById('reqConfig').checked = false;
+}
+
+/**
+ * Reset edit form
+ */
+function resetEditForm() {
+    document.getElementById('editInstallerForm').reset();
+    currentEditId = null;
+    updateIconPreview('', 'editPackageIconPreview');
+    
+    // Reset checkboxes
+    document.getElementById('editReqPhp').checked = false;
+    document.getElementById('editReqDatabase').checked = false;
+    document.getElementById('editReqDocs').checked = false;
+    document.getElementById('editReqConfig').checked = false;
+}
+
+/**
+ * Show loading spinner
+ */
+function showLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'flex';
+    }
+}
+
+/**
+ * Hide loading spinner
+ */
+function hideLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'none';
+    }
+}
+
+/**
+ * Show success message
+ */
+function showSuccess(message) {
+    showToast(message, 'success');
+}
+
+/**
+ * Show error message
+ */
+function showError(message) {
+    showToast(message, 'error');
+}
+
+/**
+ * Show toast notification
+ */
+function showToast(message, type = 'info') {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="bi bi-x"></i>
+        </button>
+    `;
+    
+    // Add styles if not already added
+    if (!document.querySelector('#toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            .toast-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 300px;
+                animation: slideInRight 0.3s ease-out;
+                border-left: 4px solid #6b7280;
+            }
+            .toast-success { border-left-color: #059669; }
+            .toast-error { border-left-color: #dc2626; }
+            .toast-content {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex: 1;
+            }
+            .toast-close {
+                background: none;
+                border: none;
+                color: #6b7280;
+                cursor: pointer;
+                padding: 0.25rem;
+                border-radius: 4px;
+            }
+            .toast-close:hover {
+                background-color: #f3f4f6;
+            }
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Add to DOM
+    document.body.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
+}
+
+// Export functions for global access
+window.saveInstaller = saveInstaller;
+window.editInstaller = editInstaller;
+window.updateInstaller = updateInstaller;
+window.deleteInstaller = deleteInstaller;

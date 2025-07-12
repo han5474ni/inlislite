@@ -1,428 +1,466 @@
 /**
- * INLISLite v3.0 Dukungan Teknis Page JavaScript
- * Simplified version without popup cards functionality
+ * INLISLite v3.0 Dukungan Teknis Page
+ * JavaScript for content management and UI interactions
  */
 
+// Global variables
+let contentItems = [];
+let filteredItems = [];
+
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the support page
-    initializeSupportPage();
-    
-    // Initialize Feather icons
-    initializeFeatherIcons();
-    
-    // Initialize animations
-    initializeAnimations();
-    
-    // Initialize interactive features
-    initializeInteractiveFeatures();
-    
-    // Handle responsive behavior
-    handleResponsive();
+    initializeApp();
 });
 
 /**
- * Initialize the support page functionality
+ * Initialize the application
  */
-function initializeSupportPage() {
-    console.log('Dukungan Teknis page initialized');
-    
-    // Add loading animation to cards
-    const supportCards = document.querySelectorAll('.support-card');
-    supportCards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            card.style.transition = 'all 0.6s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 200);
-    });
+function initializeApp() {
+    loadContent();
+    initializeEventListeners();
+    initializeSearch();
 }
 
 /**
- * Initialize Feather icons
+ * Initialize event listeners
  */
-function initializeFeatherIcons() {
-    if (typeof feather !== 'undefined') {
-        feather.replace();
+function initializeEventListeners() {
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearch);
+    }
+    
+    // Modal form submissions
+    const addItemForm = document.getElementById('addItemForm');
+    const editForm = document.getElementById('editForm');
+    
+    if (addItemForm) {
+        addItemForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveItem();
+        });
+    }
+    
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            updateItem();
+        });
     }
 }
 
 /**
- * Initialize animations
+ * Initialize search functionality
  */
-function initializeAnimations() {
-    // Staggered animation for contact cards
-    const contactCards = document.querySelectorAll('.contact-card');
-    contactCards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-    });
-    
-    // Staggered animation for service items
-    const serviceItems = document.querySelectorAll('.service-item');
-    serviceItems.forEach((item, index) => {
-        item.style.animationDelay = `${index * 0.1}s`;
-    });
-    
-    // Staggered animation for step items
-    const stepItems = document.querySelectorAll('.step-item');
-    stepItems.forEach((item, index) => {
-        item.style.animationDelay = `${index * 0.1}s`;
-    });
-}
-
-/**
- * Initialize interactive features
- */
-function initializeInteractiveFeatures() {
-    // Add click-to-copy functionality for contact information
-    initializeClickToCopy();
-    
-    // Add hover effects for cards
-    initializeHoverEffects();
-    
-    // Add smooth scrolling for internal links
-    initializeSmoothScrolling();
-    
-    // Add keyboard navigation
-    initializeKeyboardNavigation();
-}
-
-/**
- * Initialize click-to-copy functionality
- */
-function initializeClickToCopy() {
-    const contactValues = document.querySelectorAll('.contact-value');
-    
-    contactValues.forEach(element => {
-        element.style.cursor = 'pointer';
-        element.title = 'Klik untuk menyalin';
-        
-        element.addEventListener('click', function() {
-            const text = this.textContent.trim();
-            
-            // Copy to clipboard
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showCopyNotification(this, 'Disalin!');
-                }).catch(() => {
-                    fallbackCopyTextToClipboard(text, this);
-                });
-            } else {
-                fallbackCopyTextToClipboard(text, this);
-            }
+function initializeSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
         });
-    });
+        
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    }
 }
 
 /**
- * Fallback copy function for older browsers
+ * Load content from API
  */
-function fallbackCopyTextToClipboard(text, element) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
+async function loadContent() {
+    try {
+        showLoading();
+        
+        // Sample data for Dukungan Teknis
+        const sampleContent = [
+            {
+                id: 1,
+                title: "Sample Dukungan Teknis Item 1",
+                subtitle: "Contoh item pertama",
+                description: "Deskripsi lengkap untuk item pertama dalam kategori Dukungan Teknis. Item ini menunjukkan bagaimana konten ditampilkan dalam sistem.",
+                category: "general",
+                priority: "high"
+            },
+            {
+                id: 2,
+                title: "Sample Dukungan Teknis Item 2", 
+                subtitle: "Contoh item kedua",
+                description: "Deskripsi untuk item kedua yang memberikan informasi tambahan tentang fitur dan fungsi yang tersedia.",
+                category: "technical",
+                priority: "medium"
+            },
+            {
+                id: 3,
+                title: "Sample Dukungan Teknis Item 3",
+                subtitle: "Contoh item ketiga",
+                description: "Item ketiga ini menampilkan variasi konten yang dapat dikelola dalam sistem manajemen Dukungan Teknis.",
+                category: "tutorial",
+                priority: "low"
+            }
+        ];
+        
+        contentItems = sampleContent;
+        filteredItems = [...contentItems];
+        renderContent();
+        
+    } catch (error) {
+        console.error('Error loading content:', error);
+        showError('Gagal memuat konten');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Render content to the DOM
+ */
+function renderContent() {
+    const container = document.getElementById('contentContainer');
+    if (!container) return;
+    
+    if (filteredItems.length === 0) {
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h3>Tidak ada konten ditemukan</h3>
+                    <p>Belum ada konten yang tersedia atau sesuai dengan pencarian Anda.</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filteredItems.map(item => `
+        <div class="col-lg-6 col-md-12">
+            <div class="content-card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="bi bi-${getCategoryIcon(item.category)}"></i>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action edit" onclick="editItem(${item.id})" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-action delete" onclick="deleteItem(${item.id})" title="Hapus">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">${item.title}</h3>
+                    ${item.subtitle ? `<p class="card-subtitle">${item.subtitle}</p>` : ''}
+                    <div class="card-description">${item.description}</div>
+                    <div class="mt-3">
+                        <span class="badge bg-${getPriorityColor(item.priority)} me-2">${item.priority}</span>
+                        <span class="badge bg-secondary">${item.category}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Get icon for category
+ */
+function getCategoryIcon(category) {
+    const icons = {
+        'general': 'info-circle',
+        'technical': 'gear',
+        'tutorial': 'book',
+        'update': 'arrow-up-circle',
+        'default': 'file-text'
+    };
+    return icons[category] || icons.default;
+}
+
+/**
+ * Get color for priority
+ */
+function getPriorityColor(priority) {
+    const colors = {
+        'high': 'danger',
+        'medium': 'warning',
+        'low': 'success'
+    };
+    return colors[priority] || 'secondary';
+}
+
+/**
+ * Handle search functionality
+ */
+function handleSearch() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    filteredItems = contentItems.filter(item => 
+        item.title.toLowerCase().includes(searchTerm) ||
+        item.subtitle.toLowerCase().includes(searchTerm) ||
+        item.description.toLowerCase().includes(searchTerm) ||
+        item.category.toLowerCase().includes(searchTerm)
+    );
+    
+    renderContent();
+}
+
+/**
+ * Save new item
+ */
+async function saveItem() {
+    try {
+        const title = document.getElementById('itemTitle').value;
+        const subtitle = document.getElementById('itemSubtitle').value;
+        const description = document.getElementById('itemDescription').value;
+        const category = document.getElementById('itemCategory').value;
+        const priority = document.getElementById('itemPriority').value;
+        
+        if (!title || !description) {
+            showError('Judul dan deskripsi harus diisi');
+            return;
+        }
+        
+        showLoading();
+        
+        const newItem = {
+            id: Date.now(),
+            title,
+            subtitle,
+            description,
+            category,
+            priority
+        };
+        
+        contentItems.push(newItem);
+        filteredItems = [...contentItems];
+        renderContent();
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addItemModal'));
+        modal.hide();
+        document.getElementById('addItemForm').reset();
+        
+        showSuccess('Item berhasil ditambahkan');
+        
+    } catch (error) {
+        console.error('Error saving item:', error);
+        showError('Gagal menyimpan item');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Edit item
+ */
+function editItem(id) {
+    const item = contentItems.find(i => i.id === id);
+    
+    if (!item) {
+        showError('Item tidak ditemukan');
+        return;
+    }
+    
+    document.getElementById('editId').value = id;
+    document.getElementById('editTitle').value = item.title;
+    document.getElementById('editSubtitle').value = item.subtitle || '';
+    document.getElementById('editDescription').value = item.description;
+    document.getElementById('editCategory').value = item.category;
+    document.getElementById('editPriority').value = item.priority;
+    
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+}
+
+/**
+ * Update item
+ */
+async function updateItem() {
+    try {
+        const id = parseInt(document.getElementById('editId').value);
+        const title = document.getElementById('editTitle').value;
+        const subtitle = document.getElementById('editSubtitle').value;
+        const description = document.getElementById('editDescription').value;
+        const category = document.getElementById('editCategory').value;
+        const priority = document.getElementById('editPriority').value;
+        
+        if (!title || !description) {
+            showError('Judul dan deskripsi harus diisi');
+            return;
+        }
+        
+        showLoading();
+        
+        const index = contentItems.findIndex(i => i.id === id);
+        if (index !== -1) {
+            contentItems[index] = {
+                ...contentItems[index],
+                title,
+                subtitle,
+                description,
+                category,
+                priority
+            };
+            filteredItems = [...contentItems];
+            renderContent();
+        }
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+        modal.hide();
+        
+        showSuccess('Item berhasil diperbarui');
+        
+    } catch (error) {
+        console.error('Error updating item:', error);
+        showError('Gagal memperbarui item');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Delete item
+ */
+async function deleteItem(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+        return;
+    }
     
     try {
-        document.execCommand('copy');
-        showCopyNotification(element, 'Disalin!');
-    } catch (err) {
-        showCopyNotification(element, 'Gagal menyalin');
+        showLoading();
+        
+        contentItems = contentItems.filter(i => i.id !== id);
+        filteredItems = [...contentItems];
+        renderContent();
+        
+        showSuccess('Item berhasil dihapus');
+        
+    } catch (error) {
+        console.error('Error deleting item:', error);
+        showError('Gagal menghapus item');
+    } finally {
+        hideLoading();
     }
-    
-    document.body.removeChild(textArea);
 }
 
 /**
- * Show copy notification
+ * Refresh content
  */
-function showCopyNotification(element, message) {
-    const notification = document.createElement('div');
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: absolute;
-        background: #28a745;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        z-index: 1000;
-        pointer-events: none;
-        transform: translateX(-50%);
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+function refreshContent() {
+    loadContent();
+    showSuccess('Konten berhasil diperbarui');
+}
+
+/**
+ * Show loading spinner
+ */
+function showLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'flex';
+    }
+}
+
+/**
+ * Hide loading spinner
+ */
+function hideLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'none';
+    }
+}
+
+/**
+ * Show success message
+ */
+function showSuccess(message) {
+    showToast(message, 'success');
+}
+
+/**
+ * Show error message
+ */
+function showError(message) {
+    showToast(message, 'error');
+}
+
+/**
+ * Show toast notification
+ */
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="bi bi-x"></i>
+        </button>
     `;
     
-    const rect = element.getBoundingClientRect();
-    notification.style.left = rect.left + rect.width / 2 + 'px';
-    notification.style.top = rect.top - 40 + 'px';
+    if (!document.querySelector('#toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            .toast-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 300px;
+                animation: slideInRight 0.3s ease-out;
+                border-left: 4px solid #6b7280;
+            }
+            .toast-success { border-left-color: #059669; }
+            .toast-error { border-left-color: #dc2626; }
+            .toast-content {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex: 1;
+            }
+            .toast-close {
+                background: none;
+                border: none;
+                color: #6b7280;
+                cursor: pointer;
+                padding: 0.25rem;
+                border-radius: 4px;
+            }
+            .toast-close:hover {
+                background-color: #f3f4f6;
+            }
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
     
-    document.body.appendChild(notification);
-    
-    // Animate in
-    notification.style.opacity = '0';
-    notification.style.transform = 'translateX(-50%) translateY(10px)';
-    notification.style.transition = 'all 0.3s ease';
+    document.body.appendChild(toast);
     
     setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateX(-50%) translateY(0)';
-    }, 10);
-    
-    // Remove after 2 seconds
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(-50%) translateY(-10px)';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 2000);
-}
-
-/**
- * Initialize hover effects
- */
-function initializeHoverEffects() {
-    // Enhanced hover effects for contact cards
-    const contactCards = document.querySelectorAll('.contact-card');
-    contactCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-4px) scale(1.02)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-    
-    // Enhanced hover effects for service items
-    const serviceItems = document.querySelectorAll('.service-item');
-    serviceItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateX(8px)';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateX(0)';
-        });
-    });
-    
-    // Enhanced hover effects for step items
-    const stepItems = document.querySelectorAll('.step-item');
-    stepItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-}
-
-/**
- * Initialize smooth scrolling
- */
-function initializeSmoothScrolling() {
-    const links = document.querySelectorAll('a[href^="#"]');
-    
-    links.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-}
-
-/**
- * Initialize keyboard navigation
- */
-function initializeKeyboardNavigation() {
-    document.addEventListener('keydown', function(e) {
-        // Escape key to scroll to top
-        if (e.key === 'Escape') {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+        if (toast.parentElement) {
+            toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+            setTimeout(() => toast.remove(), 300);
         }
-        
-        // Ctrl+H to focus on header
-        if (e.ctrlKey && e.key === 'h') {
-            e.preventDefault();
-            const header = document.querySelector('.page-header');
-            if (header) {
-                header.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                header.focus();
-            }
-        }
-    });
+    }, 5000);
 }
 
-/**
- * Handle responsive behavior
- */
-function handleResponsive() {
-    const isMobile = window.innerWidth <= 768;
-    const isTablet = window.innerWidth <= 992;
-    
-    // Adjust card layouts for mobile
-    const contactGrid = document.querySelector('.contact-grid');
-    const requestGrid = document.querySelector('.request-grid');
-    
-    if (contactGrid) {
-        if (isMobile) {
-            contactGrid.style.gridTemplateColumns = '1fr';
-        } else if (isTablet) {
-            contactGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-        } else {
-            contactGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
-        }
-    }
-    
-    if (requestGrid) {
-        if (isTablet) {
-            requestGrid.style.gridTemplateColumns = '1fr';
-        } else {
-            requestGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-        }
-    }
-}
-
-/**
- * Logout confirmation function
- */
-function confirmLogout() {
-    return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
-}
-
-/**
- * Initialize tooltips
- */
-function initializeTooltips() {
-    // Add tooltips to interactive elements
-    const tooltipElements = [
-        { selector: '.contact-value', text: 'Klik untuk menyalin' },
-        { selector: '.header-icon', text: 'Dukungan Teknis' },
-        { selector: '.contact-icon', text: 'Informasi Kontak' },
-        { selector: '.service-bullet', text: 'Layanan Tersedia' }
-    ];
-    
-    tooltipElements.forEach(({ selector, text }) => {
-        const elements = document.querySelectorAll(selector);
-        elements.forEach(element => {
-            if (!element.title) {
-                element.title = text;
-            }
-        });
-    });
-}
-
-/**
- * Initialize intersection observer for animations
- */
-function initializeIntersectionObserver() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-    
-    // Observe all support sections
-    const sections = document.querySelectorAll('.support-section');
-    sections.forEach(section => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(30px)';
-        section.style.transition = 'all 0.6s ease';
-        observer.observe(section);
-    });
-}
-
-/**
- * Performance optimization
- */
-function optimizePerformance() {
-    // Debounce resize events
-    let resizeTimeout;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(handleResponsive, 250);
-    });
-    
-    // Lazy load animations
-    if ('IntersectionObserver' in window) {
-        initializeIntersectionObserver();
-    }
-}
-
-/**
- * Accessibility improvements
- */
-function enhanceAccessibility() {
-    // Add ARIA labels
-    const contactCards = document.querySelectorAll('.contact-card');
-    contactCards.forEach((card, index) => {
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        card.setAttribute('aria-label', `Informasi kontak ${index + 1}`);
-    });
-    
-    // Add keyboard support for interactive elements
-    const interactiveElements = document.querySelectorAll('.contact-card, .service-item');
-    interactiveElements.forEach(element => {
-        element.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-            }
-        });
-    });
-}
-
-// Handle window resize
-window.addEventListener('resize', handleResponsive);
-
-// Initialize performance optimizations
-document.addEventListener('DOMContentLoaded', function() {
-    optimizePerformance();
-    initializeTooltips();
-    enhanceAccessibility();
-});
-
-/**
- * Export functions for external use
- */
-window.DukunganTeknis = {
-    confirmLogout,
-    initializeFeatherIcons,
-    handleResponsive,
-    showCopyNotification
-};
+// Export functions for global access
+window.saveItem = saveItem;
+window.editItem = editItem;
+window.updateItem = updateItem;
+window.deleteItem = deleteItem;
+window.refreshContent = refreshContent;

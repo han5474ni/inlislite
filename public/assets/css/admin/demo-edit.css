@@ -1,0 +1,7 @@
+/* Import the base styles from tentang-edit.css with red theme */
+@import url('./tentang-edit.css');
+
+/* Override header color for Demo (Red theme) */
+.page-header {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}

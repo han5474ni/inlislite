@@ -84,7 +84,7 @@ class Home extends BaseController
             // Debug logging
             log_message('info', 'Monthly stats result: ' . json_encode($monthlyStats));
             
-            return $this->response->setJSON($monthlyStats);
+return json_encode($monthlyStats);
         } catch (\Exception $e) {
             // Log the error
             log_message('error', 'Error getting registration stats: ' . $e->getMessage());
@@ -99,7 +99,7 @@ class Home extends BaseController
                     'pending' => 0
                 ];
             }
-            return $this->response->setJSON($emptyData);
+            return json_encode($emptyData);
         }
     }
 
@@ -293,7 +293,7 @@ class Home extends BaseController
         } catch (\Exception $e) {
             // Redirect back to registration list with error
             session()->setFlashdata('error', 'Registration not found: ' . $e->getMessage());
-            return redirect()->to('/admin/registration');
+return redirect()->to(base_url('admin/registration'));
         }
     }
 
@@ -668,7 +668,7 @@ class Home extends BaseController
     public function panduan(): string
     {
         // Redirect to DocumentController
-        return redirect()->to(site_url('panduan'));
+return redirect()->to(base_url('panduan'));
     }
 
     public function debugDatabase(): string
@@ -694,9 +694,9 @@ class Home extends BaseController
                 'current_year_stats' => $currentYearStats
             ];
             
-            return $this->response->setJSON($debugData);
+            return json_encode($debugData);
         } catch (\Exception $e) {
-            return $this->response->setJSON([
+            return json_encode([
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);

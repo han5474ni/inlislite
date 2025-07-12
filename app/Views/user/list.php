@@ -548,67 +548,67 @@
     <?= view('user/form') ?>
 
     <!-- Edit User Modal -->
-    <div class="modal fade" id="editUserModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div>
-                        <h5 class="modal-title">Edit Pengguna</h5>
-                        <p class="modal-subtitle mb-0">Ubah informasi dan hak akses pengguna</p>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title">Edit Pengguna</h5>
+                    <p class="modal-subtitle mb-0">Ubah informasi dan hak akses pengguna</p>
                 </div>
-                <div class="modal-body">
-                    <form id="editUserForm">
-                        <input type="hidden" name="user_id" id="editUserId">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label">Nama Lengkap</label>
-                                <input type="text" class="form-control" name="nama_lengkap" id="editNamaLengkap">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Username</label>
-                                <input type="text" class="form-control" name="nama_pengguna" id="editNamaPengguna" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" id="editEmail" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Kata Sandi Baru (kosongkan jika tidak diubah)</label>
-                                <input type="password" class="form-control" name="kata_sandi" id="editKataSandi">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Role</label>
-                                <select class="form-select" name="role" id="editRole" required>
-                                    <option value="">Pilih Role</option>
-                                    <option value="Super Admin">Super Admin</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Pustakawan">Pustakawan</option>
-                                    <option value="Staff">Staff</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" name="status" id="editStatus" required>
-                                    <option value="">Pilih Status</option>
-                                    <option value="Aktif">Aktif</option>
-                                    <option value="Non-Aktif">Non-Aktif</option>
-                                </select>
-                            </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" name="user_id" id="editUserId">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" name="nama_lengkap" id="editNamaLengkap">
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-success" id="updateUserBtn">
-                        <i data-feather="save" style="width: 16px; height: 16px;"></i>
-                        Update User
-                    </button>
-                </div>
+                        <div class="col-12">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" name="nama_pengguna" id="editNamaPengguna" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="editEmail" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Kata Sandi Baru (kosongkan jika tidak diubah)</label>
+                            <input type="password" class="form-control" name="kata_sandi" id="editKataSandi">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Role</label>
+                            <select class="form-select" name="role" id="editRole" required>
+                                <option value="">Pilih Role</option>
+                                <option value="Super Admin">Super Admin</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Pustakawan">Pustakawan</option>
+                                <option value="Staff">Staff</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status" id="editStatus" required>
+                                <option value="">Pilih Status</option>
+                                <option value="Aktif">Aktif</option>
+                                <option value="Non-Aktif">Non-Aktif</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-success" id="updateUserBtn" onclick="submitEditUser(); return false;">
+                    <i data-feather="save" style="width: 16px; height: 16px;"></i>
+                    Perbarui User
+                </button>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
@@ -618,6 +618,25 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    
+    <!-- Fix for Bootstrap modal issues -->
+    <style>
+        .modal-backdrop {
+            z-index: 1030 !important;
+        }
+        .modal-content {
+            z-index: 1050 !important;
+        }
+        .modal-footer {
+            z-index: 1060 !important;
+            position: relative;
+        }
+        .btn {
+            position: relative;
+            z-index: 1070 !important;
+            pointer-events: auto !important;
+        }
+    </style>
     
     <script>
         // Global variables
@@ -634,6 +653,61 @@
             
             // Initialize DataTables
             initializeDataTable();
+            
+            // Add direct click handler to update button
+            $(document).on('click', '#updateUserBtn', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Update button clicked via document handler');
+                submitEditUser();
+                return false;
+            });
+            
+            // Add click handler to edit user links in dropdown
+            $(document).on('click', '.dropdown-item', function(e) {
+                console.log('Dropdown item clicked:', $(this).text());
+            });
+            
+            // Fix for Bootstrap modal issues
+            $(document).on('shown.bs.modal', '#editUserModal', function() {
+                console.log('Modal shown event triggered');
+                
+                // Ensure the button is clickable immediately
+                $('#updateUserBtn').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Update button clicked after modal shown');
+                    submitEditUser();
+                    return false;
+                });
+                console.log('Click handler attached to updateUserBtn');
+                
+                // Add a direct click handler to the button element
+                var updateBtn = document.getElementById('updateUserBtn');
+                if (updateBtn) {
+                    // Remove any existing event listeners
+                    var newUpdateBtn = updateBtn.cloneNode(true);
+                    updateBtn.parentNode.replaceChild(newUpdateBtn, updateBtn);
+                    
+                    // Add new event listener
+                    newUpdateBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Native click event on updateUserBtn');
+                        submitEditUser();
+                        return false;
+                    });
+                    console.log('Native click handler attached to cloned button');
+                    
+                    // Add inline onclick attribute
+                    newUpdateBtn.setAttribute('onclick', 'submitEditUser(); return false;');
+                } else {
+                    console.log('updateUserBtn element not found');
+                }
+                
+                // Re-initialize feather icons
+                feather.replace();
+            });
         });
 
         // Setup event listeners
@@ -662,8 +736,21 @@
             });
 
             // Edit user form submission
-            $('#updateUserBtn').on('click', function() {
+            $('#editUserForm').on('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Form submit event triggered');
                 submitEditUser();
+                return false;
+            });
+            
+            // Add direct click handler to update button as fallback
+            $('#updateUserBtn').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Update button clicked directly');
+                submitEditUser();
+                return false;
             });
 
             // Modal events
@@ -823,81 +910,179 @@
 
         // Edit user
         function editUser(userId) {
+            console.log('editUser called with userId:', userId);
+            
+            // Set currentEditUserId immediately
+            currentEditUserId = userId;
+            console.log('currentEditUserId set to:', currentEditUserId);
+            
+            // Reset form and clear errors
+            $('#editUserForm')[0].reset();
+            clearFormErrors();
+            
+            // Set the user ID in the hidden field
+            $('#editUserId').val(userId);
+            
+            // Show modal with loading indicator
+            $('#editUserModal').modal('show');
+            
+            // Add loading indicator
+            const modalBody = $('#editUserModal .modal-body');
+            const loadingIndicator = $('<div id="loadingIndicator" class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+            modalBody.find('form').hide();
+            modalBody.append(loadingIndicator);
+            
+            // Disable update button while loading
+            $('#updateUserBtn').prop('disabled', true);
+            
             $.ajax({
-                url: '<?= base_url('users/show') ?>/' + userId,
+                url: '<?= base_url(\'user/get\') ?>/' + userId,
                 type: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
+                dataType: 'json',
                 success: function(response) {
-                    if (response.success) {
+                    // Remove loading indicator
+                    $('#loadingIndicator').remove();
+                    modalBody.find('form').show();
+                    
+                    // Enable update button
+                    $('#updateUserBtn').prop('disabled', false);
+                    
+                    if (response.status) {
                         const user = response.data;
-                        currentEditUserId = userId;
+                        console.log('User data received:', user);
                         
-                        // Populate form
-                        $('#editUserId').val(user.id);
-                        $('#editNamaLengkap').val(user.nama_lengkap);
-                        $('#editNamaPengguna').val(user.nama_pengguna);
-                        $('#editEmail').val(user.email);
-                        $('#editRole').val(user.role);
-                        $('#editStatus').val(user.status);
+                        // Populate form fields
+                        $('#editUserId').val(user.ID);
+                        $('#editNamaLengkap').val(user.Fullname);
+                        $('#editNamaPengguna').val(user.Username);
+                        $('#editEmail').val(user.Email);
+                        $('#editKataSandi').val(''); // Clear password field
+                        $('#editRole').val(user.Role_id);
+                        $('#editStatus').val(user.IsActive === '1' ? 'Aktif' : 'Non-Aktif');
                         
-                        // Show modal
-                        $('#editUserModal').modal('show');
+                        console.log('Form populated with user data');
+                        
+                        // Initialize feather icons
+                        feather.replace();
+                        
+                        // Ensure the button is properly set up with click handler
+                        $('#updateUserBtn').off('click').on('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('Update button clicked');
+                            submitEditUser();
+                            return false;
+                        });
                     } else {
-                        showToast(response.message, 'error');
+                        showToast(response.message || 'Gagal mengambil data pengguna', 'error');
+                        $('#editUserModal').modal('hide');
                     }
                 },
                 error: function(xhr, status, error) {
-                    showToast('Terjadi kesalahan sistem', 'error');
+                    // Remove loading indicator
+                    $('#loadingIndicator').remove();
+                    modalBody.find('form').show();
+                    
+                    // Enable update button
+                    $('#updateUserBtn').prop('disabled', false);
+                    
+                    console.error('AJAX Error:', xhr.responseText);
+                    showToast('Terjadi kesalahan saat mengambil data pengguna', 'error');
+                    $('#editUserModal').modal('hide');
                 }
             });
         }
 
         // Submit edit user form
         function submitEditUser() {
-            if (!currentEditUserId) return;
+            console.log('submitEditUser called');
             
-            const form = $('#editUserForm');
-            const formData = new FormData(form[0]);
-            const submitBtn = $('#updateUserBtn');
+            // Get user ID from hidden field
+            const userId = $('#editUserId').val();
+            console.log('User ID from hidden field:', userId);
             
-            // Show loading state
-            submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...');
+            if (!userId) {
+                console.error('No user ID found for update operation');
+                showToast('ID Pengguna tidak ditemukan', 'error');
+                return false;
+            }
+            
+            // Clear previous errors
             clearFormErrors();
-
+            
+            // Show loading indicator in button
+            const submitBtn = $('#updateUserBtn');
+            const originalBtnText = submitBtn.html();
+            submitBtn.html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Memproses...');
+            submitBtn.prop('disabled', true);
+            
+            // Prepare form data
+            const formData = {
+                id: userId,
+                nama_lengkap: $('#editNamaLengkap').val(),
+                nama_pengguna: $('#editNamaPengguna').val(),
+                email: $('#editEmail').val(),
+                kata_sandi: $('#editKataSandi').val(),
+                role: $('#editRole').val(),
+                status: $('#editStatus').val()
+            };
+            
+            console.log('Submitting form data:', formData);
+            
             $.ajax({
-                url: '<?= base_url('users/update') ?>/' + currentEditUserId,
+                url: '<?= base_url('user/update') ?>',
                 type: 'POST',
                 data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
+                dataType: 'json',
                 success: function(response) {
-                    if (response.success) {
-                        showToast(response.message, 'success');
+                    console.log('Update response:', response);
+                    
+                    if (response.status) {
+                        showToast(response.message || 'Pengguna berhasil diperbarui', 'success');
                         $('#editUserModal').modal('hide');
-                        usersTable.ajax.reload();
+                        
+                        // Reload DataTable
+                        if (typeof userDataTable !== 'undefined') {
+                            userDataTable.ajax.reload();
+                        } else {
+                            // Fallback: reload page if DataTable not available
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                        
+                        // Reset currentEditUserId
+                        currentEditUserId = null;
                     } else {
                         if (response.errors) {
-                            displayFormErrors(response.errors, 'edit');
+                            // Display validation errors
+                            $.each(response.errors, function(field, message) {
+                                const inputField = $('#edit' + field.charAt(0).toUpperCase() + field.slice(1));
+                                inputField.addClass('is-invalid');
+                                inputField.siblings('.invalid-feedback').text(message);
+                            });
                         } else {
-                            showToast(response.message, 'error');
+                            showToast(response.message || 'Gagal memperbarui pengguna', 'error');
                         }
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('AJAX Error:', error);
-                    showToast('Terjadi kesalahan sistem', 'error');
+                    console.error('AJAX Error:', xhr.responseText);
+                    
+                    // Try to parse response if possible
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        showToast(errorResponse.message || 'Terjadi kesalahan saat memperbarui pengguna', 'error');
+                    } catch (e) {
+                        showToast('Terjadi kesalahan saat memperbarui pengguna', 'error');
+                    }
                 },
                 complete: function() {
-                    // Reset button state
-                    submitBtn.prop('disabled', false).html('<i data-feather="save" style="width: 16px; height: 16px;"></i> Update User');
-                    feather.replace();
+                    submitBtn.html(originalBtnText).prop('disabled', false);
                 }
             });
+            
+            return false;
         }
 
         // Delete user
@@ -966,35 +1151,135 @@
         function clearFormErrors() {
             $('.is-invalid').removeClass('is-invalid');
             $('.invalid-feedback').remove();
+            console.log('Form errors cleared');
         }
+        
+        // Display form errors
+            function displayFormErrors(errors, formPrefix) {
+                clearFormErrors();
+                
+                $.each(errors, function(field, message) {
+                    // Handle different field naming conventions
+                    let fieldId;
+                    
+                    // Try different field naming patterns
+                    if (field.includes('_')) {
+                        // Convert snake_case to CamelCase (nama_lengkap -> NamaLengkap)
+                        const fieldParts = field.split('_');
+                        const capitalizedField = fieldParts.map(part => 
+                            part.charAt(0).toUpperCase() + part.slice(1)
+                        ).join('');
+                        fieldId = formPrefix + capitalizedField;
+                    } else {
+                        // Try direct field name with prefix
+                        fieldId = formPrefix + field.charAt(0).toUpperCase() + field.slice(1);
+                    }
+                    
+                    // Try to find the field
+                    let inputField = $('#' + fieldId);
+                    
+                    // If not found, try alternative naming
+                    if (!inputField.length) {
+                        // Try common field mappings
+                        const fieldMappings = {
+                            'nama_pengguna': 'NamaPengguna',
+                            'nama_lengkap': 'NamaLengkap',
+                            'kata_sandi': 'KataSandi',
+                            'username': 'NamaPengguna',
+                            'fullname': 'NamaLengkap',
+                            'password': 'KataSandi',
+                            'email': 'Email',
+                            'role': 'Role',
+                            'status': 'Status'
+                        };
+                        
+                        if (fieldMappings[field]) {
+                            inputField = $('#' + formPrefix + fieldMappings[field]);
+                        }
+                    }
+                    
+                    if (inputField.length) {
+                        // Mark field as invalid
+                        inputField.addClass('is-invalid');
+                        
+                        // Create or update feedback div
+                        let feedbackDiv = inputField.siblings('.invalid-feedback');
+                        if (feedbackDiv.length === 0) {
+                            inputField.after('<div class="invalid-feedback"></div>');
+                            feedbackDiv = inputField.siblings('.invalid-feedback');
+                        }
+                        feedbackDiv.text(message);
+                        
+                        console.log('Error displayed for field:', fieldId);
+                    } else {
+                        console.warn('Field not found for error:', field, 'Tried ID:', fieldId);
+                    }
+                });
+                
+                console.log('Form errors displayed');
+            }
 
         // Show toast notification
         function showToast(message, type = 'info') {
+            // Map type to Bootstrap color class and icon
+            let bgClass, icon;
+            switch (type) {
+                case 'success':
+                    bgClass = 'bg-success';
+                    icon = '<i data-feather="check-circle" class="me-2"></i>';
+                    break;
+                case 'error':
+                    bgClass = 'bg-danger';
+                    icon = '<i data-feather="alert-circle" class="me-2"></i>';
+                    break;
+                case 'warning':
+                    bgClass = 'bg-warning';
+                    icon = '<i data-feather="alert-triangle" class="me-2"></i>';
+                    break;
+                default:
+                    bgClass = 'bg-info';
+                    icon = '<i data-feather="info" class="me-2"></i>';
+            }
+            
             const toastContainer = $('#toastContainer');
             
             const toastId = 'toast-' + Date.now();
-            const bgClass = type === 'error' ? 'bg-danger' : (type === 'success' ? 'bg-success' : 'bg-info');
             
+            // Create toast element
             const toast = $(`
-                <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert">
+                <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
                     <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
+                        <div class="toast-body d-flex align-items-center">
+                            ${icon}
+                            <span>${message}</span>
                         </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                 </div>
             `);
             
             toastContainer.append(toast);
             
-            const bootstrapToast = new bootstrap.Toast(toast[0]);
+            // Initialize feather icons in the toast
+            feather.replace({
+                'width': 18,
+                'height': 18
+            });
+            
+            // Show toast with Bootstrap
+            const bootstrapToast = new bootstrap.Toast(toast[0], {
+                autohide: true,
+                delay: 5000
+            });
+            
             bootstrapToast.show();
             
             // Remove toast from DOM after hiding
             toast.on('hidden.bs.toast', function() {
                 $(this).remove();
             });
+            
+            console.log(`Toast shown: ${type} - ${message}`);
         }
     </script>
 </body>

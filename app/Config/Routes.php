@@ -20,6 +20,11 @@ $routes->get('test-upload', function() {
     return view('test_profile_upload');
 });
 
+// CRUD functionality test route (remove in production)
+$routes->get('test-crud', 'CrudTestController::index');
+
+// Test routes for tentang have been removed - use admin/tentang routes instead
+
 $routes->get('/', 'PublicController::index');
 $routes->get('home', 'PublicController::index');
 
@@ -39,6 +44,7 @@ $routes->get('bimbingan', 'PublicController::bimbingan');
 $routes->get('training', 'PublicController::bimbingan');
 $routes->get('demo', 'PublicController::demo');
 $routes->get('demo-program', 'PublicController::demo');
+$routes->get('installer-edit', 'Admin\InstallerController::edit');
 
 // Demo routes (Public for testing - REMOVE IN PRODUCTION)
 $routes->get('modern-dashboard', 'Admin\AdminController::modernDashboard');
@@ -49,10 +55,6 @@ $routes->get('profile-demo', 'Home::profile');
 $routes->get('test-registration-view/(:num)', 'Home::viewRegistration/$1');
 
 // Debug routes (REMOVE IN PRODUCTION)
-$routes->get('test-user-management-debug', function() {
-    return file_get_contents(FCPATH . 'test_user_management_debug.php');
-});
-
 // Temporary upload routes for testing (REMOVE IN PRODUCTION)
 $routes->get('test-upload-photo', 'ProfileController::index');
 $routes->post('test-upload-photo', 'ProfileController::uploadPhoto');
@@ -107,9 +109,21 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('tentang-edit', 'AdminController::tentangEdit');
     $routes->group('tentang', function($routes) {
         $routes->get('getCards', 'AdminController::getTentangCards');
-        $routes->post('createCard', 'AdminController::createTentangCard');
-        $routes->post('updateCard', 'AdminController::updateTentangCard');
-        $routes->post('deleteCard', 'AdminController::deleteTentangCard');
+        $routes->post('createCard', 'AdminController::createCard');
+        $routes->post('updateCard', 'AdminController::updateCard');
+        $routes->post('deleteCard', 'AdminController::deleteCard');
+    });
+    
+    // Features and Modules Management
+    $routes->get('fitur', 'FiturController::index');
+    $routes->get('fitur-edit', 'FiturController::edit');
+    $routes->group('fitur', function($routes) {
+        $routes->get('data', 'FiturController::getData');
+        $routes->get('statistics', 'FiturController::getStatistics');
+        $routes->post('store', 'FiturController::store');
+        $routes->put('update/(:num)', 'FiturController::update/$1');
+        $routes->delete('delete/(:num)', 'FiturController::delete/$1');
+        $routes->post('sort-order', 'FiturController::updateSortOrder');
     });
     // Panduan page
     $routes->get('panduan', 'AdminController::panduan');
@@ -119,9 +133,17 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('bimbingan', 'AdminController::bimbingan');
     // Patch page
     $routes->get('patch', 'AdminController::patch_updater');
+    $routes->get('patch-edit', 'AdminController::patchEdit');
     $routes->get('patch_updater', function() {
         return redirect()->to(base_url('admin/patch'));
     });
+    
+    // Management edit pages
+    $routes->get('aplikasi-edit', 'AdminController::aplikasiEdit');
+    $routes->get('panduan-edit', 'AdminController::panduanEdit');
+    $routes->get('dukungan-edit', 'AdminController::dukunganEdit');
+    $routes->get('bimbingan-edit', 'AdminController::bimbinganEdit');
+    $routes->get('demo-edit', 'AdminController::demoEdit');
     // User Management
     $routes->group('users', function($routes) {
         $routes->get('/', 'UserManagement::index');
@@ -278,32 +300,6 @@ $routes->post('registration/update/(:num)', 'Home::updateRegistration/$1');
 $routes->post('registration/update-status', 'Home::updateRegistrationStatus');
 $routes->get('registration/delete/(:num)', 'Home::deleteRegistration/$1');
 $routes->get('setup/create-registrations-table', 'Setup::createRegistrationsTable');
-$routes->get('debug-database', 'Home::debugDatabase');
-
-// Document management routes (removed - using admin routes instead)
-
-// Profile routes
-$routes->get('profile', 'Home::profile', ['filter' => 'adminauth']);
-$routes->post('profile/update', 'Home::updateProfile', ['filter' => 'adminauth']);
-
-// ============================================================================
-// LOAD ENVIRONMENT AND SYSTEM ROUTES
-// ============================================================================
-
-// Load environment-specific routes
-if (file_exists(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
-    require APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php';
-}
-
-
-
-// Database Sync Testing Routes
-$routes->get('test_database_sync', function() {
-    return file_get_contents(FCPATH . 'test_database_sync.php');
-});
-$routes->get('test_new_user_management', function() {
-    return file_get_contents(FCPATH . 'test_new_user_management.html');
-});
 $routes->get('fix_user_sync', function() {
     return file_get_contents(FCPATH . 'fix_user_sync.php');
 });
@@ -312,6 +308,5 @@ $routes->get('fix_user_sync', function() {
 if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
     require SYSTEMPATH . 'Config/Routes.php';
 }
-
 
 // Additional admin routes (moved to admin group above)

@@ -1,0 +1,229 @@
+/**
+ * INLISLite v3.0 Public Demo Page JavaScript
+ * Handles demo interactions and functionality
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeDemoPage();
+});
+
+/**
+ * Initialize demo page functionality
+ */
+function initializeDemoPage() {
+    initializeCopyButtons();
+    initializeDemoButtons();
+    initializeAnimations();
+}
+
+/**
+ * Initialize copy to clipboard functionality
+ */
+function initializeCopyButtons() {
+    const copyButtons = document.querySelectorAll('.copy-btn');
+    
+    copyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const textToCopy = this.getAttribute('data-copy');
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Show success feedback
+                const originalIcon = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check"></i>';
+                this.classList.add('btn-success');
+                this.classList.remove('btn-outline-secondary');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalIcon;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-secondary');
+                }, 1000);
+                
+                showToast(`${textToCopy} berhasil disalin!`, 'success');
+            }).catch(() => {
+                showToast('Gagal menyalin teks', 'error');
+            });
+        });
+    });
+}
+
+/**
+ * Initialize demo access tracking
+ */
+function initializeDemoButtons() {
+    document.querySelectorAll('.demo-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const demoId = this.getAttribute('data-demo-id');
+            // Track demo access analytics
+            console.log(`Demo ${demoId} accessed`);
+            showToast('Membuka demo di tab baru...', 'info');
+        });
+    });
+}
+
+/**
+ * Initialize scroll animations
+ */
+function initializeAnimations() {
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        animatedElements.forEach(element => {
+            observer.observe(element);
+        });
+    } else {
+        // Fallback for browsers without Intersection Observer
+        animatedElements.forEach(element => {
+            element.classList.add('animate-fade-in');
+        });
+    }
+}
+
+/**
+ * Show demo details modal
+ * @param {number} demoId - Demo ID
+ */
+function showDemoDetails(demoId) {
+    const modal = new bootstrap.Modal(document.getElementById('demoDetailsModal'));
+    document.getElementById('demoDetailsModalLabel').textContent = `Detail Demo Program ${demoId}`;
+    
+    // Show loading
+    document.getElementById('demoDetailsContent').innerHTML = `
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Memuat detail demo...</p>
+        </div>
+    `;
+    
+    modal.show();
+    
+    // Simulate loading demo details
+    setTimeout(() => {
+        document.getElementById('demoDetailsContent').innerHTML = generateDemoDetailsContent();
+    }, 1000);
+}
+
+/**
+ * Generate demo details content
+ * @returns {string} HTML content
+ */
+function generateDemoDetailsContent() {
+    return `
+        <div class="row">
+            <div class="col-md-8">
+                <h6>Screenshot Demo</h6>
+                <div class="row g-2 mb-4">
+                    <div class="col-6">
+                        <div class="bg-light p-4 rounded text-center" style="height: 200px;">
+                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-2">Dashboard Screenshot</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-light p-4 rounded text-center" style="height: 200px;">
+                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-2">Katalogisasi Screenshot</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-light p-4 rounded text-center" style="height: 200px;">
+                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-2">Sirkulasi Screenshot</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-light p-4 rounded text-center" style="height: 200px;">
+                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-2">OPAC Screenshot</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h6>Informasi Demo</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><strong>Platform:</strong> Web-based</li>
+                    <li class="mb-2"><strong>Browser:</strong> Chrome, Firefox, Safari</li>
+                    <li class="mb-2"><strong>Akses:</strong> 24/7</li>
+                    <li class="mb-2"><strong>Data Reset:</strong> Setiap 24 jam</li>
+                    <li class="mb-2"><strong>Concurrent Users:</strong> Unlimited</li>
+                </ul>
+                
+                <h6 class="mt-4">Fitur yang Dapat Dicoba</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Katalogisasi</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Sirkulasi</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Keanggotaan</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Pelaporan</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>OPAC</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Administrasi</li>
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Show toast notification
+ * @param {string} message - Toast message
+ * @param {string} type - Toast type (success, error, info, warning)
+ */
+function showToast(message, type = 'info') {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        toastContainer.style.zIndex = '9999';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Initialize Bootstrap toast
+    if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+        const bootstrapToast = new bootstrap.Toast(toast);
+        bootstrapToast.show();
+        
+        // Remove toast from DOM after hiding
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    } else {
+        // Fallback: show toast without Bootstrap
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    }
+}
+
+// Export functions for global access
+window.showDemoDetails = showDemoDetails;

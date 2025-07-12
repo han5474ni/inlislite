@@ -58,7 +58,7 @@ class CreateRegistrationsTable extends Migration
         $this->forge->addKey('id', true);
         $this->forge->addKey('status');
         $this->forge->addKey('created_at');
-        $this->forge->createTable('registrations');
+        $this->forge->createTable('registrations', true);
     }
 
     public function down()

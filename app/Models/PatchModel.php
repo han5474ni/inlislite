@@ -13,16 +13,15 @@ class PatchModel extends Model
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
-        'version',
-        'title',
-        'description',
-        'changelog',
-        'file_path',
-        'file_size',
-        'release_date',
-        'is_critical',
-        'downloads',
-        'is_active'
+        'nama_patch',
+        'versi',
+        'deskripsi',
+        'ukuran',
+        'prioritas',
+        'tanggal_rilis',
+        'url_download',
+        'status',
+        'jumlah_unduhan'
     ];
 
     // Dates
@@ -33,29 +32,28 @@ class PatchModel extends Model
 
     // Validation
     protected $validationRules = [
-        'version' => 'required|is_unique[patches.version,id,{id}]',
-        'title' => 'required|min_length[5]|max_length[255]',
-        'description' => 'required|min_length[10]',
-        'release_date' => 'required|valid_date'
+        'nama_patch' => 'required|max_length[255]',
+        'versi' => 'required|max_length[50]',
+        'prioritas' => 'required|in_list[low,medium,high,critical]',
+        'status' => 'required|in_list[active,inactive]'
     ];
 
     protected $validationMessages = [
-        'version' => [
-            'required' => 'Versi patch harus diisi',
-            'is_unique' => 'Versi patch sudah ada'
+        'nama_patch' => [
+            'required' => 'Nama patch harus diisi',
+            'max_length' => 'Nama patch terlalu panjang'
         ],
-        'title' => [
-            'required' => 'Judul patch harus diisi',
-            'min_length' => 'Judul patch minimal 5 karakter',
-            'max_length' => 'Judul patch maksimal 255 karakter'
+        'versi' => [
+            'required' => 'Versi harus diisi',
+            'max_length' => 'Versi terlalu panjang'
         ],
-        'description' => [
-            'required' => 'Deskripsi patch harus diisi',
-            'min_length' => 'Deskripsi patch minimal 10 karakter'
+        'prioritas' => [
+            'required' => 'Prioritas harus dipilih',
+            'in_list' => 'Prioritas tidak valid'
         ],
-        'release_date' => [
-            'required' => 'Tanggal rilis harus diisi',
-            'valid_date' => 'Format tanggal tidak valid'
+        'status' => [
+            'required' => 'Status harus dipilih',
+            'in_list' => 'Status tidak valid'
         ]
     ];
 
@@ -64,143 +62,101 @@ class PatchModel extends Model
 
     // Callbacks
     protected $allowCallbacks = true;
+    protected $beforeInsert = ['beforeInsert'];
+    protected $afterInsert = [];
+    protected $beforeUpdate = ['beforeUpdate'];
+    protected $afterUpdate = [];
+    protected $beforeFind = [];
+    protected $afterFind = [];
+    protected $beforeDelete = [];
+    protected $afterDelete = [];
 
     /**
-     * Get active patches
+     * Get all active patches ordered by release date
      */
     public function getActivePatches()
     {
-        return $this->where('is_active', 1)
-                   ->orderBy('release_date', 'DESC')
+        return $this->where('status', 'active')
+                   ->orderBy('tanggal_rilis', 'DESC')
+                   ->orderBy('created_at', 'DESC')
                    ->findAll();
     }
 
     /**
-     * Get critical patches
+     * Get patches by priority
      */
-    public function getCriticalPatches()
+    public function getPatchesByPriority($priority)
     {
-        return $this->where('is_critical', 1)
-                   ->where('is_active', 1)
-                   ->orderBy('release_date', 'DESC')
+        return $this->where('prioritas', $priority)
+                   ->where('status', 'active')
+                   ->orderBy('tanggal_rilis', 'DESC')
                    ->findAll();
     }
 
     /**
-     * Get latest patch
+     * Increment download count
      */
-    public function getLatestPatch()
+    public function incrementDownload($patchId)
     {
-        return $this->where('is_active', 1)
-                   ->orderBy('release_date', 'DESC')
-                   ->first();
-    }
-
-    /**
-     * Increment download counter
-     */
-    public function incrementDownload($id)
-    {
-        $patch = $this->find($id);
+        $patch = $this->find($patchId);
         if ($patch) {
-            return $this->update($id, ['downloads' => $patch['downloads'] + 1]);
+            $newCount = ($patch['jumlah_unduhan'] ?? 0) + 1;
+            return $this->update($patchId, ['jumlah_unduhan' => $newCount]);
         }
         return false;
     }
 
     /**
-     * Get patch statistics
+     * Get download statistics
      */
-    public function getStats()
+    public function getDownloadStats()
     {
-        $total = $this->countAll();
-        $active = $this->where('is_active', 1)->countAllResults();
-        $critical = $this->where('is_critical', 1)->where('is_active', 1)->countAllResults();
-        $totalDownloads = $this->selectSum('downloads')->first()['downloads'] ?? 0;
-
         return [
-            'total' => $total,
-            'active' => $active,
-            'critical' => $critical,
-            'total_downloads' => $totalDownloads
+            'total_patches' => $this->where('status', 'active')->countAllResults(),
+            'total_downloads' => $this->selectSum('jumlah_unduhan')->first()['jumlah_unduhan'] ?? 0,
+            'critical_patches' => $this->where(['status' => 'active', 'prioritas' => 'critical'])->countAllResults(),
+            'latest_patch' => $this->where('status', 'active')->orderBy('tanggal_rilis', 'DESC')->first()
         ];
     }
 
     /**
-     * Search patches
+     * Before insert callback
      */
-    public function searchPatches($keyword)
+    protected function beforeInsert(array $data)
     {
-        return $this->like('title', $keyword)
-                   ->orLike('description', $keyword)
-                   ->orLike('version', $keyword)
-                   ->where('is_active', 1)
-                   ->orderBy('release_date', 'DESC')
-                   ->findAll();
+        $data = $this->setDefaultValues($data);
+        return $data;
     }
 
     /**
-     * Get patches by date range
+     * Before update callback
      */
-    public function getPatchesByDateRange($startDate, $endDate)
+    protected function beforeUpdate(array $data)
     {
-        return $this->where('release_date >=', $startDate)
-                   ->where('release_date <=', $endDate)
-                   ->where('is_active', 1)
-                   ->orderBy('release_date', 'DESC')
-                   ->findAll();
+        return $data;
     }
 
-    // Legacy methods for backward compatibility
-    public function getPatches(array $filters = []): array
+    /**
+     * Set default values
+     */
+    private function setDefaultValues(array $data)
     {
-        $builder = $this->builder();
-
-        if (!empty($filters['search'])) {
-            $search = $filters['search'];
-            $builder->groupStart()
-                    ->like('title', $search)
-                    ->orLike('description', $search)
-                    ->orLike('version', $search)
-                    ->groupEnd();
+        if (!isset($data['data']['status'])) {
+            $data['data']['status'] = 'active';
         }
 
-        if (!empty($filters['priority'])) {
-            $builder->where('is_critical', $filters['priority'] === 'High' ? 1 : 0);
+        if (!isset($data['data']['prioritas'])) {
+            $data['data']['prioritas'] = 'medium';
         }
 
-        return $builder->orderBy('created_at', 'DESC')
-                      ->get()
-                      ->getResultArray();
-    }
+        if (!isset($data['data']['jumlah_unduhan'])) {
+            $data['data']['jumlah_unduhan'] = 0;
+        }
 
-    public function getStatistics(): array
-    {
-        return [
-            'total_patches' => $this->countAll(),
-            'high_priority' => $this->where('is_critical', 1)->countAllResults(false),
-            'medium_priority' => $this->where('is_critical', 0)->where('is_active', 1)->countAllResults(false),
-            'low_priority' => $this->where('is_active', 0)->countAllResults(false),
-            'total_downloads' => $this->selectSum('downloads')->get()->getRow()->downloads ?? 0
-        ];
-    }
+        if (!isset($data['data']['tanggal_rilis'])) {
+            $data['data']['tanggal_rilis'] = date('Y-m-d');
+        }
 
-    public function incrementDownloadCount(int $id): bool
-    {
-        return $this->incrementDownload($id);
-    }
-
-    public function getMostDownloaded(int $limit = 10): array
-    {
-        return $this->orderBy('downloads', 'DESC')
-                   ->limit($limit)
-                   ->findAll();
-    }
-
-    public function getRecent(int $limit = 10): array
-    {
-        return $this->orderBy('created_at', 'DESC')
-                   ->limit($limit)
-                   ->findAll();
+        return $data;
     }
 }

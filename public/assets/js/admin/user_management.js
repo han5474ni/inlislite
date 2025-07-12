@@ -530,15 +530,22 @@ async function submitEditUser() {
         return;
     }
     
-    const submitBtn = form.querySelector('.btn-edit-user-submit');
+    const submitBtn = document.getElementById('updateUserBtn');
     const originalText = submitBtn.innerHTML;
     
     // Show loading state
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memperbarui...';
     
+    // Get form data, but ensure disabled fields are included
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    
+    // Make sure email field is included (it might be disabled)
+    const emailField = document.getElementById('editEmail');
+    if (emailField && emailField.disabled) {
+        data.email = emailField.value;
+    }
 
     // Validate form (edit mode)
     if (!validateForm(data, true)) {
@@ -624,7 +631,13 @@ function editUser(userId) {
     document.getElementById('editUserId').value = user.id;
     document.getElementById('editNamaLengkap').value = user.nama_lengkap;
     document.getElementById('editNamaPengguna').value = user.nama_pengguna;
-    document.getElementById('editEmail').value = user.email;
+    
+    // Disable email field and set its value (admin can't edit email)
+    const emailField = document.getElementById('editEmail');
+    emailField.value = user.email;
+    emailField.disabled = true;
+    emailField.classList.add('bg-light');
+    
     document.getElementById('editPassword').value = ''; // Always empty for security
     document.getElementById('editRole').value = user.role;
     document.getElementById('editStatus').value = user.status;
@@ -687,12 +700,13 @@ function validateForm(data, isEdit = false) {
 
     if (!data.nama_lengkap) errors.push('Nama lengkap wajib diisi');
     if (!data.nama_pengguna) errors.push('Nama pengguna wajib diisi');
-    if (!data.email) errors.push('Email wajib diisi');
+    if (!isEdit && !data.email) errors.push('Email wajib diisi');
     if (!isEdit && !data.password) errors.push('Kata sandi wajib diisi');
     if (!data.role) errors.push('Role wajib diisi');
     if (!data.status) errors.push('Status wajib diisi');
 
-    if (data.email && !isValidEmail(data.email)) {
+    // Only validate email format in add mode (not edit mode)
+    if (!isEdit && data.email && !isValidEmail(data.email)) {
         errors.push('Format email tidak valid');
     }
 

@@ -3,197 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Kelola Kartu Tentang - INLISlite v3.0' ?></title>
+    <title>Manajemen Tentang INLISLite - INLISLite v3.0</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Feather Icons -->
-    <script src="https://unpkg.com/feather-icons"></script>
-    <!-- Dashboard CSS -->
-    <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
-    <!-- Tentang CSS for consistent header styling -->
-    <link href="<?= base_url('assets/css/admin/tentang.css') ?>" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    
     <!-- Custom CSS -->
     <link href="<?= base_url('assets/css/admin/tentang-edit.css') ?>" rel="stylesheet">
+    
+    <!-- CSRF Token for AJAX requests -->
+    <meta name="csrf-token" content="<?= csrf_token() ?>">
+    <meta name="csrf-hash" content="<?= csrf_hash() ?>">
 </head>
 <body>
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
-        <i data-feather="menu"></i>
-    </button>
-
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
-                <div class="sidebar-logo-icon">
-                    <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
+    <!-- Header Section -->
+    <header class="page-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="d-flex align-items-center mb-3">
+                    <button class="btn-back me-3" onclick="history.back()">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h1 class="header-title mb-1">Manajemen Tentang INLISLite</h1>
+                        <p class="header-subtitle mb-0">Kelola konten dan informasi tentang sistem</p>
+                    </div>
+                    <div class="ms-auto">
+                        <a href="<?= base_url('admin/tentang') ?>" class="btn btn-outline-light">
+                            <i class="bi bi-eye me-2"></i>Lihat Halaman
+                        </a>
+                    </div>
                 </div>
-                <div class="sidebar-title">
-                    INLISlite v3.0<br>
-                    <small style="font-size: 0.85rem; opacity: 0.8;">Dashboard</small>
-                </div>
-            </a>
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i data-feather="chevrons-left"></i>
-            </button>
-        </div>
-        
-        <div class="sidebar-nav">
-            <div class="nav-item">
-                <a href="<?= base_url('admin/dashboard') ?>" class="nav-link">
-                    <i data-feather="home" class="nav-icon"></i>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-                <div class="nav-tooltip">Dashboard</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/users') ?>" class="nav-link">
-                    <i data-feather="users" class="nav-icon"></i>
-                    <span class="nav-text">Manajemen User</span>
-                </a>
-                <div class="nav-tooltip">Manajemen User</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('registration') ?>" class="nav-link">
-                    <i data-feather="book" class="nav-icon"></i>
-                    <span class="nav-text">Registrasi</span>
-                </a>
-                <div class="nav-tooltip">Registrasi</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/profile') ?>" class="nav-link">
-                    <i data-feather="user" class="nav-icon"></i>
-                    <span class="nav-text">Profile</span>
-                </a>
-                <div class="nav-tooltip">Profile</div>
-            </div>
-            
-            <!-- Logout Button -->
-            <div class="nav-item logout-item">
-                <a href="<?= base_url('admin/secure-logout') ?>" class="nav-link logout-link" onclick="return confirmLogout()">
-                    <i data-feather="log-out" class="nav-icon"></i>
-                    <span class="nav-text">Logout</span>
-                </a>
-                <div class="nav-tooltip">Logout</div>
             </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Top Navigation -->
-        <nav class="top-nav sticky-top">
-            <div class="container-fluid">
-                <div class="nav-content">
-                    <div class="nav-left">
-                        <a href="<?= base_url('admin/tentang') ?>" class="back-btn" title="Kembali ke Tentang">
-                            <i class="bi bi-arrow-left"></i>
-                        </a>
-                        <div class="logo-section">
-                            <div class="logo-icon">
-                                <i class="bi bi-gear-fill"></i>
-                            </div>
-                            <div class="nav-text">
-                                <h1 class="nav-title">Kelola Kartu Tentang</h1>
-                                <p class="nav-subtitle">Tambah, edit, dan hapus kartu informasi tentang sistem</p>
-                            </div>
+        <div class="container">
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="bi bi-info-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="totalCards">0</h3>
+                            <p class="stat-label">Total Kartu</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="activeCards">0</h3>
+                            <p class="stat-label">Kartu Aktif</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="bi bi-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="featuresCards">0</h3>
+                            <p class="stat-label">Kartu Fitur</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="bi bi-gear"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="technicalCards">0</h3>
+                            <p class="stat-label">Kartu Teknis</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </nav>
 
-        <!-- Page Content -->
-        <div class="page-content">
-            <div class="container-fluid">
-                <!-- Header Section -->
-                <div class="header-section">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-10">
-                            <div class="text-center mb-5">
-                                <div class="header-icon">
-                                    <i class="bi bi-gear-fill"></i>
-                                </div>
-                                <h1 class="header-title">Kelola Kartu Tentang</h1>
-                                <p class="header-subtitle">Kelola semua kartu informasi yang ditampilkan di halaman tentang. Tambah, edit, atau hapus kartu sesuai kebutuhan.</p>
+            <!-- Management Tabs -->
+            <div class="management-tabs">
+                <ul class="nav nav-tabs" id="managementTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="cards-tab" data-bs-toggle="tab" data-bs-target="#cards-panel" type="button" role="tab">
+                            <i class="bi bi-collection me-2"></i>Kelola Kartu
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="managementTabsContent">
+                    <!-- Cards Management Panel -->
+                    <div class="tab-pane fade show active" id="cards-panel" role="tabpanel">
+                        <div class="panel-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3 class="panel-title">Manajemen Kartu Tentang</h3>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCardModal">
+                                    <i class="bi bi-plus-circle me-2"></i>Tambah Kartu
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Alert Messages -->
-                <div id="alertContainer"></div>
-
-                <!-- Action Section -->
-                <div class="row justify-content-center mb-4">
-                    <div class="col-12">
-                        <div class="action-section">
-                            <button class="btn btn-add-card" id="btnAddCard">
-                                <i class="bi bi-plus-circle me-2"></i>
-                                Tambah Card Tentang
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cards List Section -->
-                <div class="row justify-content-center">
-                    <div class="col-12">
-                        <div class="cards-management-section card">
-                            <div class="card-header">
-                                <div class="management-header">
-                                    <div class="management-icon">
-                                        <i class="bi bi-collection"></i>
-                                    </div>
-                                    <div class="management-title-section">
-                                        <h5 class="management-title">Daftar Kartu Tentang</h5>
-                                        <p class="management-subtitle">Kelola semua kartu informasi yang tersedia</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <!-- Loading State -->
-                                <div id="loadingState" class="text-center py-5">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                    <p class="mt-3 text-muted">Memuat data kartu tentang...</p>
-                                </div>
-
-                                <!-- Cards Table -->
-                                <div id="cardsTable" class="table-responsive" style="display: none;">
-                                    <table class="table cards-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Kartu</th>
-                                                <th>Kategori</th>
-                                                <th>Status</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="cardsTableBody">
-                                            <!-- Dynamic content will be loaded here -->
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <!-- Empty State -->
-                                <div id="emptyState" class="text-center py-5" style="display: none;">
-                                    <div class="empty-icon">
-                                        <i class="bi bi-inbox"></i>
-                                    </div>
-                                    <h5 class="empty-title">Belum Ada Kartu Tentang</h5>
-                                    <p class="empty-description">Mulai dengan menambahkan kartu informasi pertama Anda.</p>
-                                    <button class="btn btn-primary btn-add-first" id="btnAddFirstCard">
-                                        <i class="bi bi-plus-circle me-2"></i>
-                                        Tambah Kartu Pertama
-                                    </button>
-                                </div>
+                        <div class="panel-content">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="cardsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Icon</th>
+                                            <th>Judul</th>
+                                            <th>Kategori</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -202,119 +141,176 @@
         </div>
     </main>
 
-    <!-- Add/Edit Card Modal -->
-    <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+    <!-- Add Card Modal -->
+    <div class="modal fade" id="addCardModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="cardModalLabel">Tambah Card Tentang</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Tambah Kartu Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="cardForm">
-                        <input type="hidden" id="cardId" name="id">
-                        
-                        <div class="row g-3">
+                    <form id="addCardForm">
+                        <div class="row">
                             <div class="col-md-6">
-                                <label for="cardTitle" class="form-label">Judul Kartu <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="cardTitle" name="title" required>
+                                <div class="mb-3">
+                                    <label for="cardTitle" class="form-label">Judul Kartu *</label>
+                                    <input type="text" class="form-control" id="cardTitle" required>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="cardSubtitle" class="form-label">Subtitle</label>
-                                <input type="text" class="form-control" id="cardSubtitle" name="subtitle">
+                                <div class="mb-3">
+                                    <label for="cardSubtitle" class="form-label">Subtitle</label>
+                                    <input type="text" class="form-control" id="cardSubtitle">
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="cardCategory" class="form-label">Kategori</label>
-                                <select class="form-select" id="cardCategory" name="category">
-                                    <option value="overview">Overview</option>
-                                    <option value="legal">Legal Framework</option>
-                                    <option value="features">Features</option>
-                                    <option value="technical">Technical</option>
-                                    <option value="other">Lainnya</option>
-                                </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cardContent" class="form-label">Konten *</label>
+                            <textarea class="form-control" id="cardContent" rows="5" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="cardCategory" class="form-label">Kategori *</label>
+                                    <select class="form-select" id="cardCategory" required>
+                                        <option value="">Pilih Kategori</option>
+                                        <option value="info">Info</option>
+                                        <option value="feature">Feature</option>
+                                        <option value="contact">Contact</option>
+                                        <option value="technical">Technical</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="cardStatus" class="form-label">Status</label>
-                                <select class="form-select" id="cardStatus" name="status">
-                                    <option value="active">Aktif</option>
-                                    <option value="inactive">Tidak Aktif</option>
-                                </select>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="cardIcon" class="form-label">Icon (Bootstrap Icons)</label>
+                                    <input type="text" class="form-control" id="cardIcon" placeholder="bi-info-circle">
+                                    <div class="form-text">Contoh: bi-info-circle, bi-star, bi-gear</div>
+                                </div>
                             </div>
-                            <div class="col-12">
-                                <label for="cardContent" class="form-label">Konten <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="cardContent" name="content" rows="8" required></textarea>
-                                <div class="form-text">Gunakan HTML untuk formatting. Contoh: &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;</div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Preview Icon</label>
+                                    <div class="icon-preview" id="cardIconPreview">
+                                        <i class="bi bi-question-circle"></i>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="cardIcon" class="form-label">Icon (Bootstrap Icons)</label>
-                                <input type="text" class="form-control" id="cardIcon" name="icon" placeholder="bi-info-circle">
-                                <div class="form-text">Contoh: bi-info-circle, bi-shield-check, bi-gear</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="sortOrder" class="form-label">Urutan Tampil</label>
-                                <input type="number" class="form-control" id="sortOrder" name="sort_order" min="1" value="1">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="cardStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="cardStatus">
+                                        <option value="active">Aktif</option>
+                                        <option value="inactive">Tidak Aktif</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="saveCardBtn">
-                        <i class="bi bi-check-circle me-2"></i>
-                        Simpan
-                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveCard()">Simpan</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Edit Kartu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="text-center">
-                        <div class="delete-icon">
-                            <i class="bi bi-exclamation-triangle text-warning"></i>
+                    <form id="editForm">
+                        <input type="hidden" id="editId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editTitle" class="form-label">Judul</label>
+                                    <input type="text" class="form-control" id="editTitle" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editSubtitle" class="form-label">Subtitle</label>
+                                    <input type="text" class="form-control" id="editSubtitle">
+                                </div>
+                            </div>
                         </div>
-                        <h6 class="mt-3">Apakah Anda yakin ingin menghapus kartu ini?</h6>
-                        <p class="text-muted">Tindakan ini tidak dapat dibatalkan.</p>
-                    </div>
+                        <div class="mb-3">
+                            <label for="editContent" class="form-label">Konten</label>
+                            <textarea class="form-control" id="editContent" rows="5" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="editCategory" class="form-label">Kategori</label>
+                                    <select class="form-select" id="editCategory" required>
+                                        <option value="info">Info</option>
+                                        <option value="feature">Feature</option>
+                                        <option value="contact">Contact</option>
+                                        <option value="technical">Technical</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="editIcon" class="form-label">Icon (Bootstrap Icons)</label>
+                                    <input type="text" class="form-control" id="editIcon">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Preview Icon</label>
+                                    <div class="icon-preview" id="editIconPreview">
+                                        <i class="bi bi-question-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="editStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="editStatus">
+                                        <option value="active">Aktif</option>
+                                        <option value="inactive">Tidak Aktif</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-                        <i class="bi bi-trash me-2"></i>
-                        Hapus
-                    </button>
+                    <button type="button" class="btn btn-primary" onclick="updateCard()">Update</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Dashboard JS -->
-    <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
-    <!-- Custom JavaScript -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Custom JS -->
     <script src="<?= base_url('assets/js/admin/tentang-edit.js') ?>"></script>
-    
-    <script>
-        // Logout confirmation function
-        function confirmLogout() {
-            return confirm('Apakah Anda yakin ingin logout? Anda harus login kembali untuk mengakses halaman admin.');
-        }
-
-        // Initialize Feather icons after page load
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-        });
-    </script>
 </body>
 </html>

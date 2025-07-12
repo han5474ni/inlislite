@@ -13,16 +13,13 @@ class InstallerCardModel extends Model
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
-        'package_name',
-        'version',
-        'release_date',
-        'file_size',
-        'download_link',
-        'description',
-        'requirements',
-        'default_username',
-        'default_password',
-        'card_type',
+        'nama_paket',
+        'deskripsi',
+        'versi',
+        'ukuran',
+        'tipe',
+        'url_download',
+        'icon',
         'status',
         'sort_order'
     ];
@@ -35,24 +32,19 @@ class InstallerCardModel extends Model
 
     // Validation
     protected $validationRules = [
-        'package_name' => 'required|max_length[255]',
-        'version' => 'required|max_length[50]',
-        'card_type' => 'required|in_list[source,installer,database,documentation]',
+        'nama_paket' => 'required|max_length[255]',
+        'tipe' => 'required|in_list[installer,source,database,documentation]',
         'status' => 'required|in_list[active,inactive]'
     ];
 
     protected $validationMessages = [
-        'package_name' => [
+        'nama_paket' => [
             'required' => 'Nama paket harus diisi',
             'max_length' => 'Nama paket terlalu panjang'
         ],
-        'version' => [
-            'required' => 'Versi harus diisi',
-            'max_length' => 'Versi terlalu panjang'
-        ],
-        'card_type' => [
-            'required' => 'Tipe kartu harus dipilih',
-            'in_list' => 'Tipe kartu tidak valid'
+        'tipe' => [
+            'required' => 'Tipe paket harus dipilih',
+            'in_list' => 'Tipe paket tidak valid'
         ],
         'status' => [
             'required' => 'Status harus dipilih',
@@ -75,7 +67,7 @@ class InstallerCardModel extends Model
     protected $afterDelete = [];
 
     /**
-     * Get all active cards ordered by sort_order
+     * Get all active installer cards ordered by sort_order
      */
     public function getActiveCards()
     {
@@ -90,24 +82,10 @@ class InstallerCardModel extends Model
      */
     public function getCardsByType($type)
     {
-        return $this->where('card_type', $type)
+        return $this->where('tipe', $type)
                    ->where('status', 'active')
                    ->orderBy('sort_order', 'ASC')
                    ->findAll();
-    }
-
-    /**
-     * Get card with requirements parsed
-     */
-    public function getCardWithRequirements($id)
-    {
-        $card = $this->find($id);
-        if ($card && !empty($card['requirements'])) {
-            $card['requirements_array'] = json_decode($card['requirements'], true) ?: [];
-        } else {
-            $card['requirements_array'] = [];
-        }
-        return $card;
     }
 
     /**
@@ -157,8 +135,8 @@ class InstallerCardModel extends Model
             $data['data']['status'] = 'active';
         }
 
-        if (!isset($data['data']['card_type'])) {
-            $data['data']['card_type'] = 'source';
+        if (!isset($data['data']['tipe'])) {
+            $data['data']['tipe'] = 'installer';
         }
 
         return $data;
