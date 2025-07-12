@@ -27,7 +27,7 @@
         <div class="sidebar-header">
             <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
                 <div class="sidebar-logo-icon">
-                    <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
+                    <img src="<?= base_url('assets/images/inlislite.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
                 </div>
                 <div class="sidebar-title">
                     INLISlite v3.0<br>
@@ -91,17 +91,17 @@
             <!-- Card 1: Tentang InlisLite -->
             <a href="<?= base_url('admin/tentang') ?>" class="feature-card loading" style="text-decoration: none; color: inherit;">
                 <div class="card-icon">
-                    <i data-feather="book"></i>
-                </div>
+    <img src="<?= base_url('assets/images/ikon inlislite.svg') ?>" alt="Ikon Tentang InlisLite" style="width: 40px; height: 40px;">
+</div>
+
                 <h3 class="card-title">Tentang InlisLite</h3>
                 <p class="card-description">Sistem manajemen perpustakaan modern dengan fitur terbaru dan teknologi terdepan.</p>
-                <span class="card-badge new">Baru</span>
             </a>
 
             <!-- Card 2: Features & Program Modules -->
             <div class="feature-card loading">
                 <div class="card-icon">
-                    <i data-feather="grid"></i>
+                    <img src="<?= base_url('assets/images/logo animation.svg') ?>" alt="Ikon Tentang InlisLite" style="width: 40px; height: 40px;">
                 </div>
                 <h3 class="card-title">Features & Program Modules</h3>
                 <p class="card-description">Akses ke semua modul dan fitur lengkap sistem perpustakaan.</p>

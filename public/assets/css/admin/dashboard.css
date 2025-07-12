@@ -489,3 +489,6 @@ body {
         font-size: 0.9rem;
     }
 }
+.svg-icon-white svg path {
+    fill: white;
+}
