@@ -144,6 +144,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('dukungan-edit', 'AdminController::dukunganEdit');
     $routes->get('bimbingan-edit', 'AdminController::bimbinganEdit');
     $routes->get('demo-edit', 'AdminController::demoEdit');
+    
+    // Users Edit Page
+    $routes->get('users-edit', 'UserManagement::usersEdit');
+    
     // User Management
     $routes->group('users', function($routes) {
         $routes->get('/', 'UserManagement::index');

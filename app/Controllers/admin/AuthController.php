@@ -77,10 +77,16 @@ class AuthController extends BaseController
         }
 
         try {
-            // Get user from database
+            // Get user from database - handle both field name conventions
             $builder = $this->db->table('users');
+            
+            // Check which field names exist in the database
+            $fields = $this->db->getFieldNames('users');
+            $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
+            $passwordField = in_array('kata_sandi', $fields) ? 'kata_sandi' : 'password';
+            
             $user = $builder->groupStart()
-                           ->where('nama_pengguna', $username)
+                           ->where($usernameField, $username)
                            ->orWhere('email', $username)
                            ->groupEnd()
                            ->where('status', 'Aktif')
@@ -95,7 +101,7 @@ class AuthController extends BaseController
             }
 
             // Verify password with secure hashing
-            if (!$this->verifyPassword($password, $user['kata_sandi'])) {
+            if (!$this->verifyPassword($password, $user[$passwordField])) {
                 $this->logFailedAttempt($username);
                 return redirect()->back()
                                ->withInput()
@@ -285,10 +291,14 @@ class AuthController extends BaseController
      */
     private function createUserSession($user, $rememberMe = false)
     {
+        // Handle both field name conventions
+        $fields = $this->db->getFieldNames('users');
+        $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
+        
         $sessionData = [
             'admin_id' => $user['id'],
             'admin_user_id' => $user['id'],
-            'admin_username' => $user['nama_pengguna'],
+            'admin_username' => $user[$usernameField],
             'admin_nama_lengkap' => $user['nama_lengkap'],
             'admin_name' => $user['nama_lengkap'],
             'admin_email' => $user['email'],
@@ -386,9 +396,13 @@ class AuthController extends BaseController
     private function updatePasswordHash($oldHash, $newHash)
     {
         try {
+            // Handle both field name conventions
+            $fields = $this->db->getFieldNames('users');
+            $passwordField = in_array('kata_sandi', $fields) ? 'kata_sandi' : 'password';
+            
             $builder = $this->db->table('users');
-            $builder->where('kata_sandi', $oldHash)
-                    ->update(['kata_sandi' => $newHash]);
+            $builder->where($passwordField, $oldHash)
+                    ->update([$passwordField => $newHash]);
         } catch (\Exception $e) {
             log_message('error', 'Failed to update password hash: ' . $e->getMessage());
         }

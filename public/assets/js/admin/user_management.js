@@ -84,66 +84,6 @@ function setupEventListeners() {
         statusFilter.addEventListener('change', filterUsers);
     }
 
-    // Add User Button
-    const addUserBtn = document.querySelector('.btn-add-user');
-    if (addUserBtn) {
-        addUserBtn.addEventListener('click', function() {
-            console.log('🆕 Opening Add User Modal...');
-            showToast('Opening add user form...', 'info');
-        });
-    }
-
-    // Modal events
-    const addUserModal = document.getElementById('addUserModal');
-    const editUserModal = document.getElementById('editUserModal');
-    
-    if (addUserModal) {
-        addUserModal.addEventListener('hidden.bs.modal', function() {
-            console.log('🔄 Resetting add user form...');
-            const form = document.getElementById('addUserForm');
-            if (form) {
-                form.reset();
-                clearFormErrors();
-            }
-        });
-        
-        addUserModal.addEventListener('shown.bs.modal', function() {
-            console.log('👁️ Add user modal opened');
-            const firstInput = addUserModal.querySelector('.modern-input');
-            if (firstInput) {
-                firstInput.focus();
-            }
-        });
-    }
-
-    if (editUserModal) {
-        editUserModal.addEventListener('hidden.bs.modal', function() {
-            const form = document.getElementById('editUserForm');
-            if (form) {
-                form.reset();
-                clearFormErrors();
-            }
-            currentEditUserId = null;
-        });
-    }
-
-    // Form submission
-    const addUserForm = document.getElementById('addUserForm');
-    if (addUserForm) {
-        addUserForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitAddUser();
-        });
-    }
-
-    const editUserForm = document.getElementById('editUserForm');
-    if (editUserForm) {
-        editUserForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitEditUser();
-        });
-    }
-
     // Close mobile menu when clicking outside
     document.addEventListener('click', function(e) {
         if (window.innerWidth <= 768 && sidebar) {
@@ -160,97 +100,115 @@ function setupEventListeners() {
         }
     });
 
-    // Enhanced form interactions
-    setupFormEnhancements();
+    // Setup sync listeners
+    setupSyncListeners();
 }
 
 /**
- * Setup form enhancements
+ * Setup sync listeners for real-time updates
  */
-function setupFormEnhancements() {
-    // Add floating label effect
-    document.addEventListener('focus', function(e) {
-        if (e.target.classList.contains('modern-input') || e.target.classList.contains('modern-select')) {
-            e.target.parentNode.classList.add('focused');
-        }
-    }, true);
-
-    document.addEventListener('blur', function(e) {
-        if (e.target.classList.contains('modern-input') || e.target.classList.contains('modern-select')) {
-            if (!e.target.value) {
-                e.target.parentNode.classList.remove('focused');
+function setupSyncListeners() {
+    if (window.userDataSync) {
+        window.userDataSync.onSync(function(syncData) {
+            console.log('🔄 Sync event received:', syncData.type);
+            
+            switch (syncData.type) {
+                case 'userAdded':
+                    handleUserAdded(syncData.data.user);
+                    break;
+                case 'userUpdated':
+                    handleUserUpdated(syncData.data.user);
+                    break;
+                case 'userDeleted':
+                    handleUserDeleted(syncData.data.userId);
+                    break;
+                case 'dataUpdated':
+                case 'externalUpdate':
+                    handleDataRefresh(syncData.data.users);
+                    break;
             }
-        }
-    }, true);
-
-    // Real-time validation
-    document.addEventListener('input', function(e) {
-        if (e.target.classList.contains('modern-input')) {
-            validateFieldRealTime(e.target);
-        }
-    });
+        });
+    }
 }
 
 /**
- * Real-time field validation
+ * Handle user added event
  */
-function validateFieldRealTime(field) {
-    const value = field.value.trim();
-    const name = field.name;
-    
-    // Remove previous validation classes
-    field.classList.remove('is-valid', 'is-invalid');
-    
-    // Basic validation
-    if (field.hasAttribute('required') && value === '') {
-        return;
-    }
-    
-    // Email validation
-    if (name === 'email' && value) {
-        if (isValidEmail(value)) {
-            field.classList.add('is-valid');
-        } else {
-            field.classList.add('is-invalid');
-        }
-    }
-    
-    // Password validation
-    if (name === 'password' && value) {
-        if (value.length >= 6) {
-            field.classList.add('is-valid');
-        } else {
-            field.classList.add('is-invalid');
-        }
-    }
-    
-    // Other fields
-    if (name !== 'email' && name !== 'password' && value) {
-        field.classList.add('is-valid');
+function handleUserAdded(newUser) {
+    const existingIndex = users.findIndex(u => u.id === newUser.id);
+    if (existingIndex === -1) {
+        users.push(newUser);
+        filterUsers();
+        refreshChart();
+        showToast('User baru ditambahkan dari halaman lain', 'info');
     }
 }
 
 /**
- * Load users from database or mock data
+ * Handle user updated event
+ */
+function handleUserUpdated(updatedUser) {
+    const userIndex = users.findIndex(u => u.id === updatedUser.id);
+    if (userIndex !== -1) {
+        users[userIndex] = updatedUser;
+        filterUsers();
+        refreshChart();
+        showToast('User diperbarui dari halaman lain', 'info');
+    }
+}
+
+/**
+ * Handle user deleted event
+ */
+function handleUserDeleted(userId) {
+    const userIndex = users.findIndex(u => u.id == userId);
+    if (userIndex !== -1) {
+        users.splice(userIndex, 1);
+        filterUsers();
+        refreshChart();
+        showToast('User dihapus dari halaman lain', 'info');
+    }
+}
+
+/**
+ * Handle data refresh event
+ */
+function handleDataRefresh(newUsers) {
+    if (newUsers && Array.isArray(newUsers)) {
+        users = newUsers;
+        filterUsers();
+        refreshChart();
+        console.log('🔄 Data refreshed from external source');
+    }
+}
+
+/**
+ * Load users from database or mock data with sync
  */
 async function loadUsers() {
-    console.log('📊 Loading users...');
+    console.log('📊 Loading users with sync...');
     
     try {
-        // Try to load from CodeIgniter endpoint first
-        const response = await fetch(getBaseUrl() + 'admin/users/ajax/list');
-        const result = await response.json();
-        
-        if (result.success && result.data) {
-            users = result.data.map(user => ({
-                ...user,
-                avatar_initials: getInitials(user.nama_lengkap),
-                last_login_formatted: formatLastLogin(user.last_login),
-                created_at_formatted: formatDate(user.created_at)
-            }));
-            console.log('✅ Users loaded from API');
+        // Use sync system if available
+        if (window.userDataSync) {
+            users = await window.userDataSync.loadUsers();
+            console.log('✅ Users loaded via sync system');
         } else {
-            throw new Error('API response not successful');
+            // Fallback to direct API call
+            const response = await fetch(getBaseUrl() + 'admin/users/ajax/list');
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                users = result.data.map(user => ({
+                    ...user,
+                    avatar_initials: getInitials(user.nama_lengkap),
+                    last_login_formatted: formatLastLogin(user.last_login),
+                    created_at_formatted: formatDate(user.created_at)
+                }));
+                console.log('✅ Users loaded from API');
+            } else {
+                throw new Error('API response not successful');
+            }
         }
     } catch (error) {
         console.log('⚠️ Loading mock data due to:', error.message);
@@ -369,7 +327,7 @@ function renderUsersTable() {
     if (filteredUsers.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center py-4">
+                <td colspan="5" class="text-center py-4">
                     <div class="text-muted">
                         <i data-feather="inbox" style="width: 48px; height: 48px; margin-bottom: 1rem; display: block; margin: 0 auto 1rem;"></i>
                         <p>Tidak ada pengguna yang ditemukan</p>
@@ -402,340 +360,12 @@ function renderUsersTable() {
             </td>
             <td>${escapeHtml(user.last_login_formatted)}</td>
             <td>${escapeHtml(user.created_at_formatted)}</td>
-            <td>
-                <div class="dropdown">
-                    <button class="action-btn" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-three-dots-vertical"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <a class="dropdown-item" href="#" onclick="editUser(${user.id})">
-                                <i class="bi bi-pencil me-2"></i>
-                                Edit User
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item text-danger" href="#" onclick="deleteUser(${user.id}, '${escapeHtml(user.nama_lengkap)}')">
-                                <i class="bi bi-trash me-2"></i>
-                                Hapus User
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </td>
         </tr>
     `).join('');
 
     if (typeof feather !== 'undefined') {
         feather.replace();
     }
-}
-
-/**
- * Submit add user form
- */
-async function submitAddUser() {
-    console.log('📝 Submitting add user form...');
-    
-    const form = document.getElementById('addUserForm');
-    if (!form) {
-        console.error('❌ Add user form not found');
-        return;
-    }
-    
-    const submitBtn = form.querySelector('.btn-add-user-submit');
-    const originalText = submitBtn.innerHTML;
-    
-    // Show loading state
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menambahkan...';
-    
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-
-    // Validate form
-    if (!validateForm(data)) {
-        // Reset button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        return;
-    }
-
-    try {
-        // Make real API call to add user
-        const response = await fetch(getBaseUrl() + 'admin/users/ajax/create', {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // Add new user to local array
-            const newUser = {
-                ...result.data,
-                avatar_initials: getInitials(result.data.nama_lengkap || result.data.nama_pengguna),
-                last_login_formatted: formatLastLogin(result.data.last_login),
-                created_at_formatted: formatDate(result.data.created_at)
-            };
-            
-            users.push(newUser);
-            
-            showToast(result.message || 'User berhasil ditambahkan!', 'success');
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
-            if (modal) {
-                modal.hide();
-            }
-            
-            // Refresh table and chart
-            filterUsers();
-            refreshChart();
-            
-            console.log('✅ User added successfully:', newUser);
-        } else {
-            // Handle validation errors
-            if (result.errors) {
-                const errorMessages = Object.values(result.errors).join('<br>');
-                showToast(errorMessages, 'error');
-            } else {
-                showToast(result.message || 'Gagal menambahkan user', 'error');
-            }
-        }
-        
-    } catch (error) {
-        console.error('❌ Error adding user:', error);
-        showToast('Error menambahkan user: ' + error.message, 'error');
-    } finally {
-        // Reset button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-    }
-}
-
-/**
- * Submit edit user form
- */
-async function submitEditUser() {
-    console.log('📝 Submitting edit user form...');
-    
-    const form = document.getElementById('editUserForm');
-    if (!form) {
-        console.error('❌ Edit user form not found');
-        return;
-    }
-    
-    const submitBtn = document.getElementById('updateUserBtn');
-    const originalText = submitBtn.innerHTML;
-    
-    // Show loading state
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memperbarui...';
-    
-    // Get form data, but ensure disabled fields are included
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    
-    // Make sure email field is included (it might be disabled)
-    const emailField = document.getElementById('editEmail');
-    if (emailField && emailField.disabled) {
-        data.email = emailField.value;
-    }
-
-    // Validate form (edit mode)
-    if (!validateForm(data, true)) {
-        // Reset button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        return;
-    }
-
-    try {
-        // Make real API call to update user
-        const response = await fetch(getBaseUrl() + `admin/users/ajax/update/${currentEditUserId}`, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // Update user in local array
-            const userIndex = users.findIndex(u => u.id == currentEditUserId);
-            if (userIndex !== -1) {
-                users[userIndex] = {
-                    ...result.data,
-                    avatar_initials: getInitials(result.data.nama_lengkap || result.data.nama_pengguna),
-                    last_login_formatted: formatLastLogin(result.data.last_login),
-                    created_at_formatted: formatDate(result.data.created_at)
-                };
-            }
-            
-            showToast(result.message || 'User berhasil diperbarui!', 'success');
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-            if (modal) {
-                modal.hide();
-            }
-            
-            // Refresh table and chart
-            filterUsers();
-            refreshChart();
-            
-            console.log('✅ User updated successfully:', result.data);
-        } else {
-            // Handle validation errors
-            if (result.errors) {
-                const errorMessages = Object.values(result.errors).join('<br>');
-                showToast(errorMessages, 'error');
-            } else {
-                showToast(result.message || 'Gagal memperbarui user', 'error');
-            }
-        }
-        
-    } catch (error) {
-        console.error('❌ Error updating user:', error);
-        showToast('Error memperbarui user: ' + error.message, 'error');
-    } finally {
-        // Reset button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-    }
-}
-
-/**
- * Edit user
- */
-function editUser(userId) {
-    console.log(`✏️ Editing user: ${userId}`);
-    const user = users.find(u => u.id == userId);
-    if (!user) {
-        showToast('User tidak ditemukan', 'error');
-        return;
-    }
-
-    // Set current edit user ID
-    currentEditUserId = userId;
-
-    // Populate edit form with user data
-    document.getElementById('editUserId').value = user.id;
-    document.getElementById('editNamaLengkap').value = user.nama_lengkap;
-    document.getElementById('editNamaPengguna').value = user.nama_pengguna;
-    
-    // Disable email field and set its value (admin can't edit email)
-    const emailField = document.getElementById('editEmail');
-    emailField.value = user.email;
-    emailField.disabled = true;
-    emailField.classList.add('bg-light');
-    
-    document.getElementById('editPassword').value = ''; // Always empty for security
-    document.getElementById('editRole').value = user.role;
-    document.getElementById('editStatus').value = user.status;
-
-    // Show edit modal
-    const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
-    editModal.show();
-
-    console.log('✅ Edit modal opened for user:', user.nama_lengkap);
-}
-
-/**
- * Delete user
- */
-async function deleteUser(userId, userName) {
-    if (!confirm(`Apakah Anda yakin ingin menghapus user "${userName}"?`)) {
-        return;
-    }
-
-    console.log(`🗑️ Deleting user: ${userId}`);
-
-    try {
-        // Make real API call to delete user
-        const response = await fetch(getBaseUrl() + `admin/users/ajax/delete/${userId}`, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/json',
-            }
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // Remove from users array
-            users = users.filter(u => u.id != userId);
-            
-            showToast(result.message || `User "${userName}" berhasil dihapus!`, 'success');
-            
-            // Refresh table and chart
-            filterUsers();
-            refreshChart();
-            
-            console.log('✅ User deleted successfully');
-        } else {
-            showToast(result.message || 'Gagal menghapus user', 'error');
-        }
-        
-    } catch (error) {
-        console.error('❌ Error deleting user:', error);
-        showToast('Error menghapus user: ' + error.message, 'error');
-    }
-}
-
-/**
- * Validate form
- */
-function validateForm(data, isEdit = false) {
-    const errors = [];
-
-    if (!data.nama_lengkap) errors.push('Nama lengkap wajib diisi');
-    if (!data.nama_pengguna) errors.push('Nama pengguna wajib diisi');
-    if (!isEdit && !data.email) errors.push('Email wajib diisi');
-    if (!isEdit && !data.password) errors.push('Kata sandi wajib diisi');
-    if (!data.role) errors.push('Role wajib diisi');
-    if (!data.status) errors.push('Status wajib diisi');
-
-    // Only validate email format in add mode (not edit mode)
-    if (!isEdit && data.email && !isValidEmail(data.email)) {
-        errors.push('Format email tidak valid');
-    }
-
-    // In edit mode, password is optional, but if provided, must be at least 6 characters
-    if (data.password && data.password.length > 0 && data.password.length < 6) {
-        errors.push('Kata sandi minimal 6 karakter');
-    }
-
-    if (errors.length > 0) {
-        showToast(errors.join('<br>'), 'error');
-        return false;
-    }
-
-    return true;
-}
-
-/**
- * Clear form errors
- */
-function clearFormErrors() {
-    document.querySelectorAll('.is-invalid').forEach(element => {
-        element.classList.remove('is-invalid');
-    });
-    document.querySelectorAll('.is-valid').forEach(element => {
-        element.classList.remove('is-valid');
-    });
-    document.querySelectorAll('.invalid-feedback').forEach(element => {
-        element.remove();
-    });
 }
 
 /**
@@ -932,19 +562,6 @@ function debounce(func, wait) {
         timeout = setTimeout(later, wait);
     };
 }
-
-/**
- * Export functions for global access
- */
-window.UserManagementJS = {
-    editUser,
-    deleteUser,
-    submitAddUser,
-    submitEditUser,
-    showToast,
-    loadUsers,
-    filterUsers
-};
 
 /**
  * Initialize Chart

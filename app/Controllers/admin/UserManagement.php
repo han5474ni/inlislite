@@ -18,28 +18,25 @@ class UserManagement extends BaseController
     {
         // Fetch users from database with proper field mapping
         try {
+            // Check which field names exist in the database
+            $fields = $this->db->getFieldNames('users');
+            $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
+            $passwordField = in_array('kata_sandi', $fields) ? 'kata_sandi' : 'password';
+            
             $builder = $this->db->table('users');
-            $users = $builder->select('
+            $users = $builder->select("
                 id,
                 nama_lengkap,
-                nama_pengguna,
+                {$usernameField} as nama_pengguna,
                 email,
                 role,
                 status,
                 last_login,
                 created_at
-            ')->get()->getResultArray();
+            ")->get()->getResultArray();
             
             // Format data for display
             foreach ($users as &$user) {
-                // Handle field mapping for compatibility
-                if (!isset($user['nama_lengkap']) && isset($user['username'])) {
-                    $user['nama_lengkap'] = $user['username'];
-                }
-                if (!isset($user['nama_pengguna']) && isset($user['username'])) {
-                    $user['nama_pengguna'] = $user['username'];
-                }
-                
                 $user['created_at_formatted'] = isset($user['created_at']) ? date('d M Y', strtotime($user['created_at'])) : 'N/A';
                 $user['last_login_formatted'] = isset($user['last_login']) && $user['last_login'] ? date('d M Y H:i', strtotime($user['last_login'])) : 'Belum pernah';
                 $user['avatar_initials'] = $this->getInitials($user['nama_lengkap'] ?? $user['nama_pengguna'] ?? 'U');
@@ -57,6 +54,18 @@ class UserManagement extends BaseController
 
         // Pass users data to the view
         return view('admin/user_management', $data);
+    }
+
+    /**
+     * Users Edit Page - Modern CRUD interface
+     */
+    public function usersEdit()
+    {
+        $data = [
+            'title' => 'Manajemen User INLISLite - INLISLite v3.0'
+        ];
+
+        return view('admin/users-edit', $data);
     }
 
     public function store()
@@ -267,9 +276,14 @@ class UserManagement extends BaseController
             // Get JSON input
             $input = $this->request->getJSON(true);
             
+            // Check which field names exist in the database
+            $fields = $this->db->getFieldNames('users');
+            $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
+            $passwordField = in_array('kata_sandi', $fields) ? 'kata_sandi' : 'password';
+            
             $rules = [
                 'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
-                'nama_pengguna' => 'required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna]',
+                'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.{$usernameField}]",
                 'email'         => 'required|valid_email|is_unique[users.email]',
                 'password'      => 'required|min_length[6]',
                 'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
@@ -282,9 +296,9 @@ class UserManagement extends BaseController
 
             $data = [
                 'nama_lengkap'  => $input['nama_lengkap'],
-                'nama_pengguna' => $input['nama_pengguna'],
+                $usernameField  => $input['nama_pengguna'],
                 'email'         => $input['email'],
-                'password'      => password_hash($input['password'], PASSWORD_DEFAULT),
+                $passwordField  => password_hash($input['password'], PASSWORD_DEFAULT),
                 'role'          => $input['role'],
                 'status'        => $input['status'],
                 'created_at'    => date('Y-m-d H:i:s'),
@@ -299,13 +313,13 @@ class UserManagement extends BaseController
                     $newId = $this->db->insertID();
                     $newUser = $builder->where('id', $newId)->get()->getRowArray();
                     
-                    // Format for frontend
-                    $newUser['nama_pengguna'] = $newUser['username'];
+                    // Format for frontend - normalize field names
+                    $newUser['nama_pengguna'] = $newUser[$usernameField];
                     $newUser['created_at_formatted'] = date('d M Y', strtotime($newUser['created_at']));
                     $newUser['last_login_formatted'] = 'Belum pernah';
                     $newUser['avatar_initials'] = $this->getInitials($newUser['nama_lengkap']);
                     
-                    log_message('info', 'User added successfully: ' . $newUser['username']);
+                    log_message('info', 'User added successfully: ' . $newUser[$usernameField]);
                     return $this->response->setJSON(['success' => true, 'message' => 'Pengguna berhasil ditambahkan!', 'data' => $newUser]);
                 } else {
                     return $this->response->setJSON(['success' => false, 'message' => 'Gagal menyimpan data ke database']);
@@ -427,28 +441,24 @@ class UserManagement extends BaseController
     {
         if ($this->request->isAJAX()) {
             try {
+                // Check which field names exist in the database
+                $fields = $this->db->getFieldNames('users');
+                $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
+                
                 $builder = $this->db->table('users');
-                $users = $builder->select('
+                $users = $builder->select("
                     id,
                     nama_lengkap,
-                    nama_pengguna,
+                    {$usernameField} as nama_pengguna,
                     email,
                     role,
                     status,
                     last_login,
                     created_at
-                ')->get()->getResultArray();
+                ")->get()->getResultArray();
 
                 // Format data for display
                 foreach ($users as &$user) {
-                    // Handle field mapping for compatibility
-                    if (!isset($user['nama_lengkap']) && isset($user['username'])) {
-                        $user['nama_lengkap'] = $user['username'];
-                    }
-                    if (!isset($user['nama_pengguna']) && isset($user['username'])) {
-                        $user['nama_pengguna'] = $user['username'];
-                    }
-                    
                     $user['created_at_formatted'] = isset($user['created_at']) ? date('d M Y H:i', strtotime($user['created_at'])) : 'N/A';
                     $user['last_login_formatted'] = isset($user['last_login']) && $user['last_login'] ? date('d M Y H:i', strtotime($user['last_login'])) : 'Belum pernah';
                     $user['avatar_initials'] = $this->getInitials($user['nama_lengkap'] ?? $user['nama_pengguna'] ?? 'U');
