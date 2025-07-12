@@ -13,13 +13,25 @@ class TentangCardModel extends Model
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
+        'card_key',
         'title',
         'subtitle',
+        'description',
         'content',
-        'category',
         'icon',
-        'status',
-        'sort_order'
+        'color_class',
+        'background_color',
+        'image_url',
+        'link_url',
+        'link_text',
+        'card_type',
+        'card_size',
+        'is_active',
+        'is_featured',
+        'sort_order',
+        'statistics',
+        'features',
+        'metadata'
     ];
 
     // Dates
@@ -32,8 +44,8 @@ class TentangCardModel extends Model
     protected $validationRules = [
         'title' => 'required|max_length[255]',
         'content' => 'required',
-        'category' => 'required|in_list[overview,legal,features,technical,other]',
-        'status' => 'required|in_list[active,inactive]'
+        'card_type' => 'permit_empty|in_list[info,feature,contact,technical]',
+        'is_active' => 'permit_empty|in_list[0,1]'
     ];
 
     protected $validationMessages = [
@@ -44,12 +56,10 @@ class TentangCardModel extends Model
         'content' => [
             'required' => 'Konten kartu harus diisi'
         ],
-        'category' => [
-            'required' => 'Kategori harus dipilih',
-            'in_list' => 'Kategori tidak valid'
+        'card_type' => [
+            'in_list' => 'Tipe kartu tidak valid'
         ],
-        'status' => [
-            'required' => 'Status harus dipilih',
+        'is_active' => [
             'in_list' => 'Status tidak valid'
         ]
     ];
@@ -73,7 +83,7 @@ class TentangCardModel extends Model
      */
     public function getActiveCards()
     {
-        return $this->where('status', 'active')
+        return $this->where('is_active', 1)
                    ->orderBy('sort_order', 'ASC')
                    ->orderBy('created_at', 'DESC')
                    ->findAll();
@@ -84,8 +94,8 @@ class TentangCardModel extends Model
      */
     public function getCardsByCategory($category)
     {
-        return $this->where('category', $category)
-                   ->where('status', 'active')
+        return $this->where('card_type', $category)
+                   ->where('is_active', 1)
                    ->orderBy('sort_order', 'ASC')
                    ->findAll();
     }
@@ -133,12 +143,20 @@ class TentangCardModel extends Model
             $data['data']['sort_order'] = $this->getNextSortOrder();
         }
 
-        if (!isset($data['data']['status'])) {
-            $data['data']['status'] = 'active';
+        if (!isset($data['data']['is_active'])) {
+            $data['data']['is_active'] = 1;
         }
 
-        if (!isset($data['data']['category'])) {
-            $data['data']['category'] = 'overview';
+        if (!isset($data['data']['card_type'])) {
+            $data['data']['card_type'] = 'info';
+        }
+
+        if (!isset($data['data']['card_size'])) {
+            $data['data']['card_size'] = 'medium';
+        }
+
+        if (!isset($data['data']['is_featured'])) {
+            $data['data']['is_featured'] = 0;
         }
 
         return $data;

@@ -1,671 +1,466 @@
 /**
- * Panduan Page JavaScript - INLISLite v3
- * Handles documentation management functionality
+ * INLISLite v3.0 Panduan Pengguna Page
+ * JavaScript for content management and UI interactions
  */
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialize components
-    initializeModals();
-    initializeSearch();
-    initializeEventListeners();
-    
-    console.log('Panduan page initialized successfully');
+// Global variables
+let contentItems = [];
+let filteredItems = [];
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
 });
 
-// ========================================
-// MODAL INITIALIZATION
-// ========================================
-
-let addDocModal, editDocModal;
-
-function initializeModals() {
-    // Initialize Bootstrap modals
-    const addDocModalElement = document.getElementById('addDocModal');
-    const editDocModalElement = document.getElementById('editDocModal');
-    
-    if (addDocModalElement) {
-        addDocModal = new bootstrap.Modal(addDocModalElement);
-    }
-    
-    if (editDocModalElement) {
-        editDocModal = new bootstrap.Modal(editDocModalElement);
-    }
-    
-    // Reset forms when modals are hidden
-    if (addDocModalElement) {
-        addDocModalElement.addEventListener('hidden.bs.modal', function () {
-            resetForm('addDocForm');
-        });
-    }
-    
-    if (editDocModalElement) {
-        editDocModalElement.addEventListener('hidden.bs.modal', function () {
-            resetForm('editDocForm');
-        });
-    }
+/**
+ * Initialize the application
+ */
+function initializeApp() {
+    loadContent();
+    initializeEventListeners();
+    initializeSearch();
 }
 
-// ========================================
-// SEARCH FUNCTIONALITY
-// ========================================
-
-function initializeSearch() {
-    const searchInput = document.getElementById('searchDocs');
-    
-    if (searchInput) {
-        let searchTimeout;
-        
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                performSearch(this.value.trim());
-            }, 300);
-        });
-        
-        // Clear search on escape key
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                this.value = '';
-                performSearch('');
-            }
-        });
-    }
-}
-
-function performSearch(query) {
-    const docItems = document.querySelectorAll('.doc-item');
-    const docCount = document.getElementById('docCount');
-    let visibleCount = 0;
-    
-    docItems.forEach(item => {
-        const title = item.getAttribute('data-title') || '';
-        const description = item.getAttribute('data-description') || '';
-        const searchText = (title + ' ' + description).toLowerCase();
-        
-        if (query === '' || searchText.includes(query.toLowerCase())) {
-            item.style.display = 'flex';
-            visibleCount++;
-            
-            // Highlight search terms
-            if (query !== '') {
-                highlightSearchTerms(item, query);
-            } else {
-                removeHighlights(item);
-            }
-        } else {
-            item.style.display = 'none';
-        }
-    });
-    
-    // Update document count
-    if (docCount) {
-        docCount.textContent = visibleCount;
-    }
-    
-    // Show no results message if needed
-    showNoResultsMessage(visibleCount === 0 && query !== '');
-}
-
-function highlightSearchTerms(item, query) {
-    const titleElement = item.querySelector('.doc-title');
-    const descriptionElement = item.querySelector('.doc-description');
-    
-    if (titleElement) {
-        titleElement.innerHTML = highlightText(titleElement.textContent, query);
-    }
-    
-    if (descriptionElement) {
-        descriptionElement.innerHTML = highlightText(descriptionElement.textContent, query);
-    }
-}
-
-function removeHighlights(item) {
-    const titleElement = item.querySelector('.doc-title');
-    const descriptionElement = item.querySelector('.doc-description');
-    
-    if (titleElement) {
-        titleElement.innerHTML = titleElement.textContent;
-    }
-    
-    if (descriptionElement) {
-        descriptionElement.innerHTML = descriptionElement.textContent;
-    }
-}
-
-function highlightText(text, query) {
-    if (!query) return text;
-    
-    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-    return text.replace(regex, '<span class="search-highlight">$1</span>');
-}
-
-function showNoResultsMessage(show) {
-    const documentationList = document.getElementById('documentationList');
-    let noResultsElement = document.querySelector('.no-results');
-    
-    if (show) {
-        if (!noResultsElement) {
-            noResultsElement = document.createElement('div');
-            noResultsElement.className = 'no-results';
-            noResultsElement.innerHTML = `
-                <i class="bi bi-search"></i>
-                <h5>Tidak ada dokumen yang ditemukan</h5>
-                <p>Coba gunakan kata kunci yang berbeda</p>
-            `;
-            documentationList.appendChild(noResultsElement);
-        }
-    } else {
-        if (noResultsElement) {
-            noResultsElement.remove();
-        }
-    }
-}
-
-// ========================================
-// EVENT LISTENERS
-// ========================================
-
+/**
+ * Initialize event listeners
+ */
 function initializeEventListeners() {
-    // Form submissions
-    const addDocForm = document.getElementById('addDocForm');
-    const editDocForm = document.getElementById('editDocForm');
-    
-    if (addDocForm) {
-        addDocForm.addEventListener('submit', handleAddDocument);
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearch);
     }
     
-    if (editDocForm) {
-        editDocForm.addEventListener('submit', handleEditDocument);
+    // Modal form submissions
+    const addItemForm = document.getElementById('addItemForm');
+    const editForm = document.getElementById('editForm');
+    
+    if (addItemForm) {
+        addItemForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveItem();
+        });
     }
     
-    // Document actions (using event delegation)
-    document.addEventListener('click', handleDocumentActions);
-    
-    // File input validation
-    const fileInputs = document.querySelectorAll('input[type="file"]');
-    fileInputs.forEach(input => {
-        input.addEventListener('change', validateFileInput);
-    });
-}
-
-function handleDocumentActions(e) {
-    const target = e.target.closest('button');
-    if (!target) return;
-    
-    // Download button
-    if (target.classList.contains('download-btn')) {
-        e.preventDefault();
-        const docId = target.getAttribute('data-doc-id') || getDocIdFromParent(target);
-        handleDownload(docId, target);
-    }
-    
-    // Edit button
-    if (target.classList.contains('edit-btn')) {
-        e.preventDefault();
-        const docId = target.getAttribute('data-doc-id') || getDocIdFromParent(target);
-        handleEdit(docId);
-    }
-    
-    // Delete button
-    if (target.classList.contains('delete-btn')) {
-        e.preventDefault();
-        const docId = target.getAttribute('data-doc-id') || getDocIdFromParent(target);
-        handleDelete(docId, target);
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            updateItem();
+        });
     }
 }
 
-function getDocIdFromParent(element) {
-    const docItem = element.closest('.doc-item');
-    return docItem ? docItem.getAttribute('data-id') : null;
-}
-
-// ========================================
-// DOCUMENT MANAGEMENT FUNCTIONS
-// ========================================
-
-function handleAddDocument(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const submitBtn = e.target.querySelector('button[type="submit"]') || 
-                     document.querySelector('button[form="addDocForm"]');
-    
-    // Validate form
-    if (!validateDocumentForm(formData)) {
-        return;
-    }
-    
-    // Show loading state
-    setButtonLoading(submitBtn, true, 'Menambah...');
-    
-    // Simulate API call (replace with actual endpoint)
-    setTimeout(() => {
-        try {
-            // Get form data
-            const title = formData.get('title');
-            const description = formData.get('description');
-            const version = formData.get('version') || 'v3.0';
-            const file = formData.get('file');
-            
-            // Create new document item
-            const newDocId = Date.now(); // Temporary ID
-            const fileSize = file ? formatFileSize(file.size) : '0 MB';
-            
-            addDocumentToList({
-                id: newDocId,
-                title: title,
-                description: description,
-                version: version,
-                file_size: fileSize
-            });
-            
-            // Show success message
-            showAlert('Dokumen berhasil ditambahkan!', 'success');
-            
-            // Hide modal and reset form
-            addDocModal.hide();
-            resetForm('addDocForm');
-            
-            // Update document count
-            updateDocumentCount();
-            
-        } catch (error) {
-            console.error('Error adding document:', error);
-            showAlert('Terjadi kesalahan saat menambah dokumen', 'danger');
-        } finally {
-            setButtonLoading(submitBtn, false, 'Tambah Dokumen');
-        }
-    }, 1000);
-}
-
-function handleEditDocument(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const submitBtn = e.target.querySelector('button[type="submit"]') || 
-                     document.querySelector('button[form="editDocForm"]');
-    const docId = formData.get('doc_id');
-    
-    // Validate form
-    if (!validateDocumentForm(formData)) {
-        return;
-    }
-    
-    // Show loading state
-    setButtonLoading(submitBtn, true, 'Menyimpan...');
-    
-    // Simulate API call
-    setTimeout(() => {
-        try {
-            const title = formData.get('title');
-            const description = formData.get('description');
-            const version = formData.get('version');
-            
-            // Update document in list
-            updateDocumentInList(docId, {
-                title: title,
-                description: description,
-                version: version
-            });
-            
-            showAlert('Dokumen berhasil diperbarui!', 'success');
-            editDocModal.hide();
-            resetForm('editDocForm');
-            
-        } catch (error) {
-            console.error('Error updating document:', error);
-            showAlert('Terjadi kesalahan saat memperbarui dokumen', 'danger');
-        } finally {
-            setButtonLoading(submitBtn, false, 'Simpan Perubahan');
-        }
-    }, 1000);
-}
-
-function handleDownload(docId, button) {
-    if (!docId) {
-        showAlert('ID dokumen tidak valid', 'warning');
-        return;
-    }
-    
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="bi bi-download me-1"></i>Mengunduh...';
-    button.disabled = true;
-    
-    // Simulate download
-    setTimeout(() => {
-        showAlert('Download dimulai! File akan segera tersedia.', 'success');
+/**
+ * Initialize search functionality
+ */
+function initializeSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
         
-        // Reset button
-        button.innerHTML = originalText;
-        button.disabled = false;
-    }, 1500);
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    }
 }
 
-function handleEdit(docId) {
-    if (!docId) {
-        showAlert('ID dokumen tidak valid', 'warning');
-        return;
-    }
-    
-    // Find document data
-    const docItem = document.querySelector(`[data-doc-id="${docId}"]`)?.closest('.doc-item');
-    if (!docItem) {
-        showAlert('Dokumen tidak ditemukan', 'warning');
-        return;
-    }
-    
-    // Extract document data
-    const title = docItem.querySelector('.doc-title')?.textContent || '';
-    const description = docItem.querySelector('.doc-description')?.textContent || '';
-    const versionBadge = docItem.querySelector('.badge-version')?.textContent || '';
-    const version = versionBadge.replace('v', '');
-    
-    // Populate edit form
-    document.getElementById('editDocId').value = docId;
-    document.getElementById('editDocTitle').value = title;
-    document.getElementById('editDocDescription').value = description;
-    document.getElementById('editDocVersion').value = version;
-    
-    // Show edit modal
-    editDocModal.show();
-}
-
-function handleDelete(docId, button) {
-    if (!docId) {
-        showAlert('ID dokumen tidak valid', 'warning');
-        return;
-    }
-    
-    const docItem = button.closest('.doc-item');
-    const docTitle = docItem?.querySelector('.doc-title')?.textContent || 'dokumen ini';
-    
-    if (confirm(`Apakah Anda yakin ingin menghapus "${docTitle}"?\n\nTindakan ini tidak dapat dibatalkan.`)) {
-        // Show loading state
-        button.innerHTML = '<i class="bi bi-spinner-border spinner-border-sm"></i>';
-        button.disabled = true;
+/**
+ * Load content from API
+ */
+async function loadContent() {
+    try {
+        showLoading();
         
-        // Simulate API call
-        setTimeout(() => {
-            try {
-                // Remove from DOM
-                if (docItem) {
-                    docItem.style.opacity = '0';
-                    docItem.style.transform = 'translateX(-100%)';
-                    
-                    setTimeout(() => {
-                        docItem.remove();
-                        updateDocumentCount();
-                        renumberDocuments();
-                    }, 300);
-                }
-                
-                showAlert('Dokumen berhasil dihapus!', 'success');
-                
-            } catch (error) {
-                console.error('Error deleting document:', error);
-                showAlert('Terjadi kesalahan saat menghapus dokumen', 'danger');
-                
-                // Reset button
-                button.innerHTML = '<i class="bi bi-trash"></i>';
-                button.disabled = false;
+        // Sample data for Panduan Pengguna
+        const sampleContent = [
+            {
+                id: 1,
+                title: "Sample Panduan Pengguna Item 1",
+                subtitle: "Contoh item pertama",
+                description: "Deskripsi lengkap untuk item pertama dalam kategori Panduan Pengguna. Item ini menunjukkan bagaimana konten ditampilkan dalam sistem.",
+                category: "general",
+                priority: "high"
+            },
+            {
+                id: 2,
+                title: "Sample Panduan Pengguna Item 2", 
+                subtitle: "Contoh item kedua",
+                description: "Deskripsi untuk item kedua yang memberikan informasi tambahan tentang fitur dan fungsi yang tersedia.",
+                category: "technical",
+                priority: "medium"
+            },
+            {
+                id: 3,
+                title: "Sample Panduan Pengguna Item 3",
+                subtitle: "Contoh item ketiga",
+                description: "Item ketiga ini menampilkan variasi konten yang dapat dikelola dalam sistem manajemen Panduan Pengguna.",
+                category: "tutorial",
+                priority: "low"
             }
-        }, 1000);
+        ];
+        
+        contentItems = sampleContent;
+        filteredItems = [...contentItems];
+        renderContent();
+        
+    } catch (error) {
+        console.error('Error loading content:', error);
+        showError('Gagal memuat konten');
+    } finally {
+        hideLoading();
     }
 }
 
-// ========================================
-// UTILITY FUNCTIONS
-// ========================================
-
-function addDocumentToList(docData) {
-    const documentationList = document.getElementById('documentationList');
-    const docCount = documentationList.children.length + 1;
+/**
+ * Render content to the DOM
+ */
+function renderContent() {
+    const container = document.getElementById('contentContainer');
+    if (!container) return;
     
-    const docElement = document.createElement('div');
-    docElement.className = 'doc-item';
-    docElement.setAttribute('data-title', docData.title.toLowerCase());
-    docElement.setAttribute('data-description', docData.description.toLowerCase());
-    docElement.setAttribute('data-id', docData.id);
+    if (filteredItems.length === 0) {
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h3>Tidak ada konten ditemukan</h3>
+                    <p>Belum ada konten yang tersedia atau sesuai dengan pencarian Anda.</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
     
-    docElement.innerHTML = `
-        <div class="doc-number">
-            <span>${docCount}</span>
-        </div>
-        <div class="doc-content">
-            <h6 class="doc-title">${escapeHtml(docData.title)}</h6>
-            <p class="doc-description">${escapeHtml(docData.description)}</p>
-            <div class="doc-badges">
-                <span class="badge badge-pdf">PDF</span>
-                <span class="badge badge-size">${escapeHtml(docData.file_size)}</span>
-                <span class="badge badge-version">${escapeHtml(docData.version)}</span>
+    container.innerHTML = filteredItems.map(item => `
+        <div class="col-lg-6 col-md-12">
+            <div class="content-card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="bi bi-${getCategoryIcon(item.category)}"></i>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action edit" onclick="editItem(${item.id})" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-action delete" onclick="deleteItem(${item.id})" title="Hapus">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">${item.title}</h3>
+                    ${item.subtitle ? `<p class="card-subtitle">${item.subtitle}</p>` : ''}
+                    <div class="card-description">${item.description}</div>
+                    <div class="mt-3">
+                        <span class="badge bg-${getPriorityColor(item.priority)} me-2">${item.priority}</span>
+                        <span class="badge bg-secondary">${item.category}</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="doc-actions">
-            <button class="btn btn-outline-secondary btn-sm download-btn" title="Unduh" data-doc-id="${docData.id}">
-                <i class="bi bi-download me-1"></i>
-                Unduh
-            </button>
-            <button class="btn btn-link btn-sm edit-btn" title="Edit" data-doc-id="${docData.id}">
-                <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-link btn-sm text-danger delete-btn" title="Hapus" data-doc-id="${docData.id}">
-                <i class="bi bi-trash"></i>
-            </button>
-        </div>
-    `;
-    
-    documentationList.appendChild(docElement);
-    
-    // Add animation
-    setTimeout(() => {
-        docElement.style.opacity = '1';
-        docElement.style.transform = 'translateY(0)';
-    }, 100);
+    `).join('');
 }
 
-function updateDocumentInList(docId, docData) {
-    const docItem = document.querySelector(`[data-doc-id="${docId}"]`)?.closest('.doc-item');
-    if (!docItem) return;
-    
-    // Update title and description
-    const titleElement = docItem.querySelector('.doc-title');
-    const descriptionElement = docItem.querySelector('.doc-description');
-    const versionElement = docItem.querySelector('.badge-version');
-    
-    if (titleElement) {
-        titleElement.textContent = docData.title;
-        docItem.setAttribute('data-title', docData.title.toLowerCase());
-    }
-    
-    if (descriptionElement) {
-        descriptionElement.textContent = docData.description;
-        docItem.setAttribute('data-description', docData.description.toLowerCase());
-    }
-    
-    if (versionElement && docData.version) {
-        versionElement.textContent = docData.version;
-    }
-    
-    // Add update animation
-    docItem.style.backgroundColor = '#d4edda';
-    setTimeout(() => {
-        docItem.style.backgroundColor = '';
-    }, 1000);
-}
-
-function updateDocumentCount() {
-    const docCount = document.getElementById('docCount');
-    const visibleDocs = document.querySelectorAll('.doc-item:not([style*="display: none"])').length;
-    
-    if (docCount) {
-        docCount.textContent = visibleDocs;
-    }
-}
-
-function renumberDocuments() {
-    const docItems = document.querySelectorAll('.doc-item:not([style*="display: none"])');
-    
-    docItems.forEach((item, index) => {
-        const numberElement = item.querySelector('.doc-number span');
-        if (numberElement) {
-            numberElement.textContent = index + 1;
-        }
-    });
-}
-
-function validateDocumentForm(formData) {
-    const title = formData.get('title');
-    
-    if (!title || title.trim() === '') {
-        showAlert('Judul dokumen harus diisi!', 'warning');
-        return false;
-    }
-    
-    if (title.length > 100) {
-        showAlert('Judul dokumen terlalu panjang (maksimal 100 karakter)!', 'warning');
-        return false;
-    }
-    
-    return true;
-}
-
-function validateFileInput(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    
-    if (file.size > maxSize) {
-        showAlert('Ukuran file terlalu besar! Maksimal 10MB.', 'warning');
-        e.target.value = '';
-        return;
-    }
-    
-    if (!allowedTypes.includes(file.type)) {
-        showAlert('Format file tidak didukung! Gunakan PDF, DOC, atau DOCX.', 'warning');
-        e.target.value = '';
-        return;
-    }
-}
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-function resetForm(formId) {
-    const form = document.getElementById(formId);
-    if (form) {
-        form.reset();
-        
-        // Clear validation states
-        const inputs = form.querySelectorAll('.form-control');
-        inputs.forEach(input => {
-            input.classList.remove('is-valid', 'is-invalid');
-        });
-    }
-}
-
-function setButtonLoading(button, loading, text) {
-    if (!button) return;
-    
-    if (loading) {
-        button.disabled = true;
-        button.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${text}`;
-    } else {
-        button.disabled = false;
-        button.innerHTML = text;
-    }
-}
-
-function showAlert(message, type = 'info') {
-    // Remove existing alerts
-    const existingAlerts = document.querySelectorAll('.alert-notification');
-    existingAlerts.forEach(alert => alert.remove());
-
-    // Create new alert
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show alert-notification`;
-    alertDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1060;
-        min-width: 300px;
-        max-width: 400px;
-    `;
-
-    const iconMap = {
-        success: 'bi-check-circle',
-        danger: 'bi-exclamation-triangle',
-        warning: 'bi-exclamation-triangle',
-        info: 'bi-info-circle',
+/**
+ * Get icon for category
+ */
+function getCategoryIcon(category) {
+    const icons = {
+        'general': 'info-circle',
+        'technical': 'gear',
+        'tutorial': 'book',
+        'update': 'arrow-up-circle',
+        'default': 'file-text'
     };
+    return icons[category] || icons.default;
+}
 
-    alertDiv.innerHTML = `
-        <i class="bi ${iconMap[type]} me-2"></i>${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
+/**
+ * Get color for priority
+ */
+function getPriorityColor(priority) {
+    const colors = {
+        'high': 'danger',
+        'medium': 'warning',
+        'low': 'success'
+    };
+    return colors[priority] || 'secondary';
+}
 
-    document.body.appendChild(alertDiv);
+/**
+ * Handle search functionality
+ */
+function handleSearch() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    filteredItems = contentItems.filter(item => 
+        item.title.toLowerCase().includes(searchTerm) ||
+        item.subtitle.toLowerCase().includes(searchTerm) ||
+        item.description.toLowerCase().includes(searchTerm) ||
+        item.category.toLowerCase().includes(searchTerm)
+    );
+    
+    renderContent();
+}
 
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        if (alertDiv.parentNode) {
-            alertDiv.remove();
+/**
+ * Save new item
+ */
+async function saveItem() {
+    try {
+        const title = document.getElementById('itemTitle').value;
+        const subtitle = document.getElementById('itemSubtitle').value;
+        const description = document.getElementById('itemDescription').value;
+        const category = document.getElementById('itemCategory').value;
+        const priority = document.getElementById('itemPriority').value;
+        
+        if (!title || !description) {
+            showError('Judul dan deskripsi harus diisi');
+            return;
         }
-    }, 4000);
+        
+        showLoading();
+        
+        const newItem = {
+            id: Date.now(),
+            title,
+            subtitle,
+            description,
+            category,
+            priority
+        };
+        
+        contentItems.push(newItem);
+        filteredItems = [...contentItems];
+        renderContent();
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addItemModal'));
+        modal.hide();
+        document.getElementById('addItemForm').reset();
+        
+        showSuccess('Item berhasil ditambahkan');
+        
+    } catch (error) {
+        console.error('Error saving item:', error);
+        showError('Gagal menyimpan item');
+    } finally {
+        hideLoading();
+    }
 }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function escapeRegex(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-// ========================================
-// KEYBOARD SHORTCUTS
-// ========================================
-
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + K for search focus
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.getElementById('searchDocs');
-        if (searchInput) {
-            searchInput.focus();
-            searchInput.select();
-        }
+/**
+ * Edit item
+ */
+function editItem(id) {
+    const item = contentItems.find(i => i.id === id);
+    
+    if (!item) {
+        showError('Item tidak ditemukan');
+        return;
     }
     
-    // Ctrl/Cmd + N for new document
-    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-        e.preventDefault();
-        const addBtn = document.querySelector('.add-doc-btn');
-        if (addBtn) {
-            addBtn.click();
+    document.getElementById('editId').value = id;
+    document.getElementById('editTitle').value = item.title;
+    document.getElementById('editSubtitle').value = item.subtitle || '';
+    document.getElementById('editDescription').value = item.description;
+    document.getElementById('editCategory').value = item.category;
+    document.getElementById('editPriority').value = item.priority;
+    
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+}
+
+/**
+ * Update item
+ */
+async function updateItem() {
+    try {
+        const id = parseInt(document.getElementById('editId').value);
+        const title = document.getElementById('editTitle').value;
+        const subtitle = document.getElementById('editSubtitle').value;
+        const description = document.getElementById('editDescription').value;
+        const category = document.getElementById('editCategory').value;
+        const priority = document.getElementById('editPriority').value;
+        
+        if (!title || !description) {
+            showError('Judul dan deskripsi harus diisi');
+            return;
         }
+        
+        showLoading();
+        
+        const index = contentItems.findIndex(i => i.id === id);
+        if (index !== -1) {
+            contentItems[index] = {
+                ...contentItems[index],
+                title,
+                subtitle,
+                description,
+                category,
+                priority
+            };
+            filteredItems = [...contentItems];
+            renderContent();
+        }
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+        modal.hide();
+        
+        showSuccess('Item berhasil diperbarui');
+        
+    } catch (error) {
+        console.error('Error updating item:', error);
+        showError('Gagal memperbarui item');
+    } finally {
+        hideLoading();
     }
-});
+}
 
-// ========================================
-// EXPORT FUNCTIONS (for external use)
-// ========================================
+/**
+ * Delete item
+ */
+async function deleteItem(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+        return;
+    }
+    
+    try {
+        showLoading();
+        
+        contentItems = contentItems.filter(i => i.id !== id);
+        filteredItems = [...contentItems];
+        renderContent();
+        
+        showSuccess('Item berhasil dihapus');
+        
+    } catch (error) {
+        console.error('Error deleting item:', error);
+        showError('Gagal menghapus item');
+    } finally {
+        hideLoading();
+    }
+}
 
-window.PanduanManager = {
-    search: performSearch,
-    addDocument: addDocumentToList,
-    updateDocument: updateDocumentInList,
-    showAlert: showAlert,
-    updateCount: updateDocumentCount
-};
+/**
+ * Refresh content
+ */
+function refreshContent() {
+    loadContent();
+    showSuccess('Konten berhasil diperbarui');
+}
+
+/**
+ * Show loading spinner
+ */
+function showLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'flex';
+    }
+}
+
+/**
+ * Hide loading spinner
+ */
+function hideLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'none';
+    }
+}
+
+/**
+ * Show success message
+ */
+function showSuccess(message) {
+    showToast(message, 'success');
+}
+
+/**
+ * Show error message
+ */
+function showError(message) {
+    showToast(message, 'error');
+}
+
+/**
+ * Show toast notification
+ */
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="bi bi-x"></i>
+        </button>
+    `;
+    
+    if (!document.querySelector('#toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            .toast-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 300px;
+                animation: slideInRight 0.3s ease-out;
+                border-left: 4px solid #6b7280;
+            }
+            .toast-success { border-left-color: #059669; }
+            .toast-error { border-left-color: #dc2626; }
+            .toast-content {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex: 1;
+            }
+            .toast-close {
+                background: none;
+                border: none;
+                color: #6b7280;
+                cursor: pointer;
+                padding: 0.25rem;
+                border-radius: 4px;
+            }
+            .toast-close:hover {
+                background-color: #f3f4f6;
+            }
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
+}
+
+// Export functions for global access
+window.saveItem = saveItem;
+window.editItem = editItem;
+window.updateItem = updateItem;
+window.deleteItem = deleteItem;
+window.refreshContent = refreshContent;

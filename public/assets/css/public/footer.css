@@ -1,25 +1,12 @@
-/* Modern Footer Styles for InlisLite v3 */
+/* Modern Footer Styles for InlisLite v3 - Solid Color Design */
 
 /* Footer Base Styles */
 .footer-modern {
-    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+    background-color: #1e3a8a;
     color: white;
     padding: 3rem 0 1.5rem;
     margin-top: 0;
     position: relative;
-    overflow: hidden;
-}
-
-.footer-modern::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"%3E%3Cpolygon fill="rgba(255,255,255,0.02)" points="0,1000 1000,0 1000,1000"/%3E%3C/svg%3E');
-    background-size: cover;
-    pointer-events: none;
 }
 
 /* Logo Section */
@@ -31,18 +18,18 @@
 .footer-logo-icon {
     width: 48px;
     height: 48px;
-    background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+    background-color: #059669;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
     transition: all 0.3s ease;
 }
 
 .footer-logo-icon:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
 }
 
 .footer-logo-text {
@@ -57,13 +44,13 @@
 }
 
 .footer-version-badge {
-    background-color: #10b981;
+    background-color: #059669;
     color: white;
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
     border-radius: 50px;
     font-weight: 600;
-    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
 }
 
 .footer-subtitle {

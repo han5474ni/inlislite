@@ -3,6 +3,15 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\TentangCardModel;
+use App\Models\FiturModel;
+use App\Models\InstallerCardModel;
+use App\Models\PatchModel;
+use App\Models\AplikasiModel;
+use App\Models\PanduanModel;
+use App\Models\DukunganModel;
+use App\Models\BimbinganModel;
+use App\Models\DemoModel;
 
 class PublicController extends BaseController
 {
@@ -19,23 +28,85 @@ class PublicController extends BaseController
     
     public function tentang()
     {
+        try {
+            $tentangModel = new TentangCardModel();
+            $aboutContent = $tentangModel->getActiveCards();
+        } catch (\Exception $e) {
+            log_message('error', 'Error loading tentang data: ' . $e->getMessage());
+            $aboutContent = $this->getDefaultAboutContent();
+        }
+        
         $data = [
             'title' => 'Tentang Kami - INLISLite v3',
             'page_title' => 'Tentang Kami',
             'meta_description' => 'Informasi lengkap tentang INLISLite v3, sistem otomasi perpustakaan yang dikembangkan oleh Perpustakaan Nasional RI.',
-            'about_content' => $this->getAboutContent()
+            'about_content' => $aboutContent
         ];
         
         return view('public/tentang', $data);
     }
     
+    public function fitur()
+    {
+        try {
+            $fiturModel = new FiturModel();
+            $features = $fiturModel->where('status', 'active')
+                                  ->orderBy('sort_order', 'ASC')
+                                  ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'Error loading fitur data: ' . $e->getMessage());
+            $features = $this->getDefaultFeatures();
+        }
+        
+        $data = [
+            'title' => 'Fitur & Modul - INLISLite v3',
+            'page_title' => 'Fitur & Modul',
+            'meta_description' => 'Fitur lengkap dan modul-modul canggih dalam sistem INLISLite v3 untuk manajemen perpustakaan modern.',
+            'features' => $features
+        ];
+        
+        return view('public/fitur', $data);
+    }
+    
+    public function installer()
+    {
+        try {
+            $installerModel = new InstallerCardModel();
+            $packages = $installerModel->where('status', 'active')
+                                      ->orderBy('sort_order', 'ASC')
+                                      ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'Error loading installer data: ' . $e->getMessage());
+            $packages = $this->getDefaultInstallerPackages();
+        }
+        
+        $data = [
+            'title' => 'Installer - INLISLite v3',
+            'page_title' => 'Installer',
+            'meta_description' => 'Download installer dan paket instalasi INLISLite v3. Dapatkan sistem perpustakaan terbaru.',
+            'packages' => $packages
+        ];
+        
+        return view('public/installer', $data);
+    }
+    
     public function patch()
     {
+        try {
+            $patchModel = new PatchModel();
+            $patches = $patchModel->where('status', 'active')
+                                 ->orderBy('tanggal_rilis', 'DESC')
+                                 ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'Error loading patch data: ' . $e->getMessage());
+            $patches = $this->getDefaultPatchData();
+        }
+        
         $data = [
             'title' => 'Patch & Updater - INLISLite v3',
             'page_title' => 'Patch & Updater',
             'meta_description' => 'Download patch dan update terbaru untuk INLISLite v3. Dapatkan fitur terbaru dan perbaikan bug.',
-            'patches' => $this->getPatchData(),
+            'patches' => $patches,
             'current_version' => '3.0.5',
             'latest_version' => '3.0.8'
         ];
@@ -45,11 +116,21 @@ class PublicController extends BaseController
     
     public function aplikasi()
     {
+        try {
+            $aplikasiModel = new AplikasiModel();
+            $applications = $aplikasiModel->where('status', 'active')
+                                         ->orderBy('sort_order', 'ASC')
+                                         ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'Error loading aplikasi data: ' . $e->getMessage());
+            $applications = $this->getDefaultApplicationData();
+        }
+        
         $data = [
             'title' => 'Aplikasi Pendukung - INLISLite v3',
             'page_title' => 'Aplikasi Pendukung',
             'meta_description' => 'Download aplikasi pendukung dan tools untuk INLISLite v3. Tingkatkan produktivitas dengan aplikasi tambahan.',
-            'applications' => $this->getApplicationData()
+            'applications' => $applications
         ];
         
         return view('public/aplikasi', $data);
@@ -57,11 +138,21 @@ class PublicController extends BaseController
     
     public function panduan()
     {
+        try {
+            $panduanModel = new PanduanModel();
+            $guides = $panduanModel->where('status', 'active')
+                                  ->orderBy('sort_order', 'ASC')
+                                  ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'Error loading panduan data: ' . $e->getMessage());
+            $guides = $this->getDefaultGuideData();
+        }
+        
         $data = [
             'title' => 'Panduan - INLISLite v3',
             'page_title' => 'Panduan',
             'meta_description' => 'Panduan lengkap instalasi, konfigurasi, dan penggunaan INLISLite v3. Tutorial step-by-step untuk pemula.',
-            'guides' => $this->getGuideData()
+            'guides' => $guides
         ];
         
         return view('public/panduan', $data);
@@ -69,12 +160,22 @@ class PublicController extends BaseController
     
     public function dukungan()
     {
+        try {
+            $dukunganModel = new DukunganModel();
+            $supportChannels = $dukunganModel->where('status', 'active')
+                                            ->orderBy('sort_order', 'ASC')
+                                            ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'Error loading dukungan data: ' . $e->getMessage());
+            $supportChannels = $this->getDefaultSupportChannels();
+        }
+        
         $data = [
             'title' => 'Dukungan Teknis - INLISLite v3',
             'page_title' => 'Dukungan Teknis',
             'meta_description' => 'Dapatkan dukungan teknis untuk INLISLite v3. Tim support siap membantu mengatasi masalah teknis Anda.',
-            'support_channels' => $this->getSupportChannels(),
-            'faq' => $this->getFaqData()
+            'support_channels' => $supportChannels,
+            'faq' => $this->getDefaultFaqData()
         ];
         
         return view('public/dukungan', $data);
@@ -82,12 +183,22 @@ class PublicController extends BaseController
     
     public function bimbingan()
     {
+        try {
+            $bimbinganModel = new BimbinganModel();
+            $trainingPrograms = $bimbinganModel->where('status', 'active')
+                                              ->orderBy('sort_order', 'ASC')
+                                              ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'Error loading bimbingan data: ' . $e->getMessage());
+            $trainingPrograms = $this->getDefaultTrainingPrograms();
+        }
+        
         $data = [
             'title' => 'Bimbingan Teknis - INLISLite v3',
             'page_title' => 'Bimbingan Teknis',
             'meta_description' => 'Layanan bimbingan teknis dan pelatihan untuk INLISLite v3. Tingkatkan kemampuan tim perpustakaan Anda.',
-            'training_programs' => $this->getTrainingPrograms(),
-            'schedules' => $this->getTrainingSchedules()
+            'training_programs' => $trainingPrograms,
+            'schedules' => $this->getDefaultTrainingSchedules()
         ];
         
         return view('public/bimbingan', $data);
@@ -95,461 +206,163 @@ class PublicController extends BaseController
     
     public function demo()
     {
+        try {
+            $demoModel = new DemoModel();
+            $demos = $demoModel->where('status', 'active')
+                              ->orderBy('sort_order', 'ASC')
+                              ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'Error loading demo data: ' . $e->getMessage());
+            $demos = $this->getDefaultDemoPrograms();
+        }
+        
         $data = [
             'title' => 'Demo Program - INLISLite v3',
             'page_title' => 'Demo Program',
             'meta_description' => 'Coba demo INLISLite v3 secara online. Jelajahi fitur-fitur lengkap sebelum menggunakan sistem.',
-            'demos' => $this->getDemoPrograms()
+            'demos' => $demos
         ];
         
         return view('public/demo', $data);
     }
     
-    private function getAboutContent()
+    // Default/fallback data methods
+    private function getDefaultAboutContent()
     {
         return [
             [
                 'id' => 1,
                 'title' => 'INLISLite Version 3',
                 'subtitle' => 'Library Automation System Overview',
-                'content' => 'INLISLite Version 3 adalah sistem otomasi perpustakaan yang dikembangkan oleh Perpustakaan Nasional Republik Indonesia. Sistem ini dirancang untuk membantu perpustakaan dalam mengelola koleksi, anggota, dan layanan perpustakaan secara digital dan terintegrasi.\n\nDengan teknologi terkini dan antarmuka yang user-friendly, INLISLite v3 memberikan solusi komprehensif untuk kebutuhan manajemen perpustakaan modern.',
+                'content' => 'INLISLite Version 3 adalah sistem otomasi perpustakaan yang dikembangkan oleh Perpustakaan Nasional Republik Indonesia.',
                 'icon' => 'bi-info-circle'
-            ],
-            [
-                'id' => 2,
-                'title' => 'Legal Framework',
-                'subtitle' => 'Dasar Hukum dan Regulasi',
-                'content' => '• Undang-Undang Nomor 43 Tahun 2007 tentang Perpustakaan\n• Peraturan Pemerintah Nomor 24 Tahun 2014 tentang Pelaksanaan UU Perpustakaan\n• Peraturan Kepala Perpustakaan Nasional RI tentang Standar Nasional Perpustakaan\n• Kebijakan pengembangan sistem informasi perpustakaan nasional',
-                'icon' => 'bi-shield-check'
-            ],
-            [
-                'id' => 3,
-                'title' => 'Key Features',
-                'subtitle' => 'Fitur Utama Sistem',
-                'content' => '• Katalogisasi: Sistem katalog digital dengan standar internasional\n• Sirkulasi: Manajemen peminjaman dan pengembalian otomatis\n• Keanggotaan: Pengelolaan data anggota perpustakaan\n• Inventarisasi: Tracking dan monitoring koleksi perpustakaan\n• Laporan: Sistem pelaporan komprehensif dan real-time\n• OPAC: Online Public Access Catalog untuk pencarian koleksi',
-                'icon' => 'bi-gear'
-            ],
-            [
-                'id' => 4,
-                'title' => 'System Requirements',
-                'subtitle' => 'Kebutuhan Sistem Minimum',
-                'content' => 'Server Requirements:\n• Operating System: Linux/Windows Server\n• Web Server: Apache/Nginx\n• Database: MySQL/PostgreSQL\n• PHP Version: 8.0 atau lebih tinggi\n• Memory: Minimum 4GB RAM\n• Storage: Minimum 20GB free space\n\nClient Requirements:\n• Web Browser: Chrome, Firefox, Safari, Edge (versi terbaru)\n• JavaScript: Enabled\n• Internet Connection: Stable broadband',
-                'icon' => 'bi-cpu'
             ]
         ];
     }
     
-    private function getPatchData()
+    private function getDefaultFeatures()
     {
         return [
             [
-                'version' => '3.0.8',
-                'release_date' => '2024-01-15',
-                'type' => 'Major Update',
-                'size' => '45.2 MB',
-                'description' => 'Update besar dengan fitur baru dan perbaikan performa',
-                'features' => [
-                    'Fitur backup otomatis',
-                    'Peningkatan keamanan sistem',
-                    'Interface baru untuk mobile',
-                    'Optimasi database query'
-                ],
-                'download_url' => '#',
-                'status' => 'latest'
-            ],
-            [
-                'version' => '3.0.7',
-                'release_date' => '2024-01-01',
-                'type' => 'Security Update',
-                'size' => '12.8 MB',
-                'description' => 'Perbaikan keamanan dan bug fixes',
-                'features' => [
-                    'Perbaikan vulnerability XSS',
-                    'Update library dependencies',
-                    'Perbaikan bug pada modul sirkulasi'
-                ],
-                'download_url' => '#',
-                'status' => 'stable'
-            ],
-            [
-                'version' => '3.0.6',
-                'release_date' => '2023-12-15',
-                'type' => 'Feature Update',
-                'size' => '28.5 MB',
-                'description' => 'Penambahan fitur baru dan peningkatan UX',
-                'features' => [
-                    'Modul pelaporan advanced',
-                    'Export data ke Excel',
-                    'Notifikasi email otomatis',
-                    'Dashboard analytics'
-                ],
-                'download_url' => '#',
-                'status' => 'stable'
+                'id' => 1,
+                'nama_fitur' => 'Katalogisasi',
+                'deskripsi' => 'Sistem katalogisasi digital dengan standar MARC21',
+                'kategori' => 'core',
+                'icon' => 'bi-book'
             ]
         ];
     }
     
-    private function getApplicationData()
+    private function getDefaultInstallerPackages()
     {
         return [
             [
-                'name' => 'INLISLite Desktop Client',
-                'version' => '3.0.5',
-                'platform' => 'Windows',
-                'size' => '125 MB',
-                'description' => 'Aplikasi desktop untuk akses offline dan sinkronisasi data',
-                'features' => [
-                    'Mode offline',
-                    'Sinkronisasi otomatis',
-                    'Backup lokal',
-                    'Print management'
-                ],
-                'download_url' => '#',
-                'icon' => 'bi-laptop'
-            ],
-            [
-                'name' => 'INLISLite Mobile App',
-                'version' => '1.2.0',
-                'platform' => 'Android/iOS',
-                'size' => '45 MB',
-                'description' => 'Aplikasi mobile untuk akses perpustakaan di mana saja',
-                'features' => [
-                    'Pencarian katalog',
-                    'Reservasi buku',
-                    'Notifikasi push',
-                    'QR Code scanner'
-                ],
-                'download_url' => '#',
-                'icon' => 'bi-phone'
-            ],
-            [
-                'name' => 'Barcode Generator',
-                'version' => '2.1.0',
-                'platform' => 'Web/Desktop',
-                'size' => '15 MB',
-                'description' => 'Tool untuk generate barcode dan label buku',
-                'features' => [
-                    'Multiple barcode formats',
-                    'Batch generation',
-                    'Custom templates',
-                    'Print preview'
-                ],
-                'download_url' => '#',
-                'icon' => 'bi-upc-scan'
-            ],
-            [
-                'name' => 'Data Migration Tool',
-                'version' => '1.5.0',
-                'platform' => 'Windows/Linux',
-                'size' => '32 MB',
-                'description' => 'Tool untuk migrasi data dari sistem lama',
-                'features' => [
-                    'Multiple format support',
-                    'Data validation',
-                    'Progress tracking',
-                    'Error reporting'
-                ],
-                'download_url' => '#',
-                'icon' => 'bi-arrow-left-right'
+                'id' => 1,
+                'nama_paket' => 'INLISLite v3.0 Full Package',
+                'deskripsi' => 'Paket lengkap instalasi INLISLite v3.0',
+                'versi' => '3.0.0',
+                'ukuran' => '25 MB',
+                'tipe' => 'installer'
             ]
         ];
     }
     
-    private function getGuideData()
+    private function getDefaultPatchData()
     {
         return [
             [
-                'category' => 'Installation',
+                'id' => 1,
+                'nama_patch' => 'Security Update v3.0.8',
+                'versi' => '3.0.8',
+                'deskripsi' => 'Update keamanan terbaru',
+                'ukuran' => '12 MB',
+                'prioritas' => 'high'
+            ]
+        ];
+    }
+    
+    private function getDefaultApplicationData()
+    {
+        return [
+            [
+                'id' => 1,
+                'nama_aplikasi' => 'INLISLite Desktop Client',
+                'deskripsi' => 'Aplikasi desktop untuk akses offline',
+                'versi' => '3.0.5',
+                'platform' => 'Windows'
+            ]
+        ];
+    }
+    
+    private function getDefaultGuideData()
+    {
+        return [
+            [
+                'id' => 1,
                 'title' => 'Panduan Instalasi',
-                'icon' => 'bi-download',
-                'guides' => [
-                    [
-                        'title' => 'Instalasi Server Requirements',
-                        'description' => 'Persiapan server dan environment untuk INLISLite v3',
-                        'duration' => '30 menit',
-                        'difficulty' => 'Beginner',
-                        'url' => '#'
-                    ],
-                    [
-                        'title' => 'Instalasi Database',
-                        'description' => 'Setup dan konfigurasi database MySQL/PostgreSQL',
-                        'duration' => '45 menit',
-                        'difficulty' => 'Intermediate',
-                        'url' => '#'
-                    ],
-                    [
-                        'title' => 'Instalasi Aplikasi',
-                        'description' => 'Install dan konfigurasi aplikasi INLISLite v3',
-                        'duration' => '60 menit',
-                        'difficulty' => 'Intermediate',
-                        'url' => '#'
-                    ]
-                ]
-            ],
-            [
-                'category' => 'Configuration',
-                'title' => 'Konfigurasi Sistem',
-                'icon' => 'bi-gear',
-                'guides' => [
-                    [
-                        'title' => 'Konfigurasi Dasar',
-                        'description' => 'Setting awal sistem dan parameter dasar',
-                        'duration' => '20 menit',
-                        'difficulty' => 'Beginner',
-                        'url' => '#'
-                    ],
-                    [
-                        'title' => 'Konfigurasi User & Permission',
-                        'description' => 'Setup user, role, dan permission sistem',
-                        'duration' => '40 menit',
-                        'difficulty' => 'Intermediate',
-                        'url' => '#'
-                    ],
-                    [
-                        'title' => 'Konfigurasi Advanced',
-                        'description' => 'Setting lanjutan untuk optimasi performa',
-                        'duration' => '90 menit',
-                        'difficulty' => 'Advanced',
-                        'url' => '#'
-                    ]
-                ]
-            ],
-            [
-                'category' => 'Usage',
-                'title' => 'Panduan Penggunaan',
-                'icon' => 'bi-book',
-                'guides' => [
-                    [
-                        'title' => 'Modul Katalogisasi',
-                        'description' => 'Cara menggunakan fitur katalogisasi buku',
-                        'duration' => '45 menit',
-                        'difficulty' => 'Beginner',
-                        'url' => '#'
-                    ],
-                    [
-                        'title' => 'Modul Sirkulasi',
-                        'description' => 'Panduan peminjaman dan pengembalian buku',
-                        'duration' => '30 menit',
-                        'difficulty' => 'Beginner',
-                        'url' => '#'
-                    ],
-                    [
-                        'title' => 'Modul Pelaporan',
-                        'description' => 'Generate dan customize laporan sistem',
-                        'duration' => '60 menit',
-                        'difficulty' => 'Intermediate',
-                        'url' => '#'
-                    ]
-                ]
+                'description' => 'Panduan lengkap instalasi INLISLite v3',
+                'category' => 'installation'
             ]
         ];
     }
     
-    private function getSupportChannels()
+    private function getDefaultSupportChannels()
     {
         return [
             [
-                'name' => 'Email Support',
-                'description' => 'Kirim pertanyaan melalui email untuk mendapat bantuan',
-                'contact' => 'support@inlislite.perpusnas.go.id',
-                'response_time' => '24 jam',
-                'availability' => '24/7',
-                'icon' => 'bi-envelope'
-            ],
-            [
-                'name' => 'Live Chat',
-                'description' => 'Chat langsung dengan tim support',
-                'contact' => 'Chat Widget',
-                'response_time' => '5 menit',
-                'availability' => 'Senin-Jumat 08:00-17:00',
-                'icon' => 'bi-chat-dots'
-            ],
-            [
-                'name' => 'Phone Support',
-                'description' => 'Hubungi hotline untuk bantuan urgent',
-                'contact' => '+62-21-xxxx-xxxx',
-                'response_time' => 'Langsung',
-                'availability' => 'Senin-Jumat 08:00-17:00',
-                'icon' => 'bi-telephone'
-            ],
-            [
-                'name' => 'Forum Komunitas',
-                'description' => 'Diskusi dengan komunitas pengguna INLISLite',
-                'contact' => 'forum.inlislite.perpusnas.go.id',
-                'response_time' => 'Bervariasi',
-                'availability' => '24/7',
-                'icon' => 'bi-people'
+                'id' => 1,
+                'title' => 'Email Support',
+                'description' => 'Kirim pertanyaan melalui email',
+                'contact_info' => 'support@inlislite.perpusnas.go.id',
+                'response_time' => '24 jam'
             ]
         ];
     }
     
-    private function getFaqData()
+    private function getDefaultTrainingPrograms()
+    {
+        return [
+            [
+                'id' => 1,
+                'title' => 'Basic Training',
+                'description' => 'Pelatihan dasar penggunaan INLISLite v3',
+                'duration' => '2 hari',
+                'price' => 'Gratis'
+            ]
+        ];
+    }
+    
+    private function getDefaultDemoPrograms()
+    {
+        return [
+            [
+                'id' => 1,
+                'title' => 'Demo INLISLite v3 Opensource',
+                'description' => 'Platform demo lengkap untuk sistem manajemen perpustakaan',
+                'platform' => 'PHP Open Source',
+                'version' => 'v3.0'
+            ]
+        ];
+    }
+    
+    private function getDefaultFaqData()
     {
         return [
             [
                 'question' => 'Bagaimana cara menginstall INLISLite v3?',
-                'answer' => 'Anda dapat mengikuti panduan instalasi lengkap di halaman Panduan. Pastikan server memenuhi system requirements yang diperlukan.'
-            ],
-            [
-                'question' => 'Apakah INLISLite v3 gratis?',
-                'answer' => 'Ya, INLISLite v3 adalah software open source yang dapat digunakan secara gratis oleh perpustakaan di Indonesia.'
-            ],
-            [
-                'question' => 'Bagaimana cara backup data?',
-                'answer' => 'Sistem menyediakan fitur backup otomatis dan manual. Anda dapat mengatur jadwal backup di menu Administrasi > Backup.'
-            ],
-            [
-                'question' => 'Apakah bisa import data dari sistem lama?',
-                'answer' => 'Ya, tersedia tool migrasi data yang mendukung berbagai format dari sistem perpustakaan lama.'
+                'answer' => 'Anda dapat mengikuti panduan instalasi lengkap di halaman Panduan.'
             ]
         ];
     }
     
-    private function getTrainingPrograms()
-    {
-        return [
-            [
-                'title' => 'Basic Training',
-                'description' => 'Pelatihan dasar penggunaan INLISLite v3',
-                'duration' => '2 hari',
-                'participants' => 'Max 20 orang',
-                'price' => 'Gratis',
-                'topics' => [
-                    'Pengenalan sistem',
-                    'Modul katalogisasi',
-                    'Modul sirkulasi',
-                    'Manajemen anggota'
-                ]
-            ],
-            [
-                'title' => 'Advanced Training',
-                'description' => 'Pelatihan lanjutan untuk administrator',
-                'duration' => '3 hari',
-                'participants' => 'Max 15 orang',
-                'price' => 'Rp 500.000/orang',
-                'topics' => [
-                    'Konfigurasi advanced',
-                    'Customization sistem',
-                    'Troubleshooting',
-                    'Performance tuning'
-                ]
-            ],
-            [
-                'title' => 'Train the Trainer',
-                'description' => 'Pelatihan untuk calon trainer internal',
-                'duration' => '5 hari',
-                'participants' => 'Max 10 orang',
-                'price' => 'Rp 1.500.000/orang',
-                'topics' => [
-                    'Metodologi pelatihan',
-                    'Materi training',
-                    'Praktik mengajar',
-                    'Sertifikasi trainer'
-                ]
-            ]
-        ];
-    }
-    
-    private function getTrainingSchedules()
+    private function getDefaultTrainingSchedules()
     {
         return [
             [
                 'date' => '2024-02-15',
                 'program' => 'Basic Training',
                 'location' => 'Jakarta',
-                'status' => 'Available',
-                'registered' => 12,
-                'capacity' => 20
-            ],
-            [
-                'date' => '2024-02-22',
-                'program' => 'Advanced Training',
-                'location' => 'Surabaya',
-                'status' => 'Available',
-                'registered' => 8,
-                'capacity' => 15
-            ],
-            [
-                'date' => '2024-03-01',
-                'program' => 'Basic Training',
-                'location' => 'Medan',
-                'status' => 'Full',
-                'registered' => 20,
-                'capacity' => 20
-            ]
-        ];
-    }
-    
-    private function getDemoPrograms()
-    {
-        return [
-            [
-                'id' => 1,
-                'title' => 'Demo INLISLite v3 Opensource',
-                'description' => 'Platform demo lengkap untuk sistem manajemen perpustakaan INLISLite versi 3 dengan teknologi PHP dan MySQL.',
-                'platform' => 'PHP Open Source',
-                'version' => 'v3.0',
-                'url' => 'https://demo.inlislite.perpusnas.go.id',
-                'username' => 'admin',
-                'password' => 'demo123',
-                'features' => [
-                    'Katalogisasi lengkap',
-                    'Sistem sirkulasi',
-                    'Manajemen anggota',
-                    'Laporan dan statistik',
-                    'OPAC (Online Public Access Catalog)'
-                ]
-            ],
-            [
-                'id' => 2,
-                'title' => 'Demo INLISLite .NET Framework',
-                'description' => 'Demo sistem perpustakaan berbasis .NET Framework dengan fitur enterprise dan performa tinggi.',
-                'platform' => '.NET Framework',
-                'version' => 'v2.5',
-                'url' => 'https://demo-net.inlislite.perpusnas.go.id',
-                'username' => 'administrator',
-                'password' => 'demo456',
-                'features' => [
-                    'Interface Windows Forms',
-                    'Integrasi database SQL Server',
-                    'Sistem backup otomatis',
-                    'Multi-user support',
-                    'Reporting tools'
-                ]
-            ],
-            [
-                'id' => 3,
-                'title' => 'Demo Mobile App INLISLite',
-                'description' => 'Aplikasi mobile untuk akses perpustakaan digital dengan fitur pencarian dan peminjaman online.',
-                'platform' => 'Mobile App',
-                'version' => 'v1.2',
-                'url' => 'https://mobile-demo.inlislite.perpusnas.go.id',
-                'username' => 'user',
-                'password' => 'mobile123',
-                'features' => [
-                    'Pencarian katalog mobile',
-                    'Reservasi buku online',
-                    'Notifikasi push',
-                    'Riwayat peminjaman',
-                    'QR Code scanner'
-                ]
-            ],
-            [
-                'id' => 4,
-                'title' => 'Demo OPAC Public',
-                'description' => 'Demo Online Public Access Catalog untuk akses publik ke katalog perpustakaan.',
-                'platform' => 'Web Public',
-                'version' => 'v3.0',
-                'url' => 'https://opac-demo.inlislite.perpusnas.go.id',
-                'username' => 'guest',
-                'password' => 'public123',
-                'features' => [
-                    'Pencarian advanced',
-                    'Filter kategori',
-                    'Detail koleksi',
-                    'Informasi ketersediaan',
-                    'Wishlist dan favorit'
-                ]
+                'status' => 'Available'
             ]
         ];
     }

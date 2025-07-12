@@ -22,7 +22,7 @@ class UserManagement extends BaseController
             $users = $builder->select('
                 id,
                 nama_lengkap,
-                username as nama_pengguna,
+                nama_pengguna,
                 email,
                 role,
                 status,
@@ -117,7 +117,7 @@ class UserManagement extends BaseController
         // Validate input
         $rules = [
             'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
-            'nama_pengguna' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
+            'nama_pengguna' => 'required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna]',
             'email'         => 'required|valid_email|is_unique[users.email]',
             'kata_sandi'    => 'required|min_length[8]',
             'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
@@ -142,7 +142,7 @@ class UserManagement extends BaseController
         // Prepare data for insertion
         $data = [
             'nama_lengkap'  => $namaLengkap,
-            'username'      => $namaPengguna,
+            'nama_pengguna' => $namaPengguna,
             'email'         => $email,
             'password'      => $hashedPassword,
             'role'          => $role,
@@ -173,7 +173,7 @@ class UserManagement extends BaseController
         // Validate input
         $rules = [
             'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
-            'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.username,id,{$id}]",
+            'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna,id,{$id}]",
             'email'         => "required|valid_email|is_unique[users.email,id,{$id}]",
             'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
             'status'        => 'required|in_list[Aktif,Non-aktif]',
@@ -193,7 +193,7 @@ class UserManagement extends BaseController
         // Prepare data for update
         $data = [
             'nama_lengkap'  => $namaLengkap,
-            'username'      => $namaPengguna,
+            'nama_pengguna' => $namaPengguna,
             'email'         => $email,
             'role'          => $role,
             'status'        => $status,
@@ -269,7 +269,7 @@ class UserManagement extends BaseController
             
             $rules = [
                 'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
-                'nama_pengguna' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
+                'nama_pengguna' => 'required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna]',
                 'email'         => 'required|valid_email|is_unique[users.email]',
                 'password'      => 'required|min_length[6]',
                 'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
@@ -282,7 +282,7 @@ class UserManagement extends BaseController
 
             $data = [
                 'nama_lengkap'  => $input['nama_lengkap'],
-                'username'      => $input['nama_pengguna'],
+                'nama_pengguna' => $input['nama_pengguna'],
                 'email'         => $input['email'],
                 'password'      => password_hash($input['password'], PASSWORD_DEFAULT),
                 'role'          => $input['role'],
@@ -329,10 +329,20 @@ class UserManagement extends BaseController
             // Get JSON input
             $input = $this->request->getJSON(true);
 
+            // Get existing user data
+            $builder = $this->db->table('users');
+            $existingUser = $builder->where('id', $id)->get()->getRowArray();
+            
+            if (!$existingUser) {
+                return $this->response->setJSON(['success' => false, 'message' => 'Pengguna tidak ditemukan.']);
+            }
+
+            // Admin can't edit email, so we'll use the existing email
+            $input['email'] = $existingUser['email'];
+
             $rules = [
                 'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
-                'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.username,id,{$id}]",
-                'email'         => "required|valid_email|is_unique[users.email,id,{$id}]",
+                'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna,id,{$id}]",
                 'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
                 'status'        => 'required|in_list[Aktif,Non-Aktif]',
             ];
@@ -343,8 +353,7 @@ class UserManagement extends BaseController
 
             $data = [
                 'nama_lengkap'  => $input['nama_lengkap'],
-                'username'      => $input['nama_pengguna'],
-                'email'         => $input['email'],
+                'nama_pengguna' => $input['nama_pengguna'],
                 'role'          => $input['role'],
                 'status'        => $input['status'],
             ];
@@ -422,7 +431,7 @@ class UserManagement extends BaseController
                 $users = $builder->select('
                     id,
                     nama_lengkap,
-                    username as nama_pengguna,
+                    nama_pengguna,
                     email,
                     role,
                     status,
@@ -473,7 +482,7 @@ class UserManagement extends BaseController
             $users = $builder->select('
                 id,
                 nama_lengkap,
-                username as nama_pengguna,
+                nama_pengguna,
                 email,
                 role,
                 status,

@@ -76,97 +76,49 @@
             </div>
         </div>
 
-        <!-- About Content Cards -->
+        <!-- About Content Cards from Database -->
         <div class="row g-4">
-            <?php if (isset($about_content) && is_array($about_content)): ?>
+            <?php if (isset($about_content) && is_array($about_content) && count($about_content) > 0): ?>
                 <?php foreach ($about_content as $index => $content): ?>
                     <div class="col-lg-6">
                         <div class="content-card h-100 animate-on-scroll" style="animation-delay: <?= $index * 0.1 ?>s;">
                             <div class="card-header">
                                 <h4 class="mb-1">
-                                    <i class="<?= $content['icon'] ?> me-2"></i>
+                                    <i class="<?= $content['icon'] ?? 'bi-info-circle' ?> me-2"></i>
                                     <?= esc($content['title']) ?>
                                 </h4>
-                                <p class="mb-0 opacity-75"><?= esc($content['subtitle']) ?></p>
+                                <?php if (!empty($content['subtitle'])): ?>
+                                    <p class="mb-0 opacity-75"><?= esc($content['subtitle']) ?></p>
+                                <?php endif; ?>
                             </div>
                             <div class="card-body">
                                 <div class="content-text">
                                     <?php 
-                                    $formatted_content = str_replace('\n', "\n", $content['content']);
-                                    $lines = explode("\n", $formatted_content);
-                                    foreach ($lines as $line): 
-                                        $line = trim($line);
-                                        if (empty($line)) continue;
-                                        
-                                        if (strpos($line, '•') === 0): ?>
-                                            <div class="d-flex align-items-start mb-2">
-                                                <i class="bi bi-check-circle text-success me-2 mt-1"></i>
-                                                <span><?= esc(substr($line, 1)) ?></span>
-                                            </div>
-                                        <?php else: ?>
-                                            <p class="mb-3"><?= esc($line) ?></p>
-                                        <?php endif;
-                                    endforeach; ?>
+                                    // Display HTML content from database
+                                    if (!empty($content['content'])) {
+                                        // Clean HTML content for safe display
+                                        $allowed_tags = '<p><br><ul><li><strong><b><em><i><h1><h2><h3><h4><h5><h6>';
+                                        echo strip_tags($content['content'], $allowed_tags);
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-
-        <!-- Statistics Section -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <div class="content-card animate-on-scroll">
-                    <div class="card-header text-center">
-                        <h3 class="mb-0">
-                            <i class="bi bi-graph-up me-2"></i>
-                            Statistik Penggunaan
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="stat-item">
-                                    <div class="stat-icon mb-3">
-                                        <i class="bi bi-building" style="font-size: 3rem; color: #667eea;"></i>
-                                    </div>
-                                    <h3 class="stat-number text-primary">1,000+</h3>
-                                    <p class="stat-label text-muted">Perpustakaan Aktif</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="stat-item">
-                                    <div class="stat-icon mb-3">
-                                        <i class="bi bi-people" style="font-size: 3rem; color: #28a745;"></i>
-                                    </div>
-                                    <h3 class="stat-number text-success">50,000+</h3>
-                                    <p class="stat-label text-muted">Pengguna Terdaftar</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="stat-item">
-                                    <div class="stat-icon mb-3">
-                                        <i class="bi bi-book" style="font-size: 3rem; color: #ffc107;"></i>
-                                    </div>
-                                    <h3 class="stat-number text-warning">2,000,000+</h3>
-                                    <p class="stat-label text-muted">Koleksi Dikelola</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="stat-item">
-                                    <div class="stat-icon mb-3">
-                                        <i class="bi bi-arrow-repeat" style="font-size: 3rem; color: #dc3545;"></i>
-                                    </div>
-                                    <h3 class="stat-number text-danger">99.9%</h3>
-                                    <p class="stat-label text-muted">Uptime Server</p>
-                                </div>
-                            </div>
+            <?php else: ?>
+                <!-- Fallback content if no database content available -->
+                <div class="col-12">
+                    <div class="content-card animate-on-scroll">
+                        <div class="card-body text-center">
+                            <i class="bi bi-info-circle" style="font-size: 3rem; color: #6c757d; margin-bottom: 1rem;"></i>
+                            <h4>Konten Sedang Dimuat</h4>
+                            <p class="text-muted">Informasi tentang INLISLite sedang dipersiapkan. Silakan kembali lagi nanti.</p>
+                            <a href="<?= base_url('/') ?>" class="btn btn-primary">Kembali ke Beranda</a>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <!-- Call to Action -->

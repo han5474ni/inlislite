@@ -1,0 +1,7 @@
+/* Import the base styles from tentang-edit.css with purple theme */
+@import url('./tentang-edit.css');
+
+/* Override header color for Bimbingan (Purple theme) */
+.page-header {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}

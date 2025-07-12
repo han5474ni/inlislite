@@ -339,48 +339,6 @@
             </div>
         </div>
 
-        <!-- Support Statistics -->
-        <div class="row">
-            <div class="col-12">
-                <div class="content-card animate-on-scroll">
-                    <div class="card-header text-center">
-                        <h3 class="mb-0">
-                            <i class="bi bi-graph-up me-2"></i>
-                            Statistik Dukungan
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="stat-item">
-                                    <i class="bi bi-ticket" style="font-size: 3rem; color: #667eea;"></i>
-                                    <h3 class="stat-number text-primary mt-3">15,234</h3>
-                                    <p class="stat-label text-muted">Tiket Diselesaikan</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="stat-item">
-                                    <i class="bi bi-clock" style="font-size: 3rem; color: #28a745;"></i>
-                                    <h3 class="stat-number text-success mt-3">2.5 Jam</h3>
-                                    <p class="stat-label text-muted">Rata-rata Response Time</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="stat-item">
-                                    <i class="bi bi-emoji-smile" style="font-size: 3rem; color: #ffc107;"></i>
-                                    <h3 class="stat-number text-warning mt-3">98.5%</h3>
-                                    <p class="stat-label text-muted">Customer Satisfaction</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="stat-item">
-                                    <i class="bi bi-people" style="font-size: 3rem; color: #dc3545;"></i>
-                                    <h3 class="stat-number text-danger mt-3">24/7</h3>
-                                    <p class="stat-label text-muted">Support Availability</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

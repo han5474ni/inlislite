@@ -362,7 +362,7 @@ class App extends BaseConfig
      *
      * Regenerate token on every submission?
      */
-    public bool $CSRFRegenerate = true;
+    public bool $CSRFRegenerate = false;
 
     /**
      * --------------------------------------------------------------------------

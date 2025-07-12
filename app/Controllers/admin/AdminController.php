@@ -122,6 +122,78 @@ class AdminController extends BaseController
         return $this->patch_updater();
     }
     
+    /**
+     * Show patch edit page
+     */
+    public function patchEdit()
+    {
+        $data = [
+            'title' => 'Manajemen Patch & Updater - INLISlite v3.0'
+        ];
+        
+        return view('admin/patch-edit', $data);
+    }
+    
+    /**
+     * Show aplikasi edit page
+     */
+    public function aplikasiEdit()
+    {
+        $data = [
+            'title' => 'Manajemen Aplikasi Pendukung - INLISlite v3.0'
+        ];
+        
+        return view('admin/aplikasi-edit', $data);
+    }
+    
+    /**
+     * Show panduan edit page
+     */
+    public function panduanEdit()
+    {
+        $data = [
+            'title' => 'Manajemen Panduan - INLISlite v3.0'
+        ];
+        
+        return view('admin/panduan-edit', $data);
+    }
+    
+    /**
+     * Show dukungan edit page
+     */
+    public function dukunganEdit()
+    {
+        $data = [
+            'title' => 'Manajemen Dukungan Teknis - INLISlite v3.0'
+        ];
+        
+        return view('admin/dukungan-edit', $data);
+    }
+    
+    /**
+     * Show bimbingan edit page
+     */
+    public function bimbinganEdit()
+    {
+        $data = [
+            'title' => 'Manajemen Bimbingan Teknis - INLISlite v3.0'
+        ];
+        
+        return view('admin/bimbingan-edit', $data);
+    }
+    
+    /**
+     * Show demo edit page
+     */
+    public function demoEdit()
+    {
+        $data = [
+            'title' => 'Manajemen Demo Program - INLISlite v3.0'
+        ];
+        
+        return view('admin/demo-edit', $data);
+    }
+    
     public function panduan()
     {
         $data = [
@@ -343,14 +415,10 @@ class AdminController extends BaseController
      */
     public function getTentangCards()
     {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setStatusCode(403);
-        }
-
         try {
+            // Initialize TentangCardModel
             $cardModel = new TentangCardModel();
-            $cards = $cardModel->orderBy('sort_order', 'ASC')
-                             ->orderBy('created_at', 'DESC')
+            $cards = $cardModel->orderBy('id', 'ASC')
                              ->findAll();
 
             return $this->response->setJSON([
@@ -368,16 +436,73 @@ class AdminController extends BaseController
     }
 
     /**
-     * Create new tentang card
+     * Reorder card IDs to be sequential starting from 1
      */
-    public function createTentangCard()
+    private function reorderCardIds()
     {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setStatusCode(403);
-        }
-
         try {
+            $db = \Config\Database::connect();
+            
+            // Get all cards ordered by sort_order and created_at
+            $query = $db->query("SELECT id FROM tentang_cards ORDER BY sort_order ASC, created_at ASC");
+            $cards = $query->getResultArray();
+            
+            if (empty($cards)) {
+                return true; // No cards to reorder
+            }
+            
+            // Start transaction
+            $db->transStart();
+            
+            // Temporarily rename IDs to avoid conflicts
+            $tempOffset = 10000;
+            foreach ($cards as $index => $card) {
+                $tempId = $tempOffset + $index + 1;
+                $db->query("UPDATE tentang_cards SET id = ? WHERE id = ?", [$tempId, $card['id']]);
+            }
+            
+            // Now assign sequential IDs starting from 1
+            foreach ($cards as $index => $card) {
+                $newId = $index + 1;
+                $tempId = $tempOffset + $index + 1;
+                $db->query("UPDATE tentang_cards SET id = ? WHERE id = ?", [$newId, $tempId]);
+            }
+            
+            // Reset AUTO_INCREMENT to next available ID
+            $nextId = count($cards) + 1;
+            $db->query("ALTER TABLE tentang_cards AUTO_INCREMENT = ?", [$nextId]);
+            
+            // Complete transaction
+            $db->transComplete();
+            
+            if ($db->transStatus() === false) {
+                log_message('error', 'Failed to reorder card IDs - transaction failed');
+                return false;
+            }
+            
+            log_message('info', 'Successfully reordered card IDs');
+            return true;
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error reordering card IDs: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Create new tentang card with automatic ID reordering
+     */
+    public function createCard()
+    {
+        try {
+            // Try multiple ways to get input data
             $input = $this->request->getJSON(true);
+            if (!$input) {
+                $input = $this->request->getPost();
+            }
+            if (!$input) {
+                $input = json_decode(file_get_contents('php://input'), true);
+            }
             
             // Validate required fields
             if (empty($input['title']) || empty($input['content'])) {
@@ -387,24 +512,30 @@ class AdminController extends BaseController
                 ]);
             }
 
-            // Prepare card data
+            // Map frontend fields to database fields
             $cardData = [
                 'title' => $input['title'],
                 'subtitle' => $input['subtitle'] ?: null,
                 'content' => $input['content'],
-                'category' => $input['category'] ?: 'overview',
+                'card_type' => $input['category'] ?: 'info',
                 'icon' => $input['icon'] ?: null,
-                'status' => $input['status'] ?: 'active',
-                'sort_order' => $input['sort_order'] ?: 1
+                'is_active' => $input['status'] === 'active' ? 1 : 0,
+                'sort_order' => $input['sort_order'] ?: 1,
+                'card_size' => 'medium',
+                'is_featured' => 0,
+                'card_key' => uniqid('card_', true)
             ];
 
             $cardModel = new TentangCardModel();
             $cardId = $cardModel->insert($cardData);
 
             if ($cardId) {
+                // Reorder IDs after insertion
+                $this->reorderCardIds();
+                
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => 'Kartu tentang berhasil ditambahkan',
+                    'message' => 'Kartu berhasil ditambahkan dan ID telah diurutkan ulang',
                     'card_id' => $cardId
                 ]);
             } else {
@@ -426,12 +557,8 @@ class AdminController extends BaseController
     /**
      * Update tentang card
      */
-    public function updateTentangCard()
+    public function updateCard()
     {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setStatusCode(403);
-        }
-
         try {
             $input = $this->request->getJSON(true);
             
@@ -453,20 +580,26 @@ class AdminController extends BaseController
                     'message' => 'Kartu tidak ditemukan'
                 ]);
             }
-
-            // Prepare card data
+            
+            // Map frontend fields to database fields
             $cardData = [
                 'title' => $input['title'],
                 'subtitle' => $input['subtitle'] ?: null,
                 'content' => $input['content'],
-                'category' => $input['category'] ?: 'overview',
+                'card_type' => $input['category'] ?: 'info',
                 'icon' => $input['icon'] ?: null,
-                'status' => $input['status'] ?: 'active',
+                'is_active' => $input['status'] === 'active' ? 1 : 0,
                 'sort_order' => $input['sort_order'] ?: 1
             ];
-
+            
+            // Add card_key if it doesn't exist
+            if (empty($existingCard['card_key'])) {
+                $cardData['card_key'] = uniqid('card_', true);
+                log_message('info', 'Generated new card_key for card ID: ' . $input['id']);
+            }
+            
             $updated = $cardModel->update($input['id'], $cardData);
-
+            
             if ($updated) {
                 return $this->response->setJSON([
                     'success' => true,
@@ -489,14 +622,10 @@ class AdminController extends BaseController
     }
 
     /**
-     * Delete tentang card
+     * Delete tentang card with automatic ID reordering
      */
-    public function deleteTentangCard()
+    public function deleteCard()
     {
-        if (!$this->request->isAJAX()) {
-            return $this->response->setStatusCode(403);
-        }
-
         try {
             $input = $this->request->getJSON(true);
             
@@ -519,12 +648,16 @@ class AdminController extends BaseController
                 ]);
             }
 
+            // Delete the card
             $deleted = $cardModel->delete($input['id']);
 
             if ($deleted) {
+                // Reorder IDs after deletion
+                $this->reorderCardIds();
+                
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => 'Kartu tentang berhasil dihapus'
+                    'message' => 'Kartu tentang berhasil dihapus dan ID telah diurutkan ulang'
                 ]);
             } else {
                 return $this->response->setJSON([
@@ -540,5 +673,21 @@ class AdminController extends BaseController
                 'message' => 'Terjadi kesalahan saat menghapus kartu'
             ]);
         }
+    }
+
+    /**
+     * Update tentang card (legacy method name)
+     */
+    public function updateTentangCard()
+    {
+        return $this->updateCard();
+    }
+
+    /**
+     * Delete tentang card (legacy method name)
+     */
+    public function deleteTentangCard()
+    {
+        return $this->deleteCard();
     }
 }

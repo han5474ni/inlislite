@@ -201,7 +201,7 @@ function handleCardClick(title, cardElement) {
             navigateToPage(getBaseUrl() + 'admin/tentang');
             break;
         case 'Features & Program Modules':
-            navigateToPage(getBaseUrl() + 'admin/demo');
+            navigateToPage(getBaseUrl() + 'admin/fitur');
             break;
         case 'Installer':
             navigateToPage(getBaseUrl() + 'installer');
@@ -337,62 +337,11 @@ function hideLoadingState() {
 }
 
 /**
- * Show support modal
+ * Show support modal - Redirect to dukungan page instead of showing popup
  */
 function showSupportModal() {
-    const modal = document.createElement('div');
-    modal.className = 'modal fade';
-    modal.innerHTML = `
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-headset me-2"></i>
-                        Dukungan Teknis
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-headset" style="font-size: 3rem; color: var(--primary-green);"></i>
-                    </div>
-                    <h6>Tim Support INLISLite siap membantu Anda!</h6>
-                    <p class="text-muted">Hubungi kami melalui:</p>
-                    <ul class="list-unstyled">
-                        <li><i class="bi bi-envelope me-2"></i> support@inlislite.com</li>
-                        <li><i class="bi bi-telephone me-2"></i> +62 21 1234 5678</li>
-                        <li><i class="bi bi-chat-dots me-2"></i> Live Chat (08:00 - 17:00 WIB)</li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Hubungi Support</button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Initialize Bootstrap modal if available
-    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-        const bootstrapModal = new bootstrap.Modal(modal);
-        bootstrapModal.show();
-        
-        // Remove modal from DOM after hiding
-        modal.addEventListener('hidden.bs.modal', () => {
-            modal.remove();
-        });
-    } else {
-        // Fallback: show modal without Bootstrap
-        modal.style.display = 'block';
-        modal.classList.add('show');
-        
-        // Add close functionality
-        modal.querySelector('.btn-close, .btn-secondary').addEventListener('click', () => {
-            modal.remove();
-        });
-    }
+    // Instead of showing popup, navigate directly to dukungan page
+    navigateToPage(getBaseUrl() + 'admin/dukungan');
 }
 
 /**

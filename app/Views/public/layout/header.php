@@ -11,7 +11,7 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
     
@@ -19,6 +19,9 @@
     <link href="<?= base_url('assets/css/public/main.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/css/public/footer.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/css/public/header.css') ?>" rel="stylesheet">
+    
+    <!-- Navbar JavaScript -->
+    <script src="<?= base_url('assets/js/public/navbar.js') ?>" defer></script>
     
     <!-- Page specific CSS -->
     <?php if (isset($page_css)): ?>

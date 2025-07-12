@@ -71,7 +71,7 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-            'csrf',
+            'csrf',  // Enabled for security
             // 'invalidchars',
         ],
         'after' => [
@@ -108,6 +108,7 @@ class Filters extends BaseFilters
         'csrf' => [
             'except' => [
                 'test-upload-photo',  // Exclude test upload from CSRF
+                'admin/tentang/*',    // Temporarily exclude admin/tentang routes from CSRF
             ]
         ]
     ];

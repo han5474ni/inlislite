@@ -1,855 +1,344 @@
 /**
- * INLISLite v3.0 About Page JavaScript
- * Enhanced card editing, adding, deleting, and interactive functionality
- * Includes improved animations, validation, and user experience features
+ * INLISLite v3.0 Tentang Page
+ * JavaScript for content management and UI interactions
+ * Synchronized with database via API
  */
 
+// Global variables
+let contentCards = [];
+let filteredCards = [];
+
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    let cardCounter = 4; // Start from 5 since we have 4 initial cards
-    let isEditMode = false;
-    let autoSaveInterval;
-    
-    // Initialize all functionality
-    initializeCardActions();
-    initializeAnimations();
-    initializeKeyboardShortcuts();
-    initializeTooltips();
-    
-    /**
-     * Initialize card action handlers with improved event delegation
-     */
-    function initializeCardActions() {
-        const aboutContent = document.getElementById('aboutContent');
-        
-        // Event delegation for dynamic content
-        aboutContent.addEventListener('click', function(e) {
-            const target = e.target.closest('a') || e.target.closest('button');
-            if (!target) return;
-            
-            e.preventDefault();
-            
-            // Add loading state
-            if (!target.classList.contains('cancel-edit')) {
-                target.classList.add('loading');
-                setTimeout(() => target.classList.remove('loading'), 300);
-            }
-            
-            if (target.classList.contains('add-card')) {
-                handleAddCard(target);
-            } else if (target.classList.contains('edit-card')) {
-                handleEditCard(target);
-            } else if (target.classList.contains('delete-card')) {
-                handleDeleteCard(target);
-            } else if (target.classList.contains('save-card')) {
-                handleSaveCard(target);
-            } else if (target.classList.contains('cancel-edit')) {
-                handleCancelEdit(target);
-            }
-        });
-        
-        // Handle card hover effects
-        aboutContent.addEventListener('mouseenter', function(e) {
-            if (e.target.classList.contains('about-card')) {
-                e.target.style.transform = 'translateY(-4px)';
-            }
-        }, true);
-        
-        aboutContent.addEventListener('mouseleave', function(e) {
-            if (e.target.classList.contains('about-card') && !e.target.classList.contains('edit-mode')) {
-                e.target.style.transform = 'translateY(0)';
-            }
-        }, true);
-    }
-    
-    /**
-     * Handle adding a new card with enhanced animation
-     */
-    function handleAddCard(button) {
-        const currentCard = button.closest('.about-card');
-        const newCard = createNewCard();
-        
-        // Insert after current card with fade-in effect
-        currentCard.insertAdjacentElement('afterend', newCard);
-        
-        // Animate the new card
-        newCard.classList.add('new-card', 'pulse');
-        
-        // Remove pulse after animation
-        setTimeout(() => {
-            newCard.classList.remove('pulse');
-        }, 2000);
-        
-        // Scroll to and focus on the new card
-        setTimeout(() => {
-            newCard.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center',
-                inline: 'nearest'
-            });
-            
-            const titleInput = newCard.querySelector('.edit-title');
-            if (titleInput) {
-                titleInput.focus();
-                titleInput.select();
-            }
-        }, 100);
-        
-        // Automatically enter edit mode
-        setTimeout(() => {
-            enterEditMode(newCard);
-            startAutoSave(newCard);
-        }, 300);
-        
-        showAlert('New card added successfully! Start editing to customize it.', 'success');
-        updateCardCounter();
-    }
-    
-    /**
-     * Handle editing a card with improved UX
-     */
-    function handleEditCard(button) {
-        const card = button.closest('.about-card');
-        
-        // Check if another card is in edit mode
-        if (isEditMode) {
-            showAlert('Please save or cancel the current edit before editing another card.', 'warning');
-            return;
-        }
-        
-        enterEditMode(card);
-        startAutoSave(card);
-        showAlert('Edit mode activated. Use Ctrl+S to save or Esc to cancel.', 'info');
-    }
-    
-    /**
-     * Handle deleting a card with confirmation and animation
-     */
-    function handleDeleteCard(button) {
-        const card = button.closest('.about-card');
-        const cardTitle = card.querySelector('.card-title').textContent;
-        
-        // Enhanced confirmation dialog
-        const confirmDelete = confirm(
-            `⚠️ Delete Card\n\nAre you sure you want to delete "${cardTitle}"?\n\nThis action cannot be undone.`
-        );
-        
-        if (confirmDelete) {
-            // Add delete animation
-            card.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(-20px) scale(0.95)';
-            card.style.maxHeight = card.offsetHeight + 'px';
-            
-            setTimeout(() => {
-                card.style.maxHeight = '0';
-                card.style.padding = '0';
-                card.style.margin = '0';
-            }, 200);
-            
-            setTimeout(() => {
-                card.remove();
-                showAlert(`Card "${cardTitle}" deleted successfully!`, 'success');
-                updateCardCounter();
-            }, 400);
-        }
-    }
-    
-    /**
-     * Handle saving card changes with validation
-     */
-    function handleSaveCard(button) {
-        const card = button.closest('.about-card');
-        const editForm = card.querySelector('.card-edit-form');
-        
-        // Get form values
-        const newTitle = editForm.querySelector('.edit-title').value.trim();
-        const newSubtitle = editForm.querySelector('.edit-subtitle').value.trim();
-        const newContent = editForm.querySelector('.edit-content').value.trim();
-        
-        // Enhanced validation
-        const validation = validateCardData(newTitle, newSubtitle, newContent);
-        if (!validation.isValid) {
-            showAlert(validation.message, 'danger');
-            validation.focusElement.focus();
-            validation.focusElement.classList.add('is-invalid');
-            
-            // Remove invalid class after 3 seconds
-            setTimeout(() => {
-                validation.focusElement.classList.remove('is-invalid');
-            }, 3000);
-            return;
-        }
-        
-        // Add success animation
-        button.innerHTML = '<i class="bi bi-check-lg me-2"></i>Saving...';
-        button.disabled = true;
-        
-        setTimeout(() => {
-            // Update card content
-            updateCardContent(card, newTitle, newSubtitle, newContent);
-            
-            // Exit edit mode
-            exitEditMode(card);
-            stopAutoSave();
-            
-            // Save to localStorage
-            saveCardToStorage(card);
-            
-            showAlert('Card updated successfully!', 'success');
-            
-            // Reset button
-            button.innerHTML = '<i class="bi bi-check-lg me-2"></i>Save';
-            button.disabled = false;
-        }, 500);
-    }
-    
-    /**
-     * Handle canceling edit with confirmation
-     */
-    function handleCancelEdit(button) {
-        const card = button.closest('.about-card');
-        
-        // Check if there are unsaved changes
-        if (hasUnsavedChanges(card)) {
-            const confirmCancel = confirm(
-                '⚠️ Unsaved Changes\n\nYou have unsaved changes. Are you sure you want to cancel?'
-            );
-            if (!confirmCancel) return;
-        }
-        
-        // If this is a new card (no original content), remove it
-        if (card.dataset.isNew === 'true') {
-            card.style.transition = 'all 0.3s ease';
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(-10px)';
-            
-            setTimeout(() => {
-                card.remove();
-                showAlert('New card creation cancelled.', 'info');
-                updateCardCounter();
-            }, 300);
-            return;
-        }
-        
-        // Otherwise, just exit edit mode
-        exitEditMode(card);
-        stopAutoSave();
-        showAlert('Edit cancelled. Changes discarded.', 'info');
-    }
-    
-    /**
-     * Create a new card element with enhanced structure
-     */
-    function createNewCard() {
-        cardCounter++;
-        const newCard = document.createElement('div');
-        newCard.className = 'about-card card';
-        newCard.dataset.cardId = cardCounter;
-        newCard.dataset.isNew = 'true';
-        
-        newCard.innerHTML = `
-            <div class="card-header d-flex justify-content-between align-items-start">
-                <div class="card-title-section">
-                    <h3 class="card-title mb-1">New Section Title</h3>
-                    <p class="card-subtitle text-muted mb-0">Add your subtitle here</p>
-                </div>
-                <div class="dropdown">
-                    <button class="action-btn btn btn-link p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Card Actions">
-                        <i class="bi bi-three-dots-vertical"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item add-card" href="#"><i class="bi bi-plus-circle me-2"></i>Add</a></li>
-                        <li><a class="dropdown-item edit-card" href="#"><i class="bi bi-pencil me-2"></i>Edit</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item delete-card text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="card-content">
-                    <p>Add your content here. You can include multiple paragraphs, lists, or any other content you need.</p>
-                </div>
-                <div class="card-edit-form d-none">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control edit-title" value="New Section Title" maxlength="100" required>
-                        <div class="form-text">Maximum 100 characters</div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Subtitle</label>
-                        <input type="text" class="form-control edit-subtitle" value="Add your subtitle here" maxlength="150">
-                        <div class="form-text">Maximum 150 characters (optional)</div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Content <span class="text-danger">*</span></label>
-                        <textarea class="form-control edit-content" rows="4" required>Add your content here. You can include multiple paragraphs, lists, or any other content you need.</textarea>
-                        <div class="form-text">Use • for bullet points. Separate paragraphs with empty lines.</div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary save-card">
-                            <i class="bi bi-check-lg me-2"></i>Save
-                        </button>
-                        <button class="btn btn-secondary cancel-edit">
-                            <i class="bi bi-x-lg me-2"></i>Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        return newCard;
-    }
-    
-    /**
-     * Enter edit mode for a card with enhanced UX
-     */
-    function enterEditMode(card) {
-        const cardContent = card.querySelector('.card-content');
-        const editForm = card.querySelector('.card-edit-form');
-        const titleElement = card.querySelector('.card-title');
-        const subtitleElement = card.querySelector('.card-subtitle');
-        
-        // Set global edit mode flag
-        isEditMode = true;
-        
-        // Populate edit form with current values
-        const currentTitle = titleElement.textContent;
-        const currentSubtitle = subtitleElement.textContent;
-        const currentContent = getCardContentAsText(cardContent);
-        
-        editForm.querySelector('.edit-title').value = currentTitle;
-        editForm.querySelector('.edit-subtitle').value = currentSubtitle;
-        editForm.querySelector('.edit-content').value = currentContent;
-        
-        // Show edit form, hide content
-        card.classList.add('edit-mode');
-        cardContent.classList.add('d-none');
-        editForm.classList.remove('d-none');
-        
-        // Add edit mode styling
-        card.style.boxShadow = '0 8px 24px rgba(28, 110, 196, 0.2)';
-        
-        // Focus on title input
-        setTimeout(() => {
-            const titleInput = editForm.querySelector('.edit-title');
-            titleInput.focus();
-            titleInput.setSelectionRange(0, titleInput.value.length);
-        }, 100);
-        
-        // Add character counters
-        addCharacterCounters(editForm);
-    }
-    
-    /**
-     * Exit edit mode for a card
-     */
-    function exitEditMode(card) {
-        const cardContent = card.querySelector('.card-content');
-        const editForm = card.querySelector('.card-edit-form');
-        
-        // Clear global edit mode flag
-        isEditMode = false;
-        
-        // Show content, hide edit form
-        card.classList.remove('edit-mode');
-        cardContent.classList.remove('d-none');
-        editForm.classList.add('d-none');
-        
-        // Remove edit mode styling
-        card.style.boxShadow = '';
-        
-        // Remove new card flag
-        delete card.dataset.isNew;
-        
-        // Clear validation states
-        editForm.querySelectorAll('.is-invalid').forEach(el => {
-            el.classList.remove('is-invalid');
-        });
-    }
-    
-    /**
-     * Update card content with new values and enhanced formatting
-     */
-    function updateCardContent(card, title, subtitle, content) {
-        const titleElement = card.querySelector('.card-title');
-        const subtitleElement = card.querySelector('.card-subtitle');
-        const contentElement = card.querySelector('.card-content');
-        
-        // Update title and subtitle with animation
-        titleElement.style.opacity = '0';
-        subtitleElement.style.opacity = '0';
-        
-        setTimeout(() => {
-            titleElement.textContent = title;
-            subtitleElement.textContent = subtitle;
-            titleElement.style.opacity = '1';
-            subtitleElement.style.opacity = '1';
-        }, 150);
-        
-        // Update content with enhanced formatting
-        contentElement.innerHTML = formatContentToHTML(content);
-        
-        // Add update timestamp
-        card.dataset.lastUpdated = new Date().toISOString();
-    }
-    
-    /**
-     * Enhanced content validation
-     */
-    function validateCardData(title, subtitle, content) {
-        if (!title) {
-            return {
-                isValid: false,
-                message: 'Title is required and cannot be empty.',
-                focusElement: document.querySelector('.edit-title')
-            };
-        }
-        
-        if (title.length > 100) {
-            return {
-                isValid: false,
-                message: 'Title must be 100 characters or less.',
-                focusElement: document.querySelector('.edit-title')
-            };
-        }
-        
-        if (subtitle && subtitle.length > 150) {
-            return {
-                isValid: false,
-                message: 'Subtitle must be 150 characters or less.',
-                focusElement: document.querySelector('.edit-subtitle')
-            };
-        }
-        
-        if (!content) {
-            return {
-                isValid: false,
-                message: 'Content is required and cannot be empty.',
-                focusElement: document.querySelector('.edit-content')
-            };
-        }
-        
-        if (content.length > 5000) {
-            return {
-                isValid: false,
-                message: 'Content must be 5000 characters or less.',
-                focusElement: document.querySelector('.edit-content')
-            };
-        }
-        
-        return { isValid: true };
-    }
-    
-    /**
-     * Check for unsaved changes
-     */
-    function hasUnsavedChanges(card) {
-        const editForm = card.querySelector('.card-edit-form');
-        if (!editForm || editForm.classList.contains('d-none')) return false;
-        
-        const currentTitle = card.querySelector('.card-title').textContent;
-        const currentSubtitle = card.querySelector('.card-subtitle').textContent;
-        const currentContent = getCardContentAsText(card.querySelector('.card-content'));
-        
-        const formTitle = editForm.querySelector('.edit-title').value.trim();
-        const formSubtitle = editForm.querySelector('.edit-subtitle').value.trim();
-        const formContent = editForm.querySelector('.edit-content').value.trim();
-        
-        return currentTitle !== formTitle || 
-               currentSubtitle !== formSubtitle || 
-               currentContent !== formContent;
-    }
-    
-    /**
-     * Get card content as plain text with improved parsing
-     */
-    function getCardContentAsText(contentElement) {
-        let text = '';
-        const children = contentElement.children;
-        
-        for (let i = 0; i < children.length; i++) {
-            const child = children[i];
-            
-            if (child.tagName === 'P') {
-                text += child.textContent + '\n\n';
-            } else if (child.tagName === 'UL') {
-                const listItems = child.querySelectorAll('li');
-                listItems.forEach(li => {
-                    text += '• ' + li.textContent + '\n';
-                });
-                text += '\n';
-            } else if (child.tagName === 'OL') {
-                const listItems = child.querySelectorAll('li');
-                listItems.forEach((li, index) => {
-                    text += `${index + 1}. ${li.textContent}\n`;
-                });
-                text += '\n';
-            }
-        }
-        
-        return text.trim();
-    }
-    
-    /**
-     * Enhanced content formatting to HTML
-     */
-    function formatContentToHTML(text) {
-        const lines = text.split('\n');
-        let html = '';
-        let inList = false;
-        let listType = 'ul';
-        let currentParagraph = '';
-        
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-            
-            if (line === '') {
-                // Empty line - end current paragraph or list
-                if (currentParagraph) {
-                    html += `<p>${formatInlineContent(currentParagraph)}</p>`;
-                    currentParagraph = '';
-                }
-                if (inList) {
-                    html += `</${listType}>`;
-                    inList = false;
-                }
-                continue;
-            }
-            
-            // Check for bullet points
-            if (line.match(/^[•\-\*]\s/)) {
-                if (currentParagraph) {
-                    html += `<p>${formatInlineContent(currentParagraph)}</p>`;
-                    currentParagraph = '';
-                }
-                if (!inList || listType !== 'ul') {
-                    if (inList) html += `</${listType}>`;
-                    html += '<ul>';
-                    inList = true;
-                    listType = 'ul';
-                }
-                const listText = line.substring(1).trim();
-                html += `<li>${formatInlineContent(listText)}</li>`;
-            }
-            // Check for numbered lists
-            else if (line.match(/^\d+\.\s/)) {
-                if (currentParagraph) {
-                    html += `<p>${formatInlineContent(currentParagraph)}</p>`;
-                    currentParagraph = '';
-                }
-                if (!inList || listType !== 'ol') {
-                    if (inList) html += `</${listType}>`;
-                    html += '<ol>';
-                    inList = true;
-                    listType = 'ol';
-                }
-                const listText = line.replace(/^\d+\.\s/, '');
-                html += `<li>${formatInlineContent(listText)}</li>`;
-            }
-            else {
-                // Regular text
-                if (inList) {
-                    html += `</${listType}>`;
-                    inList = false;
-                }
-                if (currentParagraph) {
-                    currentParagraph += ' ' + line;
-                } else {
-                    currentParagraph = line;
-                }
-            }
-        }
-        
-        // Close any remaining elements
-        if (currentParagraph) {
-            html += `<p>${formatInlineContent(currentParagraph)}</p>`;
-        }
-        if (inList) {
-            html += `</${listType}>`;
-        }
-        
-        return html;
-    }
-    
-    /**
-     * Format inline content (bold, italic, etc.)
-     */
-    function formatInlineContent(text) {
-        return text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/`(.*?)`/g, '<code>$1</code>');
-    }
-    
-    /**
-     * Add character counters to form inputs
-     */
-    function addCharacterCounters(editForm) {
-        const titleInput = editForm.querySelector('.edit-title');
-        const subtitleInput = editForm.querySelector('.edit-subtitle');
-        const contentTextarea = editForm.querySelector('.edit-content');
-        
-        // Add counter for title
-        addCounter(titleInput, 100);
-        addCounter(subtitleInput, 150);
-        addCounter(contentTextarea, 5000);
-    }
-    
-    function addCounter(element, maxLength) {
-        const counter = document.createElement('div');
-        counter.className = 'character-counter text-muted small mt-1';
-        counter.style.textAlign = 'right';
-        
-        const updateCounter = () => {
-            const remaining = maxLength - element.value.length;
-            counter.textContent = `${element.value.length}/${maxLength}`;
-            
-            if (remaining < 20) {
-                counter.style.color = '#D77936';
-            } else {
-                counter.style.color = '#6c757d';
-            }
-        };
-        
-        element.addEventListener('input', updateCounter);
-        element.parentNode.appendChild(counter);
-        updateCounter();
-    }
-    
-    /**
-     * Enhanced alert system with auto-dismiss and icons
-     */
-    function showAlert(message, type = 'info', duration = 5000) {
-        const alertContainer = document.getElementById('alertContainer');
-        const alertId = 'alert-' + Date.now();
-        
-        const alertHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert" id="${alertId}">
-                <i class="bi bi-${getAlertIcon(type)} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        `;
-        
-        alertContainer.insertAdjacentHTML('beforeend', alertHTML);
-        
-        // Auto-dismiss
-        setTimeout(() => {
-            const alert = document.getElementById(alertId);
-            if (alert) {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }
-        }, duration);
-    }
-    
-    /**
-     * Get appropriate icon for alert type
-     */
-    function getAlertIcon(type) {
-        const icons = {
-            success: 'check-circle-fill',
-            danger: 'exclamation-triangle-fill',
-            warning: 'exclamation-triangle-fill',
-            info: 'info-circle-fill'
-        };
-        return icons[type] || 'info-circle-fill';
-    }
-    
-    /**
-     * Initialize enhanced animations and observers
-     */
-    function initializeAnimations() {
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-        
-        // Observe existing cards
-        const cards = document.querySelectorAll('.about-card');
-        cards.forEach(card => {
-            observer.observe(card);
-        });
-        
-        // Re-observe new cards when they're added
-        const aboutContent = document.getElementById('aboutContent');
-        const mutationObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(mutation => {
-                mutation.addedNodes.forEach(node => {
-                    if (node.nodeType === 1 && node.classList.contains('about-card')) {
-                        observer.observe(node);
-                    }
-                });
-            });
-        });
-        
-        mutationObserver.observe(aboutContent, { childList: true });
-    }
-    
-    /**
-     * Initialize keyboard shortcuts
-     */
-    function initializeKeyboardShortcuts() {
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + S to save when in edit mode
-            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-                const editMode = document.querySelector('.edit-mode');
-                if (editMode) {
-                    e.preventDefault();
-                    const saveButton = editMode.querySelector('.save-card');
-                    if (saveButton && !saveButton.disabled) {
-                        saveButton.click();
-                    }
-                }
-            }
-            
-            // Escape to cancel edit mode
-            if (e.key === 'Escape') {
-                const editMode = document.querySelector('.edit-mode');
-                if (editMode) {
-                    const cancelButton = editMode.querySelector('.cancel-edit');
-                    if (cancelButton) {
-                        cancelButton.click();
-                    }
-                }
-            }
-            
-            // Ctrl/Cmd + N to add new card
-            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                e.preventDefault();
-                const lastCard = document.querySelector('.about-card:last-child');
-                if (lastCard) {
-                    const addButton = lastCard.querySelector('.add-card');
-                    if (addButton) {
-                        addButton.click();
-                    }
-                }
-            }
-        });
-    }
-    
-    /**
-     * Initialize tooltips for better UX
-     */
-    function initializeTooltips() {
-        // Add tooltips to action buttons
-        const tooltips = [
-            { selector: '.add-card', title: 'Add new card below (Ctrl+N)' },
-            { selector: '.edit-card', title: 'Edit this card' },
-            { selector: '.delete-card', title: 'Delete this card' },
-            { selector: '.save-card', title: 'Save changes (Ctrl+S)' },
-            { selector: '.cancel-edit', title: 'Cancel editing (Esc)' }
-        ];
-        
-        tooltips.forEach(tooltip => {
-            document.querySelectorAll(tooltip.selector).forEach(element => {
-                element.setAttribute('title', tooltip.title);
-                element.setAttribute('data-bs-toggle', 'tooltip');
-            });
-        });
-        
-        // Initialize Bootstrap tooltips
-        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        }
-    }
-    
-    /**
-     * Auto-save functionality
-     */
-    function startAutoSave(card) {
-        stopAutoSave(); // Clear any existing auto-save
-        
-        autoSaveInterval = setInterval(() => {
-            if (card.classList.contains('edit-mode')) {
-                saveCardToStorage(card, true); // Auto-save flag
-            }
-        }, 30000); // Auto-save every 30 seconds
-    }
-    
-    function stopAutoSave() {
-        if (autoSaveInterval) {
-            clearInterval(autoSaveInterval);
-            autoSaveInterval = null;
-        }
-    }
-    
-    /**
-     * Save card data to localStorage
-     */
-    function saveCardToStorage(card, isAutoSave = false) {
-        try {
-            const cardId = card.dataset.cardId;
-            const cardData = {
-                id: cardId,
-                title: card.querySelector('.card-title').textContent,
-                subtitle: card.querySelector('.card-subtitle').textContent,
-                content: getCardContentAsText(card.querySelector('.card-content')),
-                lastUpdated: new Date().toISOString(),
-                isAutoSave: isAutoSave
-            };
-            
-            localStorage.setItem(`inlislite_card_${cardId}`, JSON.stringify(cardData));
-            
-            if (isAutoSave) {
-                console.log(`Auto-saved card ${cardId}`);
-            }
-        } catch (error) {
-            console.error('Failed to save card to localStorage:', error);
-        }
-    }
-    
-    /**
-     * Update card counter display
-     */
-    function updateCardCounter() {
-        const cardCount = document.querySelectorAll('.about-card').length;
-        console.log(`Total cards: ${cardCount}`);
-    }
-    
-    /**
-     * Load saved cards from localStorage on page load
-     */
-    function loadSavedCards() {
-        try {
-            const cards = document.querySelectorAll('.about-card');
-            cards.forEach(card => {
-                const cardId = card.dataset.cardId;
-                const savedData = localStorage.getItem(`inlislite_card_${cardId}`);
-                
-                if (savedData) {
-                    const data = JSON.parse(savedData);
-                    if (data.isAutoSave) {
-                        console.log(`Found auto-saved data for card ${cardId}`);
-                        // Could restore auto-saved data here if needed
-                    }
-                }
-            });
-        } catch (error) {
-            console.error('Failed to load saved cards:', error);
-        }
-    }
-    
-    // Initialize saved cards
-    loadSavedCards();
-    
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', function() {
-        stopAutoSave();
-    });
-    
-    console.log('About INLISLite v3.0 - Enhanced interactive functionality loaded successfully');
+    initializeApp();
 });
+
+/**
+ * Initialize the application
+ */
+function initializeApp() {
+    loadContent();
+    initializeEventListeners();
+    initializeSearch();
+}
+
+/**
+ * Initialize event listeners
+ */
+function initializeEventListeners() {
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearch);
+    }
+}
+
+/**
+ * Initialize search functionality
+ */
+function initializeSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        // Add search icon animation
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    }
+}
+
+/**
+ * Load content from database API
+ */
+async function loadContent() {
+    try {
+        showLoading();
+        
+        // Fetch data from the same API endpoint as tentang-edit
+        const response = await fetch('/admin/tentang/getCards', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Convert database format to display format
+            contentCards = data.cards.map(card => ({
+                id: card.id,
+                title: card.title,
+                subtitle: card.subtitle,
+                content: card.content,
+                type: card.card_type || 'info',
+                icon: card.icon,
+                is_active: card.is_active,
+                sort_order: card.sort_order
+            }));
+            
+            // Filter only active cards and sort by sort_order
+            contentCards = contentCards
+                .filter(card => card.is_active == 1)
+                .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+            
+            filteredCards = [...contentCards];
+            renderContent();
+        } else {
+            throw new Error(data.message || 'Failed to load content');
+        }
+        
+    } catch (error) {
+        console.error('Error loading content:', error);
+        showError('Gagal memuat konten dari database');
+        
+        // Show empty state on error
+        contentCards = [];
+        filteredCards = [];
+        renderContent();
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Render content to the DOM
+ */
+function renderContent() {
+    const container = document.getElementById('contentContainer');
+    if (!container) return;
+    
+    if (filteredCards.length === 0) {
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h3>Tidak ada konten ditemukan</h3>
+                    <p>Belum ada konten yang tersedia atau sesuai dengan pencarian Anda.</p>
+                    <a href="/admin/tentang-edit" class="btn btn-primary mt-3">
+                        <i class="bi bi-plus-circle me-2"></i>Tambah Konten
+                    </a>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filteredCards.map(card => `
+        <div class="col-lg-6 col-md-12">
+            <div class="content-card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="${card.icon || 'bi-' + getCardIcon(card.type)}"></i>
+                    </div>
+                    <div class="card-actions">
+                        <a href="/admin/tentang-edit" class="btn-action edit" title="Kelola di Admin">
+                            <i class="bi bi-gear"></i>
+                        </a>
+                        <button class="btn-action refresh" onclick="refreshContent()" title="Refresh">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">${card.title}</h3>
+                    ${card.subtitle ? `<p class="card-subtitle">${card.subtitle}</p>` : ''}
+                    <div class="card-description">${formatContent(card.content)}</div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Get icon for card type
+ */
+function getCardIcon(type) {
+    const icons = {
+        'info': 'info-circle',
+        'feature': 'star',
+        'contact': 'person-circle',
+        'technical': 'gear',
+        'default': 'file-text'
+    };
+    return icons[type] || icons.default;
+}
+
+/**
+ * Format content for display
+ */
+function formatContent(content) {
+    if (!content) return '';
+    
+    // Convert HTML content to display format
+    let formatted = content;
+    
+    // Convert <p> tags to line breaks
+    formatted = formatted.replace(/<p>/g, '').replace(/<\/p>/g, '<br><br>');
+    
+    // Convert <ul> and <li> tags to bullet points
+    formatted = formatted.replace(/<ul>/g, '').replace(/<\/ul>/g, '');
+    formatted = formatted.replace(/<li>/g, '• ').replace(/<\/li>/g, '<br>');
+    
+    // Convert <strong> tags
+    formatted = formatted.replace(/<strong>/g, '<b>').replace(/<\/strong>/g, '</b>');
+    
+    // Clean up extra line breaks
+    formatted = formatted.replace(/<br><br><br>/g, '<br><br>');
+    formatted = formatted.replace(/^<br>|<br>$/g, '');
+    
+    return formatted;
+}
+
+/**
+ * Handle search functionality
+ */
+function handleSearch() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    // Filter content
+    filteredCards = contentCards.filter(card => 
+        card.title.toLowerCase().includes(searchTerm) ||
+        (card.subtitle && card.subtitle.toLowerCase().includes(searchTerm)) ||
+        card.content.toLowerCase().includes(searchTerm)
+    );
+    
+    // Re-render content
+    renderContent();
+}
+
+/**
+ * Refresh content
+ */
+function refreshContent() {
+    loadContent();
+    showSuccess('Konten berhasil diperbarui');
+}
+
+/**
+ * Show loading spinner
+ */
+function showLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'flex';
+    }
+}
+
+/**
+ * Hide loading spinner
+ */
+function hideLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'none';
+    }
+}
+
+/**
+ * Show success message
+ */
+function showSuccess(message) {
+    showToast(message, 'success');
+}
+
+/**
+ * Show error message
+ */
+function showError(message) {
+    showToast(message, 'error');
+}
+
+/**
+ * Show toast notification
+ */
+function showToast(message, type = 'info') {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="bi bi-x"></i>
+        </button>
+    `;
+    
+    // Add styles if not already added
+    if (!document.querySelector('#toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            .toast-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 300px;
+                animation: slideInRight 0.3s ease-out;
+                border-left: 4px solid #6b7280;
+            }
+            .toast-success { border-left-color: #059669; }
+            .toast-error { border-left-color: #dc2626; }
+            .toast-content {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex: 1;
+            }
+            .toast-close {
+                background: none;
+                border: none;
+                color: #6b7280;
+                cursor: pointer;
+                padding: 0.25rem;
+                border-radius: 4px;
+            }
+            .toast-close:hover {
+                background-color: #f3f4f6;
+            }
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Add to DOM
+    document.body.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
+}
+
+// Export functions for global access
+window.refreshContent = refreshContent;

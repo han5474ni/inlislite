@@ -116,34 +116,6 @@ function initAccessibilityFeatures() {
             this.style.outlineOffset = '';
         });
     });
-    
-    // Add skip link for screen readers
-    const skipLink = document.createElement('a');
-    skipLink.href = '#main-content';
-    skipLink.textContent = 'Skip to main content';
-    skipLink.className = 'sr-only sr-only-focusable';
-    skipLink.style.cssText = `
-        position: absolute;
-        top: -40px;
-        left: 6px;
-        z-index: 1000;
-        color: white;
-        background: #10b981;
-        padding: 8px 16px;
-        text-decoration: none;
-        border-radius: 4px;
-        transition: top 0.3s;
-    `;
-    
-    skipLink.addEventListener('focus', function() {
-        this.style.top = '6px';
-    });
-    
-    skipLink.addEventListener('blur', function() {
-        this.style.top = '-40px';
-    });
-    
-    footer.insertBefore(skipLink, footer.firstChild);
 }
 
 /**
