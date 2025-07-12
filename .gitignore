@@ -124,3 +124,15 @@ _modules/*
 
 /results/
 /phpunit*.xml
+
+# Development directories
+/scripts/
+/temp/
+/tools/
+
+# Development files
+*.tmp
+*.temp
+*_backup.*
+*_test.*
+test_*.php

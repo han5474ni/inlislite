@@ -312,5 +312,26 @@
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <!-- Custom JS -->
     <script src="<?= base_url('assets/js/admin/tentang-edit.js') ?>"></script>
+
+    <script>
+    // Enhanced CSRF token management
+    window.csrfToken = "<?= csrf_token() ?>";
+    window.csrfHash = "<?= csrf_hash() ?>";
+    
+    // Function to get fresh CSRF data
+    function getCSRFData() {
+        return {
+            "csrf_test_name": window.csrfHash
+        };
+    }
+    
+    // Update CSRF hash after successful requests
+    function updateCSRFHash(response) {
+        if (response && response.csrf_hash) {
+            window.csrfHash = response.csrf_hash;
+            document.querySelector('meta[name="csrf-hash"]').setAttribute('content', response.csrf_hash);
+        }
+    }
+    </script>
 </body>
 </html>

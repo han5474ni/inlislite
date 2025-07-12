@@ -71,7 +71,7 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-            'csrf',  // Enabled for security
+            // 'csrf',  // DISABLED FOR TESTING
             // 'invalidchars',
         ],
         'after' => [
@@ -104,11 +104,15 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [
+        public array $filters = [
         'csrf' => [
             'except' => [
-                'test-upload-photo',  // Exclude test upload from CSRF
-                'admin/tentang/*',    // Temporarily exclude admin/tentang routes from CSRF
+                'test-upload-photo',
+                'admin/tentang/*',
+                'admin/tentang/getCards',
+                'admin/tentang/createCard',
+                'admin/tentang/updateCard',
+                'admin/tentang/deleteCard',
             ]
         ]
     ];
