@@ -1,5 +1,5 @@
 /**
- * INLISLite v3.0 Tentang Edit Page (CSRF Fixed)
+ * INLISLite v3.0 Tentang Edit Page
  * CRUD management for tentang cards with DataTables integration
  */
 
@@ -16,16 +16,6 @@ function getCSRFToken() {
 function getCSRFHash() {
     const meta = document.querySelector('meta[name="csrf-hash"]');
     return meta ? meta.getAttribute('content') : '';
-}
-
-function getCSRFData() {
-    const token = getCSRFToken();
-    const hash = getCSRFHash();
-    const data = {};
-    if (token && hash) {
-        data[token] = hash;
-    }
-    return data;
 }
 
 // Initialize when DOM is loaded
@@ -308,8 +298,10 @@ async function saveCard() {
         showLoading();
         
         // Add CSRF token to form data
-        const csrfData = getCSRFData();
-        Object.assign(formData, csrfData);
+        const csrfHash = getCSRFHash();
+        if (csrfHash) {
+            formData['csrf_test_name'] = csrfHash;
+        }
         
         const response = await fetch('/admin/tentang/createCard', {
             method: 'POST',
@@ -434,8 +426,10 @@ async function updateCard() {
         showLoading();
         
         // Add CSRF token to form data
-        const csrfData = getCSRFData();
-        Object.assign(formData, csrfData);
+        const csrfHash = getCSRFHash();
+        if (csrfHash) {
+            formData['csrf_test_name'] = csrfHash;
+        }
         
         const response = await fetch('/admin/tentang/updateCard', {
             method: 'POST',
@@ -488,8 +482,10 @@ async function deleteCard(id) {
         };
         
         // Add CSRF token to form data
-        const csrfData = getCSRFData();
-        Object.assign(formData, csrfData);
+        const csrfHash = getCSRFHash();
+        if (csrfHash) {
+            formData['csrf_test_name'] = csrfHash;
+        }
         
         const response = await fetch('/admin/tentang/deleteCard', {
             method: 'POST',
