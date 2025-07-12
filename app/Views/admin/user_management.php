@@ -216,10 +216,10 @@
                         </button>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-primary w-100 btn-add-user" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <a href="<?= base_url('admin/users-edit') ?>" class="btn btn-primary w-100">
                             <i class="bi bi-plus-lg me-2"></i>
-                            Add User
-                        </button>
+                            Manage Users
+                        </a>
                     </div>
                 </div>
             </div>
@@ -250,7 +250,6 @@
                                 <th class="sortable" data-sort="created_at">
                                     Created <i class="bi bi-arrow-down-up"></i>
                                 </th>
-                                <th width="60">Action</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
@@ -273,142 +272,7 @@
             </div>
         </div>
 
-        <!-- Modern Add User Modal -->
-        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content modern-modal">
-                    <div class="modal-header modern-modal-header">
-                        <div class="modal-title-section">
-                            <h4 class="modal-title" id="addUserModalLabel">Tambahkan pengguna baru</h4>
-                            <p class="modal-subtitle">Buat akun pengguna baru dan tetapkan izin akses.</p>
-                        </div>
-                        <button type="button" class="btn-close modern-btn-close" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body modern-modal-body">
-                        <form id="addUserForm" class="modern-form">
-                            <?= csrf_field() ?>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control modern-input" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Nama Pengguna</label>
-                                    <input type="text" class="form-control modern-input" name="nama_pengguna" placeholder="Masukkan nama pengguna" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control modern-input" name="email" placeholder="Masukkan alamat email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Kata Sandi</label>
-                                    <input type="password" class="form-control modern-input" name="password" placeholder="Masukkan kata sandi" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Role</label>
-                                    <select class="form-select modern-select" name="role" required>
-                                        <option value="">Pilih Role</option>
-                                        <option value="Staff">Staff</option>
-                                        <option value="Pustakawan">Pustakawan</option>
-                                        <option value="Admin">Admin</option>
-                                        <option value="Super Admin">Super Admin</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Status</label>
-                                    <select class="form-select modern-select" name="status" required>
-                                        <option value="">Pilih Status</option>
-                                        <option value="Aktif">Aktif</option>
-                                        <option value="Non-aktif">Non-aktif</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer modern-modal-footer">
-                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
-                            Batal
-                        </button>
-                        <button type="submit" class="btn btn-add-user-submit" form="addUserForm">
-                            <i class="bi bi-plus-lg me-2"></i>
-                            Tambahkan User
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modern Edit User Modal -->
-        <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content modern-modal">
-                    <div class="modal-header modern-modal-header">
-                        <div class="modal-title-section">
-                            <h4 class="modal-title" id="editUserModalLabel">Edit pengguna</h4>
-                            <p class="modal-subtitle">Perbarui informasi pengguna dan izin akses.</p>
-                        </div>
-                        <button type="button" class="btn-close modern-btn-close" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body modern-modal-body">
-                        <form id="editUserForm" class="modern-form">
-                            <?= csrf_field() ?>
-                            <input type="hidden" id="editUserId" name="id">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control modern-input" id="editNamaLengkap" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Nama Pengguna</label>
-                                    <input type="text" class="form-control modern-input" id="editNamaPengguna" name="nama_pengguna" placeholder="Masukkan nama pengguna" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control modern-input" id="editEmail" name="email" placeholder="Masukkan alamat email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Kata Sandi Baru</label>
-                                    <input type="password" class="form-control modern-input" id="editPassword" name="password" placeholder="Kosongkan jika tidak ingin mengubah">
-                                    <small class="form-text text-muted mt-1">Kosongkan jika tidak ingin mengubah kata sandi</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Role</label>
-                                    <select class="form-select modern-select" id="editRole" name="role" required>
-                                        <option value="">Pilih Role</option>
-                                        <option value="Staff">Staff</option>
-                                        <option value="Pustakawan">Pustakawan</option>
-                                        <option value="Admin">Admin</option>
-                                        <option value="Super Admin">Super Admin</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Status</label>
-                                    <select class="form-select modern-select" id="editStatus" name="status" required>
-                                        <option value="">Pilih Status</option>
-                                        <option value="Aktif">Aktif</option>
-                                        <option value="Non-aktif">Non-aktif</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer modern-modal-footer">
-                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
-                            Batal
-                        </button>
-                        <button type="submit" class="btn btn-edit-user-submit" form="editUserForm">
-                            <i class="bi bi-check-lg me-2"></i>
-                            Perbarui User
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+            </main>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -416,6 +280,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Dashboard JS -->
     <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
+    <!-- User Sync JS -->
+    <script src="<?= base_url('assets/js/admin/user-sync.js') ?>"></script>
     <!-- Custom JavaScript -->
     <script src="<?= base_url('assets/js/admin/user_management.js') ?>"></script>
     
