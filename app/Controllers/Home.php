@@ -183,8 +183,7 @@ return json_encode($monthlyStats);
                 ]
             ];
             
-            $this->validator->setRules($rules, $messages);
-            
+            // Use the validate method from the parent Controller class
             if (!$this->validate($rules, $messages)) {
                 $errors = $this->validator->getErrors();
                 
@@ -461,7 +460,7 @@ return redirect()->to(base_url('admin/registration'));
                 ]
             ];
             
-            if (!$this->validate($rules)) {
+            if (!$this->validate($rules, $messages)) {
                 $errors = $this->validator->getErrors();
                 
                 // Check if this is an AJAX request
@@ -784,9 +783,8 @@ return redirect()->to(base_url('panduan'));
             $validation = \Config\Services::validation();
             
             $rules = [
-                'nama_lengkap' => 'permit_empty|min_length[3]|max_length[255]',
-                'email' => 'permit_empty|valid_email',
-                'nama_pengguna' => 'permit_empty|min_length[3]|max_length[100]',
+                'nama' => 'required|min_length[3]|max_length[255]',
+                'email' => 'required|valid_email|max_length[255]',
                 'phone' => 'permit_empty|max_length[20]',
                 'address' => 'permit_empty|max_length[500]',
                 'bio' => 'permit_empty|max_length[1000]',
@@ -794,8 +792,27 @@ return redirect()->to(base_url('panduan'));
                 'kata_sandi' => 'permit_empty|min_length[6]',
                 'confirm_password' => 'permit_empty|matches[kata_sandi]'
             ];
+            
+            $messages = [
+                'nama' => [
+                    'required' => 'Name is required',
+                    'min_length' => 'Name must be at least 3 characters long',
+                    'max_length' => 'Name cannot exceed 255 characters'
+                ],
+                'email' => [
+                    'required' => 'Email is required',
+                    'valid_email' => 'Please enter a valid email address',
+                    'max_length' => 'Email cannot exceed 255 characters'
+                ],
+                'kata_sandi' => [
+                    'min_length' => 'Password must be at least 6 characters long'
+                ],
+                'confirm_password' => [
+                    'matches' => 'Password confirmation does not match'
+                ]
+            ];
 
-            if (!$this->validate($rules)) {
+            if (!$this->validate($rules, $messages)) {
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Validation failed',

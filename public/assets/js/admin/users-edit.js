@@ -190,7 +190,9 @@ function loadMockData() {
             role: 'Super Admin',
             status: 'Aktif',
             last_login: '2025-01-12 14:00:00',
-            created_at: '2024-01-15 10:00:00'
+            created_at: '2024-01-15 10:00:00',
+            avatar: null,
+            avatar_url: null
         },
         {
             id: 2,
@@ -200,7 +202,9 @@ function loadMockData() {
             role: 'Pustakawan',
             status: 'Aktif',
             last_login: '2025-01-11 16:30:00',
-            created_at: '2024-02-10 09:15:00'
+            created_at: '2024-02-10 09:15:00',
+            avatar: null,
+            avatar_url: null
         },
         {
             id: 3,
@@ -210,7 +214,9 @@ function loadMockData() {
             role: 'Staff',
             status: 'Non-Aktif',
             last_login: null,
-            created_at: '2024-03-05 11:20:00'
+            created_at: '2024-03-05 11:20:00',
+            avatar: null,
+            avatar_url: null
         }
     ];
     
@@ -236,7 +242,9 @@ function populateTable(data) {
     // Add new data with sequential IDs
     sortedData.forEach((user, index) => {
         const sequentialId = index + 1; // Start from 1
-        const avatar = getInitials(user.nama_lengkap);
+        const avatar = user.avatar_url ? 
+            `<img src="${user.avatar_url}" alt="${escapeHtml(user.nama_lengkap)}" />` : 
+            getInitials(user.nama_lengkap);
         const roleClass = getRoleClass(user.role);
         const statusClass = getStatusClass(user.status);
         const lastLogin = formatLastLogin(user.last_login);

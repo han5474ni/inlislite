@@ -25,40 +25,42 @@ class ProfileController extends BaseController
     public function index(): string
     {
         try {
-            // Get current user ID (for now, use admin user by username)
-            $profile = $this->profileModel->getByUsername('admin');
+            // Get current logged-in user ID from session
+            $userId = $this->session->get('admin_user_id') ?? $this->session->get('admin_id');
+            
+            if (!$userId) {
+                // If no session, redirect to login
+                return redirect()->to(base_url('admin/login'))->with('error', 'Please login to access your profile');
+            }
+            
+            // Get user data from users table
+            $userModel = new \App\Models\UserModel();
+            $user = $userModel->find($userId);
+            
+            if (!$user) {
+                return redirect()->to(base_url('admin/login'))->with('error', 'User not found');
+            }
+            
+            // Get or create profile for this user
+            $profile = $this->profileModel->getByUserId($userId);
             
             if (!$profile) {
-                // Create default profile if not exists
-                $defaultProfile = [
-                    'user_id' => 1, // Assuming admin user has ID 1
-                    'foto' => null,
-                    'nama' => 'Administrator',
-                    'nama_lengkap' => 'Administrator',
-                    'username' => 'admin',
-                    'nama_pengguna' => 'admin',
-                    'email' => 'admin@inlislite.com',
-                    'password' => password_hash('admin123', PASSWORD_DEFAULT),
-                    'kata_sandi' => password_hash('admin123', PASSWORD_DEFAULT),
-                    'role' => 'Super Admin',
-                    'status' => 'Aktif'
-                ];
-                
-                $this->profileModel->insert($defaultProfile);
-                $profile = $this->profileModel->getByUsername('admin');
+                // Create profile from user data
+                $this->profileModel->createFromUser($userId);
+                $profile = $this->profileModel->getByUserId($userId);
             }
             
             // Get formatted profile data
             $formattedProfile = $this->profileModel->getFormattedProfile($profile['id']);
             
             // Get recent activities
-            $recentActivities = $this->activityLogModel->getFormattedUserActivities($profile['user_id'], 10);
+            $recentActivities = $this->activityLogModel->getFormattedUserActivities($userId, 10);
             
             // Get activity statistics
-            $activityStats = $this->activityLogModel->getActivityStats($profile['user_id'], 30);
+            $activityStats = $this->activityLogModel->getActivityStats($userId, 30);
             
             // Log profile access
-            $this->activityLogModel->logActivity($profile['user_id'], 'profile_access', 'User accessed profile page');
+            $this->activityLogModel->logActivity($userId, 'profile_access', 'User accessed profile page');
             
             $data = [
                 'title' => 'User Profile - INLISlite v3.0',
@@ -70,16 +72,20 @@ class ProfileController extends BaseController
             return view('admin/profile', $data);
             
         } catch (\Exception $e) {
-            // Fallback to default data
+            log_message('error', 'Profile page error: ' . $e->getMessage());
+            
+            // Get basic user info from session for fallback
             $userData = [
-                'nama' => 'Administrator',
-                'username' => 'admin',
-                'email' => 'admin@inlislite.com',
-                'role' => 'Super Admin',
+                'nama' => $this->session->get('admin_nama_lengkap') ?? 'Administrator',
+                'nama_lengkap' => $this->session->get('admin_nama_lengkap') ?? 'Administrator',
+                'nama_pengguna' => $this->session->get('admin_username') ?? 'admin',
+                'username' => $this->session->get('admin_username') ?? 'admin',
+                'email' => $this->session->get('admin_email') ?? 'admin@inlislite.com',
+                'role' => $this->session->get('admin_role') ?? 'Super Admin',
                 'status' => 'Aktif',
                 'created_at' => date('Y-m-d H:i:s'),
                 'last_login_formatted' => 'Belum pernah login',
-                'avatar_initials' => 'AD'
+                'avatar_initials' => $this->getInitials($this->session->get('admin_nama_lengkap') ?? 'Administrator')
             ];
 
             $data = [
@@ -92,6 +98,24 @@ class ProfileController extends BaseController
             return view('admin/profile', $data);
         }
     }
+    
+    /**
+     * Get initials from name
+     */
+    private function getInitials($name)
+    {
+        $words = explode(' ', trim($name));
+        $initials = '';
+        
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= strtoupper(substr($word, 0, 1));
+                if (strlen($initials) >= 2) break;
+            }
+        }
+        
+        return $initials ?: 'U';
+    }
 
     /**
      * Update profile information
@@ -99,7 +123,15 @@ class ProfileController extends BaseController
     public function updateProfile()
     {
         try {
-            $userId = $this->session->get('admin_id') ?? 1; // Default to admin user
+            // Get current logged-in user ID from session
+            $userId = $this->session->get('admin_user_id') ?? $this->session->get('admin_id');
+            
+            if (!$userId) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'User tidak terautentikasi'
+                ]);
+            }
             
             $validation = \Config\Services::validation();
             
@@ -114,8 +146,37 @@ class ProfileController extends BaseController
                 'kata_sandi' => 'permit_empty|min_length[6]',
                 'confirm_password' => 'permit_empty|matches[kata_sandi]'
             ];
+            
+            $messages = [
+                'nama_lengkap' => [
+                    'min_length' => 'Full name must be at least 3 characters',
+                    'max_length' => 'Full name cannot exceed 255 characters'
+                ],
+                'email' => [
+                    'valid_email' => 'Please enter a valid email address'
+                ],
+                'nama_pengguna' => [
+                    'min_length' => 'Username must be at least 3 characters',
+                    'max_length' => 'Username cannot exceed 100 characters'
+                ],
+                'phone' => [
+                    'max_length' => 'Phone number cannot exceed 20 characters'
+                ],
+                'address' => [
+                    'max_length' => 'Address cannot exceed 500 characters'
+                ],
+                'bio' => [
+                    'max_length' => 'Bio cannot exceed 1000 characters'
+                ],
+                'kata_sandi' => [
+                    'min_length' => 'Password must be at least 6 characters'
+                ],
+                'confirm_password' => [
+                    'matches' => 'Password confirmation must match the new password'
+                ]
+            ];
 
-            if (!$this->validate($rules)) {
+            if (!$this->validate($rules, $messages)) {
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Validation failed',
@@ -143,14 +204,51 @@ class ProfileController extends BaseController
                 $data['nama_lengkap'] = $namaLengkap;
             }
             
-            if (!empty($namaPengguna)) {
+            // Check if user can edit username (only Super Admin)
+            if (!empty($namaPengguna) && $namaPengguna !== $currentProfile['nama_pengguna']) {
+                if ($currentProfile['role'] !== 'Super Admin') {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Hanya Super Admin yang dapat mengubah username'
+                    ]);
+                }
+                
+                // Check if username is already taken by another user
+                $existingProfile = $this->profileModel->where('nama_pengguna', $namaPengguna)
+                                                    ->where('id !=', $currentProfile['id'])
+                                                    ->first();
+                if ($existingProfile) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Username sudah digunakan oleh pengguna lain'
+                    ]);
+                }
+                
                 $data['username'] = $namaPengguna;
                 $data['nama_pengguna'] = $namaPengguna;
             }
             
-            // Handle other fields
+            // Handle other fields - Check if user can edit email (only Super Admin)
             $email = $this->request->getPost('email');
-            if (!empty($email)) {
+            if (!empty($email) && $email !== $currentProfile['email']) {
+                if ($currentProfile['role'] !== 'Super Admin') {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Hanya Super Admin yang dapat mengubah email'
+                    ]);
+                }
+                
+                // Check if email is already taken by another user
+                $existingProfile = $this->profileModel->where('email', $email)
+                                                    ->where('id !=', $currentProfile['id'])
+                                                    ->first();
+                if ($existingProfile) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Email sudah digunakan oleh pengguna lain'
+                    ]);
+                }
+                
                 $data['email'] = $email;
             }
             
@@ -165,7 +263,7 @@ class ProfileController extends BaseController
             }
             
             $bio = $this->request->getPost('bio');
-            if (!empty($bio)) {
+            if ($bio !== null) { // Changed from !empty to !== null to allow empty string
                 $data['bio'] = $bio;
             }
 
@@ -191,11 +289,12 @@ class ProfileController extends BaseController
                 $this->activityLogModel->logActivity(
                     $userId, 
                     'password_change', 
-                    'User changed password'
+                    'User changed their password',
+                    null,
+                    null
                 );
             }
-
-            // Only update if there's data to update
+            
             if (empty($data)) {
                 return $this->response->setJSON([
                     'success' => false,
@@ -203,6 +302,10 @@ class ProfileController extends BaseController
                 ]);
             }
 
+            // Log data being sent for debugging
+            log_message('debug', 'Profile update data: ' . json_encode($data));
+            log_message('debug', 'Profile ID: ' . $currentProfile['id']);
+            
             // Update profile using sync method
             $result = $this->profileModel->updateProfileAndSync($currentProfile['id'], $data);
             
@@ -221,15 +324,31 @@ class ProfileController extends BaseController
                     'message' => 'Profile berhasil diupdate!'
                 ]);
             } else {
+                // Get detailed error information
+                $profileErrors = $this->profileModel->errors() ? $this->profileModel->errors() : [];
+                $dbError = $this->profileModel->db->error();
+                
+                // Log the failure for debugging
+                log_message('error', 'Profile update failed for profile ID: ' . $currentProfile['id']);
+                log_message('error', 'Profile model errors: ' . json_encode($profileErrors));
+                log_message('error', 'Database error: ' . json_encode($dbError));
+                log_message('error', 'Update data: ' . json_encode($data));
+                
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal mengupdate profile'
+                    'message' => 'Gagal mengupdate profile',
+                    'error_details' => [
+                        'model_errors' => $profileErrors,
+                        'db_error' => $dbError,
+                        'profile_id' => $currentProfile['id']
+                    ]
                 ]);
             }
         } catch (\Exception $e) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Error: ' . $e->getMessage()
+                'message' => 'Error: ' . $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
         }
     }
@@ -240,7 +359,15 @@ class ProfileController extends BaseController
     public function uploadPhoto()
     {
         try {
-            $userId = $this->session->get('admin_id') ?? 1; // Default to admin user
+            // Get current logged-in user ID from session
+            $userId = $this->session->get('admin_user_id') ?? $this->session->get('admin_id');
+            
+            if (!$userId) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'User tidak terautentikasi'
+                ]);
+            }
             
             $file = $this->request->getFile('profile_photo');
             

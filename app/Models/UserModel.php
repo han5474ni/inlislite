@@ -21,6 +21,7 @@ class UserModel extends Model
         'password',
         'role',
         'status',
+        'avatar',
         'last_login',
         'created_at',
         'updated_at'
@@ -34,11 +35,11 @@ class UserModel extends Model
 
     // Validation
     protected $validationRules = [
-        'nama_pengguna' => 'required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna,id,{id}]',
-        'email' => 'required|valid_email|is_unique[users.email,id,{id}]',
-        'kata_sandi' => 'required|min_length[6]',
-        'role' => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
-        'status' => 'required|in_list[Aktif,Non-Aktif]'
+        'nama_pengguna' => 'permit_empty|min_length[3]|max_length[50]|is_unique[users.nama_pengguna,id,{id}]',
+        'email' => 'permit_empty|valid_email|is_unique[users.email,id,{id}]',
+        'kata_sandi' => 'permit_empty|min_length[6]',
+        'role' => 'permit_empty|in_list[Super Admin,Admin,Pustakawan,Staff]',
+        'status' => 'permit_empty|in_list[Aktif,Non-Aktif]'
     ];
 
     protected $validationMessages = [
@@ -298,5 +299,50 @@ class UserModel extends Model
     public function updateLastLogin($userId)
     {
         return $this->update($userId, ['last_login' => date('Y-m-d H:i:s')]);
+    }
+    
+    /**
+     * Process user data with avatar URL and initials
+     */
+    public function processUserData($user)
+    {
+        if (is_array($user)) {
+            // Generate avatar initials
+            $user['avatar_initials'] = $this->getInitials($user['nama_lengkap'] ?? '');
+            
+            // Avatar photo URL
+            if (!empty($user['avatar'])) {
+                $user['avatar_url'] = base_url('images/profile/' . $user['avatar']);
+            } else {
+                $user['avatar_url'] = null;
+            }
+            
+            // For compatibility with profile views
+            if (!isset($user['foto_url'])) {
+                $user['foto_url'] = $user['avatar_url'];
+            }
+        }
+        
+        return $user;
+    }
+    
+    /**
+     * Update user avatar and sync to profile
+     */
+    public function updateAvatar($userId, $avatarFilename)
+    {
+        $result = $this->update($userId, ['avatar' => $avatarFilename]);
+        
+        if ($result) {
+            // Sync to profile table
+            $profileModel = new \App\Models\ProfileModel();
+            $profile = $profileModel->getByUserId($userId);
+            if ($profile) {
+                $profileModel->update($profile['id'], ['foto' => $avatarFilename]);
+                log_message('info', 'User avatar updated and synced to profile table for user ID: ' . $userId);
+            }
+        }
+        
+        return $result;
     }
 }

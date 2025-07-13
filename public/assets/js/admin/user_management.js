@@ -345,7 +345,12 @@ function renderUsersTable() {
         <tr class="fade-in">
             <td>
                 <div class="user-info">
-                    <div class="user-avatar">${user.avatar_initials}</div>
+                    <div class="user-avatar">
+                        ${user.avatar_url ? 
+                            `<img src="${user.avatar_url}" alt="${escapeHtml(user.nama_lengkap)}" />` : 
+                            user.avatar_initials
+                        }
+                    </div>
                     <div class="user-details">
                         <h6>${escapeHtml(user.nama_lengkap)}</h6>
                         <small>${escapeHtml(user.email)}</small>

@@ -23,12 +23,12 @@ class ProfileModel extends Model
     protected $updatedField = 'updated_at';
 
     protected $validationRules = [
-        'user_id' => 'required|integer|is_unique[profile.user_id,id,{id}]',
-        'nama' => 'required|min_length[3]|max_length[255]',
-        'username' => 'required|min_length[3]|max_length[100]|is_unique[profile.username,id,{id}]',
-        'email' => 'required|valid_email|is_unique[profile.email,id,{id}]',
-        'role' => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
-        'status' => 'required|in_list[Aktif,Non-Aktif,Ditangguhkan]'
+        'user_id' => 'required|integer',
+        'nama' => 'permit_empty|min_length[3]|max_length[255]',
+        'username' => 'permit_empty|min_length[3]|max_length[100]',
+        'email' => 'permit_empty|valid_email',
+        'role' => 'permit_empty|in_list[Super Admin,Admin,Pustakawan,Staff]',
+        'status' => 'permit_empty|in_list[Aktif,Non-Aktif,Ditangguhkan]'
     ];
 
     protected $validationMessages = [
@@ -64,11 +64,11 @@ class ProfileModel extends Model
     }
 
     /**
-     * Get profile by user ID (for compatibility)
+     * Get profile by user ID
      */
     public function getByUserId($userId)
     {
-        return $this->find($userId);
+        return $this->where('user_id', $userId)->first();
     }
 
     /**
@@ -88,11 +88,27 @@ class ProfileModel extends Model
     }
 
     /**
-     * Update profile photo
+     * Update profile photo and sync to users table
      */
     public function updatePhoto($id, $photoFilename)
     {
-        return $this->update($id, ['foto' => $photoFilename]);
+        $profile = $this->find($id);
+        if (!$profile) {
+            return false;
+        }
+        
+        // Update profile foto
+        $result = $this->update($id, ['foto' => $photoFilename]);
+        
+        if ($result) {
+            // Sync to users table
+            $userModel = new \App\Models\UserModel();
+            $userModel->update($profile['user_id'], ['avatar' => $photoFilename]);
+            
+            log_message('info', 'Profile photo updated and synced to users table for profile ID: ' . $id);
+        }
+        
+        return $result;
     }
 
     /**
@@ -264,13 +280,24 @@ class ProfileModel extends Model
     {
         $profile = $this->find($profileId);
         if (!$profile) {
+            log_message('error', 'Profile not found for ID: ' . $profileId);
             return false;
         }
+        
+        // Log before update attempt
+        log_message('debug', 'ProfileModel: Attempting to update profile ID ' . $profileId . ' with data: ' . json_encode($data));
         
         // Update profile
         $result = $this->update($profileId, $data);
         
-        if ($result && isset($data['nama_lengkap']) || isset($data['email']) || isset($data['role']) || isset($data['status'])) {
+        // Log update result
+        log_message('debug', 'ProfileModel: Update result: ' . ($result ? 'success' : 'failed'));
+        if (!$result) {
+            log_message('error', 'ProfileModel: Update failed. Errors: ' . json_encode($this->errors()));
+            log_message('error', 'ProfileModel: Database error: ' . json_encode($this->db->error()));
+        }
+        
+        if ($result && (isset($data['nama_lengkap']) || isset($data['nama_pengguna']) || isset($data['email']) || isset($data['kata_sandi']) || isset($data['role']) || isset($data['status']) || isset($data['foto']))) {
             // Sync back to users table if core fields changed
             $userModel = new \App\Models\UserModel();
             $userUpdateData = [];
@@ -293,9 +320,13 @@ class ProfileModel extends Model
             if (isset($data['status'])) {
                 $userUpdateData['status'] = $data['status'];
             }
+            if (isset($data['foto'])) {
+                $userUpdateData['avatar'] = $data['foto'];
+            }
             
             if (!empty($userUpdateData)) {
                 $userModel->update($profile['user_id'], $userUpdateData);
+                log_message('debug', 'Profile data synced to users table for user ID: ' . $profile['user_id']);
             }
         }
         

@@ -271,7 +271,7 @@ function initializePasswordForm() {
     if (confirmPassword) {
         confirmPassword.addEventListener('input', function() {
             if (newPassword.value !== confirmPassword.value) {
-                confirmPassword.setCustomValidity('Password tidak cocok');
+                confirmPassword.setCustomValidity('Confirmation must match new password');
                 confirmPassword.classList.add('is-invalid');
             } else {
                 confirmPassword.setCustomValidity('');
@@ -296,36 +296,36 @@ function updatePassword() {
     
     if (!currentPassword || currentPassword.trim() === '') {
         if (typeof showToast === 'function') {
-            showToast('Password saat ini harus diisi', 'error');
+            showToast('Current password is required', 'info');
         } else {
-            alert('Password saat ini harus diisi');
+            alert('Current password is required');
         }
         return;
     }
     
     if (!newPassword || newPassword.trim() === '') {
         if (typeof showToast === 'function') {
-            showToast('Password baru harus diisi', 'error');
+            showToast('New password is required', 'info');
         } else {
-            alert('Password baru harus diisi');
+            alert('New password is required');
         }
         return;
     }
     
     if (newPassword.length < 6) {
         if (typeof showToast === 'function') {
-            showToast('Password baru minimal 6 karakter', 'error');
+            showToast('New password must be at least 6 characters', 'info');
         } else {
-            alert('Password baru minimal 6 karakter');
+            alert('New password must be at least 6 characters');
         }
         return;
     }
     
     if (newPassword !== confirmPassword) {
         if (typeof showToast === 'function') {
-            showToast('Password baru dan konfirmasi password tidak cocok', 'error');
+            showToast('Confirmation must match new password', 'info');
         } else {
-            alert('Password baru dan konfirmasi password tidak cocok');
+            alert('Confirmation must match new password');
         }
         return;
     }
@@ -406,17 +406,17 @@ function initializePasswordToggle() {
 }
 
 /**
- * Display form validation errors
+ * Display form validation messages
  */
 function displayFormErrors(form, errors) {
-    // Clear previous errors
+    // Clear previous messages
     const invalidFeedbacks = form.querySelectorAll('.invalid-feedback');
     const invalidInputs = form.querySelectorAll('.is-invalid');
     
     invalidFeedbacks.forEach(feedback => feedback.textContent = '');
     invalidInputs.forEach(input => input.classList.remove('is-invalid'));
     
-    // Display new errors
+    // Display new messages
     Object.keys(errors).forEach(fieldName => {
         const field = form.querySelector(`[name="${fieldName}"]`);
         const feedback = field ? field.parentNode.querySelector('.invalid-feedback') : null;
@@ -424,6 +424,11 @@ function displayFormErrors(form, errors) {
         if (field && feedback) {
             field.classList.add('is-invalid');
             feedback.textContent = errors[fieldName];
+            
+            // Add focus event to remove invalid class when user starts typing
+            field.addEventListener('focus', function() {
+                this.classList.remove('is-invalid');
+            }, { once: true });
         }
     });
 }
