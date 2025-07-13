@@ -24,6 +24,11 @@ class UserManagement extends BaseController
             $passwordField = in_array('kata_sandi', $fields) ? 'kata_sandi' : 'password';
             
             $builder = $this->db->table('users');
+            
+            // Check if avatar column exists
+            $hasAvatar = in_array('avatar', $fields);
+            $avatarField = $hasAvatar ? 'avatar' : 'NULL as avatar';
+            
             $users = $builder->select("
                 id,
                 nama_lengkap,
@@ -31,7 +36,7 @@ class UserManagement extends BaseController
                 email,
                 role,
                 status,
-                avatar,
+                {$avatarField},
                 last_login,
                 created_at
             ")->get()->getResultArray();
@@ -327,6 +332,13 @@ class UserManagement extends BaseController
                     $newUser['last_login_formatted'] = 'Belum pernah';
                     $newUser['avatar_initials'] = $this->getInitials($newUser['nama_lengkap']);
                     
+                    // Add avatar URL if available
+                    if (isset($newUser['avatar']) && !empty($newUser['avatar'])) {
+                        $newUser['avatar_url'] = base_url('images/profile/' . $newUser['avatar']);
+                    } else {
+                        $newUser['avatar_url'] = null;
+                    }
+                    
                     log_message('info', 'User added successfully: ' . $newUser[$usernameField]);
                     return $this->response->setJSON(['success' => true, 'message' => 'Pengguna berhasil ditambahkan!', 'data' => $newUser]);
                 } else {
@@ -454,6 +466,11 @@ class UserManagement extends BaseController
                 $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
                 
                 $builder = $this->db->table('users');
+                
+                // Check if avatar column exists
+                $hasAvatar = in_array('avatar', $fields);
+                $avatarField = $hasAvatar ? 'avatar' : 'NULL as avatar';
+                
                 $users = $builder->select("
                     id,
                     nama_lengkap,
@@ -461,7 +478,7 @@ class UserManagement extends BaseController
                     email,
                     role,
                     status,
-                    avatar,
+                    {$avatarField},
                     last_login,
                     created_at
                 ")->get()->getResultArray();

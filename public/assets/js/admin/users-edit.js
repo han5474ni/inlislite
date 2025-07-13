@@ -321,9 +321,18 @@ async function saveUser() {
     showLoading();
     
     try {
-        // Add CSRF token
-        const csrfData = getCSRFData();
-        const requestData = { ...formData, ...csrfData };
+        // Make request (CSRF handling optional)
+        let requestData = { ...formData };
+        
+        // Add CSRF token if available
+        if (typeof getCSRFData === 'function') {
+            try {
+                const csrfData = getCSRFData();
+                requestData = { ...formData, ...csrfData };
+            } catch (e) {
+                console.warn('CSRF token not available, proceeding without it');
+            }
+        }
         
         const response = await fetch('/admin/users/ajax/create', {
             method: 'POST',
@@ -358,7 +367,10 @@ async function saveUser() {
             }
             
             // Close modal and reset form
-            $('#addUserModal').modal('hide');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+            if (modal) {
+                modal.hide();
+            }
             form.reset();
             
             showAlert(result.message || 'User berhasil ditambahkan!', 'success');
@@ -397,7 +409,8 @@ function editUser(userId) {
     document.getElementById('editStatus').value = user.status;
     
     // Show modal
-    $('#editModal').modal('show');
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
     
     console.log('✏️ Editing user:', user.nama_lengkap);
 }
@@ -424,9 +437,18 @@ async function updateUser() {
     showLoading();
     
     try {
-        // Add CSRF token
-        const csrfData = getCSRFData();
-        const requestData = { ...formData, ...csrfData };
+        // Make request (CSRF handling optional)
+        let requestData = { ...formData };
+        
+        // Add CSRF token if available
+        if (typeof getCSRFData === 'function') {
+            try {
+                const csrfData = getCSRFData();
+                requestData = { ...formData, ...csrfData };
+            } catch (e) {
+                console.warn('CSRF token not available, proceeding without it');
+            }
+        }
         
         const response = await fetch(`/admin/users/ajax/update/${userId}`, {
             method: 'POST',
@@ -452,7 +474,10 @@ async function updateUser() {
             }
             
             // Close modal
-            $('#editModal').modal('hide');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+            if (modal) {
+                modal.hide();
+            }
             
             showAlert(result.message || 'User berhasil diperbarui!', 'success');
             console.log('✅ User updated successfully');
