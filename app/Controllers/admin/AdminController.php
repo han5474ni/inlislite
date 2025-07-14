@@ -17,13 +17,135 @@ class AdminController extends BaseController
     
     public function index()
     {
+        // Load models
+        $userModel = new \App\Models\UserModel();
+        $registrationModel = model('RegistrationModel');
+        $fiturModel = model('FiturModel'); 
+        $db = \Config\Database::connect();
+        
+        // Get user statistics
+        $totalUsers = $userModel->countAll();
+        $activeUsers = $userModel->where('status', 'Aktif')->countAllResults();
+        $adminUsers = $userModel->whereIn('role', ['Super Admin', 'Admin'])->countAllResults();
+        $todayLogins = $userModel->where('DATE(last_login) =', date('Y-m-d'))->countAllResults();
+        
+        // Get registration statistics
+        $totalRegistrations = 0;
+        $activeRegistrations = 0;
+        $thisWeekRegistrations = 0;
+        $pendingRegistrations = 0;
+        
+        if ($db->tableExists('registrations')) {
+            $totalRegistrations = $registrationModel->countAll();
+            $activeRegistrations = $registrationModel->where('status', 'active')->countAllResults();
+            $thisWeekStart = date('Y-m-d', strtotime('-7 days'));
+            $thisWeekRegistrations = $registrationModel->where('created_at >=', $thisWeekStart)->countAllResults();
+            $pendingRegistrations = $registrationModel->where('status', 'pending')->countAllResults();
+        }
+        
+        // Get features statistics
+        $totalFeatures = 0;
+        $activeFeatures = 0;
+        
+        if ($db->tableExists('fitur')) {
+            $totalFeatures = $fiturModel->countAll();
+            $activeFeatures = $fiturModel->where('status', 'active')->countAllResults();
+        }
+        
+        // Get current user info
+        $session = session();
+        $currentUser = [
+            'name' => $session->get('admin_nama_lengkap') ?? 'Administrator',
+            'role' => $session->get('admin_role') ?? 'Super Admin',
+            'status' => 'Online',
+            'last_login' => $session->get('admin_last_login'),
+            'photo' => $session->get('admin_photo'),
+            'created_at' => $session->get('admin_created_at')
+        ];
+        
+        // Get recent registrations
+        $recentRegistrations = [];
+        if ($db->tableExists('registrations')) {
+            $recentRegistrations = $registrationModel->orderBy('created_at', 'DESC')->limit(5)->findAll();
+        }
+        
+        // Get recent users
+        $recentUsers = $userModel->orderBy('created_at', 'DESC')->limit(5)->findAll();
+        
+        $chartData = $this->_getChartData();
+
         $data = [
             'title' => 'Admin Dashboard - INLISLite v3',
             'page_title' => 'Admin Dashboard',
-            'page_subtitle' => 'Kelola sistem perpustakaan Anda'
+            'page_subtitle' => 'Kelola sistem perpustakaan Anda dengan data real-time',
+            'userStats' => [
+                'total' => $totalUsers,
+                'active' => $activeUsers,
+                'admin' => $adminUsers,
+                'today_logins' => $todayLogins
+            ],
+            'registrationStats' => [
+                'total' => $totalRegistrations,
+                'active' => $activeRegistrations,
+                'this_week' => $thisWeekRegistrations,
+                'pending' => $pendingRegistrations
+            ],
+            'featureStats' => [
+                'total' => $totalFeatures,
+                'active' => $activeFeatures
+            ],
+            'currentUser' => $currentUser,
+            'recentRegistrations' => $recentRegistrations,
+            'recentUsers' => $recentUsers,
+            'chartData' => $chartData
         ];
         
         return view('admin/dashboard', $data);
+    }
+
+    private function _getChartData()
+    {
+        $userModel = new \App\Models\UserModel();
+        $registrationModel = model('RegistrationModel');
+        $db = \Config\Database::connect();
+
+        $labels = [];
+        $users = [];
+        $registrations = [];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = date('Y-m-d', strtotime("-$i days"));
+            $labels[] = date('M d', strtotime($date));
+
+            // Get user count
+            $userCount = $userModel->where('DATE(created_at)', $date)->countAllResults();
+            $users[] = $userCount;
+
+            // Get registration count
+            $regCount = 0;
+            if ($db->tableExists('registrations')) {
+                $regCount = $registrationModel->where('DATE(created_at)', $date)->countAllResults();
+            }
+            $registrations[] = $regCount;
+        }
+
+        return [
+            'labels' => $labels,
+            'users' => $users,
+            'registrations' => $registrations,
+        ];
+    }
+
+    public function getLastLogin()
+    {
+        $session = session();
+        $lastLogin = $session->get('admin_last_login');
+
+        if ($lastLogin) {
+            return $this->response->setJSON(['last_login' => $lastLogin]);
+        }
+
+        return $this->response->setJSON(['last_login' => null]);
     }
     
     public function modernDashboard()

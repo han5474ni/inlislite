@@ -134,8 +134,24 @@ async function loadInstallers() {
     try {
         showLoading();
         
-        // Sample data - replace with actual API call
-        const sampleInstallers = [
+        // Load data from API
+        const response = await fetch(`${window.baseUrl || ''}/admin/installer/data`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+        let installers = [];
+
+        if (result.success) {
+            installers = result.data || [];
+        } else {
+            console.error('Failed to load installers:', result.message);
+            // Fallback to sample data
+            installers = [
             {
                 id: 1,
                 package_name: "INLISLite v3.0 Full Package",
@@ -244,9 +260,10 @@ async function loadInstallers() {
                 sort_order: 6,
                 created_at: "2023-12-01 09:15:00"
             }
-        ];
+            ];
+        }
         
-        populateTable(sampleInstallers);
+        populateTable(installers);
         
     } catch (error) {
         console.error('Error loading installers:', error);
@@ -371,11 +388,21 @@ async function saveInstaller() {
         
         showLoading();
         
-        // TODO: Replace with actual API call
-        console.log('Saving installer:', formData);
-        
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Save to database via API
+        const response = await fetch(`${window.baseUrl || ''}/admin/installer/store`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || 'Gagal menyimpan installer');
+        }
         
         // Close modal and refresh data
         const modal = bootstrap.Modal.getInstance(document.getElementById('addInstallerModal'));
@@ -566,11 +593,20 @@ async function deleteInstaller(id) {
     try {
         showLoading();
         
-        // TODO: Replace with actual API call
-        console.log('Deleting installer:', id);
-        
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Delete via API
+        const response = await fetch(`${window.baseUrl || ''}/admin/installer/delete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || 'Gagal menghapus installer');
+        }
         
         showSuccess('Installer berhasil dihapus');
         loadInstallers();

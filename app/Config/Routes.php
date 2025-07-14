@@ -104,6 +104,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('/', 'AdminController::index');
     $routes->get('dashboard', 'AdminController::index');
     $routes->get('modern-dashboard', 'AdminController::modernDashboard');
+    $routes->get('dashboard/getLastLogin', 'AdminController::getLastLogin');
     // About page
     $routes->get('tentang', 'AdminController::tentang');
     $routes->get('tentang-edit', 'AdminController::tentangEdit');
@@ -121,16 +122,14 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->get('data', 'FiturController::getData');
         $routes->get('statistics', 'FiturController::getStatistics');
         $routes->post('store', 'FiturController::store');
-        $routes->put('update/(:num)', 'FiturController::update/$1');
-        $routes->delete('delete/(:num)', 'FiturController::delete/$1');
+        $routes->post('update/(:num)', 'FiturController::update/$1');
+        $routes->post('delete/(:num)', 'FiturController::delete/$1');
         $routes->post('sort-order', 'FiturController::updateSortOrder');
     });
-    // Panduan page
-    $routes->get('panduan', 'AdminController::panduan');
-    // Dukungan page
-    $routes->get('dukungan', 'AdminController::dukungan');
-    // Bimbingan page
-    $routes->get('bimbingan', 'AdminController::bimbingan');
+    // Legacy routes - will redirect to new controllers
+    $routes->get('panduan', 'PanduanController::index');
+    $routes->get('dukungan', 'DukunganController::index');
+    $routes->get('bimbingan', 'BimbinganController::index');
     // Patch page
     $routes->get('patch', 'AdminController::patch_updater');
     $routes->get('patch-edit', 'AdminController::patchEdit');
@@ -138,12 +137,58 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         return redirect()->to(base_url('admin/patch'));
     });
     
-    // Management edit pages
-    $routes->get('aplikasi-edit', 'AdminController::aplikasiEdit');
-    $routes->get('panduan-edit', 'AdminController::panduanEdit');
-    $routes->get('dukungan-edit', 'AdminController::dukunganEdit');
-    $routes->get('bimbingan-edit', 'AdminController::bimbinganEdit');
-    $routes->get('demo-edit', 'AdminController::demoEdit');
+    // CRUD routes for new controllers
+    $routes->get('aplikasi', 'AplikasiController::index');
+    $routes->get('aplikasi-edit', 'AplikasiController::edit');
+    $routes->group('aplikasi', function($routes) {
+        $routes->get('data', 'AplikasiController::getData');
+        $routes->get('statistics', 'AplikasiController::getStatistics');
+        $routes->post('store', 'AplikasiController::store');
+        $routes->put('update/(:num)', 'AplikasiController::update/$1');
+        $routes->delete('delete/(:num)', 'AplikasiController::delete/$1');
+        $routes->post('sort-order', 'AplikasiController::updateSortOrder');
+    });
+    
+    $routes->get('bimbingan-edit', 'BimbinganController::edit');
+    $routes->group('bimbingan', function($routes) {
+        $routes->get('data', 'BimbinganController::getData');
+        $routes->get('statistics', 'BimbinganController::getStatistics');
+        $routes->post('store', 'BimbinganController::store');
+        $routes->put('update/(:num)', 'BimbinganController::update/$1');
+        $routes->delete('delete/(:num)', 'BimbinganController::delete/$1');
+        $routes->post('sort-order', 'BimbinganController::updateSortOrder');
+    });
+    
+    $routes->get('dukungan-edit', 'DukunganController::edit');
+    $routes->group('dukungan', function($routes) {
+        $routes->get('data', 'DukunganController::getData');
+        $routes->get('statistics', 'DukunganController::getStatistics');
+        $routes->post('store', 'DukunganController::store');
+        $routes->put('update/(:num)', 'DukunganController::update/$1');
+        $routes->delete('delete/(:num)', 'DukunganController::delete/$1');
+        $routes->post('sort-order', 'DukunganController::updateSortOrder');
+    });
+    
+    $routes->get('panduan-edit', 'PanduanController::edit');
+    $routes->group('panduan', function($routes) {
+        $routes->get('data', 'PanduanController::getData');
+        $routes->get('statistics', 'PanduanController::getStatistics');
+        $routes->post('store', 'PanduanController::store');
+        $routes->put('update/(:num)', 'PanduanController::update/$1');
+        $routes->delete('delete/(:num)', 'PanduanController::delete/$1');
+        $routes->post('sort-order', 'PanduanController::updateSortOrder');
+    });
+    
+    $routes->get('demo', 'DemoController::index');
+    $routes->get('demo-edit', 'DemoController::edit');
+    $routes->group('demo', function($routes) {
+        $routes->get('data', 'DemoController::getData');
+        $routes->get('statistics', 'DemoController::getStatistics');
+        $routes->post('store', 'DemoController::store');
+        $routes->put('update/(:num)', 'DemoController::update/$1');
+        $routes->delete('delete/(:num)', 'DemoController::delete/$1');
+        $routes->post('sort-order', 'DemoController::updateSortOrder');
+    });
     
     // Users Edit Page
     $routes->get('users-edit', 'UserManagement::usersEdit');
@@ -168,7 +213,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('ajax/create', 'UserManagement::addUserAjax');
         $routes->post('ajax/update/(:num)', 'UserManagement::editUserAjax/$1');
         $routes->post('ajax/delete/(:num)', 'UserManagement::deleteUserAjax/$1');
-        $routes->get('ajax/list', 'UserManagement::getUsersAjax');
+        $routes->get('ajax/list', 'UserManagement::getUsersList');
         $routes->get('ajax/statistics', 'UserManagement::getUserStatistics');
         $routes->get('reloadUsers', 'UserManagement::reloadUsers');
     });
@@ -253,6 +298,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->get('getDownloadStats', 'InstallerController::getDownloadStats');
         $routes->get('getRecentDownloads', 'InstallerController::getRecentDownloads');
         $routes->post('updateSettings', 'InstallerController::updateSettings');
+        $routes->get('data', 'InstallerController::getData');
+        $routes->post('store', 'InstallerController::createCard');
+        $routes->delete('delete/(:num)', 'InstallerController::deleteCard/$1');
         $routes->get('getCards', 'InstallerController::getCards');
         $routes->post('createCard', 'InstallerController::createCard');
         $routes->post('updateCard', 'InstallerController::updateCard');

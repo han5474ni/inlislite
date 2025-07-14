@@ -12,34 +12,33 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Dashboard CSS -->
+    <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="<?= base_url('assets/css/admin/tentang.css') ?>" rel="stylesheet">
+    
+    <style>
+    body {
+        background: linear-gradient(135deg, #1C6EC4 0%, #2DA84D 100%);
+        min-height: 100vh;
+    }
+    </style>
 </head>
 <body>
-    <!-- Header Section -->
-    <header class="page-header">
-        <div class="container">
-            <div class="header-content">
-                <div class="d-flex align-items-center mb-3">
-                    <button class="btn-back me-3" onclick="history.back()">
-                        <i class="bi bi-arrow-left"></i>
-                    </button>
-                    <div>
-                        <h1 class="header-title mb-1">Tentang INLISLite</h1>
-                        <p class="header-subtitle mb-0">Informasi lengkap tentang sistem otomasi perpustakaan</p>
-                    </div>
-                    <div class="ms-auto">
-                        <a href="<?= base_url('admin/tentang-edit') ?>" class="btn btn-primary">
-                            <i class="bi bi-gear me-2"></i>Manajemen
-                        </a>
-                    </div>
+    <!-- Include Enhanced Sidebar -->
+    <?= $this->include('admin/partials/sidebar') ?>
+    
+    <!-- Main Content -->
+    <main class="enhanced-main-content">
+        <div class="dashboard-container">
+            <div class="header-card">
+                <div class="content-header">
+                    <h1 class="main-title">Tentang INLISLite</h1>
+                    <p class="main-subtitle">Informasi lengkap tentang sistem otomasi perpustakaan</p>
                 </div>
             </div>
-        </div>
-    </header>
+            
 
-    <!-- Main Content -->
-    <main class="main-content">
         <div class="container">
             <!-- Page Banner Card -->
             <div class="banner-card mb-5">
@@ -67,7 +66,7 @@
                     </div>
                     <div class="col-md-6 text-md-end mt-3 mt-md-0">
                         <a href="<?= base_url('admin/tentang-edit') ?>" class="btn btn-success me-2">
-                            <i class="bi bi-gear me-2"></i>Kelola Konten
+                            <i class="bi bi-gear me-2"></i>Kelola Data
                         </a>
                         <button class="btn btn-info" onclick="refreshContent()">
                             <i class="bi bi-arrow-clockwise me-2"></i>Refresh
@@ -95,6 +94,7 @@
                     </div>
                 </div>
             </section>
+        </div>
         </div>
     </main>
 

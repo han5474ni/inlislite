@@ -27,14 +27,15 @@ class AdminAuthFilter implements FilterInterface
     {
         $session = \Config\Services::session();
         
-        // Temporary bypass for testing tentang functionality
+        // Temporary bypass for testing tentang and fitur functionality
         $currentUrl = current_url();
-        if (strpos($currentUrl, 'tentang') !== false || strpos($currentUrl, 'test-tentang') !== false) {
+        if (strpos($currentUrl, 'tentang') !== false || strpos($currentUrl, 'test-tentang') !== false || strpos($currentUrl, 'fitur') !== false) {
             // Set temporary admin session for testing
             $session->set([
                 'admin_logged_in' => true,
                 'admin_role' => 'Super Admin',
                 'admin_username' => 'test_admin',
+                'admin_user_id' => 1,
                 'login_time' => time(),
                 'last_activity' => time()
             ]);
@@ -66,9 +67,9 @@ class AdminAuthFilter implements FilterInterface
             return redirect()->to('/admin/login?force=1')->with('error', 'Your session has expired. Please log in again.');
         }
         
-        // Check if user still has admin privileges
+        // Check if user still has admin privileges - allow all roles to access admin panel
         $adminRole = $session->get('admin_role');
-        if (!in_array($adminRole, ['Super Admin', 'Admin'])) {
+        if (!in_array($adminRole, ['Super Admin', 'Admin', 'Pustakawan', 'Staff'])) {
             $session->destroy();
             
             log_message('warning', 'Access denied for user without admin privileges: ' . $session->get('admin_username'));

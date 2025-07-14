@@ -12,34 +12,33 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Dashboard CSS -->
+    <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="<?= base_url('assets/css/admin/fitur.css') ?>" rel="stylesheet">
+    
+    <style>
+    body {
+        background: linear-gradient(135deg, #1C6EC4 0%, #2DA84D 100%);
+        min-height: 100vh;
+    }
+    </style>
 </head>
 <body>
-    <!-- Header Section -->
-    <header class="page-header">
-        <div class="container">
-            <div class="header-content">
-                <div class="d-flex align-items-center mb-3">
-                    <button class="btn-back me-3" onclick="history.back()">
-                        <i class="bi bi-arrow-left"></i>
-                    </button>
-                    <div>
-                        <h1 class="header-title mb-1">Fitur dan Modul Program</h1>
-                        <p class="header-subtitle mb-0">Informasi lengkap tentang sistem otomasi perpustakaan</p>
-                    </div>
-                    <div class="ms-auto">
-                        <a href="<?= base_url('admin/fitur-edit') ?>" class="btn btn-primary">
-                            <i class="bi bi-gear me-2"></i>Manajemen
-                        </a>
-                    </div>
+    <!-- Include Enhanced Sidebar -->
+    <?= $this->include('admin/partials/sidebar') ?>
+    
+    <!-- Main Content -->
+    <main class="enhanced-main-content">
+        <div class="dashboard-container">
+            <div class="header-card">
+                <div class="content-header">
+                    <h1 class="main-title">Fitur dan Modul Program</h1>
+                    <p class="main-subtitle">Informasi lengkap tentang sistem otomasi perpustakaan</p>
                 </div>
             </div>
-        </div>
-    </header>
+            
 
-    <!-- Main Content -->
-    <main class="main-content">
         <div class="container">
             <!-- Page Banner Card -->
             <div class="banner-card mb-5">
@@ -66,11 +65,11 @@
                         </div>
                     </div>
                     <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                        <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addFeatureModal">
-                            <i class="bi bi-plus-circle me-2"></i>Tambah Fitur
-                        </button>
-                        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addModuleModal">
-                            <i class="bi bi-plus-circle me-2"></i>Tambah Modul
+                        <a href="<?= base_url('admin/fitur-edit') ?>" class="btn btn-success me-2">
+                            <i class="bi bi-gear me-2"></i>Kelola Data
+                        </a>
+                        <button class="btn btn-info" onclick="refreshContent()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Refresh
                         </button>
                     </div>
                 </div>
@@ -104,97 +103,10 @@
                 </div>
             </section>
         </div>
+        </div>
     </main>
 
-    <!-- Add Feature Modal -->
-    <div class="modal fade" id="addFeatureModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Fitur Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addFeatureForm">
-                        <div class="mb-3">
-                            <label for="featureTitle" class="form-label">Judul Fitur</label>
-                            <input type="text" class="form-control" id="featureTitle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="featureDescription" class="form-label">Deskripsi</label>
-                            <textarea class="form-control" id="featureDescription" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="featureIcon" class="form-label">Icon (Bootstrap Icons)</label>
-                            <input type="text" class="form-control" id="featureIcon" placeholder="bi-book" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="featureColor" class="form-label">Warna</label>
-                            <select class="form-select" id="featureColor" required>
-                                <option value="blue">Biru</option>
-                                <option value="green">Hijau</option>
-                                <option value="orange">Orange</option>
-                                <option value="purple">Ungu</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" onclick="saveFeature()">Simpan</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Add Module Modal -->
-    <div class="modal fade" id="addModuleModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Modul Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addModuleForm">
-                        <div class="mb-3">
-                            <label for="moduleTitle" class="form-label">Judul Modul</label>
-                            <input type="text" class="form-control" id="moduleTitle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="moduleDescription" class="form-label">Deskripsi</label>
-                            <textarea class="form-control" id="moduleDescription" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="moduleIcon" class="form-label">Icon (Bootstrap Icons)</label>
-                            <input type="text" class="form-control" id="moduleIcon" placeholder="bi-gear" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="moduleColor" class="form-label">Warna</label>
-                            <select class="form-select" id="moduleColor" required>
-                                <option value="blue">Biru (Application-based)</option>
-                                <option value="green">Hijau (Database/Backend)</option>
-                                <option value="orange">Orange</option>
-                                <option value="purple">Ungu</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="moduleType" class="form-label">Tipe Modul</label>
-                            <select class="form-select" id="moduleType" required>
-                                <option value="application">Application-based</option>
-                                <option value="database">Database/Backend</option>
-                                <option value="utility">Utility</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" onclick="saveModule()">Simpan</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Edit Modal -->
     <div class="modal fade" id="editModal" tabindex="-1">

@@ -13,13 +13,25 @@ if (!function_exists('is_super_admin')) {
 
 if (!function_exists('is_admin')) {
     /**
-     * Check if current user is Admin or Super Admin
+     * Check if current user is Admin or Super Admin (for admin-specific functions)
      */
     function is_admin(): bool
     {
         $session = \Config\Services::session();
         $role = $session->get('admin_role');
         return in_array($role, ['Super Admin', 'Admin']);
+    }
+}
+
+if (!function_exists('can_access_admin_panel')) {
+    /**
+     * Check if current user can access the admin panel (all roles)
+     */
+    function can_access_admin_panel(): bool
+    {
+        $session = \Config\Services::session();
+        $role = $session->get('admin_role');
+        return in_array($role, ['Super Admin', 'Admin', 'Pustakawan', 'Staff']);
     }
 }
 

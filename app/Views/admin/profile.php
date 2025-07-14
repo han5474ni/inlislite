@@ -1,48 +1,74 @@
-<?= $this->extend('admin/layout/admin_layout') ?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $title ?? 'User Profile - INLISlite v3.0' ?></title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Dashboard CSS -->
+    <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
+    <!-- Custom CSS for Profile Page -->
+    <link href="<?= base_url('assets/css/admin/profile.css') ?>" rel="stylesheet">
+    <!-- Custom Header CSS -->
+    <style>
+        /* Ensure modal works properly */
+        .modal {
+            z-index: 1055 !important;
+        }
+        .modal-backdrop {
+            z-index: 1050 !important;
+        }
+        /* Fix any potential conflicts */
+        .enhanced-main-content {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 
-<?= $this->section('head') ?>
-<!-- Custom CSS for Profile Page -->
-<link href="<?= base_url('assets/css/admin/profile.css') ?>" rel="stylesheet">
-<?= $this->endSection() ?>
+</head>
+<body>
+    <!-- Include Enhanced Sidebar -->
+    <?= $this->include('admin/partials/sidebar') ?>
 
-<?= $this->section('content') ?>
-<!-- Page Header -->
-<div class="page-header">
-    <div class="header-top">
-        <div class="header-left">
-            <div class="header-icon">
-                <i class="bi bi-person-circle"></i>
+    <!-- Main Content -->
+    <main class="enhanced-main-content">
+        <div class="dashboard-container">
+            <div class="header-card">
+                <div class="content-header">
+                    <h1 class="main-title">User Profile</h1>
+                    <p class="main-subtitle">Manage your account information and settings</p>
+                </div>
             </div>
-            <div>
-                <h1 class="page-title">User Profile</h1>
-                <p class="page-subtitle">Manage your account information and settings</p>
-            </div>
-        </div>
-    </div>
-            </div>
+            
+            
+        <div class="page-container">
 
-            <!-- Alert Messages -->
+            <!-- Flash Messages -->
             <?php if (session()->getFlashdata('success')): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <i class="bi bi-check-circle me-2"></i>
                     <?= session()->getFlashdata('success') ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
-
+            
             <?php if (session()->getFlashdata('error')): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="bi bi-exclamation-circle me-2"></i>
                     <?= session()->getFlashdata('error') ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
 
-            <!-- This section has been removed to eliminate duplicate profile information -->
-    </div>
-
-    <!-- Profile Content -->
-    <div class="container">
+            <!-- Profile Content -->
         <div class="row">
             <!-- Profile Information Section -->
             <div class="col-lg-4 mb-4">
@@ -61,9 +87,9 @@
                                 </div>
                             <?php endif; ?>
                             <div class="mt-3">
-                                <button type="button" class="btn btn-sm btn-outline-primary" id="changePhotoBtn">
-                                    <i class="bi bi-camera"></i> Change Photo
-                                </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadPhotoModal">
+                            <i class="bi bi-camera"></i> Change Photo
+                            </button>
                             </div>
                         </div>
                         
@@ -279,7 +305,8 @@
             </div>
         </div>
     </div>
-
+        </div>
+    
     <!-- Upload Photo Modal -->
     <div class="modal fade" id="uploadPhotoModal" tabindex="-1" aria-labelledby="uploadPhotoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -319,7 +346,6 @@
             <div class="toast-body" id="toastMessage"></div>
         </div>
     </div>
-<?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
 <script>
@@ -367,12 +393,20 @@
             });
         });
         
-        // Open photo modal
-        const changePhotoBtn = document.getElementById('changePhotoBtn');
-        if (changePhotoBtn) {
-            changePhotoBtn.addEventListener('click', function() {
-                const uploadPhotoModal = new bootstrap.Modal(document.getElementById('uploadPhotoModal'));
-                uploadPhotoModal.show();
+        // Modal event handlers
+        const uploadPhotoModal = document.getElementById('uploadPhotoModal');
+        if (uploadPhotoModal) {
+            uploadPhotoModal.addEventListener('hidden.bs.modal', function () {
+                // Reset form when modal is closed
+                const form = document.getElementById('photoForm');
+                if (form) {
+                    form.reset();
+                    form.classList.remove('was-validated');
+                }
+                const previewContainer = document.getElementById('photoPreviewContainer');
+                if (previewContainer) {
+                    previewContainer.style.display = 'none';
+                }
             });
         }
         
@@ -380,13 +414,37 @@
         const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
         if (uploadPhotoBtn) {
             uploadPhotoBtn.addEventListener('click', function() {
-                if (!photoForm.checkValidity()) {
-                    photoForm.classList.add('was-validated');
+                try {
+                    if (!photoForm || !photoInput) {
+                        console.error('Form elements not found');
+                        showToast('Error', 'Form elements not found', 'error');
+                        return;
+                    }
+                    
+                    if (!photoForm.checkValidity()) {
+                        photoForm.classList.add('was-validated');
+                        return;
+                    }
+                    
+                    if (!photoInput.files || !photoInput.files[0]) {
+                        showToast('Error', 'Please select a photo to upload', 'error');
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error in upload function:', error);
+                    showToast('Error', 'An error occurred while preparing upload', 'error');
                     return;
                 }
                 
                 const formData = new FormData();
                 formData.append('profile_photo', photoInput.files[0]);
+                
+                // Add CSRF token if available
+                const csrfName = '<?= csrf_token() ?>';
+                const csrfHash = '<?= csrf_hash() ?>';
+                if (csrfName && csrfHash) {
+                    formData.append(csrfName, csrfHash);
+                }
                 
                 fetch('<?= base_url('admin/profile/upload-photo') ?>', {
                     method: 'POST',
@@ -395,6 +453,13 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        // Close modal first
+                        const modalElement = document.getElementById('uploadPhotoModal');
+                        const modal = bootstrap.Modal.getInstance(modalElement);
+                        if (modal) {
+                            modal.hide();
+                        }
+                        
                         showToast('Success', data.message, 'success');
                         setTimeout(() => {
                             window.location.reload();
@@ -520,21 +585,24 @@
         return confirm('Are you sure you want to logout?');
     }
 </script>
-<?= $this->endSection() ?>
 
-<!-- These duplicate sections have been removed as they're already included above -->
+<!-- Toast Container -->
+<div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1055;"></div>
+
+        </div>
         </div>
     </main>
 
-    <!-- Toast Container -->
-    <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1055;"></div>
-
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Dashboard JS -->
-    <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
-    <!-- Custom JavaScript -->
-    <script src="<?= base_url('assets/js/admin/profile.js') ?>"></script>
     
+    <!-- Initialize Feather icons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -37,23 +37,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Sidebar Styles */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: var(--sidebar-width);
-    background: var(--sidebar-bg);
-    z-index: 1000;
-    transition: var(--transition);
-    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
-    overflow: visible;
-}
-
-.sidebar.collapsed {
-    width: var(--sidebar-collapsed-width);
-}
 
 .sidebar-header {
     padding: 1.5rem 1rem;
@@ -226,37 +209,53 @@ body {
     visibility: visible;
 }
 
-/* Main Content */
-.main-content {
-    margin-left: var(--sidebar-width);
-    min-height: 100vh;
-    padding: 2rem;
-    transition: var(--transition);
-}
-
-.sidebar.collapsed + .main-content {
-    margin-left: var(--sidebar-collapsed-width);
-}
 
 .content-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     color: white;
 }
 
 .main-title {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: var(--gradient-bg);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
 }
 
 .main-subtitle {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 400;
-    opacity: 0.9;
     max-width: 600px;
     margin: 0 auto;
+    background: var(--gradient-bg);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0.8;
+}
+
+/* Responsive header sizes */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 1.5rem;
+    }
+    
+    .main-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .content-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .header-card {
+        padding: 12px 15px;
+    }
 }
 
 /* Cards Grid */
@@ -488,4 +487,55 @@ body {
     .main-subtitle {
         font-size: 0.9rem;
     }
+    
+    .system-info-card .info-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .system-info-card .card-title {
+        font-size: 1rem;
+    }
+    
+    .system-info-card .card-text {
+        font-size: 0.85rem;
+    }
+}
+
+/* System Information Card */
+.system-info-card {
+    margin-bottom: 20px;
+}
+
+.system-info-card .card {
+    border: 1px solid #e3e6f0;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border-radius: 0.35rem;
+    background: white;
+}
+
+.info-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #1C6EC4 0%, #2DA84D 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.system-info-card .card-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.system-info-card .card-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.4;
 }

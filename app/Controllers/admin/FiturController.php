@@ -48,6 +48,7 @@ class FiturController extends BaseController
      */
     public function getData()
     {
+
         try {
             $type = $this->request->getGet('type'); // 'feature', 'module', or null for all
             $status = $this->request->getGet('status') ?? 'active';
@@ -124,6 +125,7 @@ class FiturController extends BaseController
      */
     public function store()
     {
+
         try {
             $rules = [
                 'title' => 'required|min_length[3]|max_length[255]',
@@ -201,6 +203,7 @@ class FiturController extends BaseController
      */
     public function update($id)
     {
+
         try {
             $item = $this->fiturModel->find($id);
             if (!$item) {
@@ -282,6 +285,7 @@ class FiturController extends BaseController
      */
     public function delete($id)
     {
+
         try {
             $item = $this->fiturModel->find($id);
             if (!$item) {
@@ -371,6 +375,10 @@ class FiturController extends BaseController
      */
     private function getNextSortOrder($type)
     {
+        if (!$type) {
+            return 1; // Default sort order if type is null
+        }
+        
         $maxOrder = $this->fiturModel->where('type', $type)
                                    ->selectMax('sort_order')
                                    ->first();

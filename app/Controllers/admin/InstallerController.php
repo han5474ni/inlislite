@@ -537,17 +537,21 @@ class InstallerController extends BaseController
     /**
      * Delete installer card
      */
-    public function deleteCard()
+    public function deleteCard($id = null)
     {
         if (!$this->request->isAJAX()) {
             return $this->response->setStatusCode(403);
         }
 
         try {
-            $input = $this->request->getJSON(true);
+            // Get ID from parameter or JSON input
+            if ($id === null) {
+                $input = $this->request->getJSON(true);
+                $id = $input['id'] ?? null;
+            }
             
             // Validate required fields
-            if (empty($input['id'])) {
+            if (empty($id)) {
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'ID kartu harus diisi'
@@ -555,7 +559,7 @@ class InstallerController extends BaseController
             }
 
             // Check if card exists
-            $existingCard = $this->cardModel->find($input['id']);
+            $existingCard = $this->cardModel->find($id);
             if (!$existingCard) {
                 return $this->response->setJSON([
                     'success' => false,
@@ -563,7 +567,7 @@ class InstallerController extends BaseController
                 ]);
             }
 
-            $deleted = $this->cardModel->delete($input['id']);
+            $deleted = $this->cardModel->delete($id);
 
             if ($deleted) {
                 return $this->response->setJSON([

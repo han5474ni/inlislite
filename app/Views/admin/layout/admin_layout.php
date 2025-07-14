@@ -28,15 +28,18 @@
         <?php endforeach; ?>
     <?php endif; ?>
     
+    <!-- Enhanced Sidebar CSS -->
+    <link href="<?= base_url('assets/css/enhanced-sidebar.css') ?>" rel="stylesheet">
+    
     <!-- Additional head content -->
     <?= $this->renderSection('head') ?>
 </head>
 <body>
-    <!-- Include Sidebar Component -->
-    <?= view('admin/components/sidebar') ?>
+    <!-- Include Enhanced Sidebar -->
+    <?= view('admin/partials/sidebar') ?>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="enhanced-main-content">
         <!-- Page Header -->
         <?php if (isset($show_header) && $show_header): ?>
         <header class="page-header">
@@ -87,6 +90,9 @@
             <script src="<?= base_url($js) ?>"></script>
         <?php endforeach; ?>
     <?php endif; ?>
+    
+    <!-- Enhanced Sidebar JavaScript -->
+    <script src="<?= base_url('assets/js/enhanced-sidebar.js') ?>"></script>
     
     <!-- Initialize Feather icons -->
     <script>

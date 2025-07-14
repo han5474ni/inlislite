@@ -14,14 +14,27 @@
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     
+    <!-- Dashboard CSS -->
+    <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="<?= base_url('assets/css/admin/tentang-edit.css') ?>" rel="stylesheet">
+    
+    <style>
+    body {
+        background: linear-gradient(135deg, #1C6EC4 0%, #2DA84D 100%);
+        min-height: 100vh;
+    }
+    </style>
     
     <!-- CSRF Token for AJAX requests -->
     <meta name="csrf-token" content="<?= csrf_token() ?>">
     <meta name="csrf-hash" content="<?= csrf_hash() ?>">
 </head>
 <body>
+    <!-- Include Enhanced Sidebar -->
+    <?= $this->include('admin/partials/sidebar') ?>
+
+    
     <!-- Header Section -->
     <header class="page-header">
         <div class="container">
@@ -45,7 +58,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="enhanced-main-content">
         <div class="container">
             <!-- Statistics Cards -->
             <div class="row mb-4">

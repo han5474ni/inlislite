@@ -12,10 +12,15 @@ class UserManagement extends BaseController
     public function __construct()
     {
         $this->db = \Config\Database::connect();
+        helper('auth');
     }
 
     public function index()
     {
+        // Check if user has permission to view users
+        if (!can_view_users()) {
+            return redirect()->to(base_url('admin/dashboard'))->with('error', 'Access denied. You need to be logged in to view users.');
+        }
         // Fetch users from database with proper field mapping
         try {
             // Check which field names exist in the database
@@ -62,7 +67,8 @@ class UserManagement extends BaseController
 
         $data = [
             'title' => 'User Manajemen - INLISLite v3.0',
-            'users' => $users
+            'users' => $users,
+            'can_edit_users' => can_edit_users() // Pass edit permission to view
         ];
 
         // Pass users data to the view
@@ -74,6 +80,16 @@ class UserManagement extends BaseController
      */
     public function usersEdit()
     {
+        // Check if user has permission to access user management (Super Admin only)
+        if (!can_edit_users()) {
+            $data = [
+                'title' => 'Manajemen User INLISLite - INLISLite v3.0',
+                'access_denied' => true,
+                'error_message' => 'Anda tidak memiliki akses ke halaman ini. Hanya Super Admin yang dapat mengakses Manajemen Pengguna.'
+            ];
+            return view('admin/users-edit', $data);
+        }
+
         $data = [
             'title' => 'Manajemen User INLISLite - INLISLite v3.0'
         ];
@@ -285,6 +301,11 @@ class UserManagement extends BaseController
 
     public function addUserAjax()
     {
+        // Check if user has permission to add users
+        if (!can_edit_users()) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Access denied. Only Super Admin can manage users.']);
+        }
+        
         if ($this->request->isAJAX()) {
             // Get JSON input
             $input = $this->request->getJSON(true);
@@ -355,6 +376,11 @@ class UserManagement extends BaseController
 
     public function editUserAjax($id = null)
     {
+        // Check if user has permission to edit users
+        if (!can_edit_users()) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Access denied. Only Super Admin can manage users.']);
+        }
+        
         if ($this->request->isAJAX()) {
             if ($id === null) {
                 return $this->response->setJSON(['success' => false, 'message' => 'ID pengguna tidak valid.']);
@@ -426,6 +452,11 @@ class UserManagement extends BaseController
 
     public function deleteUserAjax($id = null)
     {
+        // Check if user has permission to delete users
+        if (!can_edit_users()) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Access denied. Only Super Admin can manage users.']);
+        }
+        
         if ($this->request->isAJAX()) {
             if ($id === null) {
                 return $this->response->setJSON(['success' => false, 'message' => 'ID pengguna tidak valid.']);
@@ -647,5 +678,70 @@ class UserManagement extends BaseController
         }
         
         return $initials ?: 'U';
+    }
+
+    /**
+     * AJAX endpoint to get users list
+     */
+    public function getUsersList()
+    {
+        // Check if user has permission to view users
+        if (!can_view_users()) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Access denied. You need to be logged in to view users.'
+            ]);
+        }
+
+        try {
+            // Fetch users from database with proper field mapping
+            $fields = $this->db->getFieldNames('users');
+            $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
+            
+            $builder = $this->db->table('users');
+            
+            // Check if avatar column exists
+            $hasAvatar = in_array('avatar', $fields);
+            $avatarField = $hasAvatar ? 'avatar' : 'NULL as avatar';
+            
+            $users = $builder->select("
+                id,
+                nama_lengkap,
+                {$usernameField} as nama_pengguna,
+                email,
+                role,
+                status,
+                {$avatarField},
+                last_login,
+                created_at
+            ")->get()->getResultArray();
+            
+            // Format data for display
+            foreach ($users as &$user) {
+                $user['created_at_formatted'] = isset($user['created_at']) ? date('d M Y', strtotime($user['created_at'])) : 'N/A';
+                $user['last_login_formatted'] = isset($user['last_login']) && $user['last_login'] ? date('d M Y H:i', strtotime($user['last_login'])) : 'Belum pernah';
+                $user['avatar_initials'] = $this->getInitials($user['nama_lengkap'] ?? $user['nama_pengguna'] ?? 'U');
+                
+                // Add avatar URL
+                if (!empty($user['avatar'])) {
+                    $user['avatar_url'] = base_url('images/profile/' . $user['avatar']);
+                } else {
+                    $user['avatar_url'] = null;
+                }
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $users,
+                'can_edit_users' => can_edit_users()
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Error fetching users for AJAX: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error fetching users: ' . $e->getMessage()
+            ]);
+        }
     }
 }

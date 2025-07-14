@@ -17,88 +17,24 @@
     <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="<?= base_url('assets/css/admin/registration.css') ?>" rel="stylesheet">
+    <!-- Custom Header CSS -->
 </head>
 <body>
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
-        <i data-feather="menu"></i>
-    </button>
-
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
-                <div class="sidebar-logo-icon">
-                    <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
-                </div>
-                <div class="sidebar-title">
-                    INLISlite v3.0<br>
-                    <small style="font-size: 0.85rem; opacity: 0.8;">Dashboard</small>
-                </div>
-            </a>
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i data-feather="chevrons-left"></i>
-            </button>
-        </div>
-        
-        <div class="sidebar-nav">
-            <div class="nav-item">
-                <a href="<?= base_url('admin/dashboard') ?>" class="nav-link">
-                    <i data-feather="home" class="nav-icon"></i>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-                <div class="nav-tooltip">Dashboard</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/users') ?>" class="nav-link">
-                    <i data-feather="users" class="nav-icon"></i>
-                    <span class="nav-text">Manajemen User</span>
-                </a>
-                <div class="nav-tooltip">Manajemen User</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/registration') ?>" class="nav-link active">
-                    <i data-feather="book" class="nav-icon"></i>
-                    <span class="nav-text">Registrasi</span>
-                </a>
-                <div class="nav-tooltip">Registrasi</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/profile') ?>" class="nav-link">
-                    <i data-feather="user" class="nav-icon"></i>
-                    <span class="nav-text">Profile</span>
-                </a>
-                <div class="nav-tooltip">Profile</div>
-            </div>
-            
-            <!-- Logout Button -->
-            <div class="nav-item logout-item">
-                <a href="<?= base_url('admin/secure-logout') ?>" class="nav-link logout-link" onclick="return confirmLogout()">
-                    <i data-feather="log-out" class="nav-icon"></i>
-                    <span class="nav-text">Logout</span>
-                </a>
-                <div class="nav-tooltip">Logout</div>
-            </div>
-        </div>
-    </nav>
+    <!-- Include Enhanced Sidebar -->
+    <?= $this->include('admin/partials/sidebar') ?>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="page-container">
-            <!-- Page Header -->
-            <div class="page-header">
-                <div class="header-top">
-                    <div class="header-left">
-                        <div class="header-icon">
-                            <i class="bi bi-clipboard"></i>
-                        </div>
-                        <div>
-                            <h1 class="page-title">Inlislite Registration</h1>
-                            <p class="page-subtitle">Manage and monitor library registration data in the system</p>
-                        </div>
-                    </div>
+    <main class="enhanced-main-content">
+        <div class="dashboard-container">
+            <div class="header-card">
+                <div class="content-header">
+                    <h1 class="main-title">Registration Management</h1>
+                    <p class="main-subtitle">Manage and monitor library registration data in the system</p>
                 </div>
             </div>
+            
+            
+        <div class="page-container">
 
             <!-- Flash Messages -->
             <?php if (session()->getFlashdata('success')): ?>
@@ -270,13 +206,12 @@
                 </div>
             </div>
         </div>
-
-            </main>
+        </div>
+    </main>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Dashboard JS -->
-    <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
+    
     <!-- Custom JavaScript -->
     <script src="<?= base_url('assets/js/admin/registration.js') ?>"></script>
     

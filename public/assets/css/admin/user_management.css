@@ -17,7 +17,7 @@ body {
 .page-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 1rem;
 }
 
 /* Override main-content background for this page */
@@ -26,15 +26,6 @@ body {
     min-height: 100vh;
 }
 
-/* Page Header */
-.page-header {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    border: 1px solid #e9ecef;
-}
 
 .header-top {
     display: flex;

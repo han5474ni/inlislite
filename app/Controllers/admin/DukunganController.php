@@ -3,99 +3,105 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
-use App\Models\DemoModel;
+use App\Models\DukunganModel;
 
-class DemoController extends BaseController
+class DukunganController extends BaseController
 {
-    protected $demoModel;
+    protected $dukunganModel;
     protected $session;
     
     public function __construct()
     {
-        $this->demoModel = new DemoModel();
+        $this->dukunganModel = new DukunganModel();
         $this->session = \Config\Services::session();
     }
     
     /**
-     * Display demo management page
+     * Display dukungan management page
      */
     public function index()
     {
         $data = [
-            'title' => 'Demo Program - INLISLite v3.0',
-            'page_title' => 'Demo Program',
-            'page_subtitle' => 'Kelola demo program perpustakaan'
+            'title' => 'Dukungan - INLISLite v3.0',
+            'page_title' => 'Dukungan',
+            'page_subtitle' => 'Kelola item dukungan sistem perpustakaan'
         ];
         
-        return view('admin/demo', $data);
+        return view('admin/dukungan', $data);
     }
     
     /**
-     * Display demo edit page
+     * Display dukungan edit page
      */
     public function edit()
     {
         $data = [
-            'title' => 'Kelola Demo Program - INLISLite v3.0'
+            'title' => 'Kelola Dukungan - INLISLite v3.0'
         ];
         
-        return view('admin/demo-edit', $data);
+        return view('admin/dukungan-edit', $data);
     }
     
     /**
-     * Get demo data for DataTable
+     * Get dukungan data for DataTable
      */
     public function getData()
     {
         try {
-            $demos = $this->demoModel->orderBy('sort_order', 'ASC')
-                                   ->orderBy('created_at', 'DESC')
-                                   ->findAll();
+            $dukungan = $this->dukunganModel->orderBy('sort_order', 'ASC')
+                                          ->orderBy('created_at', 'DESC')
+                                          ->findAll();
             
             return $this->response->setJSON([
                 'success' => true,
-                'data' => $demos
+                'data' => $dukungan
             ]);
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to get demo data: ' . $e->getMessage());
+            log_message('error', 'Failed to get dukungan data: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Gagal memuat data demo'
+                'message' => 'Gagal memuat data dukungan'
             ]);
         }
     }
     
     /**
-     * Get statistics for demo
+     * Get statistics for dukungan
      */
     public function getStatistics()
     {
         try {
-            $totalDemo = $this->demoModel->countAll();
-            $activeDemo = $this->demoModel->where('status', 'active')->countAllResults();
-            $inactiveDemo = $this->demoModel->where('status', 'inactive')->countAllResults();
+            $totalDukungan = $this->dukunganModel->countAll();
+            $activeDukungan = $this->dukunganModel->where('status', 'active')->countAllResults();
+            $inactiveDukungan = $this->dukunganModel->where('status', 'inactive')->countAllResults();
+            
+            // Count by category
+            $categories = $this->dukunganModel->select('category, COUNT(*) as count')
+                                            ->groupBy('category')
+                                            ->findAll();
             
             return $this->response->setJSON([
                 'success' => true,
                 'statistics' => [
-                    'total' => $totalDemo,
-                    'active' => $activeDemo,
-                    'inactive' => $inactiveDemo
+                    'total' => $totalDukungan,
+                    'active' => $activeDukungan,
+                    'inactive' => $inactiveDukungan,
+                    'categories' => $categories
                 ]
             ]);
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to get demo statistics: ' . $e->getMessage());
+            log_message('error', 'Failed to get dukungan statistics: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Gagal memuat statistik demo'
+                'message' => 'Gagal memuat statistik dukungan'
             ]);
         }
     }
     
     /**
-     * Store new demo
+     * Store new dukungan
      */
     public function store()
     {
@@ -109,7 +115,7 @@ class DemoController extends BaseController
             if (empty($input['title'])) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Judul demo harus diisi'
+                    'message' => 'Judul dukungan harus diisi'
                 ]);
             }
             
@@ -117,44 +123,43 @@ class DemoController extends BaseController
             $data = [
                 'title' => $input['title'],
                 'description' => $input['description'] ?? '',
-                'platform' => $input['platform'] ?? '',
-                'version' => $input['version'] ?? '',
-                'url' => $input['url'] ?? '',
-                'username' => $input['username'] ?? '',
-                'password' => $input['password'] ?? '',
-                'features' => $input['features'] ?? '',
+                'category' => $input['category'] ?? '',
+                'contact_info' => $input['contact_info'] ?? '',
+                'response_time' => $input['response_time'] ?? '',
+                'availability' => $input['availability'] ?? '',
+                'icon' => $input['icon'] ?? 'bi-support',
                 'status' => $input['status'] ?? 'active',
                 'sort_order' => $input['sort_order'] ?? 1
             ];
             
-            $demoId = $this->demoModel->insert($data);
+            $dukunganId = $this->dukunganModel->insert($data);
             
-            if ($demoId) {
-                $this->logActivity('create', 'demo', $demoId, "Menambahkan demo: {$data['title']}");
+            if ($dukunganId) {
+                $this->logActivity('create', 'dukungan', $dukunganId, "Menambahkan dukungan: {$data['title']}");
                 
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => 'Demo berhasil ditambahkan',
-                    'data' => array_merge(['id' => $demoId], $data)
+                    'message' => 'Dukungan berhasil ditambahkan',
+                    'data' => array_merge(['id' => $dukunganId], $data)
                 ]);
             } else {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal menambahkan demo'
+                    'message' => 'Gagal menambahkan dukungan'
                 ]);
             }
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to store demo: ' . $e->getMessage());
+            log_message('error', 'Failed to store dukungan: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menambahkan demo'
+                'message' => 'Terjadi kesalahan saat menambahkan dukungan'
             ]);
         }
     }
     
     /**
-     * Update existing demo
+     * Update existing dukungan
      */
     public function update($id)
     {
@@ -164,12 +169,12 @@ class DemoController extends BaseController
                 $input = $this->request->getPost();
             }
             
-            // Check if demo exists
-            $existingDemo = $this->demoModel->find($id);
-            if (!$existingDemo) {
+            // Check if dukungan exists
+            $existingDukungan = $this->dukunganModel->find($id);
+            if (!$existingDukungan) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Demo tidak ditemukan'
+                    'message' => 'Dukungan tidak ditemukan'
                 ]);
             }
             
@@ -177,91 +182,90 @@ class DemoController extends BaseController
             if (empty($input['title'])) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Judul demo harus diisi'
+                    'message' => 'Judul dukungan harus diisi'
                 ]);
             }
             
             // Prepare data for update
             $data = [
                 'title' => $input['title'],
-                'description' => $input['description'] ?? $existingDemo['description'],
-                'platform' => $input['platform'] ?? $existingDemo['platform'],
-                'version' => $input['version'] ?? $existingDemo['version'],
-                'url' => $input['url'] ?? $existingDemo['url'],
-                'username' => $input['username'] ?? $existingDemo['username'],
-                'password' => $input['password'] ?? $existingDemo['password'],
-                'features' => $input['features'] ?? $existingDemo['features'],
-                'status' => $input['status'] ?? $existingDemo['status'],
-                'sort_order' => $input['sort_order'] ?? $existingDemo['sort_order']
+                'description' => $input['description'] ?? $existingDukungan['description'],
+                'category' => $input['category'] ?? $existingDukungan['category'],
+                'contact_info' => $input['contact_info'] ?? $existingDukungan['contact_info'],
+                'response_time' => $input['response_time'] ?? $existingDukungan['response_time'],
+                'availability' => $input['availability'] ?? $existingDukungan['availability'],
+                'icon' => $input['icon'] ?? $existingDukungan['icon'],
+                'status' => $input['status'] ?? $existingDukungan['status'],
+                'sort_order' => $input['sort_order'] ?? $existingDukungan['sort_order']
             ];
             
-            $updated = $this->demoModel->update($id, $data);
+            $updated = $this->dukunganModel->update($id, $data);
             
             if ($updated) {
-                $this->logActivity('update', 'demo', $id, "Mengupdate demo: {$data['title']}");
+                $this->logActivity('update', 'dukungan', $id, "Mengupdate dukungan: {$data['title']}");
                 
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => 'Demo berhasil diupdate',
+                    'message' => 'Dukungan berhasil diupdate',
                     'data' => array_merge(['id' => $id], $data)
                 ]);
             } else {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal mengupdate demo'
+                    'message' => 'Gagal mengupdate dukungan'
                 ]);
             }
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to update demo: ' . $e->getMessage());
+            log_message('error', 'Failed to update dukungan: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat mengupdate demo'
+                'message' => 'Terjadi kesalahan saat mengupdate dukungan'
             ]);
         }
     }
     
     /**
-     * Delete demo
+     * Delete dukungan
      */
     public function delete($id)
     {
         try {
-            $demo = $this->demoModel->find($id);
-            if (!$demo) {
+            $dukungan = $this->dukunganModel->find($id);
+            if (!$dukungan) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Demo tidak ditemukan'
+                    'message' => 'Dukungan tidak ditemukan'
                 ]);
             }
             
-            $deleted = $this->demoModel->delete($id);
+            $deleted = $this->dukunganModel->delete($id);
             
             if ($deleted) {
-                $this->logActivity('delete', 'demo', $id, "Menghapus demo: {$demo['title']}");
+                $this->logActivity('delete', 'dukungan', $id, "Menghapus dukungan: {$dukungan['title']}");
                 
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => 'Demo berhasil dihapus'
+                    'message' => 'Dukungan berhasil dihapus'
                 ]);
             } else {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal menghapus demo'
+                    'message' => 'Gagal menghapus dukungan'
                 ]);
             }
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to delete demo: ' . $e->getMessage());
+            log_message('error', 'Failed to delete dukungan: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus demo'
+                'message' => 'Terjadi kesalahan saat menghapus dukungan'
             ]);
         }
     }
     
     /**
-     * Update sort order for demo
+     * Update sort order for dukungan
      */
     public function updateSortOrder()
     {
@@ -278,7 +282,7 @@ class DemoController extends BaseController
             $db->transStart();
             
             foreach ($input['items'] as $item) {
-                $this->demoModel->update($item['id'], ['sort_order' => $item['sort_order']]);
+                $this->dukunganModel->update($item['id'], ['sort_order' => $item['sort_order']]);
             }
             
             $db->transComplete();
@@ -286,19 +290,19 @@ class DemoController extends BaseController
             if ($db->transStatus() === FALSE) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal mengupdate urutan demo'
+                    'message' => 'Gagal mengupdate urutan dukungan'
                 ]);
             }
             
-            $this->logActivity('update', 'demo', null, 'Mengupdate urutan demo');
+            $this->logActivity('update', 'dukungan', null, 'Mengupdate urutan dukungan');
             
             return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Urutan demo berhasil diupdate'
+                'message' => 'Urutan dukungan berhasil diupdate'
             ]);
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to update demo sort order: ' . $e->getMessage());
+            log_message('error', 'Failed to update dukungan sort order: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat mengupdate urutan'

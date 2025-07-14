@@ -13,12 +13,16 @@ class FiturModel extends Model
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
-        'nama_fitur',
-        'deskripsi',
-        'kategori',
+        'title',
+        'description',
         'icon',
+        'color',
+        'type',
+        'module_type',
         'status',
-        'sort_order'
+        'sort_order',
+        'created_at',
+        'updated_at'
     ];
 
     // Dates
@@ -30,27 +34,39 @@ class FiturModel extends Model
 
     // Validation
     protected $validationRules = [
-        'nama_fitur' => 'required|min_length[3]|max_length[255]',
-        'deskripsi' => 'permit_empty|min_length[10]',
-        'icon' => 'permit_empty|max_length[100]',
-        'kategori' => 'permit_empty|in_list[core,addon,plugin,utility,public,management,system,advanced]',
+        'title' => 'required|min_length[3]|max_length[255]',
+        'description' => 'required|min_length[10]',
+        'icon' => 'required|max_length[100]',
+        'color' => 'required|in_list[blue,green,orange,purple]',
+        'type' => 'required|in_list[feature,module]',
+        'module_type' => 'permit_empty|in_list[application,database,utility]',
         'status' => 'permit_empty|in_list[active,inactive]'
     ];
 
     protected $validationMessages = [
-        'nama_fitur' => [
-            'required' => 'Nama fitur harus diisi',
-            'min_length' => 'Nama fitur minimal 3 karakter',
-            'max_length' => 'Nama fitur maksimal 255 karakter'
+        'title' => [
+            'required' => 'Judul harus diisi',
+            'min_length' => 'Judul minimal 3 karakter',
+            'max_length' => 'Judul maksimal 255 karakter'
         ],
-        'deskripsi' => [
+        'description' => [
+            'required' => 'Deskripsi harus diisi',
             'min_length' => 'Deskripsi minimal 10 karakter'
         ],
         'icon' => [
+            'required' => 'Icon harus diisi',
             'max_length' => 'Icon maksimal 100 karakter'
         ],
-        'kategori' => [
-            'in_list' => 'Kategori tidak valid'
+        'color' => [
+            'required' => 'Warna harus dipilih',
+            'in_list' => 'Warna tidak valid'
+        ],
+        'type' => [
+            'required' => 'Tipe harus dipilih',
+            'in_list' => 'Tipe tidak valid'
+        ],
+        'module_type' => [
+            'in_list' => 'Tipe modul tidak valid'
         ],
         'status' => [
             'in_list' => 'Status tidak valid'
