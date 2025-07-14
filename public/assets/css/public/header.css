@@ -166,8 +166,8 @@ body {
     background-color: var(--white);
     min-width: 200px;
     margin-top: 0.5rem;
-    animation: dropdownFadeIn 0.2s ease-out;
 }
+
 
 .dropdown-item {
     padding: 0.875rem 1.25rem;
@@ -209,17 +209,7 @@ body {
     transform: scale(1.1);
 }
 
-/* Dropdown Animation */
-@keyframes dropdownFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+
 
 /* Dropdown Toggle Arrow Animation */
 .nav-link.dropdown-toggle::after {
@@ -232,8 +222,9 @@ body {
 }
 
 .nav-link.dropdown-toggle[aria-expanded="true"]::after {
-    transform: rotate(180deg);
+    transform: none;
 }
+
 
 .nav-link.dropdown-toggle:hover::after {
     border-top-color: var(--white);
