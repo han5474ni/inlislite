@@ -100,6 +100,9 @@ function setupEventListeners() {
         }
     });
 
+    // Setup table sorting
+    setupTableSorting();
+
     // Setup sync listeners
     setupSyncListeners();
 }
@@ -129,6 +132,139 @@ function setupSyncListeners() {
             }
         });
     }
+}
+
+/**
+ * Setup table sorting functionality
+ */
+function setupTableSorting() {
+    const sortableHeaders = document.querySelectorAll('.sortable');
+    let currentSort = { column: null, direction: 'asc' };
+    
+    sortableHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const sortColumn = this.getAttribute('data-sort');
+            
+            // Determine sort direction
+            if (currentSort.column === sortColumn) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.direction = 'asc';
+            }
+            currentSort.column = sortColumn;
+            
+            // Update arrow indicators
+            updateSortArrows(this, currentSort.direction);
+            
+            // Sort the data
+            sortUsers(sortColumn, currentSort.direction);
+            
+            // Show sorting feedback
+            showSortingFeedback(sortColumn, currentSort.direction);
+            
+            console.log(`🔄 Sorted by ${sortColumn} (${currentSort.direction})`);
+        });
+    });
+}
+
+/**
+ * Update sort arrow indicators
+ */
+function updateSortArrows(activeHeader, direction) {
+    // Reset all headers and arrows
+    const allHeaders = document.querySelectorAll('.sortable');
+    allHeaders.forEach(header => {
+        header.classList.remove('asc', 'desc');
+        const arrow = header.querySelector('i');
+        arrow.className = 'bi bi-arrow-down-up';
+    });
+    
+    // Set active header and arrow
+    activeHeader.classList.add(direction);
+    const activeArrow = activeHeader.querySelector('i');
+    if (direction === 'asc') {
+        activeArrow.className = 'bi bi-arrow-up';
+    } else {
+        activeArrow.className = 'bi bi-arrow-down';
+    }
+}
+
+/**
+ * Sort users array and refresh display
+ */
+function sortUsers(column, direction) {
+    const sortedUsers = [...filteredUsers].sort((a, b) => {
+        let aValue = a[column];
+        let bValue = b[column];
+        
+        // Handle different data types
+        if (column === 'created_at' || column === 'last_login') {
+            // Date sorting - use original values, not formatted
+            aValue = new Date(aValue || '1970-01-01');
+            bValue = new Date(bValue || '1970-01-01');
+        } else if (column === 'nama_lengkap') {
+            // Name sorting (case insensitive)
+            aValue = (aValue || '').toLowerCase();
+            bValue = (bValue || '').toLowerCase();
+        } else if (column === 'role') {
+            // Role sorting with custom order
+            const roleOrder = { 'Super Admin': 4, 'Admin': 3, 'Pustakawan': 2, 'Staff': 1 };
+            aValue = roleOrder[aValue] || 0;
+            bValue = roleOrder[bValue] || 0;
+        } else if (column === 'status') {
+            // Status sorting (Aktif first)
+            const statusOrder = { 'Aktif': 2, 'Non-Aktif': 1, 'Ditangguhkan': 0 };
+            aValue = statusOrder[aValue] || 0;
+            bValue = statusOrder[bValue] || 0;
+        } else if (typeof aValue === 'string' && typeof bValue === 'string') {
+            // String sorting (case insensitive)
+            aValue = aValue.toLowerCase();
+            bValue = bValue.toLowerCase();
+        }
+        
+        // Handle null/undefined values
+        if (aValue == null && bValue == null) return 0;
+        if (aValue == null) return direction === 'asc' ? 1 : -1;
+        if (bValue == null) return direction === 'asc' ? -1 : 1;
+        
+        // Compare values
+        if (aValue < bValue) {
+            return direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+            return direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+    });
+    
+    // Update filtered users and re-render
+    filteredUsers = sortedUsers;
+    renderUsersTable();
+}
+
+/**
+ * Show sorting feedback to user
+ */
+function showSortingFeedback(column, direction) {
+    const columnNames = {
+        'nama_lengkap': 'Name',
+        'role': 'Role', 
+        'status': 'Status',
+        'last_login': 'Last Login',
+        'created_at': 'Created Date'
+    };
+    
+    const columnName = columnNames[column] || column;
+    const directionText = direction === 'asc' ? 'ascending' : 'descending';
+    
+    // You can show a toast or temporary message here
+    // For now, we'll just update the document title briefly
+    const originalTitle = document.title;
+    document.title = `Sorted by ${columnName} (${directionText})`;
+    
+    setTimeout(() => {
+        document.title = originalTitle;
+    }, 1500);
 }
 
 /**
@@ -217,7 +353,19 @@ async function loadUsers() {
     }
     
     filteredUsers = [...users];
-    renderUsersTable();
+    
+    // Apply default sorting by name (ascending)
+    if (filteredUsers.length > 0) {
+        sortUsers('nama_lengkap', 'asc');
+        // Update the visual indicator for default sort
+        const nameHeader = document.querySelector('[data-sort="nama_lengkap"]');
+        if (nameHeader) {
+            updateSortArrows(nameHeader, 'asc');
+        }
+    } else {
+        renderUsersTable();
+    }
+    
     updateUserCount();
     
     // Refresh chart after loading users
@@ -345,7 +493,12 @@ function renderUsersTable() {
         <tr class="fade-in">
             <td>
                 <div class="user-info">
-                    <div class="user-avatar">${user.avatar_initials}</div>
+                    <div class="user-avatar">
+                        ${user.avatar_url ? 
+                            `<img src="${user.avatar_url}" alt="${escapeHtml(user.nama_lengkap)}" />` : 
+                            user.avatar_initials
+                        }
+                    </div>
                     <div class="user-details">
                         <h6>${escapeHtml(user.nama_lengkap)}</h6>
                         <small>${escapeHtml(user.email)}</small>

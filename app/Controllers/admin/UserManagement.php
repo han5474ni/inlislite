@@ -24,6 +24,11 @@ class UserManagement extends BaseController
             $passwordField = in_array('kata_sandi', $fields) ? 'kata_sandi' : 'password';
             
             $builder = $this->db->table('users');
+            
+            // Check if avatar column exists
+            $hasAvatar = in_array('avatar', $fields);
+            $avatarField = $hasAvatar ? 'avatar' : 'NULL as avatar';
+            
             $users = $builder->select("
                 id,
                 nama_lengkap,
@@ -31,6 +36,7 @@ class UserManagement extends BaseController
                 email,
                 role,
                 status,
+                {$avatarField},
                 last_login,
                 created_at
             ")->get()->getResultArray();
@@ -40,6 +46,13 @@ class UserManagement extends BaseController
                 $user['created_at_formatted'] = isset($user['created_at']) ? date('d M Y', strtotime($user['created_at'])) : 'N/A';
                 $user['last_login_formatted'] = isset($user['last_login']) && $user['last_login'] ? date('d M Y H:i', strtotime($user['last_login'])) : 'Belum pernah';
                 $user['avatar_initials'] = $this->getInitials($user['nama_lengkap'] ?? $user['nama_pengguna'] ?? 'U');
+                
+                // Add avatar URL
+                if (!empty($user['avatar'])) {
+                    $user['avatar_url'] = base_url('images/profile/' . $user['avatar']);
+                } else {
+                    $user['avatar_url'] = null;
+                }
             }
         } catch (\Exception $e) {
             // If table doesn't exist, use empty array
@@ -319,6 +332,13 @@ class UserManagement extends BaseController
                     $newUser['last_login_formatted'] = 'Belum pernah';
                     $newUser['avatar_initials'] = $this->getInitials($newUser['nama_lengkap']);
                     
+                    // Add avatar URL if available
+                    if (isset($newUser['avatar']) && !empty($newUser['avatar'])) {
+                        $newUser['avatar_url'] = base_url('images/profile/' . $newUser['avatar']);
+                    } else {
+                        $newUser['avatar_url'] = null;
+                    }
+                    
                     log_message('info', 'User added successfully: ' . $newUser[$usernameField]);
                     return $this->response->setJSON(['success' => true, 'message' => 'Pengguna berhasil ditambahkan!', 'data' => $newUser]);
                 } else {
@@ -446,6 +466,11 @@ class UserManagement extends BaseController
                 $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
                 
                 $builder = $this->db->table('users');
+                
+                // Check if avatar column exists
+                $hasAvatar = in_array('avatar', $fields);
+                $avatarField = $hasAvatar ? 'avatar' : 'NULL as avatar';
+                
                 $users = $builder->select("
                     id,
                     nama_lengkap,
@@ -453,6 +478,7 @@ class UserManagement extends BaseController
                     email,
                     role,
                     status,
+                    {$avatarField},
                     last_login,
                     created_at
                 ")->get()->getResultArray();
@@ -462,6 +488,13 @@ class UserManagement extends BaseController
                     $user['created_at_formatted'] = isset($user['created_at']) ? date('d M Y H:i', strtotime($user['created_at'])) : 'N/A';
                     $user['last_login_formatted'] = isset($user['last_login']) && $user['last_login'] ? date('d M Y H:i', strtotime($user['last_login'])) : 'Belum pernah';
                     $user['avatar_initials'] = $this->getInitials($user['nama_lengkap'] ?? $user['nama_pengguna'] ?? 'U');
+                    
+                    // Add avatar URL
+                    if (!empty($user['avatar'])) {
+                        $user['avatar_url'] = base_url('images/profile/' . $user['avatar']);
+                    } else {
+                        $user['avatar_url'] = null;
+                    }
                 }
 
                 return $this->response->setJSON(['success' => true, 'data' => $users]);

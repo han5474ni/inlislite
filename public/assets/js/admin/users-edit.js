@@ -190,7 +190,9 @@ function loadMockData() {
             role: 'Super Admin',
             status: 'Aktif',
             last_login: '2025-01-12 14:00:00',
-            created_at: '2024-01-15 10:00:00'
+            created_at: '2024-01-15 10:00:00',
+            avatar: null,
+            avatar_url: null
         },
         {
             id: 2,
@@ -200,7 +202,9 @@ function loadMockData() {
             role: 'Pustakawan',
             status: 'Aktif',
             last_login: '2025-01-11 16:30:00',
-            created_at: '2024-02-10 09:15:00'
+            created_at: '2024-02-10 09:15:00',
+            avatar: null,
+            avatar_url: null
         },
         {
             id: 3,
@@ -210,7 +214,9 @@ function loadMockData() {
             role: 'Staff',
             status: 'Non-Aktif',
             last_login: null,
-            created_at: '2024-03-05 11:20:00'
+            created_at: '2024-03-05 11:20:00',
+            avatar: null,
+            avatar_url: null
         }
     ];
     
@@ -236,7 +242,9 @@ function populateTable(data) {
     // Add new data with sequential IDs
     sortedData.forEach((user, index) => {
         const sequentialId = index + 1; // Start from 1
-        const avatar = getInitials(user.nama_lengkap);
+        const avatar = user.avatar_url ? 
+            `<img src="${user.avatar_url}" alt="${escapeHtml(user.nama_lengkap)}" />` : 
+            getInitials(user.nama_lengkap);
         const roleClass = getRoleClass(user.role);
         const statusClass = getStatusClass(user.status);
         const lastLogin = formatLastLogin(user.last_login);
@@ -313,9 +321,18 @@ async function saveUser() {
     showLoading();
     
     try {
-        // Add CSRF token
-        const csrfData = getCSRFData();
-        const requestData = { ...formData, ...csrfData };
+        // Make request (CSRF handling optional)
+        let requestData = { ...formData };
+        
+        // Add CSRF token if available
+        if (typeof getCSRFData === 'function') {
+            try {
+                const csrfData = getCSRFData();
+                requestData = { ...formData, ...csrfData };
+            } catch (e) {
+                console.warn('CSRF token not available, proceeding without it');
+            }
+        }
         
         const response = await fetch('/admin/users/ajax/create', {
             method: 'POST',
@@ -350,7 +367,10 @@ async function saveUser() {
             }
             
             // Close modal and reset form
-            $('#addUserModal').modal('hide');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+            if (modal) {
+                modal.hide();
+            }
             form.reset();
             
             showAlert(result.message || 'User berhasil ditambahkan!', 'success');
@@ -389,7 +409,8 @@ function editUser(userId) {
     document.getElementById('editStatus').value = user.status;
     
     // Show modal
-    $('#editModal').modal('show');
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
     
     console.log('✏️ Editing user:', user.nama_lengkap);
 }
@@ -416,9 +437,18 @@ async function updateUser() {
     showLoading();
     
     try {
-        // Add CSRF token
-        const csrfData = getCSRFData();
-        const requestData = { ...formData, ...csrfData };
+        // Make request (CSRF handling optional)
+        let requestData = { ...formData };
+        
+        // Add CSRF token if available
+        if (typeof getCSRFData === 'function') {
+            try {
+                const csrfData = getCSRFData();
+                requestData = { ...formData, ...csrfData };
+            } catch (e) {
+                console.warn('CSRF token not available, proceeding without it');
+            }
+        }
         
         const response = await fetch(`/admin/users/ajax/update/${userId}`, {
             method: 'POST',
@@ -444,7 +474,10 @@ async function updateUser() {
             }
             
             // Close modal
-            $('#editModal').modal('hide');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+            if (modal) {
+                modal.hide();
+            }
             
             showAlert(result.message || 'User berhasil diperbarui!', 'success');
             console.log('✅ User updated successfully');
