@@ -301,20 +301,26 @@ class UserManagement extends BaseController
 
     public function addUserAjax()
     {
+        // Debug logging
+        log_message('info', 'UserManagement::addUserAjax called');
+        
         // Check if user has permission to add users
         if (!can_edit_users()) {
+            log_message('warning', 'Access denied for user in addUserAjax');
             return $this->response->setJSON(['success' => false, 'message' => 'Access denied. Only Super Admin can manage users.']);
         }
         
         if ($this->request->isAJAX()) {
             // Get JSON input
             $input = $this->request->getJSON(true);
+            log_message('info', 'Input data received: ' . json_encode($input));
             
             // Check which field names exist in the database
             $fields = $this->db->getFieldNames('users');
             $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
             $passwordField = in_array('kata_sandi', $fields) ? 'kata_sandi' : 'password';
             
+            // Validation rules
             $rules = [
                 'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
                 'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.{$usernameField}]",
@@ -325,6 +331,7 @@ class UserManagement extends BaseController
             ];
 
             if (!$this->validate($rules, $input)) {
+                log_message('error', 'Validation failed: ' . json_encode($this->validator->getErrors()));
                 return $this->response->setJSON(['success' => false, 'errors' => $this->validator->getErrors()]);
             }
 
@@ -371,7 +378,8 @@ class UserManagement extends BaseController
             }
         }
 
-        return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid request']);
+        log_message('warning', 'addUserAjax: Not an AJAX request');
+        return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid request - not AJAX']);
     }
 
     public function editUserAjax($id = null)

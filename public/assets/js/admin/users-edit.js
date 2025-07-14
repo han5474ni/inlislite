@@ -321,33 +321,47 @@ async function saveUser() {
     showLoading();
     
     try {
-        // Make request (CSRF handling optional)
+        // Prepare request data with CSRF token
         let requestData = { ...formData };
         
-        // Add CSRF token if available
-        if (typeof getCSRFData === 'function') {
+        // Add CSRF token - try multiple methods
+        if (window.csrfHash) {
+            requestData.csrf_test_name = window.csrfHash;
+        } else if (typeof getCSRFData === 'function') {
             try {
                 const csrfData = getCSRFData();
                 requestData = { ...formData, ...csrfData };
             } catch (e) {
-                console.warn('CSRF token not available, proceeding without it');
+                console.warn('CSRF function failed:', e);
             }
         }
+        
+        console.log('🔄 Sending user data:', requestData);
         
         const response = await fetch(`${window.baseUrl || ''}/admin/users/ajax/create`, {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(requestData)
         });
         
+        console.log('📡 Response status:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const result = await response.json();
+        console.log('📥 Response data:', result);
         
         if (result.success) {
-            // Update CSRF hash
-            updateCSRFHash(result);
+            // Update CSRF hash if provided
+            if (typeof updateCSRFHash === 'function') {
+                updateCSRFHash(result);
+            }
             
             // Add to local data
             const newUser = {
@@ -380,6 +394,7 @@ async function saveUser() {
                 Object.values(result.errors).join('<br>') : 
                 (result.message || 'Gagal menambahkan user');
             showAlert(errorMessage, 'danger');
+            console.error('❌ Server error:', result);
         }
     } catch (error) {
         console.error('❌ Error adding user:', error);
