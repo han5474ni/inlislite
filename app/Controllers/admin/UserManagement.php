@@ -376,8 +376,11 @@ class UserManagement extends BaseController
 
     public function editUserAjax($id = null)
     {
+
+        
         // Check if user has permission to edit users
         if (!can_edit_users()) {
+
             return $this->response->setJSON(['success' => false, 'message' => 'Access denied. Only Super Admin can manage users.']);
         }
         
@@ -388,6 +391,12 @@ class UserManagement extends BaseController
 
             // Get JSON input
             $input = $this->request->getJSON(true);
+
+            
+            // Check which field names exist in the database
+            $fields = $this->db->getFieldNames('users');
+            $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
+            $passwordField = in_array('kata_sandi', $fields) ? 'kata_sandi' : 'password';
 
             // Get existing user data
             $builder = $this->db->table('users');
@@ -402,7 +411,7 @@ class UserManagement extends BaseController
 
             $rules = [
                 'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
-                'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna,id,{$id}]",
+                'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.{$usernameField},id,{$id}]",
                 'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
                 'status'        => 'required|in_list[Aktif,Non-Aktif]',
             ];
@@ -413,14 +422,14 @@ class UserManagement extends BaseController
 
             $data = [
                 'nama_lengkap'  => $input['nama_lengkap'],
-                'nama_pengguna' => $input['nama_pengguna'],
+                $usernameField  => $input['nama_pengguna'],
                 'role'          => $input['role'],
                 'status'        => $input['status'],
             ];
 
             // Update password if provided
             if (!empty($input['password'])) {
-                $data['password'] = password_hash($input['password'], PASSWORD_DEFAULT);
+                $data[$passwordField] = password_hash($input['password'], PASSWORD_DEFAULT);
             }
 
             try {
@@ -430,13 +439,13 @@ class UserManagement extends BaseController
                 if ($result !== false) {
                     $updatedUser = $builder->where('id', $id)->get()->getRowArray();
                     
-                    // Format for frontend
-                    $updatedUser['nama_pengguna'] = $updatedUser['username'];
+                    // Format for frontend - normalize field names
+                    $updatedUser['nama_pengguna'] = $updatedUser[$usernameField];
                     $updatedUser['created_at_formatted'] = date('d M Y', strtotime($updatedUser['created_at']));
                     $updatedUser['last_login_formatted'] = isset($updatedUser['last_login']) && $updatedUser['last_login'] ? date('d M Y H:i', strtotime($updatedUser['last_login'])) : 'Belum pernah';
                     $updatedUser['avatar_initials'] = $this->getInitials($updatedUser['nama_lengkap']);
                     
-                    log_message('info', 'User updated successfully: ' . $updatedUser['username']);
+                    log_message('info', 'User updated successfully: ' . $updatedUser[$usernameField]);
                     return $this->response->setJSON(['success' => true, 'message' => 'Pengguna berhasil diperbarui!', 'data' => $updatedUser]);
                 } else {
                     return $this->response->setJSON(['success' => false, 'message' => 'Gagal memperbarui data di database']);
