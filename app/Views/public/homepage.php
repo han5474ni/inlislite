@@ -1,8 +1,9 @@
 <?php echo view('public/layout/header', ['page_title' => 'Home']); ?>
 
 <!-- Hero Section -->
-<section class="hero-section" style="background: linear-gradient(180deg, #6FD09A 0%, #046BB5 100%); min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; margin-top: 76px; padding: 2.5rem 1.5rem;">
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"%3E%3Ccircle cx=\"50\" cy=\"50\" r=\"1\" fill=\"rgba(255,255,255,0.1)\"/%3E%3C/svg%3E'); background-size: 50px 50px; opacity: 0.3; pointer-events: none;"></div>
+<section class="hero-section" style="background: none; min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; margin-top: 76px; padding: 2.5rem 1.5rem;">
+    <!-- Blur Background Image -->
+    <div style="position: absolute; inset: 0; background: url('https://i.pinimg.com/736x/cd/66/6a/cd666a84ab3c739f356c8b5b366731bb.jpg') center/cover no-repeat; filter: blur(8px) brightness(0.5); z-index: 0; transform: scale(1.05);"></div>
 
     <div class="container" style="position: relative; z-index: 2;">
         <div class="row justify-content-center">
@@ -31,7 +32,7 @@
 
 <!-- Kenapa InlisLite Section -->
 <section class="features-section" style="background: linear-gradient(180deg, #046BB5 0%, #024D96 100%); padding: 5rem 1.5rem; position: relative; overflow: hidden; margin-top: 0;">
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 60 60\"%3E%3Cpath d=\"M30 30m-2 0a2 2 0 1 1 4 0a2 2 0 1 1 -4 0\" fill=\"rgba(255,255,255,0.05)\"/%3E%3C/svg%3E'); background-size: 60px 60px; opacity: 0.4; pointer-events: none;"></div>
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 60 60&quot;%3E%3Cpath d=&quot;M30 30m-2 0a2 2 0 1 1 4 0a2 2 0 1 1 -4 0&quot; fill=&quot;rgba(255,255,255,0.05)&quot;/%3E%3C/svg%3E'); background-size: 60px 60px; opacity: 0.4; pointer-events: none;"></div>
 
     <div class="container" style="position: relative; z-index: 2;">
         <div class="row mb-5">
@@ -46,11 +47,11 @@
             <!-- Card 1 -->
             <div class="col-lg-4 col-md-6 col-sm-8">
                 <div class="feature-card animate-on-scroll" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border-radius: 1.5rem; padding: 3rem 2rem; text-align: center; height: 100%; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(255, 255, 255, 0.1) inset; transition: all 0.4s ease;">
-                    <img src="/assets/images/digital-canva.png" alt="Otomasi" style="width: 200px; height: auto; margin-bottom, 1.6rem">
-                    <h4 class="feature-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #FFFFFF; line-height: 1.3; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); font-family: 'Poppins', sans-serif;">
+                    <img src="/assets/images/digital-canva.png" alt="Otomasi" style="width: 200px; height: auto; margin-bottom: 1.6rem">
+                    <h4 class="feature-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #FFFFFF; line-height: 1.3;">
                         Otomasi & Digitalisasi Terpadu
                     </h4>
-                    <p class="feature-description" style="color: #F0F0F0; line-height: 1.6; font-size: 0.95rem; font-family: 'Poppins', sans-serif;">
+                    <p class="feature-description" style="color: #F0F0F0; line-height: 1.6; font-size: 0.95rem;">
                         Sistem terintegrasi yang mengotomatisasi seluruh proses perpustakaan dengan teknologi digital terdepan.
                     </p>
                 </div>
@@ -60,10 +61,10 @@
             <div class="col-lg-4 col-md-6 col-sm-8">
                 <div class="feature-card animate-on-scroll" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border-radius: 1.5rem; padding: 3rem 2rem; text-align: center; height: 100%; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(255, 255, 255, 0.1) inset; transition: all 0.4s ease;">
                     <img src="/assets/images/book canva.png" alt="Opensource" style="width: 200px; height: auto; margin-bottom: 1.5rem;">
-                    <h4 class="feature-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #FFFFFF; line-height: 1.3; font-family: 'Poppins', sans-serif;">
+                    <h4 class="feature-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #FFFFFF; line-height: 1.3;">
                         Gratis, Opensource & Fleksibel
                     </h4>
-                    <p class="feature-description" style="color: #F0F0F0; line-height: 1.6; font-size: 0.95rem; font-family: 'Poppins', sans-serif;">
+                    <p class="feature-description" style="color: #F0F0F0; line-height: 1.6; font-size: 0.95rem;">
                         Solusi perpustakaan yang dapat disesuaikan dengan kebutuhan tanpa biaya lisensi yang mahal.
                     </p>
                 </div>
@@ -73,10 +74,10 @@
             <div class="col-lg-4 col-md-6 col-sm-8">
                 <div class="feature-card animate-on-scroll" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border-radius: 1.5rem; padding: 3rem 2rem; text-align: center; height: 100%; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(255, 255, 255, 0.1) inset; transition: all 0.4s ease;">
                     <img src="/assets/images/ceklis canva.png" alt="Etis" style="width: 200px; height: auto; margin-bottom: 1.5rem;">
-                    <h4 class="feature-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #FFFFFF; line-height: 1.3; font-family: 'Poppins', sans-serif;">
+                    <h4 class="feature-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: #FFFFFF; line-height: 1.3;">
                         Penggunaan & Modifikasi Etis
                     </h4>
-                    <p class="feature-description" style="color: #F0F0F0; line-height: 1.6; font-size: 0.95rem; font-family: 'Poppins', sans-serif;">
+                    <p class="feature-description" style="color: #F0F0F0; line-height: 1.6; font-size: 0.95rem;">
                         Dikembangkan dengan standar etika tinggi dan dapat dimodifikasi sesuai kebutuhan institusi.
                     </p>
                 </div>
@@ -84,6 +85,23 @@
         </div>
     </div>
 </section>
+
+<!-- Dropdown Animation CSS -->
+<style>
+.dropdown-menu {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    display: block;
+    visibility: hidden;
+}
+
+.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+</style>
 
 <link rel="stylesheet" href="/assets/css/public/homepage.css" />
 <script src="/assets/js/public/homepage.js"></script>
