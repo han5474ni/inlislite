@@ -3,99 +3,105 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
-use App\Models\DemoModel;
+use App\Models\AplikasiModel;
 
-class DemoController extends BaseController
+class AplikasiController extends BaseController
 {
-    protected $demoModel;
+    protected $aplikasiModel;
     protected $session;
     
     public function __construct()
     {
-        $this->demoModel = new DemoModel();
+        $this->aplikasiModel = new AplikasiModel();
         $this->session = \Config\Services::session();
     }
     
     /**
-     * Display demo management page
+     * Display aplikasi management page
      */
     public function index()
     {
         $data = [
-            'title' => 'Demo Program - INLISLite v3.0',
-            'page_title' => 'Demo Program',
-            'page_subtitle' => 'Kelola demo program perpustakaan'
+            'title' => 'Aplikasi Pendukung - INLISLite v3.0',
+            'page_title' => 'Aplikasi Pendukung',
+            'page_subtitle' => 'Kelola aplikasi pendukung sistem perpustakaan'
         ];
         
-        return view('admin/demo', $data);
+        return view('admin/aplikasi', $data);
     }
     
     /**
-     * Display demo edit page
+     * Display aplikasi edit page
      */
     public function edit()
     {
         $data = [
-            'title' => 'Kelola Demo Program - INLISLite v3.0'
+            'title' => 'Kelola Aplikasi Pendukung - INLISLite v3.0'
         ];
         
-        return view('admin/demo-edit', $data);
+        return view('admin/aplikasi-edit', $data);
     }
     
     /**
-     * Get demo data for DataTable
+     * Get aplikasi data for DataTable
      */
     public function getData()
     {
         try {
-            $demos = $this->demoModel->orderBy('sort_order', 'ASC')
-                                   ->orderBy('created_at', 'DESC')
-                                   ->findAll();
+            $aplikasi = $this->aplikasiModel->orderBy('sort_order', 'ASC')
+                                          ->orderBy('created_at', 'DESC')
+                                          ->findAll();
             
             return $this->response->setJSON([
                 'success' => true,
-                'data' => $demos
+                'data' => $aplikasi
             ]);
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to get demo data: ' . $e->getMessage());
+            log_message('error', 'Failed to get aplikasi data: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Gagal memuat data demo'
+                'message' => 'Gagal memuat data aplikasi'
             ]);
         }
     }
     
     /**
-     * Get statistics for demo
+     * Get statistics for aplikasi
      */
     public function getStatistics()
     {
         try {
-            $totalDemo = $this->demoModel->countAll();
-            $activeDemo = $this->demoModel->where('status', 'active')->countAllResults();
-            $inactiveDemo = $this->demoModel->where('status', 'inactive')->countAllResults();
+            $totalAplikasi = $this->aplikasiModel->countAll();
+            $activeAplikasi = $this->aplikasiModel->where('status', 'active')->countAllResults();
+            $inactiveAplikasi = $this->aplikasiModel->where('status', 'inactive')->countAllResults();
+            
+            // Count by category
+            $categories = $this->aplikasiModel->select('kategori, COUNT(*) as count')
+                                            ->groupBy('kategori')
+                                            ->findAll();
             
             return $this->response->setJSON([
                 'success' => true,
                 'statistics' => [
-                    'total' => $totalDemo,
-                    'active' => $activeDemo,
-                    'inactive' => $inactiveDemo
+                    'total' => $totalAplikasi,
+                    'active' => $activeAplikasi,
+                    'inactive' => $inactiveAplikasi,
+                    'categories' => $categories
                 ]
             ]);
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to get demo statistics: ' . $e->getMessage());
+            log_message('error', 'Failed to get aplikasi statistics: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Gagal memuat statistik demo'
+                'message' => 'Gagal memuat statistik aplikasi'
             ]);
         }
     }
     
     /**
-     * Store new demo
+     * Store new aplikasi
      */
     public function store()
     {
@@ -106,55 +112,55 @@ class DemoController extends BaseController
             }
             
             // Validate required fields
-            if (empty($input['title'])) {
+            if (empty($input['nama_aplikasi'])) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Judul demo harus diisi'
+                    'message' => 'Nama aplikasi harus diisi'
                 ]);
             }
             
             // Prepare data for insertion
             $data = [
-                'title' => $input['title'],
-                'description' => $input['description'] ?? '',
+                'nama_aplikasi' => $input['nama_aplikasi'],
+                'deskripsi' => $input['deskripsi'] ?? '',
+                'versi' => $input['versi'] ?? '',
                 'platform' => $input['platform'] ?? '',
-                'version' => $input['version'] ?? '',
-                'url' => $input['url'] ?? '',
-                'username' => $input['username'] ?? '',
-                'password' => $input['password'] ?? '',
-                'features' => $input['features'] ?? '',
+                'ukuran' => $input['ukuran'] ?? '',
+                'kategori' => $input['kategori'] ?? 'aplikasi',
+                'url_download' => $input['url_download'] ?? '',
+                'icon' => $input['icon'] ?? 'bi-app',
                 'status' => $input['status'] ?? 'active',
                 'sort_order' => $input['sort_order'] ?? 1
             ];
             
-            $demoId = $this->demoModel->insert($data);
+            $aplikasiId = $this->aplikasiModel->insert($data);
             
-            if ($demoId) {
-                $this->logActivity('create', 'demo', $demoId, "Menambahkan demo: {$data['title']}");
+            if ($aplikasiId) {
+                $this->logActivity('create', 'aplikasi', $aplikasiId, "Menambahkan aplikasi: {$data['nama_aplikasi']}");
                 
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => 'Demo berhasil ditambahkan',
-                    'data' => array_merge(['id' => $demoId], $data)
+                    'message' => 'Aplikasi berhasil ditambahkan',
+                    'data' => array_merge(['id' => $aplikasiId], $data)
                 ]);
             } else {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal menambahkan demo'
+                    'message' => 'Gagal menambahkan aplikasi'
                 ]);
             }
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to store demo: ' . $e->getMessage());
+            log_message('error', 'Failed to store aplikasi: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menambahkan demo'
+                'message' => 'Terjadi kesalahan saat menambahkan aplikasi'
             ]);
         }
     }
     
     /**
-     * Update existing demo
+     * Update existing aplikasi
      */
     public function update($id)
     {
@@ -164,104 +170,104 @@ class DemoController extends BaseController
                 $input = $this->request->getPost();
             }
             
-            // Check if demo exists
-            $existingDemo = $this->demoModel->find($id);
-            if (!$existingDemo) {
+            // Check if aplikasi exists
+            $existingAplikasi = $this->aplikasiModel->find($id);
+            if (!$existingAplikasi) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Demo tidak ditemukan'
+                    'message' => 'Aplikasi tidak ditemukan'
                 ]);
             }
             
             // Validate required fields
-            if (empty($input['title'])) {
+            if (empty($input['nama_aplikasi'])) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Judul demo harus diisi'
+                    'message' => 'Nama aplikasi harus diisi'
                 ]);
             }
             
             // Prepare data for update
             $data = [
-                'title' => $input['title'],
-                'description' => $input['description'] ?? $existingDemo['description'],
-                'platform' => $input['platform'] ?? $existingDemo['platform'],
-                'version' => $input['version'] ?? $existingDemo['version'],
-                'url' => $input['url'] ?? $existingDemo['url'],
-                'username' => $input['username'] ?? $existingDemo['username'],
-                'password' => $input['password'] ?? $existingDemo['password'],
-                'features' => $input['features'] ?? $existingDemo['features'],
-                'status' => $input['status'] ?? $existingDemo['status'],
-                'sort_order' => $input['sort_order'] ?? $existingDemo['sort_order']
+                'nama_aplikasi' => $input['nama_aplikasi'],
+                'deskripsi' => $input['deskripsi'] ?? $existingAplikasi['deskripsi'],
+                'versi' => $input['versi'] ?? $existingAplikasi['versi'],
+                'platform' => $input['platform'] ?? $existingAplikasi['platform'],
+                'ukuran' => $input['ukuran'] ?? $existingAplikasi['ukuran'],
+                'kategori' => $input['kategori'] ?? $existingAplikasi['kategori'],
+                'url_download' => $input['url_download'] ?? $existingAplikasi['url_download'],
+                'icon' => $input['icon'] ?? $existingAplikasi['icon'],
+                'status' => $input['status'] ?? $existingAplikasi['status'],
+                'sort_order' => $input['sort_order'] ?? $existingAplikasi['sort_order']
             ];
             
-            $updated = $this->demoModel->update($id, $data);
+            $updated = $this->aplikasiModel->update($id, $data);
             
             if ($updated) {
-                $this->logActivity('update', 'demo', $id, "Mengupdate demo: {$data['title']}");
+                $this->logActivity('update', 'aplikasi', $id, "Mengupdate aplikasi: {$data['nama_aplikasi']}");
                 
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => 'Demo berhasil diupdate',
+                    'message' => 'Aplikasi berhasil diupdate',
                     'data' => array_merge(['id' => $id], $data)
                 ]);
             } else {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal mengupdate demo'
+                    'message' => 'Gagal mengupdate aplikasi'
                 ]);
             }
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to update demo: ' . $e->getMessage());
+            log_message('error', 'Failed to update aplikasi: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat mengupdate demo'
+                'message' => 'Terjadi kesalahan saat mengupdate aplikasi'
             ]);
         }
     }
     
     /**
-     * Delete demo
+     * Delete aplikasi
      */
     public function delete($id)
     {
         try {
-            $demo = $this->demoModel->find($id);
-            if (!$demo) {
+            $aplikasi = $this->aplikasiModel->find($id);
+            if (!$aplikasi) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Demo tidak ditemukan'
+                    'message' => 'Aplikasi tidak ditemukan'
                 ]);
             }
             
-            $deleted = $this->demoModel->delete($id);
+            $deleted = $this->aplikasiModel->delete($id);
             
             if ($deleted) {
-                $this->logActivity('delete', 'demo', $id, "Menghapus demo: {$demo['title']}");
+                $this->logActivity('delete', 'aplikasi', $id, "Menghapus aplikasi: {$aplikasi['nama_aplikasi']}");
                 
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => 'Demo berhasil dihapus'
+                    'message' => 'Aplikasi berhasil dihapus'
                 ]);
             } else {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal menghapus demo'
+                    'message' => 'Gagal menghapus aplikasi'
                 ]);
             }
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to delete demo: ' . $e->getMessage());
+            log_message('error', 'Failed to delete aplikasi: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus demo'
+                'message' => 'Terjadi kesalahan saat menghapus aplikasi'
             ]);
         }
     }
     
     /**
-     * Update sort order for demo
+     * Update sort order for aplikasi
      */
     public function updateSortOrder()
     {
@@ -278,7 +284,7 @@ class DemoController extends BaseController
             $db->transStart();
             
             foreach ($input['items'] as $item) {
-                $this->demoModel->update($item['id'], ['sort_order' => $item['sort_order']]);
+                $this->aplikasiModel->update($item['id'], ['sort_order' => $item['sort_order']]);
             }
             
             $db->transComplete();
@@ -286,19 +292,19 @@ class DemoController extends BaseController
             if ($db->transStatus() === FALSE) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Gagal mengupdate urutan demo'
+                    'message' => 'Gagal mengupdate urutan aplikasi'
                 ]);
             }
             
-            $this->logActivity('update', 'demo', null, 'Mengupdate urutan demo');
+            $this->logActivity('update', 'aplikasi', null, 'Mengupdate urutan aplikasi');
             
             return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Urutan demo berhasil diupdate'
+                'message' => 'Urutan aplikasi berhasil diupdate'
             ]);
             
         } catch (\Exception $e) {
-            log_message('error', 'Failed to update demo sort order: ' . $e->getMessage());
+            log_message('error', 'Failed to update aplikasi sort order: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat mengupdate urutan'

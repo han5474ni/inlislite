@@ -641,3 +641,179 @@ body {
         border: 1px solid var(--gray-300);
     }
 }
+
+/* DataTables Customization */
+.table-responsive {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.table {
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.table thead th {
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+    font-weight: 600;
+    border-bottom: 2px solid var(--gray-200);
+    padding: 12px 8px;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 10px 8px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.table tbody tr:hover {
+    background-color: var(--gray-50);
+}
+
+/* Badge Styles */
+.type-badge, .color-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.type-badge {
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+}
+
+.type-badge.application {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.type-badge.database {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.type-badge.utility {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.color-badge {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    padding: 0;
+}
+
+.color-badge.blue {
+    background-color: var(--primary-blue);
+}
+
+.color-badge.green {
+    background-color: var(--secondary-green);
+}
+
+.color-badge.orange {
+    background-color: var(--accent-orange);
+}
+
+.color-badge.purple {
+    background-color: var(--accent-purple);
+}
+
+/* Action Buttons */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    margin: 0 2px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+}
+
+.btn-action.edit {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.btn-action.edit:hover {
+    background-color: #bfdbfe;
+}
+
+.btn-action.delete {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-action.delete:hover {
+    background-color: #fecaca;
+}
+
+/* DataTables Controls */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+.dataTables_wrapper .dataTables_info {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border: 1px solid var(--gray-300);
+    background: var(--white);
+    color: var(--gray-700);
+    margin: 0 2px;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-400);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: var(--white);
+}
+
+/* Responsive table adjustments */
+@media (max-width: 768px) {
+    .table {
+        font-size: 12px;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 8px 4px;
+    }
+    
+    .btn-action {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+}

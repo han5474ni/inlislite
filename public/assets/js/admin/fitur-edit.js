@@ -31,15 +31,32 @@ async function loadData() {
     try {
         showLoading();
         
-        // Load sample data (replace with actual API calls)
-        await loadFeatures();
-        await loadModules();
+        console.log('Starting data load...');
         
-        updateStatistics();
+        // Load data from API
+        await Promise.all([
+            loadFeatures(),
+            loadModules()
+        ]);
+        
+        // Load statistics after data is loaded
+        await loadStatistics();
+        
+        // Refresh DataTables with loaded data
+        if (featuresTable && features.length > 0) {
+            featuresTable.clear().rows.add(features).draw();
+            console.log('Features table updated with', features.length, 'items');
+        }
+        if (modulesTable && modules.length > 0) {
+            modulesTable.clear().rows.add(modules).draw();
+            console.log('Modules table updated with', modules.length, 'items');
+        }
+        
+        console.log('Data load completed. Features:', features.length, 'Modules:', modules.length);
         
     } catch (error) {
         console.error('Error loading data:', error);
-        showError('Gagal memuat data');
+        showError('Gagal memuat data: ' + error.message);
     } finally {
         hideLoading();
     }
@@ -49,8 +66,33 @@ async function loadData() {
  * Load features data
  */
 async function loadFeatures() {
-    // Sample data - replace with actual API call
-    features = [
+    try {
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/data?type=feature`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            features = result.data || [];
+            console.log('Features loaded successfully:', features.length, 'items');
+        } else {
+            console.error('Failed to load features:', result.message);
+            throw new Error(result.message || 'Failed to load features');
+        }
+    } catch (error) {
+        console.error('Error loading features:', error);
+        console.log('Using fallback sample data for features');
+        // Fallback to sample data
+        features = [
         {
             id: 1,
             title: "Form Entri Katalog Sederhana",
@@ -99,15 +141,41 @@ async function loadFeatures() {
             color: "green",
             type: "feature"
         }
-    ];
+        ];
+    }
 }
 
 /**
  * Load modules data
  */
 async function loadModules() {
-    // Sample data - replace with actual API call
-    modules = [
+    try {
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/data?type=module`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            modules = result.data || [];
+            console.log('Modules loaded successfully:', modules.length, 'items');
+        } else {
+            console.error('Failed to load modules:', result.message);
+            throw new Error(result.message || 'Failed to load modules');
+        }
+    } catch (error) {
+        console.error('Error loading modules:', error);
+        console.log('Using fallback sample data for modules');
+        // Fallback to sample data
+        modules = [
         {
             id: 1,
             title: "Portal Aplikasi Inlislite",
@@ -162,7 +230,8 @@ async function loadModules() {
             type: "module",
             module_type: "application"
         }
-    ];
+        ];
+    }
 }
 
 /**
@@ -184,15 +253,17 @@ function initializeDataTables() {
             { data: 'title' },
             { 
                 data: 'description',
+                width: '200px',
                 render: function(data, type, row) {
-                    return data.length > 100 ? data.substring(0, 100) + '...' : data;
+                    if (!data) return '';
+                    return data.length > 80 ? data.substring(0, 80) + '...' : data;
                 }
             },
             { 
                 data: 'color',
                 width: '80px',
                 render: function(data, type, row) {
-                    return `<span class="color-badge ${data}"></span> ${data}`;
+                    return `<div style="display: flex; align-items: center;"><span class="color-badge ${data}"></span>${data}</div>`;
                 }
             },
             { 
@@ -233,14 +304,17 @@ function initializeDataTables() {
             { data: 'title' },
             { 
                 data: 'description',
+                width: '180px',
                 render: function(data, type, row) {
-                    return data.length > 100 ? data.substring(0, 100) + '...' : data;
+                    if (!data) return '';
+                    return data.length > 60 ? data.substring(0, 60) + '...' : data;
                 }
             },
             { 
                 data: 'module_type',
                 width: '120px',
                 render: function(data, type, row) {
+                    if (!data) return '<span class="type-badge">-</span>';
                     return `<span class="type-badge ${data}">${data}</span>`;
                 }
             },
@@ -248,7 +322,7 @@ function initializeDataTables() {
                 data: 'color',
                 width: '80px',
                 render: function(data, type, row) {
-                    return `<span class="color-badge ${data}"></span> ${data}`;
+                    return `<div style="display: flex; align-items: center;"><span class="color-badge ${data}"></span>${data}</div>`;
                 }
             },
             { 
@@ -355,7 +429,44 @@ function updateIconPreview(previewId, iconClass, color) {
 }
 
 /**
- * Update statistics
+ * Load statistics from API
+ */
+async function loadStatistics() {
+    try {
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/statistics`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            const stats = result.data;
+            document.getElementById('totalFeatures').textContent = stats.total_features || 0;
+            document.getElementById('totalModules').textContent = stats.total_modules || 0;
+            document.getElementById('appModules').textContent = stats.app_modules || 0;
+            document.getElementById('dbModules').textContent = stats.db_modules || 0;
+            console.log('Statistics loaded successfully:', stats);
+        } else {
+            console.error('Failed to load statistics:', result.message);
+            updateStatistics(); // Fallback to local calculation
+        }
+    } catch (error) {
+        console.error('Error loading statistics:', error);
+        console.log('Using local statistics calculation');
+        updateStatistics(); // Fallback to local calculation
+    }
+}
+
+/**
+ * Update statistics (fallback method)
  */
 function updateStatistics() {
     document.getElementById('totalFeatures').textContent = features.length;
@@ -385,8 +496,7 @@ async function saveFeature() {
 
         showLoading();
 
-        const newFeature = {
-            id: Date.now(),
+        const featureData = {
             title,
             description,
             icon: icon.startsWith('bi-') ? icon : `bi-${icon}`,
@@ -394,11 +504,25 @@ async function saveFeature() {
             type: 'feature'
         };
 
-        // TODO: Replace with actual API call
-        features.push(newFeature);
-        
-        // Update DataTable
-        featuresTable.row.add(newFeature).draw();
+        // Save to database via API
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/store`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams(featureData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Add to local array and refresh table
+            features.push(result.data);
+            featuresTable.row.add(result.data).draw();
+        } else {
+            throw new Error(result.message || 'Gagal menyimpan fitur');
+        }
         
         // Update statistics
         updateStatistics();
@@ -436,8 +560,7 @@ async function saveModule() {
 
         showLoading();
 
-        const newModule = {
-            id: Date.now(),
+        const moduleData = {
             title,
             description,
             icon: icon.startsWith('bi-') ? icon : `bi-${icon}`,
@@ -446,11 +569,25 @@ async function saveModule() {
             module_type: moduleType
         };
 
-        // TODO: Replace with actual API call
-        modules.push(newModule);
-        
-        // Update DataTable
-        modulesTable.row.add(newModule).draw();
+        // Save to database via API
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/store`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams(moduleData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Add to local array and refresh table
+            modules.push(result.data);
+            modulesTable.row.add(result.data).draw();
+        } else {
+            throw new Error(result.message || 'Gagal menyimpan modul');
+        }
         
         // Update statistics
         updateStatistics();
@@ -474,12 +611,17 @@ async function saveModule() {
  * Edit item
  */
 function editItem(id, type) {
+    console.log('EditItem called with ID:', id, 'Type:', type);
+    console.log('Available features:', features.length, 'Available modules:', modules.length);
+    
     const item = type === 'feature' 
-        ? features.find(f => f.id === id)
-        : modules.find(m => m.id === id);
+        ? features.find(f => f.id == id)  // Use == for type coercion
+        : modules.find(m => m.id == id);
+
+    console.log('Found item:', item);
 
     if (!item) {
-        showError('Item tidak ditemukan');
+        showError('Item tidak ditemukan. ID: ' + id + ', Type: ' + type);
         return;
     }
 
@@ -539,27 +681,43 @@ async function updateItem() {
             updatedItem.module_type = $('#editModuleType').val();
         }
 
-        // Update in arrays
-        if (type === 'feature') {
-            const index = features.findIndex(f => f.id === id);
-            if (index !== -1) {
-                features[index] = updatedItem;
-                
-                // Update DataTable
-                featuresTable.row(function(idx, data) {
-                    return data.id === id;
-                }).data(updatedItem).draw();
+        // Update via API
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/update/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams(updatedItem)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Update in arrays
+            if (type === 'feature') {
+                const index = features.findIndex(f => f.id == id);  // Use == for type coercion
+                if (index !== -1) {
+                    features[index] = result.data;
+                    
+                    // Update DataTable
+                    featuresTable.row(function(idx, data) {
+                        return data.id == id;  // Use == for type coercion
+                    }).data(result.data).draw();
+                }
+            } else {
+                const index = modules.findIndex(m => m.id == id);  // Use == for type coercion
+                if (index !== -1) {
+                    modules[index] = result.data;
+                    
+                    // Update DataTable
+                    modulesTable.row(function(idx, data) {
+                        return data.id == id;  // Use == for type coercion
+                    }).data(result.data).draw();
+                }
             }
         } else {
-            const index = modules.findIndex(m => m.id === id);
-            if (index !== -1) {
-                modules[index] = updatedItem;
-                
-                // Update DataTable
-                modulesTable.row(function(idx, data) {
-                    return data.id === id;
-                }).data(updatedItem).draw();
-            }
+            throw new Error(result.message || 'Gagal memperbarui item');
         }
 
         // Update statistics
@@ -582,6 +740,8 @@ async function updateItem() {
  * Delete item
  */
 async function deleteItem(id, type) {
+    console.log('DeleteItem called with ID:', id, 'Type:', type);
+    
     if (!confirm(`Apakah Anda yakin ingin menghapus ${type === 'feature' ? 'fitur' : 'modul'} ini?`)) {
         return;
     }
@@ -589,27 +749,41 @@ async function deleteItem(id, type) {
     try {
         showLoading();
 
-        // Remove from arrays
-        if (type === 'feature') {
-            features = features.filter(f => f.id !== id);
-            
-            // Remove from DataTable
-            featuresTable.row(function(idx, data) {
-                return data.id === id;
-            }).remove().draw();
+        // Delete via API
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/delete/${id}`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Remove from arrays
+            if (type === 'feature') {
+                features = features.filter(f => f.id != id);  // Use != for type coercion
+                
+                // Remove from DataTable
+                featuresTable.row(function(idx, data) {
+                    return data.id == id;  // Use == for type coercion
+                }).remove().draw();
+            } else {
+                modules = modules.filter(m => m.id != id);  // Use != for type coercion
+                
+                // Remove from DataTable
+                modulesTable.row(function(idx, data) {
+                    return data.id == id;  // Use == for type coercion
+                }).remove().draw();
+            }
+
+            // Update statistics
+            updateStatistics();
+
+            showSuccess(result.message || `${type === 'feature' ? 'Fitur' : 'Modul'} berhasil dihapus`);
         } else {
-            modules = modules.filter(m => m.id !== id);
-            
-            // Remove from DataTable
-            modulesTable.row(function(idx, data) {
-                return data.id === id;
-            }).remove().draw();
+            throw new Error(result.message || 'Gagal menghapus item');
         }
-
-        // Update statistics
-        updateStatistics();
-
-        showSuccess(`${type === 'feature' ? 'Fitur' : 'Modul'} berhasil dihapus`);
 
     } catch (error) {
         console.error('Error deleting item:', error);

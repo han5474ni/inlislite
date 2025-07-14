@@ -13,67 +13,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Dashboard CSS -->
+    <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="<?= base_url('assets/css/admin/user_management.css') ?>" rel="stylesheet">
+    
+    <style>
+    body {
+        background: linear-gradient(135deg, #1C6EC4 0%, #2DA84D 100%);
+        min-height: 100vh;
+    }
+    </style>
 </head>
 <body>
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
-        <i data-feather="menu"></i>
-    </button>
-
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <button class="sidebar-toggle" id="sidebarToggle">
-            <i data-feather="chevron-left"></i>
-        </button>
-        
-        <div class="sidebar-header">
-            <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
-                <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
-                <div class="sidebar-title">
-                    INLISlite v3.0<br>
-                    <small style="font-size: 0.8rem; opacity: 0.8;">Dashboard</small>
-                </div>
-            </a>
-        </div>
-        
-        <div class="sidebar-nav">
-            <div class="nav-item">
-                <a href="<?= base_url('admin/dashboard') ?>" class="nav-link">
-                    <i data-feather="home" class="nav-icon"></i>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/users') ?>" class="nav-link active">
-                    <i data-feather="users" class="nav-icon"></i>
-                    <span class="nav-text">User Management</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('registration') ?>" class="nav-link">
-                    <i data-feather="clipboard" class="nav-icon"></i>
-                    <span class="nav-text">Registrasi</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/patches') ?>" class="nav-link">
-                    <i data-feather="download" class="nav-icon"></i>
-                    <span class="nav-text">Patch & Update</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/applications') ?>" class="nav-link">
-                    <i data-feather="package" class="nav-icon"></i>
-                    <span class="nav-text">Aplikasi Pendukung</span>
-                </a>
-            </div>
-        </div>
-    </nav>
+    <!-- Include Enhanced Sidebar -->
+    <?= $this->include('admin/partials/sidebar') ?>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="enhanced-main-content">
+
         <!-- Page Header -->
         <div class="page-header">
             <a href="<?= base_url('admin/dashboard') ?>" class="back-btn">

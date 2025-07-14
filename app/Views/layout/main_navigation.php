@@ -275,7 +275,11 @@
                 </ul>
                 
                 <ul class="navbar-nav">
-                    <?php if (session()->get('admin_logged_in')): ?>
+                    <?php 
+                    // Load auth helper for role checking
+                    helper('auth');
+                    
+                    if (session()->get('admin_logged_in')): ?>                    
                         <!-- Admin is logged in -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -288,11 +292,13 @@
                                         <i class="bi bi-speedometer2 me-2"></i>Dashboard
                                     </a>
                                 </li>
+                                <?php if (function_exists('can_edit_users') && can_edit_users()): ?>
                                 <li>
                                     <a class="dropdown-item" href="<?= base_url('admin/users') ?>">
                                         <i class="bi bi-people me-2"></i>User Management
                                     </a>
                                 </li>
+                                <?php endif; ?>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" href="<?= base_url('admin/secure-logout') ?>">

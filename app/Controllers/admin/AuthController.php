@@ -108,8 +108,8 @@ class AuthController extends BaseController
                                ->with('error', 'Username atau password salah');
             }
 
-            // Check if user has admin privileges
-            if (!in_array($user['role'], ['Super Admin', 'Admin'])) {
+            // Check if user has admin privileges - allow all roles to access admin panel
+            if (!in_array($user['role'], ['Super Admin', 'Admin', 'Pustakawan', 'Staff'])) {
                 return redirect()->back()
                                ->withInput()
                                ->with('error', 'Anda tidak memiliki akses admin');

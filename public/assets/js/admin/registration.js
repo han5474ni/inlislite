@@ -809,6 +809,29 @@ function submitRegistrationForm() {
         return;
     }
     
+    // Validate form before submission
+    if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        showToast('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    // Check required fields manually
+    const requiredFields = form.querySelectorAll('[required]');
+    let hasErrors = false;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            showFieldError(field, 'This field is required');
+            hasErrors = true;
+        }
+    });
+    
+    if (hasErrors) {
+        showToast('Please fix the errors before submitting', 'error');
+        return;
+    }
+    
     const formData = new FormData(form);
     const submitBtn = form.querySelector('button[type="submit"]');
     
@@ -822,7 +845,7 @@ function submitRegistrationForm() {
         clearFormErrors();
         
         // Send form data to server
-        fetch('/admin/registration/add', {
+        fetch(form.action || '/admin/registration/add', {
             method: 'POST',
             body: formData,
             headers: {

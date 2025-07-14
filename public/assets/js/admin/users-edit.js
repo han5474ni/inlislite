@@ -147,7 +147,7 @@ async function loadUsers() {
             console.log('✅ Users loaded via sync system:', usersData.length);
         } else {
             // Fallback to direct API call
-            const response = await fetch('/admin/users/ajax/list', {
+            const response = await fetch(`${window.baseUrl || ''}/admin/users/ajax/list`, {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -334,7 +334,7 @@ async function saveUser() {
             }
         }
         
-        const response = await fetch('/admin/users/ajax/create', {
+        const response = await fetch(`${window.baseUrl || ''}/admin/users/ajax/create`, {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -450,7 +450,7 @@ async function updateUser() {
             }
         }
         
-        const response = await fetch(`/admin/users/ajax/update/${userId}`, {
+        const response = await fetch(`${window.baseUrl || ''}/admin/users/ajax/update/${userId}`, {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -509,7 +509,7 @@ async function deleteUser(userId, userName) {
         // Add CSRF token
         const csrfData = getCSRFData();
         
-        const response = await fetch(`/admin/users/ajax/delete/${userId}`, {
+        const response = await fetch(`${window.baseUrl || ''}/admin/users/ajax/delete/${userId}`, {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',

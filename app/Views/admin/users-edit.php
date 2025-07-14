@@ -14,6 +14,8 @@
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     
+    <!-- Dashboard CSS -->
+    <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="<?= base_url('assets/css/admin/users-edit.css') ?>" rel="stylesheet">
     
@@ -22,6 +24,40 @@
     <meta name="csrf-hash" content="<?= csrf_hash() ?>">
 </head>
 <body>
+    <!-- Include Enhanced Sidebar -->
+    <?= $this->include('admin/partials/sidebar') ?>
+    <!-- Access Denied Modal -->
+    <?php if (isset($access_denied) && $access_denied): ?>
+    <div class="modal fade" id="accessDeniedModal" tabindex="-1" aria-labelledby="accessDeniedModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="accessDeniedModalLabel">
+                        <i class="bi bi-shield-exclamation me-2"></i>Akses Ditolak
+                    </h5>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="bi bi-lock-fill text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6 class="fw-bold mb-3">Anda tidak memiliki akses ke halaman ini</h6>
+                    <p class="text-muted mb-0"><?= $error_message ?? 'Hanya Super Admin yang dapat mengakses Manajemen Pengguna.' ?></p>
+                </div>
+                <div class="modal-footer justify-content-center border-0">
+                    <button type="button" class="btn btn-danger" onclick="window.history.back()">
+                        <i class="bi bi-arrow-left me-2"></i>Kembali
+                    </button>
+                    <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-secondary">
+                        <i class="bi bi-house me-2"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Main Content -->
+    <?php if (!isset($access_denied) || !$access_denied): ?>
     <!-- Header Section -->
     <header class="page-header">
         <div class="container">
@@ -35,8 +71,8 @@
                         <p class="header-subtitle mb-0">Kelola pengguna sistem dan hak aksesnya</p>
                     </div>
                     <div class="ms-auto">
-                        <a href="<?= base_url('admin/users') ?>" class="btn btn-outline-light">
-                            <i class="bi bi-eye me-2"></i>Lihat Dashboard
+                        <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-outline-light">
+                            <i class="bi bi-eye me-2"></i>Dashboard
                         </a>
                     </div>
                 </div>
@@ -45,7 +81,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="enhanced-main-content">
         <div class="container">
             <!-- Statistics Cards -->
             <div class="row mb-4">
@@ -142,7 +178,9 @@
                 </div>
             </div>
         </div>
+        </div>
     </main>
+    <?php endif; ?>
 
     <!-- Add User Modal -->
     <div class="modal fade" id="addUserModal" tabindex="-1">
@@ -311,6 +349,7 @@
     // Enhanced CSRF token management
     window.csrfToken = "<?= csrf_token() ?>";
     window.csrfHash = "<?= csrf_hash() ?>";
+    window.baseUrl = "<?= base_url() ?>";
     
     // Function to get fresh CSRF data
     function getCSRFData() {
@@ -326,6 +365,14 @@
             document.querySelector('meta[name="csrf-hash"]').setAttribute('content', response.csrf_hash);
         }
     }
+
+    // Show access denied modal if access is denied
+    <?php if (isset($access_denied) && $access_denied): ?>
+    document.addEventListener('DOMContentLoaded', function() {
+        const accessDeniedModal = new bootstrap.Modal(document.getElementById('accessDeniedModal'));
+        accessDeniedModal.show();
+    });
+    <?php endif; ?>
     </script>
 </body>
 </html>

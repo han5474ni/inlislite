@@ -19,92 +19,21 @@
     <link href="<?= base_url('assets/css/admin/registration_view.css') ?>" rel="stylesheet">
 </head>
 <body>
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
-        <i data-feather="menu"></i>
-    </button>
-
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
-                <div class="sidebar-logo-icon">
-                    <img src="<?= base_url('assets/images/logo.png') ?>" alt="INLISLite Logo" style="width: 24px; height: 24px;">
-                </div>
-                <div class="sidebar-title">
-                    INLISlite v3.0<br>
-                    <small style="font-size: 0.85rem; opacity: 0.8;">Dashboard</small>
-                </div>
-            </a>
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i data-feather="chevrons-left"></i>
-            </button>
-        </div>
-        
-        <div class="sidebar-nav">
-            <div class="nav-item">
-                <a href="<?= base_url('admin/dashboard') ?>" class="nav-link">
-                    <i data-feather="home" class="nav-icon"></i>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-                <div class="nav-tooltip">Dashboard</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/users') ?>" class="nav-link">
-                    <i data-feather="users" class="nav-icon"></i>
-                    <span class="nav-text">Manajemen User</span>
-                </a>
-                <div class="nav-tooltip">Manajemen User</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/registration') ?>" class="nav-link active">
-                    <i data-feather="book" class="nav-icon"></i>
-                    <span class="nav-text">Registrasi</span>
-                </a>
-                <div class="nav-tooltip">Registrasi</div>
-            </div>
-            <div class="nav-item">
-                <a href="<?= base_url('admin/profile') ?>" class="nav-link">
-                    <i data-feather="user" class="nav-icon"></i>
-                    <span class="nav-text">Profile</span>
-                </a>
-                <div class="nav-tooltip">Profile</div>
-            </div>
-            
-            <!-- Logout Button -->
-            <div class="nav-item logout-item">
-                <a href="<?= base_url('admin/secure-logout') ?>" class="nav-link logout-link" onclick="return confirmLogout()">
-                    <i data-feather="log-out" class="nav-icon"></i>
-                    <span class="nav-text">Logout</span>
-                </a>
-                <div class="nav-tooltip">Logout</div>
-            </div>
-        </div>
-    </nav>
+    <!-- Include Enhanced Sidebar -->
+    <?= $this->include('admin/partials/sidebar') ?>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="page-container" data-registration-id="<?= $registration['id'] ?? '' ?>">
-            <!-- Page Header -->
-            <div class="page-header">
-                <div class="header-top">
-                    <div class="header-left">
-                        <div class="header-icon">
-                            <i class="bi bi-book"></i>
-                        </div>
-                        <div>
-                            <h1 class="page-title">Registrasi Inlislite</h1>
-                            <p class="page-subtitle">Kelola pengguna sistem dan hak aksesnya</p>
-                        </div>
-                    </div>
-                    <div class="header-right">
-                        <a href="<?= base_url('admin/registration') ?>" class="back-btn">
-                            <i class="bi bi-arrow-left"></i>
-                            Kembali
-                        </a>
-                    </div>
+    <main class="enhanced-main-content">
+        <div class="dashboard-container">
+            <div class="header-card">
+                <div class="content-header">
+                    <h1 class="main-title">Registrasi Inlislite</h1>
+                    <p class="main-subtitle">Kelola pengguna sistem dan hak aksesnya</p>
                 </div>
             </div>
+            
+            
+        <div class="page-container" data-registration-id="<?= $registration['id'] ?? '' ?>">
 
             <!-- Library Main Card -->
             <div class="library-main-card">
@@ -338,6 +267,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </main>
 
