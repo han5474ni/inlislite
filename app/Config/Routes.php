@@ -44,6 +44,9 @@ $routes->get('bimbingan', 'PublicController::bimbingan');
 $routes->get('training', 'PublicController::bimbingan');
 $routes->get('demo', 'PublicController::demo');
 $routes->get('demo-program', 'PublicController::demo');
+$routes->get('public/demo/details/(:num)', 'PublicController::demoDetails/$1');
+$routes->get('public/demo/download/(:num)', 'PublicController::downloadDemo/$1');
+$routes->post('public/demo/track-access', 'PublicController::trackDemoAccess');
 $routes->get('installer-edit', 'Admin\InstallerController::edit');
 
 // Demo routes (Public for testing - REMOVE IN PRODUCTION)

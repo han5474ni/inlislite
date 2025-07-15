@@ -116,16 +116,31 @@ class DemoController extends BaseController
             // Prepare data for insertion
             $data = [
                 'title' => $input['title'],
+                'subtitle' => $input['subtitle'] ?? '',
                 'description' => $input['description'] ?? '',
-                'platform' => $input['platform'] ?? '',
+                'category' => $input['category'] ?? '',
+                'demo_type' => $input['demo_type'] ?? '',
                 'version' => $input['version'] ?? '',
-                'url' => $input['url'] ?? '',
-                'username' => $input['username'] ?? '',
-                'password' => $input['password'] ?? '',
+                'demo_url' => $input['demo_url'] ?? '',
+                'icon' => $input['icon'] ?? '',
                 'features' => $input['features'] ?? '',
+                'access_level' => $input['access_level'] ?? 'public',
                 'status' => $input['status'] ?? 'active',
-                'sort_order' => $input['sort_order'] ?? 1
+                'sort_order' => $input['sort_order'] ?? 1,
+                'is_featured' => $input['is_featured'] ?? 0
             ];
+            
+            // Handle file upload if present
+            $file = $this->request->getFile('demo_file');
+            if ($file && $file->isValid() && !$file->hasMoved()) {
+                $newName = $file->getRandomName();
+                $file->move(ROOTPATH . 'public/uploads/demo', $newName);
+                
+                $data['file_name'] = $file->getClientName();
+                $data['file_path'] = 'uploads/demo/' . $newName;
+                $data['file_size'] = $file->getSize();
+                $data['file_type'] = $file->getClientMimeType();
+            }
             
             $demoId = $this->demoModel->insert($data);
             
@@ -184,16 +199,53 @@ class DemoController extends BaseController
             // Prepare data for update
             $data = [
                 'title' => $input['title'],
+                'subtitle' => $input['subtitle'] ?? $existingDemo['subtitle'] ?? '',
                 'description' => $input['description'] ?? $existingDemo['description'],
-                'platform' => $input['platform'] ?? $existingDemo['platform'],
+                'category' => $input['category'] ?? $existingDemo['category'] ?? '',
+                'demo_type' => $input['demo_type'] ?? $existingDemo['demo_type'] ?? '',
                 'version' => $input['version'] ?? $existingDemo['version'],
-                'url' => $input['url'] ?? $existingDemo['url'],
-                'username' => $input['username'] ?? $existingDemo['username'],
-                'password' => $input['password'] ?? $existingDemo['password'],
+                'demo_url' => $input['demo_url'] ?? $existingDemo['demo_url'] ?? '',
+                'icon' => $input['icon'] ?? $existingDemo['icon'] ?? '',
                 'features' => $input['features'] ?? $existingDemo['features'],
+                'access_level' => $input['access_level'] ?? $existingDemo['access_level'] ?? 'public',
                 'status' => $input['status'] ?? $existingDemo['status'],
-                'sort_order' => $input['sort_order'] ?? $existingDemo['sort_order']
+                'sort_order' => $input['sort_order'] ?? $existingDemo['sort_order'],
+                'is_featured' => $input['is_featured'] ?? $existingDemo['is_featured'] ?? 0,
+                'file_name' => $existingDemo['file_name'] ?? null,
+                'file_path' => $existingDemo['file_path'] ?? null,
+                'file_size' => $existingDemo['file_size'] ?? null,
+                'file_type' => $existingDemo['file_type'] ?? null
             ];
+            
+            // Handle file upload if present
+            $file = $this->request->getFile('demo_file');
+            if ($file && $file->isValid() && !$file->hasMoved()) {
+                // Delete old file if exists
+                if (!empty($existingDemo['file_path']) && file_exists(ROOTPATH . 'public/' . $existingDemo['file_path'])) {
+                    unlink(ROOTPATH . 'public/' . $existingDemo['file_path']);
+                }
+                
+                $newName = $file->getRandomName();
+                $file->move(ROOTPATH . 'public/uploads/demo', $newName);
+                
+                $data['file_name'] = $file->getClientName();
+                $data['file_path'] = 'uploads/demo/' . $newName;
+                $data['file_size'] = $file->getSize();
+                $data['file_type'] = $file->getClientMimeType();
+            }
+            
+            // Handle file removal if requested
+            if (isset($input['remove_file']) && $input['remove_file'] === true) {
+                // Delete file if exists
+                if (!empty($existingDemo['file_path']) && file_exists(ROOTPATH . 'public/' . $existingDemo['file_path'])) {
+                    unlink(ROOTPATH . 'public/' . $existingDemo['file_path']);
+                }
+                
+                $data['file_name'] = null;
+                $data['file_path'] = null;
+                $data['file_size'] = null;
+                $data['file_type'] = null;
+            }
             
             $updated = $this->demoModel->update($id, $data);
             
@@ -233,6 +285,11 @@ class DemoController extends BaseController
                     'success' => false,
                     'message' => 'Demo tidak ditemukan'
                 ]);
+            }
+            
+            // Delete associated file if exists
+            if (!empty($demo['file_path']) && file_exists(ROOTPATH . 'public/' . $demo['file_path'])) {
+                unlink(ROOTPATH . 'public/' . $demo['file_path']);
             }
             
             $deleted = $this->demoModel->delete($id);

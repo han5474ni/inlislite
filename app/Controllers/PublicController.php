@@ -226,6 +226,125 @@ class PublicController extends BaseController
         return view('public/demo', $data);
     }
     
+    /**
+     * Get demo details by ID
+     * 
+     * @param int $id Demo ID
+     * @return \CodeIgniter\HTTP\Response
+     */
+    public function demoDetails($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'ID demo tidak valid'
+            ]);
+        }
+        
+        try {
+            $demoModel = new DemoModel();
+            $demo = $demoModel->find($id);
+            
+            if (!$demo) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Demo tidak ditemukan'
+                ]);
+            }
+            
+            // Increment view count
+            $demoModel->update($id, [
+                'view_count' => ($demo['view_count'] ?? 0) + 1
+            ]);
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'demo' => $demo
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Error getting demo details: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memuat detail demo'
+            ]);
+        }
+    }
+    
+    /**
+     * Download demo file
+     * 
+     * @param int $id Demo ID
+     * @return \CodeIgniter\HTTP\DownloadResponse|\CodeIgniter\HTTP\Response
+     */
+    public function downloadDemo($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'ID demo tidak valid'
+            ]);
+        }
+        
+        try {
+            $demoModel = new DemoModel();
+            $demo = $demoModel->find($id);
+            
+            if (!$demo || !isset($demo['file_path']) || !isset($demo['file_name'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'File demo tidak ditemukan'
+                ]);
+            }
+            
+            $filePath = FCPATH . $demo['file_path'];
+            
+            if (!file_exists($filePath)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'File demo tidak ditemukan di server'
+                ]);
+            }
+            
+            // Track download
+            $demoModel->update($id, [
+                'download_count' => ($demo['download_count'] ?? 0) + 1
+            ]);
+            
+            return $this->response->download($filePath, null);
+        } catch (\Exception $e) {
+            log_message('error', 'Error downloading demo file: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengunduh file demo'
+            ]);
+        }
+    }
+    
+    /**
+     * Track demo access
+     * 
+     * @return \CodeIgniter\HTTP\Response
+     */
+    public function trackDemoAccess()
+    {
+        $url = $this->request->getJSON(true)['url'] ?? null;
+        
+        if (!$url) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'URL tidak valid'
+            ]);
+        }
+        
+        // Log access for analytics
+        log_message('info', 'Demo accessed: ' . $url);
+        
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Akses demo berhasil dicatat'
+        ]);
+    }
+    
     // Default/fallback data methods
     private function getDefaultAboutContent()
     {

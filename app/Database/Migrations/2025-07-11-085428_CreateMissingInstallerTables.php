@@ -284,6 +284,15 @@ class CreateMissingInstallerTables extends Migration
 
     private function insertDefaultData()
     {
+        // Check if installer_settings table exists and has data
+        if ($this->db->tableExists('installer_settings')) {
+            $existingSettings = $this->db->table('installer_settings')->countAllResults();
+            if ($existingSettings > 0) {
+                // Data already exists, skip insertion
+                return;
+            }
+        }
+        
         // Insert default installer settings
         $settingsData = [
             [

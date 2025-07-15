@@ -164,10 +164,12 @@ class CrudTestController extends BaseController
             
             // CREATE
             $testData = [
-                'nama_fitur' => 'Test Feature',
-                'deskripsi' => 'Test feature description',
-                'kategori' => 'utility',
+                'title' => 'Test Feature',
+                'description' => 'Test feature description',
                 'icon' => 'bi-test',
+                'color' => 'green',
+                'type' => 'feature',
+                'module_type' => null,
                 'status' => 'active',
                 'sort_order' => 999
             ];
@@ -178,11 +180,11 @@ class CrudTestController extends BaseController
                 
                 // READ
                 $record = $fiturModel->find($insertId);
-                if ($record && $record['nama_fitur'] === 'Test Feature') {
+                if ($record && $record['title'] === 'Test Feature') {
                     $results[] = "✅ Fitur read: SUCCESS";
                     
                     // UPDATE
-                    $updateData = ['nama_fitur' => 'Updated Test Feature'];
+                    $updateData = ['title' => 'Updated Test Feature'];
                     if ($fiturModel->update($insertId, $updateData)) {
                         $results[] = "✅ Fitur UPDATE: SUCCESS";
                     } else {

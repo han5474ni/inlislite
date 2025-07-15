@@ -14,6 +14,35 @@ function initializeDemoPage() {
     initializeCopyButtons();
     initializeDemoButtons();
     initializeAnimations();
+    initAccessDemoButton();
+}
+
+/**
+ * Initialize access demo button
+ */
+function initAccessDemoButton() {
+    const accessBtn = document.getElementById('accessDemoBtn');
+    if (accessBtn) {
+        accessBtn.addEventListener('click', function() {
+            const demoUrl = this.getAttribute('data-url');
+            if (demoUrl) {
+                // Track demo access
+                fetch('/public/demo/track-access', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ url: demoUrl })
+                }).catch(error => console.error('Error tracking demo access:', error));
+                
+                // Open demo in new tab
+                window.open(demoUrl, '_blank');
+            } else {
+                showToast('URL demo tidak tersedia', 'warning');
+            }
+        });
+    }
 }
 
 /**
@@ -91,6 +120,20 @@ function initializeAnimations() {
 }
 
 /**
+ * Format file size in bytes to human-readable format
+ * @param {number} bytes - File size in bytes
+ * @returns {string} Formatted file size
+ */
+function formatFileSize(bytes) {
+    if (!bytes || isNaN(bytes)) return '0 Bytes';
+    
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    
+    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+/**
  * Show demo details modal
  * @param {number} demoId - Demo ID
  */
@@ -110,17 +153,67 @@ function showDemoDetails(demoId) {
     
     modal.show();
     
-    // Simulate loading demo details
-    setTimeout(() => {
-        document.getElementById('demoDetailsContent').innerHTML = generateDemoDetailsContent();
-    }, 1000);
+    // Fetch demo details
+    fetch(`/public/demo/details/${demoId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.demo) {
+                document.getElementById('demoDetailsContent').innerHTML = generateDemoDetailsContent(data.demo);
+                
+                // Update access demo button URL if available
+                const accessBtn = document.getElementById('accessDemoBtn');
+                if (accessBtn && data.demo.url) {
+                    accessBtn.setAttribute('data-url', data.demo.url);
+                    accessBtn.style.display = 'block';
+                } else if (accessBtn) {
+                    accessBtn.style.display = 'none';
+                }
+            } else {
+                document.getElementById('demoDetailsContent').innerHTML = generateDemoDetailsContent();
+                showToast('Gagal memuat detail demo', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching demo details:', error);
+            document.getElementById('demoDetailsContent').innerHTML = generateDemoDetailsContent();
+            showToast('Terjadi kesalahan saat memuat detail demo', 'danger');
+        });
 }
 
 /**
  * Generate demo details content
+ * @param {Object} demo - Demo data
  * @returns {string} HTML content
  */
-function generateDemoDetailsContent() {
+function generateDemoDetailsContent(demo = null) {
+    // If no demo data is provided, use placeholder content
+    if (!demo) {
+        demo = {
+            title: 'Demo Program',
+            description: 'Informasi demo tidak tersedia',
+            features: 'Katalogisasi,Sirkulasi,Keanggotaan,Pelaporan,OPAC,Administrasi'
+        };
+    }
+    
+    // Parse features if available
+    const features = demo.features ? demo.features.split(',').map(f => f.trim()) : [];
+    
+    // Generate file download section if file is available
+    const fileDownloadSection = demo.file_path && demo.file_name ? `
+        <div class="mt-4 p-3 bg-light rounded">
+            <h6><i class="bi bi-file-earmark-arrow-down me-2"></i>File Demo</h6>
+            <div class="d-flex align-items-center">
+                <div>
+                    <p class="mb-1">${demo.file_name}</p>
+                    <small class="text-muted">${formatFileSize(demo.file_size || 0)}</small>
+                </div>
+                <a href="/public/demo/download/${demo.id}" class="btn btn-sm btn-primary ms-auto">
+                    <i class="bi bi-download me-1"></i> Download
+                </a>
+            </div>
+        </div>
+    ` : '';
+    
     return `
         <div class="row">
             <div class="col-md-8">
@@ -151,6 +244,7 @@ function generateDemoDetailsContent() {
                         </div>
                     </div>
                 </div>
+                ${fileDownloadSection}
             </div>
             <div class="col-md-4">
                 <h6>Informasi Demo</h6>
@@ -164,12 +258,15 @@ function generateDemoDetailsContent() {
                 
                 <h6 class="mt-4">Fitur yang Dapat Dicoba</h6>
                 <ul class="list-unstyled">
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Katalogisasi</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Sirkulasi</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Keanggotaan</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Pelaporan</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>OPAC</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Administrasi</li>
+                    ${features.length > 0 ? 
+                        features.map(feature => `<li class="mb-1"><i class="bi bi-check text-success me-2"></i>${feature}</li>`).join('') :
+                        `<li class="mb-1"><i class="bi bi-check text-success me-2"></i>Katalogisasi</li>
+                        <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Sirkulasi</li>
+                        <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Keanggotaan</li>
+                        <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Pelaporan</li>
+                        <li class="mb-1"><i class="bi bi-check text-success me-2"></i>OPAC</li>
+                        <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Administrasi</li>`
+                    }
                 </ul>
             </div>
         </div>

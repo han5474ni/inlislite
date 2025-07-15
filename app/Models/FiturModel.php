@@ -240,14 +240,56 @@ class FiturModel extends Model
     /**
      * After find callback
      */
-    protected function afterFind(array $data)
+    protected function afterFind($data)
     {
-        if (isset($data['data'])) {
-            foreach ($data['data'] as &$item) {
-                $item = $this->formatItem($item);
+        // Debug logging - remove after fixing
+        log_message('debug', 'FiturModel::afterFind called with data type: ' . gettype($data) . ', data: ' . json_encode($data));
+        
+        // Early return if data is empty, null, or not an array
+        if (empty($data) || !is_array($data)) {
+            log_message('debug', 'FiturModel::afterFind - early return for empty/non-array data (type: ' . gettype($data) . ')');
+            return $data;
+        }
+        
+        try {
+            if (isset($data['data'])) {
+                // Handle findAll() results - $data['data'] is array of items
+                if (is_array($data['data'])) {
+                    foreach ($data['data'] as &$item) {
+                        if (is_array($item) && isset($item['id'])) {
+                            $item = $this->formatItem($item);
+                        } else {
+                            log_message('debug', 'FiturModel::afterFind - skipping non-array item in data[data]: ' . json_encode($item));
+                        }
+                    }
+                }
+            } elseif (isset($data['id']) && is_array($data)) {
+                // Handle find() results - $data is the item itself
+                $data = $this->formatItem($data);
+            } else {
+                // Handle direct array results
+                if (is_array($data) && !empty($data)) {
+                    // Check if it's an array of items (multiple results)
+                    if (isset($data[0]) && is_array($data[0])) {
+                        foreach ($data as &$item) {
+                            if (is_array($item) && isset($item['id'])) {
+                                $item = $this->formatItem($item);
+                            } else {
+                                log_message('debug', 'FiturModel::afterFind - skipping non-array item in direct results: ' . json_encode($item));
+                            }
+                        }
+                    } else {
+                        // Single item result - ensure it has required fields before formatting
+                        if (isset($data['id'])) {
+                            $data = $this->formatItem($data);
+                        } else {
+                            log_message('debug', 'FiturModel::afterFind - skipping single item without id: ' . json_encode($data));
+                        }
+                    }
+                }
             }
-        } elseif (isset($data['id'])) {
-            $data = $this->formatItem($data);
+        } catch (Exception $e) {
+            log_message('error', 'FiturModel::afterFind - Exception: ' . $e->getMessage() . ', data: ' . json_encode($data));
         }
         
         return $data;

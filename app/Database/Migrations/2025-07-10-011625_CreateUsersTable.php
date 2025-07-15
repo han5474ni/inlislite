@@ -8,7 +8,9 @@ class CreateUsersTable extends Migration
 {
     public function up()
     {
-        $this->forge->addField([
+        // Check if users table exists
+        if (!$this->db->tableExists('users')) {
+            $this->forge->addField([
             'id' => [
                 'type' => 'INT',
                 'constraint' => 11,
@@ -105,6 +107,7 @@ class CreateUsersTable extends Migration
         ];
 
         $this->db->table('users')->insert($data);
+        }
     }
 
     public function down()

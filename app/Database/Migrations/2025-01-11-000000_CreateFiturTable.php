@@ -8,73 +8,79 @@ class CreateFiturTable extends Migration
 {
     public function up()
     {
-        // Create fitur table
-        $this->forge->addField([
-            'id' => [
-                'type' => 'INT',
-                'constraint' => 11,
-                'unsigned' => true,
-                'auto_increment' => true,
-            ],
-            'title' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
-                'null' => false,
-            ],
-            'description' => [
-                'type' => 'TEXT',
-                'null' => false,
-            ],
-            'icon' => [
-                'type' => 'VARCHAR',
-                'constraint' => 100,
-                'null' => false,
-                'default' => 'bi-star',
-            ],
-            'color' => [
-                'type' => 'ENUM',
-                'constraint' => ['blue', 'green', 'orange', 'purple'],
-                'default' => 'blue',
-            ],
-            'type' => [
-                'type' => 'ENUM',
-                'constraint' => ['feature', 'module'],
-                'default' => 'feature',
-            ],
-            'module_type' => [
-                'type' => 'ENUM',
-                'constraint' => ['application', 'database', 'utility'],
-                'null' => true,
-                'default' => null,
-            ],
-            'status' => [
-                'type' => 'ENUM',
-                'constraint' => ['active', 'inactive'],
-                'default' => 'active',
-            ],
-            'sort_order' => [
-                'type' => 'INT',
-                'constraint' => 11,
-                'default' => 0,
-            ],
-            'created_at' => [
-                'type' => 'DATETIME',
-                'null' => true,
-            ],
-            'updated_at' => [
-                'type' => 'DATETIME',
-                'null' => true,
-            ],
-        ]);
+        // Check if fitur table exists
+        if (!$this->db->tableExists('fitur')) {
+            // Create fitur table
+            $this->forge->addField([
+                'id' => [
+                    'type' => 'INT',
+                    'constraint' => 11,
+                    'unsigned' => true,
+                    'auto_increment' => true,
+                ],
+                'title' => [
+                    'type' => 'VARCHAR',
+                    'constraint' => 255,
+                    'null' => false,
+                ],
+                'description' => [
+                    'type' => 'TEXT',
+                    'null' => false,
+                ],
+                'icon' => [
+                    'type' => 'VARCHAR',
+                    'constraint' => 100,
+                    'null' => false,
+                    'default' => 'bi-star',
+                ],
+                'color' => [
+                    'type' => 'ENUM',
+                    'constraint' => ['blue', 'green', 'orange', 'purple'],
+                    'default' => 'blue',
+                ],
+                'type' => [
+                    'type' => 'ENUM',
+                    'constraint' => ['feature', 'module'],
+                    'default' => 'feature',
+                ],
+                'module_type' => [
+                    'type' => 'ENUM',
+                    'constraint' => ['application', 'database', 'utility'],
+                    'null' => true,
+                    'default' => null,
+                ],
+                'status' => [
+                    'type' => 'ENUM',
+                    'constraint' => ['active', 'inactive'],
+                    'default' => 'active',
+                ],
+                'sort_order' => [
+                    'type' => 'INT',
+                    'constraint' => 11,
+                    'default' => 0,
+                ],
+                'created_at' => [
+                    'type' => 'DATETIME',
+                    'null' => true,
+                ],
+                'updated_at' => [
+                    'type' => 'DATETIME',
+                    'null' => true,
+                ],
+            ]);
 
-        $this->forge->addKey('id', true);
-        $this->forge->addKey('type');
-        $this->forge->addKey('status');
-        $this->forge->addKey('sort_order');
-        $this->forge->createTable('fitur');
+            $this->forge->addKey('id', true);
+            $this->forge->addKey('type');
+            $this->forge->addKey('status');
+            $this->forge->addKey('sort_order');
+            $this->forge->createTable('fitur');
 
-        // Insert sample data
-        $this->insertSampleData();
+            // Insert sample data
+            $this->insertSampleData();
+        } else {
+            // If table exists, check if we need to update structure
+            $this->updateTableStructure();
+        }
     }
 
     public function down()
@@ -234,5 +240,53 @@ class CreateFiturTable extends Migration
         ];
 
         $this->db->table('fitur')->insertBatch($data);
+    }
+    
+    private function updateTableStructure()
+    {
+        // Check if table structure needs updating
+        $fields = $this->db->getFieldData('fitur');
+        $fieldNames = array_column($fields, 'name');
+        
+        // Add missing columns if needed
+        $columnsToAdd = [];
+        
+        if (!in_array('color', $fieldNames)) {
+            $columnsToAdd['color'] = [
+                'type' => 'ENUM',
+                'constraint' => ['blue', 'green', 'orange', 'purple'],
+                'default' => 'blue',
+                'after' => 'icon'
+            ];
+        }
+        
+        if (!in_array('type', $fieldNames)) {
+            $columnsToAdd['type'] = [
+                'type' => 'ENUM',
+                'constraint' => ['feature', 'module'],
+                'default' => 'feature',
+                'after' => 'color'
+            ];
+        }
+        
+        if (!in_array('module_type', $fieldNames)) {
+            $columnsToAdd['module_type'] = [
+                'type' => 'ENUM',
+                'constraint' => ['application', 'database', 'utility'],
+                'null' => true,
+                'default' => null,
+                'after' => 'type'
+            ];
+        }
+        
+        if (!empty($columnsToAdd)) {
+            $this->forge->addColumn('fitur', $columnsToAdd);
+        }
+        
+        // Check if we need to insert sample data
+        $existingData = $this->db->table('fitur')->countAllResults();
+        if ($existingData == 0) {
+            $this->insertSampleData();
+        }
     }
 }

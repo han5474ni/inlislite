@@ -8,7 +8,9 @@ class CreateActivityLogsTable extends Migration
 {
     public function up()
     {
-        $this->forge->addField([
+        // Check if activity_logs table exists
+        if (!$this->db->tableExists('activity_logs')) {
+            $this->forge->addField([
             'id' => [
                 'type' => 'INT',
                 'constraint' => 11,
@@ -62,6 +64,7 @@ class CreateActivityLogsTable extends Migration
         $this->forge->addForeignKey('user_id', 'users', 'id', 'SET NULL', 'CASCADE');
         
         $this->forge->createTable('activity_logs');
+        }
     }
 
     public function down()

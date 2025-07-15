@@ -14,15 +14,23 @@ class DemoModel extends Model
     protected $protectFields = true;
     protected $allowedFields = [
         'title',
+        'subtitle',
         'description',
-        'platform',
+        'category',
+        'demo_type',
         'version',
-        'url',
-        'username',
-        'password',
+        'demo_url',
+        'icon',
         'features',
+        'access_level',
         'status',
-        'sort_order'
+        'sort_order',
+        'is_featured',
+        'view_count',
+        'file_name',
+        'file_path',
+        'file_size',
+        'file_type'
     ];
 
     // Dates
