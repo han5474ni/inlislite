@@ -1,6 +1,6 @@
 /**
  * Enhanced Admin Sidebar CSS
- * Modern sidebar styles with Poppins font and blue theme
+ * Modern sidebar styles with Poppins font and blue-green gradient theme
  */
 
 /* Import Poppins Font */
@@ -13,12 +13,12 @@
     top: 0;
     height: 100vh;
     width: 200px;
-    background: #2DA84D;
+    background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 25%, #1e40af 50%, #059669 75%, #047857 100%);
     color: #FFFFFF;
     font-family: 'Poppins', sans-serif;
     z-index: 1000;
     transition: width 0.3s ease;
-    box-shadow: 4px 0 20px rgba(45, 168, 77, 0.15);
+    box-shadow: 4px 0 20px rgba(37, 99, 235, 0.25);
     overflow-y: auto;
 }
 
@@ -43,7 +43,7 @@
     padding: 24px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     text-align: center;
-    background: linear-gradient(135deg, #2F80ED 0%, #56CCF2 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #059669 100%);
 }
 
 .enhanced-sidebar .sidebar-logo {
@@ -84,20 +84,21 @@
     border-radius: 6px;
     position: relative;
     font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .enhanced-sidebar .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     color: #FFFFFF;
+    transform: translateX(4px);
 }
 
 .enhanced-sidebar .nav-link.active {
-    background: #56CCF2;
+    background: linear-gradient(135deg, #3b82f6 0%, #059669 100%);
     font-weight: 700;
     color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
-
-
 
 .enhanced-sidebar .nav-text {
     flex: 1;
@@ -109,18 +110,21 @@
     font-size: 0.75rem;
     margin-left: auto;
     opacity: 0.8;
+    transition: transform 0.3s ease;
 }
 
 .enhanced-sidebar .dropdown-toggle.expanded::after {
     content: '▲';
+    transform: rotate(180deg);
 }
 
 .enhanced-sidebar .submenu {
     max-height: 0;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 6px;
     margin: 4px 0;
+    transition: max-height 0.3s ease;
 }
 
 .enhanced-sidebar .submenu.expanded {
@@ -144,7 +148,7 @@
 }
 
 .enhanced-sidebar .submenu .nav-link.active {
-    background: rgba(86, 204, 242, 0.8);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(5, 150, 105, 0.8) 100%);
     font-weight: 600;
 }
 
@@ -155,19 +159,19 @@
     top: 20px;
     left: 20px;
     z-index: 1001;
-    background: #2F80ED;
+    background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
     color: white;
     border: none;
     padding: 12px;
     border-radius: 10px;
     cursor: pointer;
     font-size: 1.25rem;
-    box-shadow: 0 4px 15px rgba(47, 128, 237, 0.3);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
     transition: all 0.3s ease;
 }
 
 .enhanced-mobile-toggle:hover {
-    background: #56CCF2;
+    background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
     transform: scale(1.05);
 }
 
@@ -194,8 +198,6 @@
 .page-header.sidebar-collapsed {
     margin-left: 90px;
 }
-
-
 
 .enhanced-main-content {
     margin-left: 220px;
@@ -234,6 +236,26 @@
     padding: 20px 30px;
 }
 
+/* Sidebar Footer Styles */
+.sidebar-footer {
+    padding: 15px 0;
+    background: transparent !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-footer .nav-link {
+    color: #FFFFFF !important;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s ease;
+}
+
+.sidebar-footer .nav-link:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #FFFFFF !important;
+    transform: translateX(4px);
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .enhanced-sidebar {
@@ -270,8 +292,6 @@
     display: block;
 }
 
-
-
 /* Legacy sidebar compatibility */
 .sidebar {
     display: none !important;
@@ -285,4 +305,36 @@
     .main-content {
         margin-left: 0;
     }
+}
+
+/* Enhanced animations and effects */
+.enhanced-sidebar .nav-link {
+    position: relative;
+    overflow: hidden;
+}
+
+.enhanced-sidebar .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.enhanced-sidebar .nav-link:hover::before {
+    left: 100%;
+}
+
+/* Improved scrollbar styling */
+.enhanced-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Firefox scrollbar styling */
+.enhanced-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
 }

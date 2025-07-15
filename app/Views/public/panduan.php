@@ -1,23 +1,47 @@
 <?= view('public/layout/header', ['page_title' => $page_title ?? 'Panduan']) ?>
 
 <!-- Page Header -->
-<section class="page-header">
-    <div class="container">
+<header class="page-header" style="
+    position: relative;
+    background: url('https://i.pinimg.com/736x/cd/66/6a/cd666a84ab3c739f356c8b5b366731bb.jpg') center/cover no-repeat;
+    background-attachment: fixed;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+">
+    <!-- Overlay dan efek blur -->
+    <div style="
+        content: '';
+        position: absolute;
+        inset: 0;
+        backdrop-filter: blur(2px);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    "></div>
+
+    <!-- Konten header -->
+    <div class="container" style="position: relative; z-index: 2;">
         <div class="row">
             <div class="col-12">
-                <div class="page-header-content text-center">
-                    <div class="page-icon">
-                        <i class="bi bi-book"></i>
+                <div class="page-header-content text-center" style="padding: 2rem;">
+                    <div class="page-icon mb-3">
+                        <i class="bi bi-book" style="font-size: 4rem; color: white;"></i>
                     </div>
-                    <h1 class="page-title">Panduan</h1>
-                    <p class="page-subtitle">
-                        Panduan lengkap instalasi, konfigurasi, dan penggunaan INLISLite v3. Tutorial step-by-step untuk pemula hingga advanced
+                    <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+                        Panduan
+                    </h1>
+                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 0.85;">
+                        Panduan Pengguna INLISLite Versi 3 PHP Opensource
                     </p>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</header>
 
 <!-- Breadcrumb -->
 <section class="breadcrumb-section">
@@ -32,416 +56,499 @@
 </section>
 
 <!-- Main Content -->
-<section class="main-content">
+<main class="main-content">
     <div class="container">
-        <!-- Quick Start -->
-        <div class="row mb-5">
-            <div class="col-lg-8 mx-auto">
-                <div class="content-card animate-on-scroll">
-                    <div class="card-header text-center">
-                        <h2 class="mb-0">
-                            <i class="bi bi-rocket me-2"></i>
-                            Quick Start Guide
-                        </h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="lead text-center mb-4">
-                            Mulai menggunakan INLISLite v3 dalam 4 langkah mudah
-                        </p>
-                        <div class="row">
-                            <div class="col-md-3 mb-4">
-                                <div class="text-center">
-                                    <div class="quick-step-icon mb-3">
-                                        <i class="bi bi-download" style="font-size: 2.5rem; color: #667eea;"></i>
-                                    </div>
-                                    <h6>1. Download</h6>
-                                    <p class="small text-muted">Download installer INLISLite v3</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-4">
-                                <div class="text-center">
-                                    <div class="quick-step-icon mb-3">
-                                        <i class="bi bi-gear" style="font-size: 2.5rem; color: #28a745;"></i>
-                                    </div>
-                                    <h6>2. Install</h6>
-                                    <p class="small text-muted">Jalankan proses instalasi</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-4">
-                                <div class="text-center">
-                                    <div class="quick-step-icon mb-3">
-                                        <i class="bi bi-sliders" style="font-size: 2.5rem; color: #ffc107;"></i>
-                                    </div>
-                                    <h6>3. Konfigurasi</h6>
-                                    <p class="small text-muted">Setup konfigurasi dasar</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-4">
-                                <div class="text-center">
-                                    <div class="quick-step-icon mb-3">
-                                        <i class="bi bi-play-circle" style="font-size: 2.5rem; color: #dc3545;"></i>
-                                    </div>
-                                    <h6>4. Mulai</h6>
-                                    <p class="small text-muted">Sistem siap digunakan</p>
-                                </div>
-                            </div>
+        
+        <!-- Section: Introduction -->
+        <section class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <article class="content-card animate-on-scroll">
+                        <div class="card-header">
+                            <h2 class="mb-0">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Dokumentasi Resmi INLISLite V3
+                            </h2>
                         </div>
-                        <div class="text-center">
-                            <a href="#installation" class="btn btn-primary-gradient">
-                                <i class="bi bi-arrow-down me-2"></i>
-                                Mulai Instalasi
-                            </a>
+                        <div class="card-body">
+                            <p class="mb-0">
+                                Dokumentasi resmi dan panduan praktis untuk membantu pengguna mengoperasikan semua fitur INLISLite v3. 
+                                Temukan petunjuk lengkap, tutorial, dan referensi teknis untuk memaksimalkan penggunaan sistem perpustakaan Anda.
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search and Add Document Section -->
+        <section class="mb-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="search-section bg-white p-4 rounded-3 shadow-sm border">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8 col-md-7 mb-3 mb-md-0">
+                                <div class="search-container">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0">
+                                            <i class="bi bi-search text-muted"></i>
+                                        </span>
+                                        <input type="text" class="form-control border-start-0 ps-0" placeholder="Cari dokumen..." id="documentSearch">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-5 text-md-end">
+                            
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Guide Categories -->
-        <?php if (isset($guides) && is_array($guides)): ?>
-            <?php foreach ($guides as $index => $category): ?>
-                <div class="row mb-5" id="<?= strtolower($category['category']) ?>">
-                    <div class="col-12">
-                        <div class="content-card animate-on-scroll" style="animation-delay: <?= $index * 0.1 ?>s;">
-                            <div class="card-header">
-                                <div class="d-flex align-items-center">
-                                    <div class="category-icon me-3">
-                                        <i class="<?= $category['icon'] ?>" style="font-size: 2.5rem; color: #667eea;"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="mb-1"><?= esc($category['title']) ?></h3>
-                                        <p class="mb-0 opacity-75">Panduan <?= strtolower($category['title']) ?> INLISLite v3</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-4">
-                                    <?php foreach ($category['guides'] as $guide): ?>
-                                        <div class="col-lg-4 col-md-6">
-                                            <div class="guide-item border rounded p-4 h-100">
-                                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                                    <h5 class="mb-0"><?= esc($guide['title']) ?></h5>
-                                                    <span class="badge <?= $guide['difficulty'] === 'Beginner' ? 'bg-success' : ($guide['difficulty'] === 'Intermediate' ? 'bg-warning' : 'bg-danger') ?>">
-                                                        <?= esc($guide['difficulty']) ?>
-                                                    </span>
-                                                </div>
-                                                <p class="text-muted mb-3"><?= esc($guide['description']) ?></p>
-                                                <div class="guide-meta mb-3">
-                                                    <div class="d-flex align-items-center text-muted small">
-                                                        <i class="bi bi-clock me-1"></i>
-                                                        <span class="me-3"><?= esc($guide['duration']) ?></span>
-                                                        <i class="bi bi-bar-chart me-1"></i>
-                                                        <span><?= esc($guide['difficulty']) ?></span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-grid">
-                                                    <a href="<?= esc($guide['url']) ?>" class="btn btn-outline-primary">
-                                                        <i class="bi bi-book me-2"></i>
-                                                        Baca Panduan
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-
-        <!-- Video Tutorials -->
-        <div class="row mb-5">
-            <div class="col-12">
-                <div class="content-card animate-on-scroll">
-                    <div class="card-header text-center">
-                        <h3 class="mb-0">
-                            <i class="bi bi-play-btn me-2"></i>
-                            Video Tutorial
+        <!-- Available Documentation Section -->
+        <section class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-header mb-4">
+                        <h3 class="section-title">
+                            <i class="bi bi-folder me-2 text-primary"></i>
+                            Dokumentasi Tersedia (6)
                         </h3>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-4">
-                            <div class="col-lg-4 col-md-6">
-                                <div class="video-item">
-                                    <div class="video-thumbnail bg-light rounded mb-3" style="height: 200px; position: relative;">
-                                        <div class="d-flex align-items-center justify-content-center h-100">
-                                            <i class="bi bi-play-circle" style="font-size: 4rem; color: #667eea;"></i>
-                                        </div>
-                                        <div class="video-duration position-absolute bottom-0 end-0 bg-dark text-white px-2 py-1 m-2 rounded">
-                                            15:30
-                                        </div>
-                                    </div>
-                                    <h6>Instalasi INLISLite v3</h6>
-                                    <p class="text-muted small">Tutorial lengkap instalasi dari awal hingga selesai</p>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="playVideo('install')">
-                                        <i class="bi bi-play me-1"></i>
-                                        Tonton
-                                    </button>
+                    
+                    <div class="row g-4">
+                        <!-- Document 1 -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="document-card">
+                                <div class="document-icon">
+                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6">
-                                <div class="video-item">
-                                    <div class="video-thumbnail bg-light rounded mb-3" style="height: 200px; position: relative;">
-                                        <div class="d-flex align-items-center justify-content-center h-100">
-                                            <i class="bi bi-play-circle" style="font-size: 4rem; color: #28a745;"></i>
-                                        </div>
-                                        <div class="video-duration position-absolute bottom-0 end-0 bg-dark text-white px-2 py-1 m-2 rounded">
-                                            22:45
-                                        </div>
+                                <div class="document-content">
+                                    <h5 class="document-title">User Guide Revision 16062016 – Full Module</h5>
+                                    <p class="document-description">
+                                        Panduan lengkap penggunaan semua modul INLISLite v3 dengan fitur terbaru dan update terkini.
+                                    </p>
+                                    <div class="document-meta">
+                                        <span class="file-type">PDF</span>
+                                        <span class="file-size">12 MB</span>
+                                        <span class="file-version">v3.2.1</span>
                                     </div>
-                                    <h6>Konfigurasi Sistem</h6>
-                                    <p class="text-muted small">Panduan konfigurasi dasar dan advanced setting</p>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="playVideo('config')">
-                                        <i class="bi bi-play me-1"></i>
-                                        Tonton
-                                    </button>
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6">
-                                <div class="video-item">
-                                    <div class="video-thumbnail bg-light rounded mb-3" style="height: 200px; position: relative;">
-                                        <div class="d-flex align-items-center justify-content-center h-100">
-                                            <i class="bi bi-play-circle" style="font-size: 4rem; color: #ffc107;"></i>
-                                        </div>
-                                        <div class="video-duration position-absolute bottom-0 end-0 bg-dark text-white px-2 py-1 m-2 rounded">
-                                            18:20
-                                        </div>
-                                    </div>
-                                    <h6>Penggunaan Dasar</h6>
-                                    <p class="text-muted small">Tutorial penggunaan fitur-fitur utama sistem</p>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="playVideo('usage')">
-                                        <i class="bi bi-play me-1"></i>
-                                        Tonton
+                                <div class="document-actions">
+                                    <button class="btn btn-success btn-sm">
+                                        <i class="bi bi-download me-1"></i>
+                                        Download
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- FAQ Section -->
-        <div class="row mb-5">
-            <div class="col-lg-8 mx-auto">
-                <div class="content-card animate-on-scroll">
-                    <div class="card-header text-center">
-                        <h3 class="mb-0">
-                            <i class="bi bi-question-circle me-2"></i>
-                            Frequently Asked Questions
-                        </h3>
+                        <!-- Document 2 -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="document-card">
+                                <div class="document-icon">
+                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                </div>
+                                <div class="document-content">
+                                    <h5 class="document-title">Installation Guide for PHP Platform</h5>
+                                    <p class="document-description">
+                                        Petunjuk instalasi lengkap INLISLite v3 pada platform PHP dengan berbagai konfigurasi server.
+                                    </p>
+                                    <div class="document-meta">
+                                        <span class="file-type">PDF</span>
+                                        <span class="file-size">8.5 MB</span>
+                                        <span class="file-version">v3.2.0</span>
+                                    </div>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="btn btn-success btn-sm">
+                                        <i class="bi bi-download me-1"></i>
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Document 3 -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="document-card">
+                                <div class="document-icon">
+                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                </div>
+                                <div class="document-content">
+                                    <h5 class="document-title">Cataloging Module User Manual</h5>
+                                    <p class="document-description">
+                                        Panduan khusus untuk modul katalogisasi dengan standar MARC dan pengolahan bahan pustaka.
+                                    </p>
+                                    <div class="document-meta">
+                                        <span class="file-type">PDF</span>
+                                        <span class="file-size">15.2 MB</span>
+                                        <span class="file-version">v3.1.8</span>
+                                    </div>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="btn btn-success btn-sm">
+                                        <i class="bi bi-download me-1"></i>
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Document 4 -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="document-card">
+                                <div class="document-icon">
+                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                </div>
+                                <div class="document-content">
+                                    <h5 class="document-title">Circulation System Guide</h5>
+                                    <p class="document-description">
+                                        Manual penggunaan sistem sirkulasi untuk peminjaman, pengembalian, dan manajemen anggota.
+                                    </p>
+                                    <div class="document-meta">
+                                        <span class="file-type">PDF</span>
+                                        <span class="file-size">9.8 MB</span>
+                                        <span class="file-version">v3.2.1</span>
+                                    </div>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="btn btn-success btn-sm">
+                                        <i class="bi bi-download me-1"></i>
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Document 5 -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="document-card">
+                                <div class="document-icon">
+                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                </div>
+                                <div class="document-content">
+                                    <h5 class="document-title">OPAC Configuration Manual</h5>
+                                    <p class="document-description">
+                                        Panduan konfigurasi dan kustomisasi OPAC (Online Public Access Catalog) untuk pengguna akhir.
+                                    </p>
+                                    <div class="document-meta">
+                                        <span class="file-type">PDF</span>
+                                        <span class="file-size">6.4 MB</span>
+                                        <span class="file-version">v3.1.9</span>
+                                    </div>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="btn btn-success btn-sm">
+                                        <i class="bi bi-download me-1"></i>
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Document 6 -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="document-card">
+                                <div class="document-icon">
+                                    <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                </div>
+                                <div class="document-content">
+                                    <h5 class="document-title">System Administration Guide</h5>
+                                    <p class="document-description">
+                                        Panduan administrasi sistem untuk pengelolaan pengguna, backup, dan maintenance INLISLite v3.
+                                    </p>
+                                    <div class="document-meta">
+                                        <span class="file-type">PDF</span>
+                                        <span class="file-size">11.7 MB</span>
+                                        <span class="file-version">v3.2.0</span>
+                                    </div>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="btn btn-success btn-sm">
+                                        <i class="bi bi-download me-1"></i>
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="accordion" id="faqAccordion">
-                            <div class="accordion-item border-0 mb-3">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                        Bagaimana cara menginstall INLISLite v3?
-                                    </button>
-                                </h2>
-                                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <p>Untuk menginstall INLISLite v3, ikuti langkah-langkah berikut:</p>
-                                        <ol>
-                                            <li>Download installer dari halaman aplikasi</li>
-                                            <li>Pastikan server memenuhi system requirements</li>
-                                            <li>Jalankan installer dan ikuti wizard instalasi</li>
-                                            <li>Konfigurasi database dan setting dasar</li>
-                                            <li>Akses sistem melalui web browser</li>
-                                        </ol>
-                                        <a href="#installation" class="btn btn-sm btn-primary-gradient">Panduan Detail</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Additional Resources Section -->
+        <section class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <article class="content-card animate-on-scroll">
+                        <div class="card-header">
+                            <h2 class="mb-0">
+                                <i class="bi bi-link-45deg me-2"></i>
+                                Sumber Daya Tambahan
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="bi bi-download text-primary"></i>
+                                        </div>
+                                        <div class="resource-content">
+                                            <h5 class="resource-title">Petunjuk Instalasi</h5>
+                                            <p class="resource-description">Petunjuk instalasi lengkap untuk platform PHP</p>
+                                            <a href="<?= base_url('installer') ?>" class="resource-link">
+                                                Installer > Platform PHP <i class="bi bi-arrow-right ms-1"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div class="accordion-item border-0 mb-3">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                        Apa saja system requirements yang diperlukan?
-                                    </button>
-                                </h2>
-                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <p><strong>Server Requirements:</strong></p>
-                                        <ul>
-                                            <li>Operating System: Linux/Windows Server</li>
-                                            <li>Web Server: Apache/Nginx</li>
-                                            <li>Database: MySQL 5.7+ atau PostgreSQL 10+</li>
-                                            <li>PHP: Version 8.0 atau lebih tinggi</li>
-                                            <li>Memory: Minimum 4GB RAM</li>
-                                            <li>Storage: Minimum 20GB free space</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="accordion-item border-0 mb-3">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                        Bagaimana cara backup dan restore data?
-                                    </button>
-                                </h2>
-                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <p>INLISLite v3 menyediakan fitur backup otomatis dan manual:</p>
-                                        <ul>
-                                            <li><strong>Backup Otomatis:</strong> Dapat dijadwalkan harian/mingguan</li>
-                                            <li><strong>Backup Manual:</strong> Melalui menu Administrasi > Backup</li>
-                                            <li><strong>Restore:</strong> Upload file backup melalui menu Restore</li>
-                                        </ul>
-                                        <p>Backup mencakup database dan file sistem.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="accordion-item border-0 mb-3">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                                        Bagaimana cara migrasi dari sistem lama?
-                                    </button>
-                                </h2>
-                                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <p>Tersedia tool migrasi data yang mendukung:</p>
-                                        <ul>
-                                            <li>Import dari Excel/CSV</li>
-                                            <li>Migrasi dari INLISLite versi sebelumnya</li>
-                                            <li>Import dari sistem perpustakaan lain</li>
-                                            <li>Validasi data otomatis</li>
-                                        </ul>
-                                        <a href="<?= base_url('aplikasi') ?>" class="btn btn-sm btn-outline-primary">Download Migration Tool</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="accordion-item border-0">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
-                                        Dimana bisa mendapat bantuan jika ada masalah?
-                                    </button>
-                                </h2>
-                                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <p>Anda dapat mendapat bantuan melalui:</p>
-                                        <ul>
-                                            <li><strong>Dukungan Teknis:</strong> Email, live chat, atau telepon</li>
-                                            <li><strong>Forum Komunitas:</strong> Diskusi dengan pengguna lain</li>
-                                            <li><strong>Dokumentasi:</strong> Panduan lengkap online</li>
-                                            <li><strong>Pelatihan:</strong> Workshop dan bimbingan teknis</li>
-                                        </ul>
-                                        <div class="d-flex gap-2 flex-wrap">
-                                            <a href="<?= base_url('dukungan') ?>" class="btn btn-sm btn-primary-gradient">Dukungan Teknis</a>
-                                            <a href="<?= base_url('bimbingan') ?>" class="btn btn-sm btn-outline-primary">Pelatihan</a>
+                                <div class="col-md-6">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="bi bi-arrow-clockwise text-success"></i>
+                                        </div>
+                                        <div class="resource-content">
+                                            <h5 class="resource-title">Petunjuk Update</h5>
+                                            <p class="resource-description">Panduan update dan patch sistem terbaru</p>
+                                            <a href="<?= base_url('patch') ?>" class="resource-link">
+                                                Patch & Updater > Platform PHP <i class="bi bi-arrow-right ms-1"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Download Resources -->
-        <div class="row">
-            <div class="col-12">
-                <div class="content-card animate-on-scroll">
-                    <div class="card-header text-center">
-                        <h3 class="mb-0">
-                            <i class="bi bi-download me-2"></i>
-                            Download Resources
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-4">
-                            <div class="col-lg-3 col-md-6">
-                                <div class="resource-item text-center p-4 border rounded">
-                                    <i class="bi bi-file-pdf text-danger" style="font-size: 3rem;"></i>
-                                    <h6 class="mt-3">Installation Guide</h6>
-                                    <p class="text-muted small">Panduan instalasi lengkap format PDF</p>
-                                    <a href="#" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-download me-1"></i>
-                                        Download PDF
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="resource-item text-center p-4 border rounded">
-                                    <i class="bi bi-file-word text-primary" style="font-size: 3rem;"></i>
-                                    <h6 class="mt-3">User Manual</h6>
-                                    <p class="text-muted small">Manual pengguna format Word</p>
-                                    <a href="#" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-download me-1"></i>
-                                        Download DOC
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="resource-item text-center p-4 border rounded">
-                                    <i class="bi bi-file-slides text-warning" style="font-size: 3rem;"></i>
-                                    <h6 class="mt-3">Training Slides</h6>
-                                    <p class="text-muted small">Materi pelatihan PowerPoint</p>
-                                    <a href="#" class="btn btn-sm btn-outline-warning">
-                                        <i class="bi bi-download me-1"></i>
-                                        Download PPT
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="resource-item text-center p-4 border rounded">
-                                    <i class="bi bi-file-zip text-success" style="font-size: 3rem;"></i>
-                                    <h6 class="mt-3">Sample Data</h6>
-                                    <p class="text-muted small">Data contoh untuk testing</p>
-                                    <a href="#" class="btn btn-sm btn-outline-success">
-                                        <i class="bi bi-download me-1"></i>
-                                        Download ZIP
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-</section>
+</main>
 
-<!-- Video Modal -->
-<div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="videoModalLabel">Video Tutorial</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="ratio ratio-16x9">
-                    <div id="videoPlayer" class="bg-dark d-flex align-items-center justify-content-center">
-                        <div class="text-white text-center">
-                            <i class="bi bi-play-circle" style="font-size: 4rem;"></i>
-                            <p class="mt-2">Video akan diputar di sini</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function playVideo(videoType) {
-    const modal = new bootstrap.Modal(document.getElementById('videoModal'));
-    const videoTitles = {
-        'install': 'Tutorial Instalasi INLISLite v3',
-        'config': 'Tutorial Konfigurasi Sistem',
-        'usage': 'Tutorial Penggunaan Dasar'
-    };
-    
-    document.getElementById('videoModalLabel').textContent = videoTitles[videoType] || 'Video Tutorial';
-    modal.show();
+<style>
+/* Search Section */
+.search-section {
+    border: 1px solid #e5e7eb;
 }
-</script>
+
+.search-container .input-group-text {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.search-container .form-control {
+    border-color: #dee2e6;
+}
+
+.search-container .form-control:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+/* Section Header */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0;
+}
+
+/* Document Cards */
+.document-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.document-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #2563eb, #10b981);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.document-card:hover::before {
+    transform: scaleX(1);
+}
+
+.document-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
+}
+
+.document-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fee2e2;
+    border-radius: 12px;
+}
+
+.document-icon i {
+    font-size: 1.5rem;
+}
+
+.document-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.document-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.document-description {
+    color: #6b7280;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.document-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.document-meta span {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.file-type {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.file-size {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.file-version {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.document-actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+}
+
+/* Resource Items */
+.resource-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.resource-item:hover {
+    background: #f1f5f9;
+    border-color: #d1d5db;
+    transform: translateY(-2px);
+}
+
+.resource-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.resource-icon i {
+    font-size: 1.25rem;
+}
+
+.resource-content {
+    flex: 1;
+}
+
+.resource-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.resource-description {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+}
+
+.resource-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.resource-link:hover {
+    color: #1d4ed8;
+    gap: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .document-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .document-actions {
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .resource-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .document-meta {
+        justify-content: center;
+    }
+}
+</style>
 
 <?= view('public/layout/footer') ?>

@@ -29,7 +29,7 @@
             <div class="col-12">
                 <div class="page-header-content text-center" style="padding: 2rem;">
                     <div class="page-icon mb-3">
-                        <img src="<?= base_url('assets/images/ikon aplikasi pendukung.svg') ?>" alt="Aplikasi Pendukung" style="height: 80px; max-width: 100%;">
+                        <img src="<?= base_url('assets/images/aplikasi.svg') ?>" alt="Aplikasi Pendukung" style="height: 80px; max-width: 100%;">
                     </div>
                     <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
                         Aplikasi Pendukung

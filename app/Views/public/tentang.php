@@ -370,6 +370,23 @@
     z-index: -1;
     transform: scale(1.05); /* Hindari tepi blur */
 }
+/* Tambahkan warna background ke card-header bergantian */
+.content-card .card-header {
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    color: #fff;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Card ganjil - biru */
+.content-card:nth-of-type(odd) .card-header {
+    background-color: #2563eb;
+}
+
+/* Card genap - hijau */
+.content-card:nth-of-type(even) .card-header {
+    background-color: #22c55e;
+}
 
 </style>
 

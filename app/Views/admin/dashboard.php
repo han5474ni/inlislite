@@ -39,7 +39,7 @@
         </div>
 
         <!-- Charts Section -->
-        <div class="row">
+        <div class="row mb-5">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
@@ -238,29 +238,76 @@
     <script src="<?= base_url('assets/js/admin/dashboard.js') ?>"></script>
     
     <style>
+        /* Modern Color Palette - Matching tentang.php */
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --secondary-green: #059669;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-800: #1f2937;
+            --border-radius: 16px;
+            --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --box-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Override body background to match tentang.php */
+        body {
+            background: var(--gray-50) !important;
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Main content area background */
+        .enhanced-main-content {
+            background: var(--gray-50) !important;
+        }
+
         /* Dashboard Container */
         .dashboard-container {
             padding: 20px;
             max-width: 1400px;
             margin: 0 auto;
+            background: var(--gray-50);
         }
 
+        /* Header Card - Matching tentang.php content-card style */
         .header-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            background-color: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-md);
+            transition: var(--transition-slow);
+            overflow: hidden;
+            position: relative;
             padding: 20px;
             margin-bottom: 30px;
-            border: 1px solid #f0f0f0;
         }
 
-        .header-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 1px solid #f0f0f0;
+        .header-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--primary-blue);
+            opacity: 0;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--box-shadow-xl);
+            border-color: var(--gray-300);
+        }
+
+        .header-card:hover::before {
+            opacity: 1;
         }
 
         /* Dashboard Stats Cards */
@@ -272,24 +319,44 @@
         }
 
         .stat-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            background-color: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-md);
+            transition: var(--transition-slow);
             overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid #f0f0f0;
+            position: relative;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--primary-blue);
+            opacity: 0;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            box-shadow: var(--box-shadow-xl);
+            border-color: var(--gray-300);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
         }
 
         .stat-header {
             display: flex;
             align-items: center;
             padding: 20px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
         }
 
         .stat-icon {
@@ -308,19 +375,19 @@
             margin: 0;
             font-size: 1.8rem;
             font-weight: 700;
-            color: #333;
+            color: var(--white);
         }
 
         .stat-info p {
             margin: 0;
             font-size: 0.9rem;
-            color: #666;
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 500;
         }
 
         .stat-link {
             margin-left: auto;
-            color: #6c757d;
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             padding: 8px;
             border-radius: 8px;
@@ -328,14 +395,15 @@
         }
 
         .stat-link:hover {
-            background: rgba(0, 0, 0, 0.05);
-            color: #333;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
         }
 
         .stat-details {
             display: flex;
             padding: 15px 20px 20px;
             gap: 15px;
+            background-color: var(--white);
         }
 
         .stat-details .stat-item {
@@ -515,17 +583,42 @@
             letter-spacing: 0.5px;
         }
 
-        /* Activity Section */
+        /* Activity Section - Matching tentang.php content-card style */
         .dashboard-activity {
             margin-bottom: 30px;
         }
 
         .activity-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            border: 1px solid #f0f0f0;
+            background-color: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-md);
+            transition: var(--transition-slow);
+            overflow: hidden;
+            position: relative;
             height: 100%;
+        }
+
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--primary-blue);
+            opacity: 0;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .activity-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--box-shadow-xl);
+            border-color: var(--gray-300);
+        }
+
+        .activity-card:hover::before {
+            opacity: 1;
         }
 
         .activity-header {
@@ -533,30 +626,33 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px;
-            border-bottom: 1px solid #f0f0f0;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
         }
 
         .activity-header h4 {
             margin: 0;
             font-size: 1.1rem;
             font-weight: 600;
-            color: #333;
+            color: var(--white);
         }
 
         .activity-list {
             padding: 0;
+            background-color: var(--white);
         }
 
         .activity-item {
             display: flex;
             align-items: center;
             padding: 15px 20px;
-            border-bottom: 1px solid #f8f9fa;
+            border-bottom: 1px solid var(--gray-100);
             transition: background 0.2s;
         }
 
         .activity-item:hover {
-            background: #f8f9fa;
+            background: var(--gray-50);
         }
 
         .activity-item:last-child {
@@ -567,12 +663,12 @@
             width: 36px;
             height: 36px;
             border-radius: 8px;
-            background: #e9ecef;
+            background: var(--gray-100);
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: 12px;
-            color: #6c757d;
+            color: var(--gray-600);
         }
 
         .activity-content {
@@ -581,14 +677,14 @@
 
         .activity-title {
             font-weight: 600;
-            color: #333;
+            color: var(--gray-800);
             margin-bottom: 2px;
             font-size: 0.9rem;
         }
 
         .activity-meta {
             font-size: 0.8rem;
-            color: #6c757d;
+            color: var(--gray-600);
         }
 
         .activity-status {
@@ -598,7 +694,8 @@
         .activity-empty {
             text-align: center;
             padding: 40px 20px;
-            color: #6c757d;
+            color: var(--gray-600);
+            background-color: var(--white);
         }
 
         .activity-empty i {
@@ -633,12 +730,12 @@
             margin: 0 0 8px 0;
             font-size: 1.3rem;
             font-weight: 600;
-            color: #333;
+            color: var(--gray-800);
         }
 
         .quick-actions-header p {
             margin: 0;
-            color: #6c757d;
+            color: var(--gray-600);
             font-size: 0.9rem;
         }
 
@@ -652,24 +749,43 @@
 
         .action-card {
             display: block;
-            background: white;
-            border-radius: 16px;
+            background-color: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
             padding: 30px 25px;
             text-decoration: none;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid #f0f0f0;
-            transition: all 0.3s;
+            box-shadow: var(--box-shadow-md);
+            transition: var(--transition-slow);
             text-align: center;
             min-height: 180px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--primary-blue);
+            opacity: 0;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+            box-shadow: var(--box-shadow-xl);
             text-decoration: none;
+            border-color: var(--gray-300);
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
         }
 
         .action-card .action-icon {
@@ -688,13 +804,13 @@
             margin: 0 0 12px 0;
             font-size: 1.2rem;
             font-weight: 600;
-            color: #333;
+            color: var(--gray-800);
         }
 
         .action-card p {
             margin: 0;
             font-size: 0.9rem;
-            color: #6c757d;
+            color: var(--gray-600);
             line-height: 1.5;
         }
 
@@ -711,6 +827,52 @@
             background: linear-gradient(135deg, #fd7e14, #fd9a47) !important;
         }
 
+        /* Bootstrap Card Override for Charts - Matching tentang.php style */
+        .card {
+            background-color: var(--white) !important;
+            border: 1px solid var(--gray-200) !important;
+            border-radius: var(--border-radius) !important;
+            box-shadow: var(--box-shadow-md) !important;
+            transition: var(--transition-slow) !important;
+            overflow: hidden !important;
+            position: relative !important;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--primary-blue);
+            opacity: 0;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--box-shadow-xl) !important;
+            border-color: var(--gray-300) !important;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            background-color: var(--primary-blue) !important;
+            border-bottom: none !important;
+            color: var(--white) !important;
+            font-weight: 700 !important;
+            padding: 2rem 1.5rem 1.5rem !important;
+        }
+
+        .card-body {
+            background-color: var(--white) !important;
+            padding: 2.5rem 2rem !important;
+        }
+
         /* Content header adjustments */
         .content-header {
             margin-bottom: 30px;
@@ -719,14 +881,39 @@
         .main-title {
             font-size: 2rem;
             font-weight: 700;
-            color: #333;
+            color: var(--gray-800);
             margin-bottom: 10px;
         }
 
         .main-subtitle {
             font-size: 1rem;
-            color: #666;
+            color: var(--gray-600);
             margin-bottom: 0;
+        }
+
+        /* Button Styles */
+        .btn-outline-primary {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .btn-outline-success {
+            border-color: var(--secondary-green);
+            color: var(--secondary-green);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-outline-success:hover {
+            background-color: var(--secondary-green);
+            border-color: var(--secondary-green);
+            color: var(--white);
         }
 
         /* Responsive adjustments */
@@ -758,6 +945,10 @@
 
             .activity-item {
                 padding: 12px 15px;
+            }
+
+            .card-body {
+                padding: 1.5rem !important;
             }
         }
 
@@ -794,6 +985,14 @@
             .stat-details {
                 flex-direction: column;
                 gap: 10px;
+            }
+
+            .card-body {
+                padding: 1rem !important;
+            }
+
+            .card-header {
+                padding: 1.5rem 1rem 1rem !important;
             }
         }
     </style>
@@ -853,7 +1052,7 @@
         // Update immediately when page loads
         updateTime();
 
-        // Charts
+        // Charts with Green Colors
         const userCtx = document.getElementById('userChart').getContext('2d');
         new Chart(userCtx, {
             type: 'line',
@@ -862,8 +1061,8 @@
                 datasets: [{
                     label: 'Total Users',
                     data: <?= json_encode($chartData['users']) ?>,
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: '#059669',
+                    backgroundColor: 'rgba(5, 150, 105, 0.2)',
                     fill: true,
                 }]
             },
@@ -885,8 +1084,8 @@
                 datasets: [{
                     label: 'Total Registrations',
                     data: <?= json_encode($chartData['registrations']) ?>,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: '#059669',
+                    backgroundColor: 'rgba(5, 150, 105, 0.2)',
                     fill: true,
                 }]
             },
