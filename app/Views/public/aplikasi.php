@@ -1,23 +1,47 @@
 <?= view('public/layout/header', ['page_title' => $page_title ?? 'Aplikasi Pendukung']) ?>
 
 <!-- Page Header -->
-<section class="page-header">
-    <div class="container">
+<header class="page-header" style="
+    position: relative;
+    background: url('https://i.pinimg.com/736x/cd/66/6a/cd666a84ab3c739f356c8b5b366731bb.jpg') center/cover no-repeat;
+    background-attachment: fixed;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+">
+    <!-- Overlay dan efek blur -->
+    <div style="
+        content: '';
+        position: absolute;
+        inset: 0;
+        backdrop-filter: blur(2px);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    "></div>
+
+    <!-- Konten header -->
+    <div class="container" style="position: relative; z-index: 2;">
         <div class="row">
             <div class="col-12">
-                <div class="page-header-content text-center">
-                    <div class="page-icon">
-                        <i class="bi bi-app"></i>
+                <div class="page-header-content text-center" style="padding: 2rem;">
+                    <div class="page-icon mb-3">
+                        <img src="<?= base_url('assets/images/ikon aplikasi pendukung.svg') ?>" alt="Aplikasi Pendukung" style="height: 80px; max-width: 100%;">
                     </div>
-                    <h1 class="page-title">Aplikasi Pendukung</h1>
-                    <p class="page-subtitle">
-                        Download aplikasi pendukung dan tools untuk INLISLite v3. Tingkatkan produktivitas dengan aplikasi tambahan yang terintegrasi
+                    <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+                        Aplikasi Pendukung
+                    </h1>
+                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 0.85;">
+                        Modul dan layanan penting yang memperluas fungsionalitas sistem manajemen perpustakaan INLISLite Anda. Aplikasi-aplikasi ini menyediakan fitur tambahan untuk komunikasi, integrasi data, dan peningkatan sistem.
                     </p>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</header>
 
 <!-- Breadcrumb -->
 <section class="breadcrumb-section">
@@ -32,378 +56,461 @@
 </section>
 
 <!-- Main Content -->
-<section class="main-content">
+<main class="main-content">
     <div class="container">
-        <!-- Introduction -->
-        <div class="row mb-5">
-            <div class="col-lg-8 mx-auto">
-                <div class="content-card animate-on-scroll">
-                    <div class="card-body text-center">
-                        <h2 class="mb-3">Ekosistem Aplikasi INLISLite</h2>
-                        <p class="lead">
-                            Kumpulan aplikasi pendukung yang dirancang khusus untuk melengkapi dan meningkatkan fungsionalitas INLISLite v3. 
-                            Semua aplikasi terintegrasi sempurna dengan sistem utama.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Applications Grid -->
-        <div class="row g-4">
-            <?php if (isset($applications) && is_array($applications)): ?>
-                <?php foreach ($applications as $index => $app): ?>
-                    <div class="col-lg-6">
-                        <div class="content-card h-100 animate-on-scroll" style="animation-delay: <?= $index * 0.1 ?>s;">
-                            <div class="card-header">
-                                <div class="d-flex align-items-center">
-                                    <div class="app-icon me-3">
-                                        <i class="<?= $app['icon'] ?>" style="font-size: 2.5rem; color: #667eea;"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="mb-1"><?= esc($app['name']) ?></h4>
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge bg-primary me-2">v<?= esc($app['version']) ?></span>
-                                            <span class="badge bg-secondary"><?= esc($app['platform']) ?></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <p class="text-muted mb-3"><?= esc($app['description']) ?></p>
-                                
-                                <!-- Features -->
-                                <h6 class="mb-2">Fitur Utama:</h6>
-                                <ul class="list-unstyled mb-3">
-                                    <?php foreach ($app['features'] as $feature): ?>
-                                        <li class="mb-1">
-                                            <i class="bi bi-check-circle text-success me-2"></i>
-                                            <?= esc($feature) ?>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                                
-                                <!-- App Info -->
-                                <div class="app-info bg-light p-3 rounded mb-3">
-                                    <div class="row text-center">
-                                        <div class="col-4">
-                                            <i class="bi bi-download text-primary"></i>
-                                            <div class="small text-muted">Size</div>
-                                            <div class="fw-bold"><?= esc($app['size']) ?></div>
-                                        </div>
-                                        <div class="col-4">
-                                            <i class="bi bi-laptop text-success"></i>
-                                            <div class="small text-muted">Platform</div>
-                                            <div class="fw-bold"><?= esc($app['platform']) ?></div>
-                                        </div>
-                                        <div class="col-4">
-                                            <i class="bi bi-star text-warning"></i>
-                                            <div class="small text-muted">Version</div>
-                                            <div class="fw-bold"><?= esc($app['version']) ?></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Download Button -->
-                                <div class="d-grid gap-2">
-                                    <a href="<?= esc($app['download_url']) ?>" class="btn btn-primary-gradient btn-lg">
-                                        <i class="bi bi-download me-2"></i>
-                                        Download Sekarang
-                                    </a>
-                                    <button class="btn btn-outline-secondary" onclick="showAppDetails('<?= esc($app['name']) ?>')">
-                                        <i class="bi bi-info-circle me-2"></i>
-                                        Detail & Screenshot
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-
-        <!-- System Requirements -->
-        <div class="row mt-5">
-            <div class="col-lg-6">
-                <div class="content-card h-100 animate-on-scroll">
-                    <div class="card-header">
-                        <h4 class="mb-0">
-                            <i class="bi bi-cpu me-2"></i>
-                            System Requirements
-                        </h4>
-                    </div>
-                    <div class="card-body">
-                        <h6 class="mb-3">Desktop Applications:</h6>
-                        <ul class="list-unstyled">
-                            <li class="mb-2">
-                                <i class="bi bi-windows text-primary me-2"></i>
-                                <strong>Windows:</strong> 10/11 (64-bit)
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-memory text-success me-2"></i>
-                                <strong>RAM:</strong> Minimum 4GB
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-hdd text-warning me-2"></i>
-                                <strong>Storage:</strong> 500MB free space
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-wifi text-info me-2"></i>
-                                <strong>Network:</strong> Internet connection
-                            </li>
-                        </ul>
-                        
-                        <h6 class="mb-3 mt-4">Mobile Applications:</h6>
-                        <ul class="list-unstyled">
-                            <li class="mb-2">
-                                <i class="bi bi-android text-success me-2"></i>
-                                <strong>Android:</strong> 6.0+ (API level 23)
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-apple text-dark me-2"></i>
-                                <strong>iOS:</strong> 12.0+
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-memory text-primary me-2"></i>
-                                <strong>RAM:</strong> Minimum 2GB
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-6">
-                <div class="content-card h-100 animate-on-scroll">
-                    <div class="card-header">
-                        <h4 class="mb-0">
-                            <i class="bi bi-question-circle me-2"></i>
-                            FAQ Aplikasi
-                        </h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="accordion" id="faqAccordion">
-                            <div class="accordion-item border-0 mb-2">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                        Apakah aplikasi gratis?
-                                    </button>
-                                </h2>
-                                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        Ya, semua aplikasi pendukung INLISLite v3 dapat didownload dan digunakan secara gratis.
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="accordion-item border-0 mb-2">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                        Bagaimana cara instalasi?
-                                    </button>
-                                </h2>
-                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        Setiap aplikasi dilengkapi dengan installer otomatis dan panduan instalasi step-by-step.
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="accordion-item border-0 mb-2">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                        Apakah perlu koneksi internet?
-                                    </button>
-                                </h2>
-                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        Beberapa aplikasi dapat bekerja offline, namun untuk sinkronisasi data diperlukan koneksi internet.
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="accordion-item border-0">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                                        Bagaimana cara update aplikasi?
-                                    </button>
-                                </h2>
-                                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        Aplikasi akan memberikan notifikasi otomatis ketika ada update tersedia dan dapat diupdate dengan sekali klik.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Installation Guide -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <div class="content-card animate-on-scroll">
-                    <div class="card-header text-center">
-                        <h3 class="mb-0">
-                            <i class="bi bi-gear me-2"></i>
-                            Panduan Instalasi
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="text-center">
-                                    <div class="step-icon mb-3">
-                                        <i class="bi bi-download" style="font-size: 3rem; color: #667eea;"></i>
-                                    </div>
-                                    <h5>1. Download</h5>
-                                    <p class="text-muted">Download aplikasi sesuai platform yang digunakan</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="text-center">
-                                    <div class="step-icon mb-3">
-                                        <i class="bi bi-gear" style="font-size: 3rem; color: #28a745;"></i>
-                                    </div>
-                                    <h5>2. Install</h5>
-                                    <p class="text-muted">Jalankan installer dan ikuti petunjuk instalasi</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="text-center">
-                                    <div class="step-icon mb-3">
-                                        <i class="bi bi-link-45deg" style="font-size: 3rem; color: #ffc107;"></i>
-                                    </div>
-                                    <h5>3. Konfigurasi</h5>
-                                    <p class="text-muted">Hubungkan dengan server INLISLite v3</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <div class="text-center">
-                                    <div class="step-icon mb-3">
-                                        <i class="bi bi-check-circle" style="font-size: 3rem; color: #dc3545;"></i>
-                                    </div>
-                                    <h5>4. Selesai</h5>
-                                    <p class="text-muted">Aplikasi siap digunakan dan terintegrasi</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Support Section -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <div class="content-card animate-on-scroll">
-                    <div class="card-body text-center">
-                        <h3 class="mb-3">Butuh Bantuan Instalasi?</h3>
-                        <p class="lead mb-4">
-                            Tim support kami siap membantu proses instalasi dan konfigurasi aplikasi pendukung.
-                        </p>
-                        <div class="d-flex justify-content-center gap-3 flex-wrap">
-                            <a href="<?= base_url('panduan') ?>" class="btn btn-primary-gradient">
-                                <i class="bi bi-book me-2"></i>
-                                Panduan Lengkap
-                            </a>
-                            <a href="<?= base_url('dukungan') ?>" class="btn btn-secondary-gradient">
-                                <i class="bi bi-headset me-2"></i>
-                                Dukungan Teknis
-                            </a>
-                            <a href="<?= base_url('bimbingan') ?>" class="btn btn-outline-primary">
-                                <i class="bi bi-mortarboard me-2"></i>
-                                Pelatihan
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- App Details Modal -->
-<div class="modal fade" id="appDetailsModal" tabindex="-1" aria-labelledby="appDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="appDetailsModalLabel">Detail Aplikasi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="appDetailsContent">
-                <!-- Content will be loaded dynamically -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary-gradient" id="downloadAppBtn">
-                    <i class="bi bi-download me-2"></i>
-                    Download
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function showAppDetails(appName) {
-    const modal = new bootstrap.Modal(document.getElementById('appDetailsModal'));
-    document.getElementById('appDetailsModalLabel').textContent = `Detail ${appName}`;
-    
-    // Show loading
-    document.getElementById('appDetailsContent').innerHTML = `
-        <div class="text-center">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-2">Memuat detail aplikasi...</p>
-        </div>
-    `;
-    
-    modal.show();
-    
-    // Simulate loading app details
-    setTimeout(() => {
-        document.getElementById('appDetailsContent').innerHTML = `
+        
+        <!-- Section: Aplikasi Pendukung Untuk INLISLite V3 -->
+        <section class="mb-5">
             <div class="row">
-                <div class="col-md-6">
-                    <h6>Screenshot Aplikasi</h6>
-                    <div class="bg-light p-4 rounded text-center">
-                        <i class="bi bi-image" style="font-size: 4rem; color: #ccc;"></i>
-                        <p class="text-muted mt-2">Screenshot akan ditampilkan di sini</p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <h6>Informasi Detail</h6>
-                    <p>Detail lengkap tentang ${appName} termasuk:</p>
-                    <ul>
-                        <li>Fitur lengkap dan cara penggunaan</li>
-                        <li>System requirements detail</li>
-                        <li>Changelog dan update history</li>
-                        <li>Tutorial dan dokumentasi</li>
-                        <li>Known issues dan troubleshooting</li>
-                    </ul>
-                    
-                    <h6 class="mt-4">Statistik Download</h6>
-                    <div class="row text-center">
-                        <div class="col-4">
-                            <div class="fw-bold text-primary">1,234</div>
-                            <small class="text-muted">Downloads</small>
+                <div class="col-12">
+                    <article class="content-card animate-on-scroll">
+                        <div class="card-header">
+                            <h2 class="mb-0">
+                                <i class="bi bi-app me-2"></i>
+                                Aplikasi Pendukung Untuk INLISLite V3
+                            </h2>
                         </div>
-                        <div class="col-4">
-                            <div class="fw-bold text-success">4.8/5</div>
-                            <small class="text-muted">Rating</small>
+                        <div class="card-body">
+                            <div class="alert alert-warning" role="alert">
+                                <h5 class="alert-heading">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Aplikasi Pendukung Untuk Inlislite V3
+                                </h5>
+                                <p class="mb-0">
+                                    Modul-modul ini menyediakan komunikasi, integrasi data, dan peningkatan fitur untuk INLISLite. 
+                                    Setiap aplikasi dirancang untuk memperluas fungsionalitas sistem manajemen perpustakaan Anda.
+                                </p>
+                            </div>
                         </div>
-                        <div class="col-4">
-                            <div class="fw-bold text-warning">v1.2.0</div>
-                            <small class="text-muted">Latest</small>
-                        </div>
-                    </div>
+                    </article>
                 </div>
             </div>
-        `;
-    }, 1000);
+        </section>
+
+    <!-- Section: OAI-PMH Service -->
+        <section class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <article class="content-card animate-on-scroll">
+                        <div class="card-header">
+                            <h2 class="mb-0">
+                                <i class="bi bi-box-arrow-down text-primary me-2"></i>
+                                OAI-PMH Service
+                            </h2>
+                            <small class="text-muted">Protokol Inisiatif Arsip Terbuka untuk Pengambilan Metadata</small>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">
+                                Modul ini digunakan untuk mengekspos metadata perpustakaan melalui protokol harvesting, 
+                                memungkinkan integrasi dengan sistem katalog nasional dan internasional.
+                            </p>
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6>Informasi Teknis:</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Berdasarkan format MARCXML
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-folder text-info me-2"></i>
+                                            Lokasi Modul: inlislite3\opac\modules\oai
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-link text-primary me-2"></i>
+                                            URL Pengujian: <small>http://localhost:8123/opac/oai?verb=ListRecords&metadataPrefix=marcxml</small>
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Kompatibel dengan Indonesia OneSearch & Katalog Induk Nasional
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    <!-- Section: SMS Gateway Service -->
+        <section class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <article class="content-card animate-on-scroll">
+                        <div class="card-header">
+                            <h2 class="mb-0">
+                                <i class="bi bi-chat-left-text text-success me-2"></i>
+                                SMS Gateway Service
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">
+                                Tujuan dari layanan ini adalah untuk mengirim notifikasi SMS otomatis/manual dari INLISLite menggunakan Gammu.
+                            </p>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <h6>Penggunaan SMS:</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Pengingat jatuh tempo peminjaman
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Notifikasi denda
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Pengumuman acara perpustakaan
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Konfirmasi reservasi buku
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Pemberitahuan ketersediaan koleksi
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Tentang Gammu:</h6>
+                                    <p>
+                                        Gammu adalah alat command-line dan library yang menyediakan abstraksi 
+                                        untuk berbagai fungsi ponsel. Mendukung komunikasi SMS melalui berbagai 
+                                        jenis modem dan perangkat mobile.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-4">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>Gammu for Windows 32-bit</h6>
+                                        <p class="mb-1"><strong>Gammu-1.33.0-Windows.exe</strong></p>
+                                        <p class="text-muted small">Ukuran: 4MB</p>
+                                        <button class="btn btn-success btn-sm">Download</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>Gammu for Windows 64-bit</h6>
+                                        <p class="mb-1"><strong>Gammu-1.33.0-Windows-x64.exe</strong></p>
+                                        <p class="text-muted small">Ukuran: 4MB</p>
+                                        <button class="btn btn-success btn-sm">Download</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>Gammu for Linux</h6>
+                                        <p class="mb-1"><strong>gammu-1.33.0.tar.gz</strong></p>
+                                        <p class="text-muted small">Ukuran: 4MB</p>
+                                        <button class="btn btn-success btn-sm">Download</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <button class="btn btn-outline-primary">
+                                    <i class="bi bi-file-earmark-pdf me-2"></i>
+                                    Panduan Instalasi di Windows (PDF)
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    <!-- Section: RFID Gateway Service -->
+        <section class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <article class="content-card animate-on-scroll">
+                        <div class="card-header">
+                            <h2 class="mb-0">
+                                <i class="bi bi-rss text-danger me-2"></i>
+                                RFID Gateway Service (SIP2)
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">
+                                Gateway untuk menghubungkan INLISLite ke terminal RFID mandiri menggunakan protokol SIP2 
+                                untuk otomatisasi peminjaman dan pengembalian buku.
+                            </p>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <h6>Perangkat yang diuji:</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Terminal RFID 3M
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Terminal Fe Technologies
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Perangkat kompatibel SIP2 lainnya
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Persyaratan:</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="bi bi-gear text-info me-2"></i>
+                                            Protokol SIP2
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-wifi text-info me-2"></i>
+                                            Konektivitas terminal ke server
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-database text-info me-2"></i>
+                                            Integrasi database INLISLite
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="bi bi-router text-info me-2"></i>
+                                            Konfigurasi jaringan yang tepat
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-6">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>Windows Installer (RAR)</h6>
+                                        <p class="mb-1"><strong>rfid-gateway-inlislite-v3.rar</strong></p>
+                                        <p class="text-muted small">Ukuran: 179KB</p>
+                                        <button class="btn btn-success btn-sm">Download</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>Windows Installer (ZIP)</h6>
+                                        <p class="mb-1"><strong>rfid-gateway-inlislite-v3.zip</strong></p>
+                                        <p class="text-muted small">Ukuran: 208KB</p>
+                                        <button class="btn btn-success btn-sm">Download</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Data Migrator -->
+        <section class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <article class="content-card animate-on-scroll">
+                        <div class="card-header">
+                            <h2 class="mb-0">
+                                <i class="bi bi-arrow-left-right text-warning me-2"></i>
+                                Data Migrator (V212 to V3)
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">
+                                Migrasi data dari INLISLite versi 2.1.2 ke versi 3. Mengkonversi skema database, 
+                                mempertahankan integritas data, dan menyediakan panduan lengkap untuk proses migrasi.
+                            </p>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <h6>Fitur Teknis:</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Konversi skema database otomatis
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Preservasi data dan relasi
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Validasi integritas data
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Backup otomatis sebelum migrasi
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Persyaratan:</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="bi bi-windows text-info me-2"></i>
+                                            Windows Operating System
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-app text-info me-2"></i>
+                                            INLISLite 2.1.2 terinstal
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-shield-check text-info me-2"></i>
+                                            Hak akses administrator
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="bi bi-archive text-info me-2"></i>
+                                            Backup data yang valid
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-6">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>Data Migrator</h6>
+                                        <p class="mb-1"><strong>migrator-v212-to-v3.7z</strong></p>
+                                        <p class="text-muted small">Ukuran: 2.1MB</p>
+                                        <button class="btn btn-success btn-sm">Download</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>Panduan Migrasi</h6>
+                                        <p class="mb-1"><strong>Panduan-Migrasi-Data.pdf</strong></p>
+                                        <p class="text-muted small">Dokumentasi lengkap</p>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-file-earmark-pdf me-2"></i>Download PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Record Indexing -->
+        <section class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <article class="content-card animate-on-scroll">
+                        <div class="card-header">
+                            <h2 class="mb-0">
+                                <i class="bi bi-search text-danger me-2"></i>
+                                Record Indexing (ElasticSearch)
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">
+                                Meningkatkan kecepatan pencarian OPAC via ElasticSearch. Menyediakan indexing yang cepat 
+                                dan pencarian yang lebih akurat untuk koleksi perpustakaan.
+                            </p>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <h6>Komponen Sistem:</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            ElasticSearch 6.2.2
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Java Runtime Environment 8
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Plugin indexing INLISLite
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Konfigurasi mapping MARC
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Persyaratan:</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="bi bi-cpu text-info me-2"></i>
+                                            Sistem 64-bit
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-memory text-info me-2"></i>
+                                            Minimal 4GB RAM
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-arrow-right text-info me-2"></i>
+                                            Instalasi berurutan (JRE → ES → Plugin)
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="bi bi-ethernet text-info me-2"></i>
+                                            Port 9200 tersedia
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-4">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>ElasticSearch MSI</h6>
+                                        <p class="mb-1"><strong>elasticsearch-6.2.2.msi</strong></p>
+                                        <p class="text-muted small">Ukuran: 68.5MB</p>
+                                        <button class="btn btn-success btn-sm">Download</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>ElasticSearch 7z</h6>
+                                        <p class="mb-1"><strong>elasticsearch-6.2.2.7z</strong></p>
+                                        <p class="text-muted small">Ukuran: 33.4MB</p>
+                                        <button class="btn btn-success btn-sm">Download</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="download-card text-center p-3 border rounded">
+                                        <h6>Plugin INLISLite</h6>
+                                        <p class="mb-1"><strong>inlislite-indexer.zip</strong></p>
+                                        <p class="text-muted small">Ukuran: 452KB</p>
+                                        <button class="btn btn-success btn-sm">Download</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <button class="btn btn-outline-primary">
+                                    <i class="bi bi-file-earmark-pdf me-2"></i>
+                                    Panduan Instalasi ElasticSearch (PDF)
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<style>
+.download-card {
+    transition: all 0.3s ease;
 }
-</script>
+
+.download-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+</style>
 
 <?= view('public/layout/footer') ?>

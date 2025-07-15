@@ -333,7 +333,7 @@
 .platform-card {
     text-align: center;
     padding: 2rem 1rem;
-    border: 1px solid #e9ecef;
+    border: 1px solid #F9F9F9;
     border-radius: 0.5rem;
     transition: all 0.3s ease;
 }
@@ -354,7 +354,7 @@
 }
 </style>
 <style>
-/* Tambahkan ini ke existing style */
+
 .section-blur-bg {
     position: relative;
     overflow: hidden;
@@ -370,6 +370,7 @@
     z-index: -1;
     transform: scale(1.05); /* Hindari tepi blur */
 }
+
 </style>
 
 
