@@ -666,9 +666,9 @@
 
             <!-- Welcome Message -->
             <div class="welcome-section">
-                <h1 class="welcome-title">Selamat Datang, Admin!</h1>
+                <h1 class="welcome-title">Selamat Datang!</h1>
                 <p class="welcome-subtitle">
-                    Akses sistem manajemen perpustakaan digital Anda. Silakan masuk untuk melanjutkan ke panel administrasi INLISLite v3.0 yang telah dipercaya oleh ribuan perpustakaan di seluruh Indonesia.
+                    Akses sistem manajemen perpustakaan digital Anda. Silakan masuk untuk melanjutkan ke panel administrasi INLISLite v3.0
                 </p>
             </div>
         </div>
