@@ -27,9 +27,7 @@
             <!-- Unit Description -->
             <div class="col-lg-8 col-md-6">
                 <div class="text-center text-md-start">
-                    <p class="footer-unit-description mb-0">
-                        Sub Kelompok Kerja Pengembangan Sistem Informasi Perpustakaan Nasional RI
-                    </p>
+                    
                 </div>
             </div>
         </div>
@@ -80,11 +78,15 @@
             </div>
         </div>
 
-        <!-- Admin Login Button (pojok kanan bawah) -->
-        <div class="footer-animate" style="position: absolute; bottom: 1rem; right: 1rem;">
-            <a href="<?= base_url('admin/login') ?>" class="footer-admin-btn btn btn-outline-light btn-sm d-flex align-items-center gap-1">
-                <i class="bi bi-box-arrow-in-right"></i>
-                <span>Admin Login</span>
+        <!-- Admin Login Button (bottom-right corner) -->
+        <div class="position-absolute" style="bottom: 1rem; right: 1rem; z-index: 10;">
+            <a href="<?= base_url('admin/login') ?>" 
+               class="btn btn-outline-light d-flex align-items-center gap-2 px-3 px-md-4 py-2 py-md-3 rounded-3 shadow-sm text-decoration-none admin-login-btn"
+               role="button"
+               aria-label="Admin Login">
+                <i class="bi bi-shield-lock-fill fs-6 fs-md-5"></i>
+                <span class="fw-semibold d-none d-sm-inline">Admin Login</span>
+                <span class="fw-semibold d-sm-none">Admin</span>
             </a>
         </div>
 

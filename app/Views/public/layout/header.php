@@ -40,8 +40,6 @@
     background: none !important;
     outline: none !important;
 }
-</style>
-
     </style>
 </head>
 <body>

@@ -29,8 +29,8 @@
     </div>
 </section>
 
-<!-- Modern Glassmorphism Features Section -->
-<section class="modern-features-section" id="modernFeatures">
+<!-- Combined Features and Why Choose InlisLite Section -->
+<section class="combined-features-section" id="featuresAndWhy">
     <!-- Animated Gradient Background -->
     <div class="gradient-bg"></div>
     
@@ -44,10 +44,39 @@
         <div class="particle"></div>
         <div class="particle"></div>
         <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Morphing SVG Shapes -->
+    <div class="morphing-shapes">
+        <svg class="morph-shape" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path fill="rgba(59, 130, 246, 0.1)" d="M40.7,-69.8C50.9,-59.4,56.3,-43.2,64.4,-27.5C72.5,-11.8,83.3,3.4,83.6,19.1C83.9,34.8,73.7,51,59.6,61.5C45.5,72,27.5,76.8,8.9,75.2C-9.7,73.6,-28.9,65.6,-43.8,54.1C-58.7,42.6,-69.3,27.6,-74.4,10.1C-79.5,-7.4,-79.1,-27.4,-71.2,-42.8C-63.3,-58.2,-47.9,-69,-31.1,-68.9C-14.3,-68.8,3.9,-57.8,22.6,-52.4C41.3,-47,60.5,-47.2,40.7,-69.8Z" transform="translate(100 100)" />
+        </svg>
+        
+        <svg class="morph-shape morph-shape-2" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path fill="rgba(29, 78, 216, 0.08)" d="M44.3,-76.1C56.2,-68.3,64.4,-53.4,69.8,-37.8C75.2,-22.2,77.8,-5.9,75.9,9.7C74,25.3,67.6,40.2,57.8,51.8C48,63.4,34.8,71.7,20.2,75.4C5.6,79.1,-10.4,78.2,-25.1,73.8C-39.8,69.4,-53.2,61.5,-63.4,50.2C-73.6,38.9,-80.6,24.2,-82.1,8.8C-83.6,-6.6,-79.6,-22.7,-71.8,-36.4C-64,-50.1,-52.4,-61.4,-39.2,-68.8C-26,-76.2,-11.2,-79.7,4.2,-86.4C19.6,-93.1,32.4,-83.9,44.3,-76.1Z" transform="translate(100 100)" />
+        </svg>
+    </div>
+    
+    <!-- Gradient Waves -->
+    <div class="gradient-waves">
+        <svg class="wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="rgba(37, 99, 235, 0.1)" fill-opacity="1" d="M0,96L48,122.7C96,149,192,203,288,192C384,181,480,107,576,112C672,117,768,203,864,224C960,245,1056,203,1152,176C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+        
+        <svg class="wave wave-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="rgba(29, 78, 216, 0.08)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,149.3C672,149,768,203,864,208C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
     </div>
 
     <div class="container">
-        <!-- Section Header -->
+        <!-- First Section Header -->
         <div class="section-header">
             <h2 class="section-title">Keunggulan Sistem InlisLite V3</h2>
             <p class="section-subtitle">Solusi perpustakaan digital yang modern, terintegrasi, dan mudah digunakan</p>
@@ -112,52 +141,8 @@
                 </div>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- Redesigned Kenapa InlisLite Section -->
-<section class="why-inlislite-section" id="whyInlislite">
-    <!-- Animated Background Elements -->
-    <div class="animated-background">
-        <!-- Floating Particles -->
-        <div class="floating-particles">
-            <div class="particle-dot"></div>
-            <div class="particle-dot"></div>
-            <div class="particle-dot"></div>
-            <div class="particle-dot"></div>
-            <div class="particle-dot"></div>
-            <div class="particle-dot"></div>
-            <div class="particle-dot"></div>
-            <div class="particle-dot"></div>
-            <div class="particle-dot"></div>
-            <div class="particle-dot"></div>
-        </div>
-        
-        <!-- Morphing SVG Shapes -->
-        <div class="morphing-shapes">
-            <svg class="morph-shape" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <path fill="rgba(59, 130, 246, 0.1)" d="M40.7,-69.8C50.9,-59.4,56.3,-43.2,64.4,-27.5C72.5,-11.8,83.3,3.4,83.6,19.1C83.9,34.8,73.7,51,59.6,61.5C45.5,72,27.5,76.8,8.9,75.2C-9.7,73.6,-28.9,65.6,-43.8,54.1C-58.7,42.6,-69.3,27.6,-74.4,10.1C-79.5,-7.4,-79.1,-27.4,-71.2,-42.8C-63.3,-58.2,-47.9,-69,-31.1,-68.9C-14.3,-68.8,3.9,-57.8,22.6,-52.4C41.3,-47,60.5,-47.2,40.7,-69.8Z" transform="translate(100 100)" />
-            </svg>
-            
-            <svg class="morph-shape morph-shape-2" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <path fill="rgba(29, 78, 216, 0.08)" d="M44.3,-76.1C56.2,-68.3,64.4,-53.4,69.8,-37.8C75.2,-22.2,77.8,-5.9,75.9,9.7C74,25.3,67.6,40.2,57.8,51.8C48,63.4,34.8,71.7,20.2,75.4C5.6,79.1,-10.4,78.2,-25.1,73.8C-39.8,69.4,-53.2,61.5,-63.4,50.2C-73.6,38.9,-80.6,24.2,-82.1,8.8C-83.6,-6.6,-79.6,-22.7,-71.8,-36.4C-64,-50.1,-52.4,-61.4,-39.2,-68.8C-26,-76.2,-11.2,-79.7,4.2,-86.4C19.6,-93.1,32.4,-83.9,44.3,-76.1Z" transform="translate(100 100)" />
-            </svg>
-        </div>
-        
-        <!-- Gradient Waves -->
-        <div class="gradient-waves">
-            <svg class="wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
-                <path fill="rgba(37, 99, 235, 0.1)" fill-opacity="1" d="M0,96L48,122.7C96,149,192,203,288,192C384,181,480,107,576,112C672,117,768,203,864,224C960,245,1056,203,1152,176C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-            </svg>
-            
-            <svg class="wave wave-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
-                <path fill="rgba(29, 78, 216, 0.08)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,149.3C672,149,768,203,864,208C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-            </svg>
-        </div>
-    </div>
-
-    <div class="container">
-        <!-- Section Header -->
+        <!-- Second Section Header -->
         <div class="section-header-why">
             <h2 class="section-title-why">Kenapa Memilih InlisLite?</h2>
             <p class="section-subtitle-why">Tiga alasan utama mengapa InlisLite menjadi pilihan terbaik untuk sistem perpustakaan modern</p>
@@ -293,13 +278,13 @@
     visibility: visible;
 }
 
-/* Modern Glassmorphism Features Section */
-.modern-features-section {
+/* Combined Features Section */
+.combined-features-section {
     position: relative;
     min-height: 100vh;
     padding: 6rem 0;
     overflow: hidden;
-    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #1d4ed8 50%, #2563eb 75%, #0f172a 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 20%, #1d4ed8 40%, #2563eb 60%, #1e40af 80%, #0f172a 100%);
 }
 
 /* Animated Gradient Background */
@@ -524,71 +509,6 @@
 .glass-card:hover .feature-tag {
     background: rgba(255, 255, 255, 0.25);
     transform: translateY(-2px);
-}
-
-/* Redesigned Why InlisLite Section */
-.why-inlislite-section {
-    position: relative;
-    min-height: 100vh;
-    padding: 6rem 0;
-    overflow: hidden;
-    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 20%, #1d4ed8 40%, #2563eb 60%, #1e40af 80%, #0f172a 100%);
-}
-
-/* Animated Background Elements */
-.animated-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-/* Floating Particles */
-.floating-particles {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-.particle-dot {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    animation: floatParticle 12s ease-in-out infinite;
-}
-
-.particle-dot:nth-child(1) { top: 10%; left: 15%; animation-delay: 0s; animation-duration: 10s; }
-.particle-dot:nth-child(2) { top: 20%; left: 85%; animation-delay: 2s; animation-duration: 14s; }
-.particle-dot:nth-child(3) { top: 35%; left: 25%; animation-delay: 4s; animation-duration: 12s; }
-.particle-dot:nth-child(4) { top: 50%; left: 75%; animation-delay: 6s; animation-duration: 16s; }
-.particle-dot:nth-child(5) { top: 65%; left: 10%; animation-delay: 8s; animation-duration: 11s; }
-.particle-dot:nth-child(6) { top: 80%; left: 90%; animation-delay: 10s; animation-duration: 13s; }
-.particle-dot:nth-child(7) { top: 25%; left: 50%; animation-delay: 3s; animation-duration: 15s; }
-.particle-dot:nth-child(8) { top: 70%; left: 40%; animation-delay: 7s; animation-duration: 9s; }
-.particle-dot:nth-child(9) { top: 15%; left: 70%; animation-delay: 5s; animation-duration: 17s; }
-.particle-dot:nth-child(10) { top: 85%; left: 60%; animation-delay: 9s; animation-duration: 14s; }
-
-@keyframes floatParticle {
-    0%, 100% { 
-        transform: translateY(0px) translateX(0px) scale(1);
-        opacity: 0.4;
-    }
-    25% { 
-        transform: translateY(-30px) translateX(20px) scale(1.3);
-        opacity: 0.8;
-    }
-    50% { 
-        transform: translateY(-60px) translateX(-15px) scale(0.7);
-        opacity: 0.6;
-    }
-    75% { 
-        transform: translateY(-30px) translateX(25px) scale(1.1);
-        opacity: 0.9;
-    }
 }
 
 /* Morphing SVG Shapes */
@@ -845,7 +765,7 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .modern-features-section {
+    .combined-features-section {
         padding: 4rem 0;
     }
     
@@ -879,11 +799,6 @@
     
     .card-description {
         font-size: 0.9rem;
-    }
-    
-    /* Why InlisLite Responsive */
-    .why-inlislite-section {
-        padding: 4rem 0;
     }
     
     .section-title-why {
@@ -967,8 +882,139 @@
 }
 </style>
 
-<link rel="stylesheet" href="/assets/css/public/homepage.css" />
-<script src="/assets/js/public/homepage.js"></script>
+<link rel="stylesheet" href="/assets/css/public/homepage.css" /<script src="/assets/js/public/homepage.js"></script>
+
+<!-- Enhanced Glassmorphism Feature Tags -->
+<style/* Enhanced Glassmorphism Feature Tags Override */
+.feature-tag {
+    /* Glassmorphism Background */
+    background: linear-gradient(135deg, 
+        rgba(16, 185, 129, 0.3) 0%, 
+        rgba(5, 150, 105, 0.4) 50%, 
+        rgba(4, 120, 87, 0.3) 100%) !important;
+    
+    /* Backdrop Blur Effect */
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    
+    /* Soft Green Border with Transparency */
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+    border-radius: 18px !important;
+    
+    /* Enhanced Typography for Better Readability */
+    color: #ffffff !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.03em !important;
+    text-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.3),
+        0 0 8px rgba(16, 185, 129, 0.2) !important;
+    
+    /* Spacing */
+    padding: 0.5rem 1rem !important;
+    
+    /* Enhanced Shadows for Better Depth */
+    box-shadow: 
+        0 6px 16px rgba(16, 185, 129, 0.2),
+        0 3px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -1px 0 rgba(16, 185, 129, 0.1) !important;
+    
+    /* Smooth Transitions */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    
+    /* Positioning */
+    position: relative !important;
+    overflow: hidden !important;
+    
+    /* Prevent text selection */
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+/* Shimmer Effect on Hover */
+.feature-tag::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.feature-tag:hover::before {
+    left: 100%;
+}
+
+/* Enhanced Hover Effects */
+.feature-tag:hover {
+    /* Enhanced Background */
+    background: linear-gradient(135deg, 
+        rgba(16, 185, 129, 0.4) 0%, 
+        rgba(5, 150, 105, 0.5) 50%, 
+        rgba(4, 120, 87, 0.4) 100%) !important;
+    
+    /* Stronger Border */
+    border-color: rgba(16, 185, 129, 0.5) !important;
+    
+    /* Enhanced Shadows */
+    box-shadow: 
+        0 8px 24px rgba(16, 185, 129, 0.25),
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    
+    /* Lift Effect */
+    transform: translateY(-3px) scale(1.02) !important;
+    
+    /* Brighter Text */
+    color: rgba(255, 255, 255, 1) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.glass-card:hover .feature-tag {
+    /* Subtle Enhancement when Parent is Hovered */
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    box-shadow: 
+        0 6px 18px rgba(16, 185, 129, 0.2),
+        0 3px 8px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Enhanced Card Features Container */
+.card-features {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+    margin-top: 0.5rem !important;
+}
+
+/* Responsive Adjustments for Enhanced Tags */
+@media (max-width: 768px) {
+    .card-features {
+        gap: 0.5rem !important;
+        justify-content: center !important;
+    }
+    
+    .feature-tag {
+        font-size: 0.7rem !important;
+        padding: 0.4rem 0.8rem !important;
+        border-radius: 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .feature-tag {
+        font-size: 0.65rem !important;
+        padding: 0.35rem 0.7rem !important;
+        border-radius: 10px !important;
+    }
+}
+</style>
 
 <!-- Animasi CSS -->
 <style>
