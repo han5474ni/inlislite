@@ -146,6 +146,36 @@ body {
     font-family: 'Inter', 'Poppins', sans-serif;
 }
 
+/* Redesign styles */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.card-header > div {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.card-content {
+    margin-top: 16px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media(min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 .banner-description {
     font-size: 1rem;
     color: var(--gray-600);

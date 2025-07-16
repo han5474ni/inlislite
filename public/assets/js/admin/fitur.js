@@ -187,6 +187,9 @@ function renderFeatures() {
     container.innerHTML = filteredFeatures.map(feature => `
         <div class="col-lg-4 col-md-6">
             <div class="feature-card animate-fade-in">
+                <div class="card-badge">
+                    <i class="bi bi-star-fill me-1"></i>FITUR
+                </div>
                 <div class="card-header">
                     <div class="card-icon ${feature.color}">
                         <i class="${feature.icon}"></i>
@@ -204,7 +207,6 @@ function renderFeatures() {
                     <h3 class="card-title">${feature.title}</h3>
                     <p class="card-description">${feature.description}</p>
                 </div>
-                <div class="card-badge">Fitur</div>
             </div>
         </div>
     `).join('');
@@ -233,6 +235,10 @@ function renderModules() {
     container.innerHTML = filteredModules.map(module => `
         <div class="col-lg-4 col-md-6">
             <div class="module-card animate-fade-in">
+                <div class="card-badge ${module.module_type || 'module'}">
+                    <i class="bi bi-${module.module_type === 'database' ? 'database' : module.module_type === 'application' ? 'app' : 'gear'}-fill me-1"></i>
+                    ${module.module_type ? module.module_type.toUpperCase() : 'MODUL'}
+                </div>
                 <div class="card-header">
                     <div class="card-icon ${module.color}">
                         <i class="${module.icon}"></i>
@@ -250,7 +256,6 @@ function renderModules() {
                     <h3 class="card-title">${module.title}</h3>
                     <p class="card-description">${module.description}</p>
                 </div>
-                <div class="card-badge module">Modul</div>
             </div>
         </div>
     `).join('');

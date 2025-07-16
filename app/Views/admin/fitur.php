@@ -19,8 +19,9 @@
     
     <style>
     body {
-        background: linear-gradient(135deg, #1C6EC4 0%, #2DA84D 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     </style>
 </head>
@@ -41,13 +42,13 @@
 
         <div class="container">
             <!-- Page Banner Card -->
-            <div class="banner-card mb-5">
+            <div class="banner-card mb-5 shadow-sm">
                 <div class="banner-icon">
-                    <i class="bi bi-book"></i>
+                    <i class="bi bi-puzzle-fill"></i>
                 </div>
                 <div class="banner-content">
                     <h2 class="banner-title">Fitur dan Modul Program</h2>
-                    <h3 class="banner-subtitle">Inlislite V3</h3>
+                    <h3 class="banner-subtitle">INLISLite V3</h3>
                     <p class="banner-description">
                         Dokumentasi lengkap tentang fitur-fitur canggih dan modul program yang menjadikan INLISLite v3 
                         sebagai solusi manajemen perpustakaan yang komprehensif.
@@ -56,21 +57,26 @@
             </div>
 
             <!-- Search and Action Section -->
-            <div class="search-action-section mb-5">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
+            <div class="search-action-section mb-4 shadow-sm">
+                <div class="row align-items-center g-2">
+                    <div class="col-md-7">
                         <div class="search-box">
                             <i class="bi bi-search search-icon"></i>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Cari fitur atau modul...">
+                            <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Cari fitur atau modul...">
                         </div>
                     </div>
-                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                        <a href="<?= base_url('admin/fitur-edit') ?>" class="btn btn-success me-2">
-                            <i class="bi bi-gear me-2"></i>Kelola Data
-                        </a>
-                        <button class="btn btn-info" onclick="refreshContent()">
-                            <i class="bi bi-arrow-clockwise me-2"></i>Refresh
-                        </button>
+                    <div class="col-md-5 text-md-end">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="<?= base_url('admin/fitur-edit') ?>" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-1"></i>Tambah Modul
+                            </a>
+                            <a href="<?= base_url('admin/fitur-edit') ?>" class="btn btn-outline-primary">
+                                <i class="bi bi-gear me-1"></i>Kelola
+                            </a>
+                            <button class="btn btn-outline-secondary" onclick="refreshContent()">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,28 +84,50 @@
             <!-- Features Section -->
             <section class="features-section mb-5">
                 <div class="section-header mb-4">
-                    <h2 class="section-title">Fitur-fitur Inlislite V3</h2>
-                    <p class="section-subtitle">
-                        Fitur-fitur canggih yang memudahkan pengelolaan perpustakaan modern dengan teknologi terdepan
-                    </p>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="section-title">Fitur-fitur INLISLite V3</h2>
+                            <p class="section-subtitle">
+                                Fitur-fitur canggih yang memudahkan pengelolaan perpustakaan modern dengan teknologi terdepan
+                            </p>
+                        </div>
+                        <div class="section-actions">
+                            <div class="badge bg-primary-subtle text-primary px-3 py-2">
+                                <i class="bi bi-star-fill me-1"></i>Fitur Utama
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="row g-4" id="featuresContainer">
-                    <!-- Features will be loaded here -->
+                <div class="features-grid">
+                    <div class="row g-4" id="featuresContainer">
+                        <!-- Features will be loaded here -->
+                    </div>
                 </div>
             </section>
 
             <!-- Modules Section -->
             <section class="modules-section">
                 <div class="section-header mb-4">
-                    <h2 class="section-title">Modul Program Inlislite V3</h2>
-                    <p class="section-subtitle">
-                        Arsitektur modular yang memungkinkan integrasi dan kustomisasi sesuai kebutuhan perpustakaan
-                    </p>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="section-title">Modul Program INLISLite V3</h2>
+                            <p class="section-subtitle">
+                                Arsitektur modular yang memungkinkan integrasi dan kustomisasi sesuai kebutuhan perpustakaan
+                            </p>
+                        </div>
+                        <div class="section-actions">
+                            <div class="badge bg-success-subtle text-success px-3 py-2">
+                                <i class="bi bi-puzzle-fill me-1"></i>Modul Sistem
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="row g-4" id="modulesContainer">
-                    <!-- Modules will be loaded here -->
+                <div class="modules-grid">
+                    <div class="row g-4" id="modulesContainer">
+                        <!-- Modules will be loaded here -->
+                    </div>
                 </div>
             </section>
         </div>

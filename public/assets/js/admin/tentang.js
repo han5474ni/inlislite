@@ -118,13 +118,13 @@ function renderContent() {
     
     if (filteredCards.length === 0) {
         container.innerHTML = `
-            <div class="col-12">
-                <div class="empty-state">
-                    <i class="bi bi-inbox"></i>
-                    <h3>Tidak ada konten ditemukan</h3>
-                    <p>Belum ada konten yang tersedia atau sesuai dengan pencarian Anda.</p>
-                    <a href="/admin/tentang-edit" class="btn btn-primary mt-3">
-                        <i class="bi bi-plus-circle me-2"></i>Tambah Konten
+            <div class="col-span-full">
+                <div class="text-center py-12">
+                    <i class="bi bi-inbox text-gray-400 text-6xl mb-4"></i>
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Tidak ada konten ditemukan</h3>
+                    <p class="text-gray-500 mb-4">Belum ada konten yang tersedia atau sesuai dengan pencarian Anda.</p>
+                    <a href="/admin/tentang-edit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="bi bi-plus-circle mr-2"></i>Tambah Konten
                     </a>
                 </div>
             </div>
@@ -132,30 +132,37 @@ function renderContent() {
         return;
     }
     
-    container.innerHTML = filteredCards.map(card => `
-        <div class="col-lg-6 col-md-12">
-            <div class="content-card animate-fade-in">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="${card.icon || 'bi-' + getCardIcon(card.type)}"></i>
+    // Render dynamic content from database
+    let html = '';
+    
+    filteredCards.forEach((card, index) => {
+        const cardIcon = card.icon || `bi-${getCardIcon(card.type)}`;
+        const cardContent = formatContent(card.content);
+        
+        html += `
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="${cardIcon} text-white text-lg"></i>
                     </div>
-                    <div class="card-actions">
-                        <a href="/admin/tentang-edit" class="btn-action edit" title="Kelola di Admin">
-                            <i class="bi bi-gear"></i>
-                        </a>
-                        <button class="btn-action refresh" onclick="refreshContent()" title="Refresh">
-                            <i class="bi bi-arrow-clockwise"></i>
-                        </button>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">${card.title}</h3>
+                        ${card.subtitle ? `<p class="text-gray-600 text-sm mb-3 font-medium">${card.subtitle}</p>` : ''}
+                        <div class="text-gray-600 text-sm leading-relaxed mb-3">${cardContent}</div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                <span class="text-xs font-medium text-green-600">Aktif</span>
+                            </div>
+                            <a href="/admin/tentang-edit" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</a>
+                        </div>
                     </div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">${card.title}</h3>
-                    ${card.subtitle ? `<p class="card-subtitle">${card.subtitle}</p>` : ''}
-                    <div class="card-description">${formatContent(card.content)}</div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    });
+    
+    container.innerHTML = html;
 }
 
 /**

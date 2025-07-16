@@ -45,7 +45,7 @@ class PublicController extends BaseController
             'about_content' => $aboutContent
         ];
         
-        return view('public/tentang', $data);
+        return view('public/tentang_dynamic', $data);
     }
     
     public function fitur()

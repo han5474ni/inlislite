@@ -122,28 +122,28 @@
                 <div class="tab-content" id="managementTabsContent">
                     <!-- Features Management Panel -->
                     <div class="tab-pane fade show active" id="features-panel" role="tabpanel">
-                        <div class="panel-header">
-                            <div class="d-flex justify-content-between align-items-center">
+                        <div class="panel-header py-3">
+                            <div class="d-flex justify-content-between align-items-center gap-3">
                                 <div>
-                                    <h3 class="panel-title">Manajemen Fitur</h3>
-                                    <p class="text-muted mb-0">Kelola fitur-fitur utama sistem perpustakaan</p>
+                                    <h3 class="panel-title mb-1">Manajemen Fitur</h3>
+                                    <p class="text-muted mb-0 small">Kelola fitur-fitur utama sistem perpustakaan</p>
                                 </div>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFeatureModal">
-                                    <i class="bi bi-plus-circle me-2"></i>Tambah Fitur
+                                <button class="btn btn-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addFeatureModal">
+                                    <i class="bi bi-plus-circle me-1"></i>Tambah Fitur
                                 </button>
                             </div>
                         </div>
-                        <div class="panel-content">
+                        <div class="panel-content p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover" id="featuresTable">
-                                    <thead>
+                                <table class="table table-hover table-striped table-compact mb-0" id="featuresTable">
+                                    <thead class="table-fixed-header bg-primary text-white">
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Icon</th>
-                                            <th>Judul</th>
-                                            <th>Deskripsi</th>
-                                            <th>Warna</th>
-                                            <th>Aksi</th>
+                                            <th class="text-center py-2 px-2" style="width: 50px;">#</th>
+                                            <th class="text-center py-2 px-2" style="width: 60px;">Icon</th>
+                                            <th class="py-2 px-3" style="width: 25%;">Judul</th>
+                                            <th class="py-2 px-3" style="width: 45%;">Deskripsi</th>
+                                            <th class="text-center py-2 px-2" style="width: 80px;">Warna</th>
+                                            <th class="text-center py-2 px-2" style="width: 100px;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -156,34 +156,34 @@
 
                     <!-- Modules Management Panel -->
                     <div class="tab-pane fade" id="modules-panel" role="tabpanel">
-                        <div class="panel-header">
-                            <div class="d-flex justify-content-between align-items-center">
+                        <div class="panel-header py-3">
+                            <div class="d-flex justify-content-between align-items-center gap-3">
                                 <div>
-                                    <h3 class="panel-title">Manajemen Modul</h3>
-                                    <p class="text-muted mb-0">Kelola modul-modul sistem dengan berbagai kategori</p>
+                                    <h3 class="panel-title mb-1">Manajemen Modul</h3>
+                                    <p class="text-muted mb-0 small">Kelola modul-modul sistem dengan berbagai kategori</p>
                                 </div>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-outline-primary btn-sm" onclick="refreshModulesData()">
-                                        <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                                    <button class="btn btn-outline-primary btn-sm px-3 py-2" onclick="refreshModulesData()">
+                                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh
                                     </button>
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModuleModal">
-                                        <i class="bi bi-plus-circle me-2"></i>Tambah Modul
+                                    <button class="btn btn-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addModuleModal">
+                                        <i class="bi bi-plus-circle me-1"></i>Tambah Modul
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="panel-content">
+                        <div class="panel-content p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover" id="modulesTable">
-                                    <thead>
+                                <table class="table table-hover table-striped table-compact mb-0" id="modulesTable">
+                                    <thead class="table-fixed-header bg-success text-white">
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Icon</th>
-                                            <th>Judul</th>
-                                            <th>Deskripsi</th>
-                                            <th>Tipe</th>
-                                            <th>Warna</th>
-                                            <th>Aksi</th>
+                                            <th class="text-center py-2 px-2" style="width: 50px;">#</th>
+                                            <th class="text-center py-2 px-2" style="width: 60px;">Icon</th>
+                                            <th class="py-2 px-3" style="width: 20%;">Judul</th>
+                                            <th class="py-2 px-3" style="width: 35%;">Deskripsi</th>
+                                            <th class="text-center py-2 px-2" style="width: 100px;">Tipe</th>
+                                            <th class="text-center py-2 px-2" style="width: 80px;">Warna</th>
+                                            <th class="text-center py-2 px-2" style="width: 100px;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>

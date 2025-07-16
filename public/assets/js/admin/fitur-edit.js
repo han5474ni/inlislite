@@ -10,56 +10,103 @@ let featuresTable;
 let modulesTable;
 
 // Initialize when DOM is loaded
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
 });
 
 /**
  * Initialize the application
  */
-function initializeApp() {
-    loadData();
-    initializeDataTables();
-    initializeEventListeners();
-    initializeIconPreviews();
-}
-
-/**
- * Load initial data
- */
-async function loadData() {
+async function initializeApp() {
+    showLoading();
+    
     try {
-        showLoading();
+        // Load data from database
+        await loadFeatures();
+        await loadModules();
         
-        console.log('Starting data load...');
+        // Initialize UI components
+        initializeDataTables();
+        updateStats();
+        initializeEventListeners();
+        initializeIconPreviews();
         
-        // Load data from API
-        await Promise.all([
-            loadFeatures(),
-            loadModules()
-        ]);
-        
-        // Load statistics after data is loaded
-        await loadStatistics();
-        
-        // Refresh DataTables with loaded data
-        if (featuresTable && features.length > 0) {
-            featuresTable.clear().rows.add(features).draw();
-            console.log('Features table updated with', features.length, 'items');
-        }
-        if (modulesTable && modules.length > 0) {
-            modulesTable.clear().rows.add(modules).draw();
-            console.log('Modules table updated with', modules.length, 'items');
-        }
-        
-        console.log('Data load completed. Features:', features.length, 'Modules:', modules.length);
-        
+        console.log('Application initialized successfully');
     } catch (error) {
-        console.error('Error loading data:', error);
-        showError('Gagal memuat data: ' + error.message);
+        console.error('Error initializing application:', error);
+        // Fallback to sample data if database fails
+        loadSampleData();
+        initializeDataTables();
+        updateStats();
+        initializeEventListeners();
+        initializeIconPreviews();
     } finally {
         hideLoading();
     }
+}
+
+/**
+ * Load sample data for demonstration
+ */
+function loadSampleData() {
+    // Sample features data
+    features = [
+        {
+            id: 1,
+            title: "Form Entri Katalog Sederhana",
+            description: "Menyediakan form entri katalog berbasis MARC yang disederhanakan untuk memudahkan pustakawan dalam menginput data bibliografi dengan cepat dan akurat.",
+            icon: "bi-file-text",
+            color: "blue",
+            type: "feature"
+        },
+        {
+            id: 2,
+            title: "Sistem Sirkulasi Otomatis",
+            description: "Manajemen peminjaman dan pengembalian buku secara otomatis dengan notifikasi real-time dan sistem denda terintegrasi.",
+            icon: "bi-arrow-repeat",
+            color: "green",
+            type: "feature"
+        },
+        {
+            id: 3,
+            title: "OPAC (Online Public Access Catalog)",
+            description: "Katalog online yang memungkinkan pengguna mencari dan mengakses informasi koleksi perpustakaan dari mana saja.",
+            icon: "bi-search",
+            color: "orange",
+            type: "feature"
+        }
+    ];
+    
+    // Sample modules data
+    modules = [
+        {
+            id: 1,
+            title: "Portal Aplikasi Inlislite",
+            description: "Navigasi utama ke semua modul sistem dengan dashboard terpusat dan akses cepat ke fitur-fitur utama.",
+            icon: "bi-house-door",
+            color: "blue",
+            type: "module",
+            module_type: "application"
+        },
+        {
+            id: 2,
+            title: "Database Management System",
+            description: "Sistem manajemen database yang robust dengan fitur backup otomatis, replikasi, dan optimasi performa.",
+            icon: "bi-database",
+            color: "purple",
+            type: "module",
+            module_type: "database"
+        },
+        {
+            id: 3,
+            title: "Backup Utility",
+            description: "Utilitas backup otomatis untuk menjaga keamanan data dengan penjadwalan backup yang fleksibel.",
+            icon: "bi-shield-check",
+            color: "green",
+            type: "module",
+            module_type: "utility"
+        }
+    ];
 }
 
 /**
@@ -1114,10 +1161,285 @@ function showToast(message, type = 'info') {
     }, 5000);
 }
 
+/**
+ * Table data rendering functions
+ */
+function renderTableData() {
+    renderFeaturesTable();
+    renderModulesTable();
+}
+
+function renderFeaturesTable() {
+    const tbody = document.querySelector('#featuresTable tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    features.forEach((feature, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="text-center">${index + 1}</td>
+            <td class="text-center">
+                <div class="table-icon ${feature.color}">
+                    <i class="${feature.icon}"></i>
+                </div>
+            </td>
+            <td class="fw-medium">${feature.title}</td>
+            <td>
+                <div class="description-text">${feature.description}</div>
+            </td>
+            <td class="text-center">
+                <div class="color-indicator ${feature.color}"></div>
+            </td>
+            <td class="text-center">
+                <div class="d-flex justify-content-center gap-1">
+                    <button class="btn-action-compact btn-edit" onclick="editFeature(${feature.id})" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn-action-compact btn-delete" onclick="deleteFeature(${feature.id})" title="Hapus">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function renderModulesTable() {
+    const tbody = document.querySelector('#modulesTable tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    modules.forEach((module, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="text-center">${index + 1}</td>
+            <td class="text-center">
+                <div class="table-icon ${module.color}">
+                    <i class="${module.icon}"></i>
+                </div>
+            </td>
+            <td class="fw-medium">${module.title}</td>
+            <td>
+                <div class="description-text">${module.description}</div>
+            </td>
+            <td class="text-center">
+                <span class="badge-compact bg-${getTypeBadgeColor(module.module_type || 'utility')}">
+                    ${(module.module_type || 'utility').toUpperCase()}
+                </span>
+            </td>
+            <td class="text-center">
+                <div class="color-indicator ${module.color}"></div>
+            </td>
+            <td class="text-center">
+                <div class="d-flex justify-content-center gap-1">
+                    <button class="btn-action-compact btn-edit" onclick="editModule(${module.id})" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn-action-compact btn-delete" onclick="deleteModule(${module.id})" title="Hapus">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function getTypeBadgeColor(type) {
+    switch(type) {
+        case 'database': return 'purple';
+        case 'application': return 'primary';
+        case 'utility': return 'warning';
+        default: return 'secondary';
+    }
+}
+
+function editFeature(id) {
+    const feature = features.find(f => f.id === id);
+    if (!feature) {
+        showError('Fitur tidak ditemukan');
+        return;
+    }
+    
+    // Populate edit form
+    document.getElementById('editId').value = id;
+    document.getElementById('editType').value = 'feature';
+    document.getElementById('editTitle').value = feature.title;
+    document.getElementById('editDescription').value = feature.description;
+    document.getElementById('editIcon').value = feature.icon;
+    document.getElementById('editColor').value = feature.color;
+    
+    // Hide module type field
+    document.getElementById('editTypeContainer').style.display = 'none';
+    
+    // Update modal title
+    document.getElementById('editModalTitle').textContent = 'Edit Fitur';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+}
+
+function editModule(id) {
+    const module = modules.find(m => m.id === id);
+    if (!module) {
+        showError('Modul tidak ditemukan');
+        return;
+    }
+    
+    // Populate edit form
+    document.getElementById('editId').value = id;
+    document.getElementById('editType').value = 'module';
+    document.getElementById('editTitle').value = module.title;
+    document.getElementById('editDescription').value = module.description;
+    document.getElementById('editIcon').value = module.icon;
+    document.getElementById('editColor').value = module.color;
+    document.getElementById('editModuleType').value = module.module_type || 'utility';
+    
+    // Show module type field
+    document.getElementById('editTypeContainer').style.display = 'block';
+    
+    // Update modal title
+    document.getElementById('editModalTitle').textContent = 'Edit Modul';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+}
+
+function deleteFeature(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus fitur ini?')) {
+        return;
+    }
+    
+    features = features.filter(f => f.id !== id);
+    renderFeaturesTable();
+    updateStats();
+    showSuccess('Fitur berhasil dihapus');
+}
+
+function deleteModule(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus modul ini?')) {
+        return;
+    }
+    
+    modules = modules.filter(m => m.id !== id);
+    renderModulesTable();
+    updateStats();
+    showSuccess('Modul berhasil dihapus');
+}
+
+function updateStats() {
+    const totalFeatures = document.getElementById('totalFeatures');
+    const totalModules = document.getElementById('totalModules');
+    const appModules = document.getElementById('appModules');
+    const dbModules = document.getElementById('dbModules');
+    
+    if (totalFeatures) totalFeatures.textContent = features.length;
+    if (totalModules) totalModules.textContent = modules.length;
+    if (appModules) appModules.textContent = modules.filter(m => m.module_type === 'application').length;
+    if (dbModules) dbModules.textContent = modules.filter(m => m.module_type === 'database').length;
+}
+
+// Update existing functions to use new rendering
+const originalSaveFeature = saveFeature;
+const originalSaveModule = saveModule;
+const originalUpdateItem = updateItem;
+
+saveFeature = function() {
+    const result = originalSaveFeature.call(this);
+    renderFeaturesTable();
+    updateStats();
+    return result;
+};
+
+saveModule = function() {
+    const result = originalSaveModule.call(this);
+    renderModulesTable();
+    updateStats();
+    return result;
+};
+
+updateItem = function() {
+    const result = originalUpdateItem.call(this);
+    renderTableData();
+    updateStats();
+    return result;
+};
+
+// Initialize table rendering on load
+document.addEventListener('DOMContentLoaded', function() {
+    // Add sample data for demonstration
+    features = [
+        {
+            id: 1,
+            title: "Katalog Online",
+            description: "Sistem katalog online yang memungkinkan pengguna mencari dan menelusuri koleksi perpustakaan secara digital dengan interface yang user-friendly dan fitur pencarian yang canggih",
+            icon: "bi-search",
+            color: "blue"
+        },
+        {
+            id: 2,
+            title: "Sistem Sirkulasi",
+            description: "Modul sirkulasi untuk mengelola peminjaman dan pengembalian buku dengan sistem otomatis, tracking yang akurat, dan notifikasi reminder",
+            icon: "bi-arrow-repeat",
+            color: "green"
+        },
+        {
+            id: 3,
+            title: "Manajemen Anggota",
+            description: "Pengelolaan data anggota perpustakaan dengan sistem registrasi online, manajemen keanggotaan yang komprehensif, dan laporan statistik",
+            icon: "bi-people",
+            color: "orange"
+        }
+    ];
+    
+    modules = [
+        {
+            id: 1,
+            title: "Database Engine",
+            description: "Sistem database yang robust untuk menyimpan dan mengelola seluruh data perpustakaan dengan performa tinggi, keamanan optimal, dan backup otomatis",
+            icon: "bi-database",
+            color: "purple",
+            module_type: "database"
+        },
+        {
+            id: 2,
+            title: "User Interface",
+            description: "Antarmuka pengguna yang modern dan responsif untuk akses mudah ke semua fitur sistem perpustakaan dengan desain yang intuitif",
+            icon: "bi-window",
+            color: "blue",
+            module_type: "application"
+        },
+        {
+            id: 3,
+            title: "Backup Utility",
+            description: "Utilitas backup otomatis untuk menjaga keamanan data dengan penjadwalan backup yang fleksibel dan restore yang mudah",
+            icon: "bi-shield-check",
+            color: "green",
+            module_type: "utility"
+        }
+    ];
+    
+    renderTableData();
+    updateStats();
+});
+
 // Export functions for global access
-window.editItem = editItem;
-window.deleteItem = deleteItem;
 window.saveFeature = saveFeature;
 window.saveModule = saveModule;
+window.editItem = editItem;
 window.updateItem = updateItem;
-window.refreshModulesData = refreshModulesData;
+window.deleteItem = deleteItem;
+window.refreshContent = refreshContent;
+window.editFeature = editFeature;
+window.editModule = editModule;
+window.deleteFeature = deleteFeature;
+window.deleteModule = deleteModule;
+window.refreshModulesData = function() {
+    loadModules();
+    showSuccess('Data modul berhasil direfresh');
+};

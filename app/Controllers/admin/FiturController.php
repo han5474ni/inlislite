@@ -33,7 +33,7 @@ class FiturController extends BaseController
             'page_title' => 'Fitur dan Modul Program'
         ];
 
-        return view('admin/fitur', $data);
+        return view('admin/fitur_new', $data);
     }
 
     /**
@@ -370,6 +370,11 @@ class FiturController extends BaseController
     {
         try {
             $items = $this->request->getPost('items');
+            
+            // Decode JSON string if it's a string
+            if (is_string($items)) {
+                $items = json_decode($items, true);
+            }
             
             if (!$items || !is_array($items)) {
                 return $this->response->setStatusCode(400)->setJSON([
