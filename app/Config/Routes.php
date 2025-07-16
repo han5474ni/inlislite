@@ -32,6 +32,8 @@ $routes->get('home', 'PublicController::index');
 $routes->get('tentang', 'PublicController::tentang');
 $routes->get('tentang-aplikasi', 'PublicController::tentang');
 $routes->get('about', 'PublicController::tentang');
+$routes->get('fitur', 'PublicController::fitur');
+$routes->get('features', 'PublicController::fitur');
 $routes->get('panduan', 'PublicController::panduan');
 $routes->get('guide', 'PublicController::panduan');
 $routes->get('aplikasi', 'PublicController::aplikasi');
@@ -127,7 +129,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('store', 'FiturController::store');
         $routes->post('update/(:num)', 'FiturController::update/$1');
         $routes->post('delete/(:num)', 'FiturController::delete/$1');
-        $routes->post('sort-order', 'FiturController::updateSortOrder');
+        $routes->post('updateSortOrder', 'FiturController::updateSortOrder');
     });
     // Legacy routes - will redirect to new controllers
     $routes->get('panduan', 'PanduanController::index');
@@ -193,33 +195,25 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('sort-order', 'DemoController::updateSortOrder');
     });
     
-    // Users Edit Page
-    $routes->get('users-edit', 'UserManagement::usersEdit');
+    // User Management - Complete routes
+    $routes->get('users', 'UserManagement::index');
+    $routes->get('users-edit', 'UserManagement::userEdit');
+    $routes->get('users-edit/create', 'UserManagement::create');
+    $routes->post('users/store', 'UserManagement::store');
+    $routes->get('users/edit/(:num)', 'UserManagement::edit/$1');
+    $routes->post('users/update/(:num)', 'UserManagement::update/$1');
+    $routes->get('users/delete/(:num)', 'UserManagement::delete/$1');
+    $routes->get('users/history', 'UserManagement::history');
+    $routes->get('users/history/(:num)', 'UserManagement::userHistory/$1');
     
-    // User Management
-    $routes->group('users', function($routes) {
-        $routes->get('/', 'UserManagement::index');
-        $routes->get('create', 'UserManagement::create');
-        $routes->post('store', 'UserManagement::store');
-        $routes->get('edit/(:num)', 'UserManagement::edit/$1');
-        $routes->post('update/(:num)', 'UserManagement::update/$1');
-        $routes->get('delete/(:num)', 'UserManagement::delete/$1');
-        
-        // Secure user management
-        $routes->get('add-secure', 'SecureUserController::addUser');
-        $routes->post('store-secure', 'SecureUserController::storeSecure');
-        $routes->post('check-password-strength', 'SecureUserController::checkPasswordStrength');
-        $routes->post('generate-password', 'SecureUserController::generatePassword');
-        
-        // AJAX endpoints
-        $routes->get('ajax/(:num)', 'UserManagement::getUser/$1');
-        $routes->post('ajax/create', 'UserManagement::addUserAjax');
-        $routes->post('ajax/update/(:num)', 'UserManagement::editUserAjax/$1');
-        $routes->post('ajax/delete/(:num)', 'UserManagement::deleteUserAjax/$1');
-        $routes->get('ajax/list', 'UserManagement::getUsersList');
-        $routes->get('ajax/statistics', 'UserManagement::getUserStatistics');
-        $routes->get('reloadUsers', 'UserManagement::reloadUsers');
-    });
+    // AJAX endpoints
+    $routes->get('users/ajax/(:num)', 'UserManagement::getUser/$1');
+    $routes->get('users/ajax/list', 'UserManagement::getUsersList');
+    $routes->get('users/ajax/statistics', 'UserManagement::getUserStatistics');
+    $routes->post('users/ajax/create', 'UserManagement::addUserAjax');
+    $routes->post('users/ajax/update/(:num)', 'UserManagement::editUserAjax/$1');
+    $routes->post('users/ajax/delete/(:num)', 'UserManagement::deleteUserAjax/$1');
+    $routes->get('users/reloadUsers', 'UserManagement::reloadUsers');
     
     // Profile Management
     $routes->get('profile', '\App\Controllers\ProfileController::index');

@@ -3,16 +3,22 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\FeatureModel;
+use App\Models\ModuleModel;
 use App\Models\FiturModel;
 
 class FiturController extends BaseController
 {
-    protected $fiturModel;
+    protected $featureModel;
+    protected $moduleModel;
+    protected $fiturModel; // Keep for backward compatibility
     protected $session;
 
     public function __construct()
     {
-        $this->fiturModel = new FiturModel();
+        $this->featureModel = new FeatureModel();
+        $this->moduleModel = new ModuleModel();
+        $this->fiturModel = new FiturModel(); // Keep for backward compatibility
         $this->session = \Config\Services::session();
         helper(['form', 'url']);
     }
@@ -48,20 +54,27 @@ class FiturController extends BaseController
      */
     public function getData()
     {
-
         try {
             $type = $this->request->getGet('type'); // 'feature', 'module', or null for all
             $status = $this->request->getGet('status') ?? 'active';
 
-            $builder = $this->fiturModel->where('status', $status);
+            $data = [];
             
-            if ($type) {
-                $builder->where('type', $type);
+            if ($type === 'feature') {
+                $data = $this->featureModel->getAll($status);
+            } elseif ($type === 'module') {
+                $data = $this->moduleModel->getAll($status);
+            } else {
+                // Return both features and modules if no type specified
+                $features = $this->featureModel->getAll($status);
+                $modules = $this->moduleModel->getAll($status);
+                $data = array_merge($features, $modules);
+                
+                // Sort by sort_order
+                usort($data, function($a, $b) {
+                    return $a['sort_order'] - $b['sort_order'];
+                });
             }
-
-            $data = $builder->orderBy('sort_order', 'ASC')
-                           ->orderBy('created_at', 'DESC')
-                           ->findAll();
 
             return $this->response->setJSON([
                 'success' => true,
@@ -77,37 +90,25 @@ class FiturController extends BaseController
         }
     }
 
+    
     /**
      * Get statistics (API endpoint)
      */
     public function getStatistics()
     {
         try {
-            $totalFeatures = $this->fiturModel->where('type', 'feature')
-                                             ->where('status', 'active')
-                                             ->countAllResults();
+            $totalFeatures = $this->featureModel->where('status', 'active')
+                                               ->countAllResults();
 
-            $totalModules = $this->fiturModel->where('type', 'module')
-                                            ->where('status', 'active')
-                                            ->countAllResults();
-
-            $appModules = $this->fiturModel->where('type', 'module')
-                                          ->where('module_type', 'application')
-                                          ->where('status', 'active')
-                                          ->countAllResults();
-
-            $dbModules = $this->fiturModel->where('type', 'module')
-                                         ->where('module_type', 'database')
-                                         ->where('status', 'active')
-                                         ->countAllResults();
+            $moduleStats = $this->moduleModel->getStatistics();
 
             return $this->response->setJSON([
                 'success' => true,
                 'data' => [
                     'total_features' => $totalFeatures,
-                    'total_modules' => $totalModules,
-                    'app_modules' => $appModules,
-                    'db_modules' => $dbModules
+                    'total_modules' => $moduleStats['total_modules'],
+                    'app_modules' => $moduleStats['app_modules'],
+                    'db_modules' => $moduleStats['db_modules']
                 ]
             ]);
 
@@ -125,8 +126,9 @@ class FiturController extends BaseController
      */
     public function store()
     {
-
         try {
+            $type = $this->request->getPost('type');
+            
             $rules = [
                 'title' => 'required|min_length[3]|max_length[255]',
                 'description' => 'required|min_length[10]',
@@ -135,7 +137,7 @@ class FiturController extends BaseController
                 'type' => 'required|in_list[feature,module]'
             ];
 
-            if ($this->request->getPost('type') === 'module') {
+            if ($type === 'module') {
                 $rules['module_type'] = 'required|in_list[application,database,utility]';
             }
 
@@ -152,10 +154,7 @@ class FiturController extends BaseController
                 'description' => $this->request->getPost('description'),
                 'icon' => $this->request->getPost('icon'),
                 'color' => $this->request->getPost('color'),
-                'type' => $this->request->getPost('type'),
-                'module_type' => $this->request->getPost('module_type'),
                 'status' => 'active',
-                'sort_order' => $this->getNextSortOrder($this->request->getPost('type')),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ];
@@ -165,21 +164,37 @@ class FiturController extends BaseController
                 $data['icon'] = 'bi-' . $data['icon'];
             }
 
-            $id = $this->fiturModel->insert($data);
+            $id = null;
+            $newItem = null;
 
-            if ($id) {
-                $newItem = $this->fiturModel->find($id);
-                
+            if ($type === 'feature') {
+                // Set sort order for feature
+                $data['sort_order'] = $this->featureModel->getNextSortOrder();
+                $id = $this->featureModel->insert($data);
+                if ($id) {
+                    $newItem = $this->featureModel->find($id);
+                }
+            } else {
+                // Set sort order for module and module type
+                $data['module_type'] = $this->request->getPost('module_type');
+                $data['sort_order'] = $this->moduleModel->getNextSortOrder();
+                $id = $this->moduleModel->insert($data);
+                if ($id) {
+                    $newItem = $this->moduleModel->find($id);
+                }
+            }
+
+            if ($id && $newItem) {
                 // Log activity
                 $this->logActivity(
                     $this->session->get('admin_user_id'),
-                    'create_' . $data['type'],
-                    "Created new {$data['type']}: {$data['title']}"
+                    'create_' . $type,
+                    "Created new {$type}: {$data['title']}"
                 );
 
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => ucfirst($data['type']) . ' berhasil ditambahkan',
+                    'message' => ucfirst($type) . ' berhasil ditambahkan',
                     'data' => $newItem
                 ]);
             } else {
@@ -203,9 +218,17 @@ class FiturController extends BaseController
      */
     public function update($id)
     {
-
         try {
-            $item = $this->fiturModel->find($id);
+            // First try to find in features table
+            $item = $this->featureModel->find($id);
+            $isFeature = true;
+            
+            if (!$item) {
+                // If not found in features, try modules table
+                $item = $this->moduleModel->find($id);
+                $isFeature = false;
+            }
+            
             if (!$item) {
                 return $this->response->setStatusCode(404)->setJSON([
                     'success' => false,
@@ -220,7 +243,7 @@ class FiturController extends BaseController
                 'color' => 'required|in_list[blue,green,orange,purple]'
             ];
 
-            if ($item['type'] === 'module') {
+            if (!$isFeature) {
                 $rules['module_type'] = 'required|in_list[application,database,utility]';
             }
 
@@ -240,7 +263,7 @@ class FiturController extends BaseController
                 'updated_at' => date('Y-m-d H:i:s')
             ];
 
-            if ($item['type'] === 'module') {
+            if (!$isFeature) {
                 $data['module_type'] = $this->request->getPost('module_type');
             }
 
@@ -249,19 +272,22 @@ class FiturController extends BaseController
                 $data['icon'] = 'bi-' . $data['icon'];
             }
 
-            if ($this->fiturModel->update($id, $data)) {
-                $updatedItem = $this->fiturModel->find($id);
+            $model = $isFeature ? $this->featureModel : $this->moduleModel;
+            $type = $isFeature ? 'feature' : 'module';
+            
+            if ($model->update($id, $data)) {
+                $updatedItem = $model->find($id);
                 
                 // Log activity
                 $this->logActivity(
                     $this->session->get('admin_user_id'),
-                    'update_' . $item['type'],
-                    "Updated {$item['type']}: {$data['title']}"
+                    'update_' . $type,
+                    "Updated {$type}: {$data['title']}"
                 );
 
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => ucfirst($item['type']) . ' berhasil diperbarui',
+                    'message' => ucfirst($type) . ' berhasil diperbarui',
                     'data' => $updatedItem
                 ]);
             } else {
@@ -285,9 +311,17 @@ class FiturController extends BaseController
      */
     public function delete($id)
     {
-
         try {
-            $item = $this->fiturModel->find($id);
+            // First try to find in features table
+            $item = $this->featureModel->find($id);
+            $isFeature = true;
+            
+            if (!$item) {
+                // If not found in features, try modules table
+                $item = $this->moduleModel->find($id);
+                $isFeature = false;
+            }
+            
             if (!$item) {
                 return $this->response->setStatusCode(404)->setJSON([
                     'success' => false,
@@ -295,17 +329,23 @@ class FiturController extends BaseController
                 ]);
             }
 
-            if ($this->fiturModel->delete($id)) {
+            $model = $isFeature ? $this->featureModel : $this->moduleModel;
+            $type = $isFeature ? 'feature' : 'module';
+            
+            if ($model->delete($id)) {
+                // Reorder sort_order after deletion using the appropriate model
+                $model->reorderAfterDeletion($item['sort_order']);
+                
                 // Log activity
                 $this->logActivity(
                     $this->session->get('admin_user_id'),
-                    'delete_' . $item['type'],
-                    "Deleted {$item['type']}: {$item['title']}"
+                    'delete_' . $type,
+                    "Deleted {$type}: {$item['title']}"
                 );
 
                 return $this->response->setJSON([
                     'success' => true,
-                    'message' => ucfirst($item['type']) . ' berhasil dihapus'
+                    'message' => ucfirst($type) . ' berhasil dihapus'
                 ]);
             } else {
                 return $this->response->setStatusCode(500)->setJSON([
@@ -338,22 +378,38 @@ class FiturController extends BaseController
                 ]);
             }
 
-            $this->fiturModel->db->transStart();
-
+            // Group items by type for separate processing
+            $featureItems = [];
+            $moduleItems = [];
+            
             foreach ($items as $index => $item) {
-                $this->fiturModel->update($item['id'], [
-                    'sort_order' => $index + 1,
-                    'updated_at' => date('Y-m-d H:i:s')
-                ]);
+                // Check if item exists in features table
+                $featureItem = $this->featureModel->find($item['id']);
+                if ($featureItem) {
+                    $featureItems[] = ['id' => $item['id'], 'sort_order' => $index + 1];
+                } else {
+                    $moduleItems[] = ['id' => $item['id'], 'sort_order' => $index + 1];
+                }
             }
 
-            $this->fiturModel->db->transComplete();
+            // Update features sort order
+            if (!empty($featureItems)) {
+                if (!$this->featureModel->updateSortOrders($featureItems)) {
+                    return $this->response->setStatusCode(500)->setJSON([
+                        'success' => false,
+                        'message' => 'Gagal memperbarui urutan fitur'
+                    ]);
+                }
+            }
 
-            if ($this->fiturModel->db->transStatus() === false) {
-                return $this->response->setStatusCode(500)->setJSON([
-                    'success' => false,
-                    'message' => 'Gagal memperbarui urutan'
-                ]);
+            // Update modules sort order
+            if (!empty($moduleItems)) {
+                if (!$this->moduleModel->updateSortOrders($moduleItems)) {
+                    return $this->response->setStatusCode(500)->setJSON([
+                        'success' => false,
+                        'message' => 'Gagal memperbarui urutan modul'
+                    ]);
+                }
             }
 
             return $this->response->setJSON([
@@ -370,21 +426,6 @@ class FiturController extends BaseController
         }
     }
 
-    /**
-     * Get next sort order for a type
-     */
-    private function getNextSortOrder($type)
-    {
-        if (!$type) {
-            return 1; // Default sort order if type is null
-        }
-        
-        $maxOrder = $this->fiturModel->where('type', $type)
-                                   ->selectMax('sort_order')
-                                   ->first();
-        
-        return ($maxOrder['sort_order'] ?? 0) + 1;
-    }
 
     /**
      * Log user activity

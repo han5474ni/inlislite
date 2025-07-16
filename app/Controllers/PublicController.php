@@ -5,6 +5,8 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\TentangCardModel;
 use App\Models\FiturModel;
+use App\Models\FeatureModel;
+use App\Models\ModuleModel;
 use App\Models\InstallerCardModel;
 use App\Models\PatchModel;
 use App\Models\AplikasiModel;
@@ -49,20 +51,32 @@ class PublicController extends BaseController
     public function fitur()
     {
         try {
-            $fiturModel = new FiturModel();
-            $features = $fiturModel->where('status', 'active')
-                                  ->orderBy('sort_order', 'ASC')
-                                  ->findAll();
+            $featureModel = new FeatureModel();
+            $moduleModel = new ModuleModel();
+            
+            $features = $featureModel->getAll('active');
+            $modules = $moduleModel->getAll('active');
+            
+            // Combine and sort by sort_order
+            $allItems = array_merge($features, $modules);
+            usort($allItems, function($a, $b) {
+                return $a['sort_order'] - $b['sort_order'];
+            });
+            
         } catch (\Exception $e) {
             log_message('error', 'Error loading fitur data: ' . $e->getMessage());
             $features = $this->getDefaultFeatures();
+            $modules = $this->getDefaultModules();
+            $allItems = array_merge($features, $modules);
         }
         
         $data = [
             'title' => 'Fitur & Modul - INLISLite v3',
             'page_title' => 'Fitur & Modul',
             'meta_description' => 'Fitur lengkap dan modul-modul canggih dalam sistem INLISLite v3 untuk manajemen perpustakaan modern.',
-            'features' => $features
+            'features' => $features ?? [],
+            'modules' => $modules ?? [],
+            'all_items' => $allItems
         ];
         
         return view('public/fitur', $data);
@@ -364,10 +378,28 @@ class PublicController extends BaseController
         return [
             [
                 'id' => 1,
-                'nama_fitur' => 'Katalogisasi',
-                'deskripsi' => 'Sistem katalogisasi digital dengan standar MARC21',
-                'kategori' => 'core',
-                'icon' => 'bi-book'
+                'title' => 'Katalogisasi',
+                'description' => 'Sistem katalogisasi digital dengan standar MARC21',
+                'icon' => 'bi-book',
+                'color' => 'blue',
+                'type' => 'feature',
+                'sort_order' => 1
+            ]
+        ];
+    }
+    
+    private function getDefaultModules()
+    {
+        return [
+            [
+                'id' => 1,
+                'title' => 'Portal Aplikasi',
+                'description' => 'Navigasi utama ke semua modul sistem',
+                'icon' => 'bi-house-door',
+                'color' => 'green',
+                'type' => 'module',
+                'module_type' => 'application',
+                'sort_order' => 2
             ]
         ];
     }

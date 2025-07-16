@@ -780,6 +780,9 @@ async function deleteItem(id, type) {
             // Update statistics
             updateStatistics();
 
+            // Reorder items after deletion to avoid gaps in sort_order
+            await reorderItems(type);
+
             showSuccess(result.message || `${type === 'feature' ? 'Fitur' : 'Modul'} berhasil dihapus`);
         } else {
             throw new Error(result.message || 'Gagal menghapus item');
@@ -790,6 +793,75 @@ async function deleteItem(id, type) {
         showError('Gagal menghapus item');
     } finally {
         hideLoading();
+    }
+}
+
+/**
+ * Reorder items after deletion to maintain sequential sort_order
+ */
+async function reorderItems(type) {
+    try {
+        console.log(`Reordering ${type} items...`);
+        
+        const currentItems = type === 'feature' ? features : modules;
+        
+        // Sort items by current sort_order or by id if sort_order is missing
+        currentItems.sort((a, b) => {
+            const aOrder = a.sort_order || a.id;
+            const bOrder = b.sort_order || b.id;
+            return aOrder - bOrder;
+        });
+        
+        // Create array of items with new sequential order
+        const reorderedItems = currentItems.map((item, index) => ({
+            id: item.id,
+            sort_order: index + 1
+        }));
+        
+        // Only proceed if we have items to reorder
+        if (reorderedItems.length === 0) {
+            console.log(`No ${type} items to reorder`);
+            return;
+        }
+        
+        // Send to backend API for persistence
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/updateSortOrder`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                items: JSON.stringify(reorderedItems)
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log(`Successfully reordered ${reorderedItems.length} ${type} items`);
+            
+            // Update local arrays with new sort_order values
+            reorderedItems.forEach(reorderedItem => {
+                const item = currentItems.find(i => i.id === reorderedItem.id);
+                if (item) {
+                    item.sort_order = reorderedItem.sort_order;
+                }
+            });
+            
+            // Refresh the DataTable to reflect new ordering
+            const table = type === 'feature' ? featuresTable : modulesTable;
+            table.clear().rows.add(currentItems).draw();
+            
+        } else {
+            console.error(`Failed to reorder ${type} items:`, result.message);
+            throw new Error(result.message || `Failed to reorder ${type} items`);
+        }
+        
+    } catch (error) {
+        console.error(`Error reordering ${type} items:`, error);
+        // Don't show error to user as this is a background operation
+        // Just log it for debugging
     }
 }
 
@@ -901,9 +973,151 @@ function showToast(message, type = 'info') {
     }, 5000);
 }
 
+/**
+ * Refresh modules data
+ */
+async function refreshModulesData() {
+    try {
+        showLoading();
+        
+        // Reload modules data
+        await loadModules();
+        
+        // Update modules table
+        if (modulesTable && modules.length > 0) {
+            modulesTable.clear().rows.add(modules).draw();
+        }
+        
+        // Update statistics
+        await loadStatistics();
+        
+        showSuccess('Data modul berhasil diperbarui');
+        
+    } catch (error) {
+        console.error('Error refreshing modules data:', error);
+        showError('Gagal memperbarui data modul');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Enhanced toast notification with better styling
+ */
+function showToast(message, type = 'info') {
+    // Create toast element with enhanced styling
+    const toast = $(`
+        <div class="toast-notification toast-${type} animate-fade-in">
+            <div class="toast-content">
+                <div class="toast-icon">
+                    <i class="bi bi-${type === 'success' ? 'check-circle-fill' : type === 'error' ? 'exclamation-triangle-fill' : 'info-circle-fill'}"></i>
+                </div>
+                <div class="toast-message">
+                    <span class="toast-title">${type === 'success' ? 'Berhasil' : type === 'error' ? 'Error' : 'Info'}</span>
+                    <span class="toast-text">${message}</span>
+                </div>
+            </div>
+            <button class="toast-close">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+    `);
+
+    // Add enhanced styles if not already added
+    if (!$('#enhanced-toast-styles').length) {
+        $('head').append(`
+            <style id="enhanced-toast-styles">
+                .toast-notification {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                    border-radius: 12px;
+                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                    padding: 1rem 1.5rem;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 1rem;
+                    min-width: 320px;
+                    max-width: 400px;
+                    animation: slideInRight 0.3s ease-out;
+                    border-left: 4px solid #6b7280;
+                    backdrop-filter: blur(10px);
+                }
+                .toast-success { border-left-color: #059669; }
+                .toast-error { border-left-color: #dc2626; }
+                .toast-info { border-left-color: #2563eb; }
+                .toast-content {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 0.75rem;
+                    flex: 1;
+                }
+                .toast-icon {
+                    font-size: 1.25rem;
+                    margin-top: 0.125rem;
+                }
+                .toast-success .toast-icon { color: #059669; }
+                .toast-error .toast-icon { color: #dc2626; }
+                .toast-info .toast-icon { color: #2563eb; }
+                .toast-message {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.25rem;
+                }
+                .toast-title {
+                    font-weight: 600;
+                    font-size: 0.875rem;
+                    color: #374151;
+                }
+                .toast-text {
+                    font-size: 0.875rem;
+                    color: #6b7280;
+                    line-height: 1.4;
+                }
+                .toast-close {
+                    background: none;
+                    border: none;
+                    color: #9ca3af;
+                    cursor: pointer;
+                    padding: 0.25rem;
+                    border-radius: 6px;
+                    font-size: 1rem;
+                    transition: all 0.2s ease;
+                }
+                .toast-close:hover {
+                    background-color: #f3f4f6;
+                    color: #6b7280;
+                }
+                @keyframes slideInRight {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            </style>
+        `);
+    }
+
+    // Add to DOM
+    $('body').append(toast);
+
+    // Close button functionality
+    toast.find('.toast-close').on('click', function() {
+        toast.addClass('animate-fade-out');
+        setTimeout(() => toast.remove(), 300);
+    });
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        toast.addClass('animate-fade-out');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
 // Export functions for global access
 window.editItem = editItem;
 window.deleteItem = deleteItem;
 window.saveFeature = saveFeature;
 window.saveModule = saveModule;
 window.updateItem = updateItem;
+window.refreshModulesData = refreshModulesData;

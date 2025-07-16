@@ -86,32 +86,25 @@
                         </div>
                         <div class="chart-legend mt-3">
                             <div class="row">
-                                <div class="col-6 col-md-3">
+                                <div class="col-6 col-md-4">
                                     <div class="legend-item">
-                                        <span class="legend-color" style="background-color: #004AAD;"></span>
-                                        <span class="legend-label">Super Admin</span>
-                                        <span class="legend-count" id="superAdminCount">0</span>
+                                        <span class="legend-color" style="background-color: #28a745;"></span>
+                                        <span class="legend-label">Active Users</span>
+                                        <span class="legend-count" id="activeCount">0</span>
                                     </div>
                                 </div>
-                                <div class="col-6 col-md-3">
+                                <div class="col-6 col-md-4">
                                     <div class="legend-item">
-                                        <span class="legend-color" style="background-color: #1C6EC4;"></span>
-                                        <span class="legend-label">Admin</span>
-                                        <span class="legend-count" id="adminCount">0</span>
+                                        <span class="legend-color" style="background-color: #dc3545;"></span>
+                                        <span class="legend-label">Inactive Users</span>
+                                        <span class="legend-count" id="inactiveCount">0</span>
                                     </div>
                                 </div>
-                                <div class="col-6 col-md-3">
+                                <div class="col-6 col-md-4">
                                     <div class="legend-item">
-                                        <span class="legend-color" style="background-color: #2DA84D;"></span>
-                                        <span class="legend-label">Pustakawan</span>
-                                        <span class="legend-count" id="pustakawaCount">0</span>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="legend-item">
-                                        <span class="legend-color" style="background-color: #0B8F1C;"></span>
-                                        <span class="legend-label">Staff</span>
-                                        <span class="legend-count" id="staffCount">0</span>
+                                        <span class="legend-color" style="background-color: #007bff;"></span>
+                                        <span class="legend-label">Total Users</span>
+                                        <span class="legend-count" id="totalCount">0</span>
                                     </div>
                                 </div>
                             </div>
@@ -126,16 +119,6 @@
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Search</label>
                         <input type="text" class="form-control" id="searchInput" placeholder="Search users...">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-semibold">Role</label>
-                        <select class="form-select" id="roleFilter">
-                            <option value="">All Roles</option>
-                            <option value="Super Admin">Super Admin</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Pustakawan">Pustakawan</option>
-                            <option value="Staff">Staff</option>
-                        </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label fw-semibold">Status</label>
@@ -159,6 +142,12 @@
                         </a>
                     </div>
                     <?php endif; ?>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-secondary w-100" id="refreshBtn">
+                            <i class="bi bi-arrow-clockwise me-2"></i>
+                            Refresh
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -176,9 +165,6 @@
                                 <th class="sortable" data-sort="nama_lengkap">
                                     User <i class="bi bi-arrow-down-up"></i>
                                 </th>
-                                <th class="sortable" data-sort="role">
-                                    Role <i class="bi bi-arrow-down-up"></i>
-                                </th>
                                 <th class="sortable" data-sort="status">
                                     Status <i class="bi bi-arrow-down-up"></i>
                                 </th>
@@ -188,6 +174,7 @@
                                 <th class="sortable" data-sort="created_at">
                                     Created <i class="bi bi-arrow-down-up"></i>
                                 </th>
+                                <th>History</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
@@ -264,43 +251,6 @@
 
         .sidebar-nav .nav-item:not(.logout-item) {
             flex-shrink: 0;
-        }
-
-        /* Sortable table headers */
-        .sortable {
-            cursor: pointer;
-            user-select: none;
-            transition: background-color 0.2s ease;
-            position: relative;
-        }
-
-        .sortable:hover {
-            background-color: rgba(0, 123, 255, 0.1);
-        }
-
-        .sortable i {
-            margin-left: 0.5rem;
-            opacity: 0.6;
-            transition: opacity 0.2s ease;
-        }
-
-        .sortable:hover i {
-            opacity: 1;
-        }
-
-        .sortable.asc i,
-        .sortable.desc i {
-            opacity: 1;
-            color: #007bff;
-        }
-
-        /* Table row animations */
-        .users-table tbody tr {
-            transition: all 0.3s ease;
-        }
-
-        .users-table tbody tr:hover {
-            background-color: rgba(0, 123, 255, 0.05);
         }
     </style>
 

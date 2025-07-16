@@ -77,24 +77,16 @@
                             Fitur
                         </a>
                         <ul class="dropdown-menu">
-    <li><a class="dropdown-item" href="<?= base_url('aplikasi') ?>">
-        <i class="bi bi-app me-2"></i>Aplikasi Pendukung
-    </a></li>
-    <li><a class="dropdown-item" href="<?= base_url('patch') ?>">
-        <i class="bi bi-arrow-clockwise me-2"></i>Patch & Updater
-    </a></li>
-    <li><a class="dropdown-item" href="<?= base_url('demo') ?>">
-        <i class="bi bi-play-circle me-2"></i>Demo Program
-    </a></li>
-    <!-- Tambahan Baru -->
-    <li><a class="dropdown-item" href="<?= base_url('fitur-modul') ?>">
-        <i class="bi bi-sliders me-2"></i>Fitur & Modul Program
-    </a></li>
-    <li><a class="dropdown-item" href="<?= base_url('installer') ?>">
-        <i class="bi bi-download me-2"></i>Installer
-    </a></li>
-</ul>
-
+                            <li><a class="dropdown-item" href="<?= base_url('aplikasi') ?>">
+                                <i class="bi bi-app me-2"></i>Aplikasi Pendukung
+                            </a></li>
+                            <li><a class="dropdown-item" href="<?= base_url('patch') ?>">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Patch & Updater
+                            </a></li>
+                            <li><a class="dropdown-item" href="<?= base_url('demo') ?>">
+                                <i class="bi bi-play-circle me-2"></i>Demo Program
+                            </a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= ($page_title === 'Tentang') ? 'active' : '' ?>" href="<?= base_url('tentang') ?>">

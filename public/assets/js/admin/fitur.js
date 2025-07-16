@@ -85,65 +85,37 @@ async function loadFeatures() {
     try {
         showLoading();
         
-        // For now, use sample data. Replace with actual API call
-        const sampleFeatures = [
-            {
-                id: 1,
-                title: "Form Entri Katalog Sederhana",
-                description: "Menyediakan form entri katalog berbasis MARC yang disederhanakan untuk memudahkan pustakawan dalam menginput data bibliografi dengan cepat dan akurat.",
-                icon: "bi-file-text",
-                color: "blue",
-                type: "feature"
-            },
-            {
-                id: 2,
-                title: "Kardek Terbitan Teknologi",
-                description: "Fitur back-end untuk mendukung pengelolaan koleksi berbasis teknologi dengan sistem tracking dan monitoring yang terintegrasi.",
-                icon: "bi-cpu",
-                color: "green",
-                type: "feature"
-            },
-            {
-                id: 3,
-                title: "Sistem Sirkulasi Otomatis",
-                description: "Manajemen peminjaman dan pengembalian buku secara otomatis dengan notifikasi real-time dan sistem denda terintegrasi.",
-                icon: "bi-arrow-repeat",
-                color: "blue",
-                type: "feature"
-            },
-            {
-                id: 4,
-                title: "OPAC (Online Public Access Catalog)",
-                description: "Katalog online yang memungkinkan pengguna mencari dan mengakses informasi koleksi perpustakaan dari mana saja.",
-                icon: "bi-search",
-                color: "orange",
-                type: "feature"
-            },
-            {
-                id: 5,
-                title: "Manajemen Keanggotaan",
-                description: "Sistem pengelolaan data anggota perpustakaan dengan fitur registrasi online, perpanjangan membership, dan kartu anggota digital.",
-                icon: "bi-people",
-                color: "purple",
-                type: "feature"
-            },
-            {
-                id: 6,
-                title: "Laporan dan Statistik",
-                description: "Sistem pelaporan komprehensif dengan dashboard analitik untuk monitoring aktivitas perpustakaan dan pengambilan keputusan.",
-                icon: "bi-graph-up",
-                color: "green",
-                type: "feature"
+        // Fetch features from backend API
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/data?type=feature`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
             }
-        ];
+        });
         
-        features = sampleFeatures;
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            features = data.data || [];
+        } else {
+            throw new Error(data.message || 'Failed to load features');
+        }
         filteredFeatures = [...features];
         renderFeatures();
         
     } catch (error) {
         console.error('Error loading features:', error);
         showError('Gagal memuat data fitur');
+        
+        // Fallback to empty array
+        features = [];
+        filteredFeatures = [];
+        renderFeatures();
     } finally {
         hideLoading();
     }
@@ -156,71 +128,37 @@ async function loadModules() {
     try {
         showLoading();
         
-        // For now, use sample data. Replace with actual API call
-        const sampleModules = [
-            {
-                id: 1,
-                title: "Portal Aplikasi Inlislite",
-                description: "Navigasi utama ke semua modul sistem dengan dashboard terpusat dan akses cepat ke fitur-fitur utama.",
-                icon: "bi-house-door",
-                color: "green",
-                type: "module",
-                module_type: "application"
-            },
-            {
-                id: 2,
-                title: "Back Office",
-                description: "Manajemen data perpustakaan internal termasuk pengaturan sistem, konfigurasi, dan administrasi pengguna.",
-                icon: "bi-gear",
-                color: "blue",
-                type: "module",
-                module_type: "application"
-            },
-            {
-                id: 3,
-                title: "Modul Katalogisasi",
-                description: "Sistem katalogisasi lengkap dengan standar MARC21, Dublin Core, dan format metadata internasional lainnya.",
-                icon: "bi-book",
-                color: "blue",
-                type: "module",
-                module_type: "application"
-            },
-            {
-                id: 4,
-                title: "Database Management System",
-                description: "Sistem manajemen database yang robust dengan fitur backup otomatis, replikasi, dan optimasi performa.",
-                icon: "bi-database",
-                color: "green",
-                type: "module",
-                module_type: "database"
-            },
-            {
-                id: 5,
-                title: "API Gateway",
-                description: "Interface pemrograman aplikasi untuk integrasi dengan sistem eksternal dan pengembangan aplikasi pihak ketiga.",
-                icon: "bi-cloud",
-                color: "green",
-                type: "module",
-                module_type: "database"
-            },
-            {
-                id: 6,
-                title: "Mobile Application",
-                description: "Aplikasi mobile untuk akses perpustakaan digital dengan fitur pencarian, peminjaman, dan notifikasi push.",
-                icon: "bi-phone",
-                color: "orange",
-                type: "module",
-                module_type: "application"
+        // Fetch modules from backend API
+        const response = await fetch(`${window.baseUrl || ''}/admin/fitur/data?type=module`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
             }
-        ];
+        });
         
-        modules = sampleModules;
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            modules = data.data || [];
+        } else {
+            throw new Error(data.message || 'Failed to load modules');
+        }
         filteredModules = [...modules];
         renderModules();
         
     } catch (error) {
         console.error('Error loading modules:', error);
         showError('Gagal memuat data modul');
+        
+        // Fallback to empty array
+        modules = [];
+        filteredModules = [];
+        renderModules();
     } finally {
         hideLoading();
     }
@@ -721,9 +659,35 @@ function debounce(func, wait) {
     };
 }
 
+/**
+ * Refresh content function
+ */
+function refreshContent() {
+    console.log('Refreshing content...');
+    
+    // Clear existing data
+    features = [];
+    modules = [];
+    filteredFeatures = [];
+    filteredModules = [];
+    
+    // Clear search input
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    
+    // Reload data
+    loadFeatures();
+    loadModules();
+    
+    showSuccess('Data berhasil direfresh');
+}
+
 // Export functions for global access
 window.saveFeature = saveFeature;
 window.saveModule = saveModule;
 window.editItem = editItem;
 window.updateItem = updateItem;
 window.deleteItem = deleteItem;
+window.refreshContent = refreshContent;

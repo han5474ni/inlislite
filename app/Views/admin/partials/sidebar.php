@@ -51,7 +51,7 @@ $menuItems = [
         'url' => 'admin/users',
         'active_patterns' => ['admin/users', 'admin/user_management', 'usermanagement', 'user-management', 'user_management'],
         'type' => 'link',
-        'permission' => 'can_view_users'
+        'show_for_admin' => true
     ],
     [
         'title' => 'Registrasi',
@@ -140,12 +140,24 @@ function isSubmenuActive($submenu, $currentPath) {
     <div class="sidebar-nav">
         <?php foreach ($menuItems as $index => $item): ?>
             <?php 
-            // Skip user management menu for non-Super Admin users
-            if (isset($item['permission']) && !function_exists($item['permission'])) {
-                continue;
-            }
-            if (isset($item['permission']) && function_exists($item['permission']) && !call_user_func($item['permission'])) {
-                continue;
+            // Debug permission check
+            if (isset($item['permission'])) {
+                $permissionFunction = $item['permission'];
+                $functionExists = function_exists($permissionFunction);
+                $hasPermission = $functionExists ? call_user_func($permissionFunction) : false;
+                
+                if (ENVIRONMENT === 'development' && $item['title'] === 'Manajemen Pengguna') {
+                    log_message('debug', 'Permission check for ' . $item['title'] . ':');
+                    log_message('debug', '- Function: ' . $permissionFunction);
+                    log_message('debug', '- Function exists: ' . ($functionExists ? 'true' : 'false'));
+                    log_message('debug', '- Has permission: ' . ($hasPermission ? 'true' : 'false'));
+                    log_message('debug', '- Session admin_role: ' . (session('admin_role') ?? 'none'));
+                    log_message('debug', '- Session admin_logged_in: ' . (session('admin_logged_in') ? 'true' : 'false'));
+                }
+                
+                if (!$functionExists || !$hasPermission) {
+                    continue;
+                }
             }
             
             $isActive = isMenuActive($item['active_patterns'], $currentPath);

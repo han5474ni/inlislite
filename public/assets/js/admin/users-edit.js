@@ -128,8 +128,8 @@ function initializeDataTable() {
             zeroRecords: "Tidak ada data yang cocok"
         },
         columnDefs: [
-            { orderable: false, targets: [1, 8] }, // Avatar and Actions columns
-            { className: "text-center", targets: [0, 1, 6, 7] }
+            { orderable: false, targets: [1, 7, 8] }, // Avatar, History and Actions columns
+            { className: "text-center", targets: [0, 1, 6, 7, 8] }
         ]
     });
 }
@@ -255,9 +255,13 @@ function populateTable(data) {
             escapeHtml(user.nama_lengkap),
             escapeHtml(user.nama_pengguna),
             escapeHtml(user.email),
-            `<span class="role-badge ${roleClass}">${escapeHtml(user.role)}</span>`,
             `<span class="status-badge ${statusClass}">${escapeHtml(user.status)}</span>`,
             lastLogin,
+            `
+                <button class="btn-action view-history" onclick="viewUserHistory(${user.id})" title="View History" data-user-id="${user.id}">
+                    <i class="bi bi-clock-history"></i>
+                </button>
+            `,
             `
                 <button class="btn-action edit" onclick="editUser(${user.id})" title="Edit" data-user-id="${user.id}">
                     <i class="bi bi-pencil"></i>
@@ -309,7 +313,6 @@ async function saveUser() {
         nama_pengguna: document.getElementById('userNamaPengguna').value.trim(),
         email: document.getElementById('userEmail').value.trim(),
         password: document.getElementById('userPassword').value,
-        role: document.getElementById('userRole').value,
         status: document.getElementById('userStatus').value
     };
     
@@ -420,8 +423,16 @@ function editUser(userId) {
     document.getElementById('editNamaPengguna').value = user.nama_pengguna;
     document.getElementById('editEmail').value = user.email;
     document.getElementById('editPassword').value = ''; // Always empty for security
-    document.getElementById('editRole').value = user.role;
     document.getElementById('editStatus').value = user.status;
+
+    // Populate feature checkboxes
+    document.querySelectorAll('.feature-checkbox').forEach(checkbox => {
+        if (user.features && Array.isArray(user.features)) {
+            checkbox.checked = user.features.includes(checkbox.value);
+        } else {
+            checkbox.checked = false;
+        }
+    });
     
     // Show modal
     const modal = new bootstrap.Modal(document.getElementById('editModal'));
@@ -440,8 +451,8 @@ async function updateUser() {
         nama_pengguna: document.getElementById('editNamaPengguna').value.trim(),
         email: document.getElementById('editEmail').value.trim(),
         password: document.getElementById('editPassword').value,
-        role: document.getElementById('editRole').value,
-        status: document.getElementById('editStatus').value
+status: document.getElementById('editStatus').value,
+        features: Array.from(document.querySelectorAll('.feature-checkbox:checked')).map(cb => cb.value)
     };
     
     // Validate form
@@ -567,7 +578,6 @@ function validateUserForm(data, isEdit = false) {
     if (!data.nama_pengguna) errors.push('Username wajib diisi');
     if (!data.email) errors.push('Email wajib diisi');
     if (!isEdit && !data.password) errors.push('Password wajib diisi');
-    if (!data.role) errors.push('Role wajib diisi');
     if (!data.status) errors.push('Status wajib diisi');
     
     // Email validation
@@ -734,6 +744,53 @@ function updateCSRFHash(response) {
             metaTag.setAttribute('content', response.csrf_hash);
         }
     }
+}
+
+/**
+ * View user history
+ */
+function viewUserHistory(userId) {
+    // Redirect to user history page
+    window.location.href = `${window.baseUrl || ''}/admin/users/history/${userId}`;
+}
+
+/**
+ * Toggle password visibility
+ */
+function togglePasswordVisibility(passwordFieldId) {
+    const passwordField = document.getElementById(passwordFieldId);
+    const toggleButton = passwordField.nextElementSibling;
+    const icon = toggleButton.querySelector('i');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+
+/**
+ * Select all features
+ */
+function selectAllFeatures() {
+    const checkboxes = document.querySelectorAll('.feature-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+}
+
+/**
+ * Deselect all features
+ */
+function deselectAllFeatures() {
+    const checkboxes = document.querySelectorAll('.feature-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
 }
 
 console.log('📦 Users Edit JavaScript loaded successfully');

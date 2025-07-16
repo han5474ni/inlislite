@@ -85,11 +85,116 @@ class ActivityLogModel extends Model
      */
     public function getRecentActivities($limit = 50)
     {
-        return $this->select('activity_log.*, profile.nama, profile.username')
-                   ->join('profile', 'profile.id = activity_log.user_id', 'left')
-                   ->orderBy('activity_log.created_at', 'DESC')
+        return $this->select('activity_logs.*, users.nama_lengkap, users.email')
+                   ->join('users', 'users.id = activity_logs.user_id', 'left')
+                   ->orderBy('activity_logs.created_at', 'DESC')
                    ->limit($limit)
                    ->findAll();
+    }
+    
+    /**
+     * Get logs with filters and pagination
+     */
+    public function getLogs($filters = [], $perPage = 15, $page = 1)
+    {
+        $builder = $this->db->table('activity_logs');
+        $builder->select('activity_logs.*, users.nama_lengkap, users.email, users.nama_pengguna')
+                ->join('users', 'users.id = activity_logs.user_id', 'left')
+                ->orderBy('activity_logs.created_at', 'DESC');
+        
+        // Apply filters
+        if (!empty($filters['date_from'])) {
+            $builder->where('activity_logs.created_at >=', $filters['date_from'] . ' 00:00:00');
+        }
+        
+        if (!empty($filters['date_to'])) {
+            $builder->where('activity_logs.created_at <=', $filters['date_to'] . ' 23:59:59');
+        }
+        
+        if (!empty($filters['activity_type'])) {
+            $builder->where('activity_logs.action', $filters['activity_type']);
+        }
+        
+        if (!empty($filters['user_id'])) {
+            $builder->where('activity_logs.user_id', $filters['user_id']);
+        }
+        
+        if (!empty($filters['search'])) {
+            $builder->groupStart()
+                    ->like('activity_logs.description', $filters['search'])
+                    ->orLike('users.nama_lengkap', $filters['search'])
+                    ->orLike('users.email', $filters['search'])
+                    ->groupEnd();
+        }
+        
+        // Pagination
+        $offset = ($page - 1) * $perPage;
+        $builder->limit($perPage, $offset);
+        
+        $logs = $builder->get()->getResultArray();
+        
+        // Format each log
+        foreach ($logs as &$log) {
+            $log['created_at_formatted'] = $this->formatDateDetailed($log['created_at']);
+            $log['activity_icon'] = $this->getActivityIcon($log['action']);
+            $log['activity_color'] = $this->getActivityColor($log['action']);
+            $log['browser_info'] = $this->getBrowserInfo($log['user_agent']);
+        }
+        
+        return $logs;
+    }
+    
+    /**
+     * Get total count of logs with filters
+     */
+    public function getLogsCount($filters = [])
+    {
+        $builder = $this->db->table('activity_logs');
+        $builder->select('COUNT(*) as total')
+                ->join('users', 'users.id = activity_logs.user_id', 'left');
+        
+        // Apply same filters as getLogs
+        if (!empty($filters['date_from'])) {
+            $builder->where('activity_logs.created_at >=', $filters['date_from'] . ' 00:00:00');
+        }
+        
+        if (!empty($filters['date_to'])) {
+            $builder->where('activity_logs.created_at <=', $filters['date_to'] . ' 23:59:59');
+        }
+        
+        if (!empty($filters['activity_type'])) {
+            $builder->where('activity_logs.action', $filters['activity_type']);
+        }
+        
+        if (!empty($filters['user_id'])) {
+            $builder->where('activity_logs.user_id', $filters['user_id']);
+        }
+        
+        if (!empty($filters['search'])) {
+            $builder->groupStart()
+                    ->like('activity_logs.description', $filters['search'])
+                    ->orLike('users.nama_lengkap', $filters['search'])
+                    ->orLike('users.email', $filters['search'])
+                    ->groupEnd();
+        }
+        
+        $result = $builder->get()->getRowArray();
+        return $result['total'] ?? 0;
+    }
+    
+    /**
+     * Get unique activity types for filter dropdown
+     */
+    public function getActivityTypes()
+    {
+        $builder = $this->db->table('activity_logs');
+        $result = $builder->select('DISTINCT action')
+                         ->where('action IS NOT NULL')
+                         ->orderBy('action', 'ASC')
+                         ->get()
+                         ->getResultArray();
+        
+        return array_column($result, 'action');
     }
 
     /**
@@ -193,5 +298,39 @@ class ActivityLogModel extends Model
         ];
         
         return $colors[$action] ?? 'secondary';
+    }
+    
+    /**
+     * Format date for detailed display
+     */
+    private function formatDateDetailed($dateString)
+    {
+        $date = new \DateTime($dateString);
+        return $date->format('d M Y, H:i');
+    }
+    
+    /**
+     * Get browser info from user agent
+     */
+    private function getBrowserInfo($userAgent)
+    {
+        if (empty($userAgent)) {
+            return 'Unknown Browser';
+        }
+        
+        // Simple browser detection
+        if (strpos($userAgent, 'Chrome') !== false) {
+            return 'Chrome';
+        } elseif (strpos($userAgent, 'Firefox') !== false) {
+            return 'Firefox';
+        } elseif (strpos($userAgent, 'Safari') !== false) {
+            return 'Safari';
+        } elseif (strpos($userAgent, 'Edge') !== false) {
+            return 'Edge';
+        } elseif (strpos($userAgent, 'Opera') !== false) {
+            return 'Opera';
+        } else {
+            return 'Unknown Browser';
+        }
     }
 }
