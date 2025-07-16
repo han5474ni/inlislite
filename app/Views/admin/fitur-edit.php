@@ -57,7 +57,7 @@
     <main class="enhanced-main-content">
         <div class="container">
             <!-- Statistics Cards -->
-            <div class="row mb-4">
+            <div class="row mb-4 animate-fade-in">
                 <div class="col-lg-3 col-md-6 mb-3">
                     <div class="stat-card">
                         <div class="stat-icon blue">
@@ -105,7 +105,7 @@
             </div>
 
             <!-- Management Tabs -->
-            <div class="management-tabs">
+            <div class="management-tabs card-enhanced">
                 <ul class="nav nav-tabs" id="managementTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="features-tab" data-bs-toggle="tab" data-bs-target="#features-panel" type="button" role="tab">
@@ -124,7 +124,10 @@
                     <div class="tab-pane fade show active" id="features-panel" role="tabpanel">
                         <div class="panel-header">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h3 class="panel-title">Manajemen Fitur</h3>
+                                <div>
+                                    <h3 class="panel-title">Manajemen Fitur</h3>
+                                    <p class="text-muted mb-0">Kelola fitur-fitur utama sistem perpustakaan</p>
+                                </div>
                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFeatureModal">
                                     <i class="bi bi-plus-circle me-2"></i>Tambah Fitur
                                 </button>
@@ -155,10 +158,18 @@
                     <div class="tab-pane fade" id="modules-panel" role="tabpanel">
                         <div class="panel-header">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h3 class="panel-title">Manajemen Modul</h3>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModuleModal">
-                                    <i class="bi bi-plus-circle me-2"></i>Tambah Modul
-                                </button>
+                                <div>
+                                    <h3 class="panel-title">Manajemen Modul</h3>
+                                    <p class="text-muted mb-0">Kelola modul-modul sistem dengan berbagai kategori</p>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="refreshModulesData()">
+                                        <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                                    </button>
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModuleModal">
+                                        <i class="bi bi-plus-circle me-2"></i>Tambah Modul
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="panel-content">

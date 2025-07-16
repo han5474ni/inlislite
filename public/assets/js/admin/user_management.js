@@ -69,20 +69,18 @@ function setupEventListeners() {
 
     // Search and filters
     const searchInput = document.getElementById('searchInput');
-    const roleFilter = document.getElementById('roleFilter');
     const statusFilter = document.getElementById('statusFilter');
     
     if (searchInput) {
         searchInput.addEventListener('input', debounce(filterUsers, 300));
     }
     
-    if (roleFilter) {
-        roleFilter.addEventListener('change', filterUsers);
-    }
-    
     if (statusFilter) {
         statusFilter.addEventListener('change', filterUsers);
     }
+
+    // Setup history button listeners
+    setupHistoryListeners();
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', function(e) {
@@ -105,6 +103,25 @@ function setupEventListeners() {
 
     // Setup sync listeners
     setupSyncListeners();
+}
+
+/**
+ * Setup history button listeners
+ */
+function setupHistoryListeners() {
+    // Use event delegation to handle dynamically added history buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.history-btn') || e.target.closest('.history-btn')) {
+            const btn = e.target.matches('.history-btn') ? e.target : e.target.closest('.history-btn');
+            const userId = btn.getAttribute('data-user-id');
+            
+            if (userId) {
+                // Navigate to individual user history page
+                // Use absolute path to avoid URL duplication issues
+                window.location.href = '/admin/users/history/' + userId;
+            }
+        }
+    });
 }
 
 /**
@@ -206,11 +223,6 @@ function sortUsers(column, direction) {
             // Name sorting (case insensitive)
             aValue = (aValue || '').toLowerCase();
             bValue = (bValue || '').toLowerCase();
-        } else if (column === 'role') {
-            // Role sorting with custom order
-            const roleOrder = { 'Super Admin': 4, 'Admin': 3, 'Pustakawan': 2, 'Staff': 1 };
-            aValue = roleOrder[aValue] || 0;
-            bValue = roleOrder[bValue] || 0;
         } else if (column === 'status') {
             // Status sorting (Aktif first)
             const statusOrder = { 'Aktif': 2, 'Non-Aktif': 1, 'Ditangguhkan': 0 };
@@ -248,7 +260,6 @@ function sortUsers(column, direction) {
 function showSortingFeedback(column, direction) {
     const columnNames = {
         'nama_lengkap': 'Name',
-        'role': 'Role', 
         'status': 'Status',
         'last_login': 'Last Login',
         'created_at': 'Created Date'
@@ -331,7 +342,7 @@ async function loadUsers() {
             console.log('✅ Users loaded via sync system');
         } else {
             // Fallback to direct API call
-            const response = await fetch(getBaseUrl() + 'admin/users/ajax/list');
+            const response = await fetch('/admin/users/ajax/list');
             const result = await response.json();
             
             if (result.success && result.data) {
@@ -378,13 +389,12 @@ async function loadUsers() {
  * Load mock users for demo
  */
 function loadMockUsers() {
-    users = [
+        users = [
         {
             id: 1,
             nama_lengkap: 'System Administrator',
             nama_pengguna: 'admin',
             email: 'admin@inlislite.local',
-            role: 'Super Admin',
             status: 'Aktif',
             last_login: '2025-01-01 14:00:00',
             created_at: '2024-01-15',
@@ -394,40 +404,25 @@ function loadMockUsers() {
         },
         {
             id: 2,
-            nama_lengkap: 'Test Pustakawan',
-            nama_pengguna: 'pustakawan',
-            email: 'pustakawan@inlislite.local',
-            role: 'Pustakawan',
+            nama_lengkap: 'Test Admin',
+            nama_pengguna: 'testadmin',
+            email: 'testadmin@inlislite.local',
             status: 'Aktif',
             last_login: '2024-12-31 10:00:00',
             created_at: '2024-01-10',
-            avatar_initials: 'TP',
+            avatar_initials: 'TA',
             last_login_formatted: '1 hari yang lalu',
             created_at_formatted: '10 Jan 2024'
         },
         {
             id: 3,
-            nama_lengkap: 'Test Staff',
-            nama_pengguna: 'staff',
-            email: 'staff@inlislite.local',
-            role: 'Staff',
-            status: 'Aktif',
-            last_login: '2024-12-29 16:00:00',
-            created_at: '2024-01-08',
-            avatar_initials: 'TS',
-            last_login_formatted: '3 hari yang lalu',
-            created_at_formatted: '8 Jan 2024'
-        },
-        {
-            id: 4,
-            nama_lengkap: 'Test Admin',
-            nama_pengguna: 'testadmin',
-            email: 'testadmin@inlislite.local',
-            role: 'Admin',
+            nama_lengkap: 'Test User',
+            nama_pengguna: 'testuser',
+            email: 'testuser@inlislite.local',
             status: 'Non-Aktif',
             last_login: null,
             created_at: '2024-01-05',
-            avatar_initials: 'TA',
+            avatar_initials: 'TU',
             last_login_formatted: 'Belum pernah',
             created_at_formatted: '5 Jan 2024'
         }
@@ -440,11 +435,9 @@ function loadMockUsers() {
  */
 function filterUsers() {
     const searchInput = document.getElementById('searchInput');
-    const roleFilter = document.getElementById('roleFilter');
     const statusFilter = document.getElementById('statusFilter');
     
     const search = searchInput ? searchInput.value.toLowerCase() : '';
-    const role = roleFilter ? roleFilter.value : '';
     const status = statusFilter ? statusFilter.value : '';
 
     filteredUsers = users.filter(user => {
@@ -453,10 +446,9 @@ function filterUsers() {
             user.nama_pengguna.toLowerCase().includes(search) ||
             user.email.toLowerCase().includes(search);
         
-        const matchesRole = role === '' || user.role === role;
         const matchesStatus = status === '' || user.status === status;
 
-        return matchesSearch && matchesRole && matchesStatus;
+        return matchesSearch && matchesStatus;
     });
 
     renderUsersTable();
@@ -506,13 +498,15 @@ function renderUsersTable() {
                 </div>
             </td>
             <td>
-                <span class="badge badge-role ${getRoleClass(user.role)}">${escapeHtml(user.role)}</span>
-            </td>
-            <td>
                 <span class="badge badge-status ${getStatusClass(user.status)}">${escapeHtml(user.status)}</span>
             </td>
             <td>${escapeHtml(user.last_login_formatted)}</td>
             <td>${escapeHtml(user.created_at_formatted)}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-info history-btn" data-user-id="${user.id}" title="Lihat Riwayat Pengguna">
+                    <i class="bi bi-info-circle"></i>
+                </button>
+            </td>
         </tr>
     `).join('');
 
@@ -674,16 +668,8 @@ function getBaseUrl() {
         return baseElement.href;
     }
     
-    // Fallback to current location
-    const path = window.location.pathname;
-    const segments = path.split('/');
-    
-    // Remove the last segment if it's not empty
-    if (segments[segments.length - 1] !== '') {
-        segments.pop();
-    }
-    
-    return window.location.origin + segments.join('/') + '/';
+    // For this application, we know the base URL structure
+    return window.location.origin + '/';
 }
 
 /**
@@ -742,37 +728,28 @@ function initializeChart() {
             labels: chartData.years,
             datasets: [
                 {
-                    label: 'Super Admin',
-                    data: chartData.superAdmin,
-                    backgroundColor: '#004AAD',
-                    borderColor: '#004AAD',
+                    label: 'Aktif',
+                    data: chartData.active,
+                    backgroundColor: '#28a745',
+                    borderColor: '#28a745',
                     borderWidth: 1,
                     borderRadius: 4,
                     borderSkipped: false,
                 },
                 {
-                    label: 'Admin',
-                    data: chartData.admin,
-                    backgroundColor: '#1C6EC4',
-                    borderColor: '#1C6EC4',
+                    label: 'Non-Aktif',
+                    data: chartData.inactive,
+                    backgroundColor: '#dc3545',
+                    borderColor: '#dc3545',
                     borderWidth: 1,
                     borderRadius: 4,
                     borderSkipped: false,
                 },
                 {
-                    label: 'Pustakawan',
-                    data: chartData.pustakawan,
-                    backgroundColor: '#2DA84D',
-                    borderColor: '#2DA84D',
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    borderSkipped: false,
-                },
-                {
-                    label: 'Staff',
-                    data: chartData.staff,
-                    backgroundColor: '#0B8F1C',
-                    borderColor: '#0B8F1C',
+                    label: 'Total',
+                    data: chartData.total,
+                    backgroundColor: '#007bff',
+                    borderColor: '#007bff',
                     borderWidth: 1,
                     borderRadius: 4,
                     borderSkipped: false,
@@ -858,11 +835,10 @@ function initializeChart() {
 function generateChartData() {
     const currentYear = new Date().getFullYear();
     const years = [];
-    const roleData = {
-        'Super Admin': [],
-        'Admin': [],
-        'Pustakawan': [],
-        'Staff': []
+    const statusData = {
+        'Aktif': [],
+        'Non-Aktif': [],
+        'Total': []
     };
 
     // Generate years (current year and 4 previous years)
@@ -872,10 +848,9 @@ function generateChartData() {
 
     // Initialize data arrays
     years.forEach(() => {
-        roleData['Super Admin'].push(0);
-        roleData['Admin'].push(0);
-        roleData['Pustakawan'].push(0);
-        roleData['Staff'].push(0);
+        statusData['Aktif'].push(0);
+        statusData['Non-Aktif'].push(0);
+        statusData['Total'].push(0);
     });
 
     // Process users data
@@ -884,8 +859,13 @@ function generateChartData() {
             const userYear = new Date(user.created_at).getFullYear();
             const yearIndex = years.indexOf(userYear);
             
-            if (yearIndex !== -1 && roleData[user.role]) {
-                roleData[user.role][yearIndex]++;
+            if (yearIndex !== -1) {
+                statusData['Total'][yearIndex]++;
+                if (user.status === 'Aktif') {
+                    statusData['Aktif'][yearIndex]++;
+                } else {
+                    statusData['Non-Aktif'][yearIndex]++;
+                }
             }
         }
     });
@@ -894,19 +874,21 @@ function generateChartData() {
     if (users.length === 0) {
         // Generate sample data for demonstration
         years.forEach((year, index) => {
-            roleData['Super Admin'][index] = Math.floor(Math.random() * 3) + 1;
-            roleData['Admin'][index] = Math.floor(Math.random() * 5) + 2;
-            roleData['Pustakawan'][index] = Math.floor(Math.random() * 8) + 3;
-            roleData['Staff'][index] = Math.floor(Math.random() * 12) + 5;
+            const total = Math.floor(Math.random() * 20) + 10;
+            const active = Math.floor(total * 0.7);
+            const inactive = total - active;
+            
+            statusData['Total'][index] = total;
+            statusData['Aktif'][index] = active;
+            statusData['Non-Aktif'][index] = inactive;
         });
     }
 
     return {
         years: years,
-        superAdmin: roleData['Super Admin'],
-        admin: roleData['Admin'],
-        pustakawan: roleData['Pustakawan'],
-        staff: roleData['Staff']
+        active: statusData['Aktif'],
+        inactive: statusData['Non-Aktif'],
+        total: statusData['Total']
     };
 }
 
@@ -915,22 +897,19 @@ function generateChartData() {
  */
 function updateLegendCounts(chartData) {
     const totalCounts = {
-        superAdmin: chartData.superAdmin.reduce((a, b) => a + b, 0),
-        admin: chartData.admin.reduce((a, b) => a + b, 0),
-        pustakawan: chartData.pustakawan.reduce((a, b) => a + b, 0),
-        staff: chartData.staff.reduce((a, b) => a + b, 0)
+        active: chartData.active.reduce((a, b) => a + b, 0),
+        inactive: chartData.inactive.reduce((a, b) => a + b, 0),
+        total: chartData.total.reduce((a, b) => a + b, 0)
     };
 
     // Update legend count elements
-    const superAdminCount = document.getElementById('superAdminCount');
-    const adminCount = document.getElementById('adminCount');
-    const pustakawaCount = document.getElementById('pustakawaCount');
-    const staffCount = document.getElementById('staffCount');
+    const activeCount = document.getElementById('activeCount');
+    const inactiveCount = document.getElementById('inactiveCount');
+    const totalCount = document.getElementById('totalCount');
 
-    if (superAdminCount) superAdminCount.textContent = totalCounts.superAdmin;
-    if (adminCount) adminCount.textContent = totalCounts.admin;
-    if (pustakawaCount) pustakawaCount.textContent = totalCounts.pustakawan;
-    if (staffCount) staffCount.textContent = totalCounts.staff;
+    if (activeCount) activeCount.textContent = totalCounts.active;
+    if (inactiveCount) inactiveCount.textContent = totalCounts.inactive;
+    if (totalCount) totalCount.textContent = totalCounts.total;
 }
 
 /**
@@ -968,19 +947,17 @@ function filterChartByYear(selectedYear) {
     if (selectedYear === 'all') {
         // Show all years
         userChart.data.labels = chartData.years;
-        userChart.data.datasets[0].data = chartData.superAdmin;
-        userChart.data.datasets[1].data = chartData.admin;
-        userChart.data.datasets[2].data = chartData.pustakawan;
-        userChart.data.datasets[3].data = chartData.staff;
+        userChart.data.datasets[0].data = chartData.active;
+        userChart.data.datasets[1].data = chartData.inactive;
+        userChart.data.datasets[2].data = chartData.total;
     } else {
         // Show only selected year
         const yearIndex = chartData.years.indexOf(parseInt(selectedYear));
         if (yearIndex !== -1) {
             userChart.data.labels = [selectedYear];
-            userChart.data.datasets[0].data = [chartData.superAdmin[yearIndex]];
-            userChart.data.datasets[1].data = [chartData.admin[yearIndex]];
-            userChart.data.datasets[2].data = [chartData.pustakawan[yearIndex]];
-            userChart.data.datasets[3].data = [chartData.staff[yearIndex]];
+            userChart.data.datasets[0].data = [chartData.active[yearIndex]];
+            userChart.data.datasets[1].data = [chartData.inactive[yearIndex]];
+            userChart.data.datasets[2].data = [chartData.total[yearIndex]];
         }
     }
 
@@ -995,10 +972,9 @@ function refreshChart() {
     if (userChart) {
         const chartData = generateChartData();
         userChart.data.labels = chartData.years;
-        userChart.data.datasets[0].data = chartData.superAdmin;
-        userChart.data.datasets[1].data = chartData.admin;
-        userChart.data.datasets[2].data = chartData.pustakawan;
-        userChart.data.datasets[3].data = chartData.staff;
+        userChart.data.datasets[0].data = chartData.active;
+        userChart.data.datasets[1].data = chartData.inactive;
+        userChart.data.datasets[2].data = chartData.total;
         userChart.update();
         updateLegendCounts(chartData);
     }

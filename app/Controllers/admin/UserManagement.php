@@ -39,7 +39,6 @@ class UserManagement extends BaseController
                 nama_lengkap,
                 {$usernameField} as nama_pengguna,
                 email,
-                role,
                 status,
                 {$avatarField},
                 last_login,
@@ -71,29 +70,71 @@ class UserManagement extends BaseController
             'can_edit_users' => can_edit_users() // Pass edit permission to view
         ];
 
-        // Pass users data to the view
+        // Pass users data to the view (use the user_management view for overview)
         return view('admin/user_management', $data);
     }
 
     /**
-     * Users Edit Page - Modern CRUD interface
+     * User edit page with full management capabilities
      */
-    public function usersEdit()
+    public function userEdit()
     {
-        // Check if user has permission to access user management (Super Admin only)
+        // Check if user has permission to edit users (Super Admin only)
         if (!can_edit_users()) {
-            $data = [
-                'title' => 'Manajemen User INLISLite - INLISLite v3.0',
-                'access_denied' => true,
-                'error_message' => 'Anda tidak memiliki akses ke halaman ini. Hanya Super Admin yang dapat mengakses Manajemen Pengguna.'
-            ];
-            return view('admin/users-edit', $data);
+            return redirect()->to(base_url('admin/dashboard'))->with('error', 'Access denied. Only Super Admin can access user management.');
+        }
+        
+        // Fetch users from database with proper field mapping
+        try {
+            // Check which field names exist in the database
+            $fields = $this->db->getFieldNames('users');
+            $usernameField = in_array('nama_pengguna', $fields) ? 'nama_pengguna' : 'username';
+            $passwordField = in_array('kata_sandi', $fields) ? 'kata_sandi' : 'password';
+            
+            $builder = $this->db->table('users');
+            
+            // Check if avatar column exists
+            $hasAvatar = in_array('avatar', $fields);
+            $avatarField = $hasAvatar ? 'avatar' : 'NULL as avatar';
+            
+            $users = $builder->select("
+                id,
+                nama_lengkap,
+                {$usernameField} as nama_pengguna,
+                email,
+                role,
+                status,
+                {$avatarField},
+                last_login,
+                created_at
+            ")->get()->getResultArray();
+            
+            // Format data for display
+            foreach ($users as &$user) {
+                $user['created_at_formatted'] = isset($user['created_at']) ? date('d M Y', strtotime($user['created_at'])) : 'N/A';
+                $user['last_login_formatted'] = isset($user['last_login']) && $user['last_login'] ? date('d M Y H:i', strtotime($user['last_login'])) : 'Belum pernah';
+                $user['avatar_initials'] = $this->getInitials($user['nama_lengkap'] ?? $user['nama_pengguna'] ?? 'U');
+                
+                // Add avatar URL
+                if (!empty($user['avatar'])) {
+                    $user['avatar_url'] = base_url('images/profile/' . $user['avatar']);
+                } else {
+                    $user['avatar_url'] = null;
+                }
+            }
+        } catch (\Exception $e) {
+            // If table doesn't exist, use empty array
+            $users = [];
+            log_message('error', 'Error fetching users: ' . $e->getMessage());
         }
 
         $data = [
-            'title' => 'Manajemen User INLISLite - INLISLite v3.0'
+            'title' => 'User Management - INLISLite v3.0',
+            'users' => $users,
+            'can_edit_users' => can_edit_users() // Pass edit permission to view
         ];
 
+        // Use the users-edit view for full functionality
         return view('admin/users-edit', $data);
     }
 
@@ -103,11 +144,11 @@ class UserManagement extends BaseController
 
         // Validate input according to your specifications
         $rules = [
-            'username'  => 'required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna]',
-            'email'     => 'required|valid_email|is_unique[users.email]',
-            'password'  => 'required|min_length[6]',
-            'role'      => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
-            'status'    => 'required|in_list[Aktif,Non-Aktif]',
+            'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
+            'nama_pengguna' => 'required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna]',
+            'email'         => 'required|valid_email|is_unique[users.email]',
+            'password'      => 'required|min_length[6]',
+            'status'        => 'required|in_list[Aktif,Non-Aktif]',
         ];
 
         if (! $this->validate($rules)) {
@@ -115,23 +156,24 @@ class UserManagement extends BaseController
         }
 
         // Get form data
-        $username = $request->getPost('username');
-        $email    = $request->getPost('email');
-        $password = $request->getPost('password');
-        $role     = $request->getPost('role');
-        $status   = $request->getPost('status');
+        $namaLengkap = $request->getPost('nama_lengkap');
+        $namaPengguna = $request->getPost('nama_pengguna');
+        $email       = $request->getPost('email');
+        $password    = $request->getPost('password');
+        $status      = $request->getPost('status');
+        $features    = $request->getPost('features');
 
         // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // Prepare data for insertion using Indonesian field names
         $data = [
-            'nama_lengkap'  => $username, // Use username as nama_lengkap since it's not in the form
-            'nama_pengguna' => $username,
+            'nama_lengkap'  => $namaLengkap,
+            'nama_pengguna' => $namaPengguna,
             'email'         => $email,
             'kata_sandi'    => $hashedPassword,
-            'role'          => $role,
             'status'        => $status,
+            'role'          => 'Staff', // Default role for new users
             'created_at'    => date('Y-m-d H:i:s'),
         ];
 
@@ -139,6 +181,25 @@ class UserManagement extends BaseController
         try {
             $builder = $this->db->table('users');
             $builder->insert($data);
+
+            $userId = $this->db->insertID();
+
+            // Sync user feature access based on role
+            if (function_exists('sync_user_feature_access')) {
+                sync_user_feature_access($userId, 'Staff');
+            }
+
+            // Insert additional feature access if specified
+            if ($features) {
+                $featureData = [];
+                foreach ($features as $feature) {
+                    $featureData[] = [
+                        'user_id' => $userId,
+                        'feature' => $feature,
+                    ];
+                }
+                $this->db->table('user_feature_access')->insertBatch($featureData);
+            }
 
             return redirect()->to('/admin/users')->with('success', 'User berhasil ditambahkan!');
         } catch (\Exception $e) {
@@ -158,7 +219,6 @@ class UserManagement extends BaseController
             'nama_pengguna' => 'required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna]',
             'email'         => 'required|valid_email|is_unique[users.email]',
             'kata_sandi'    => 'required|min_length[8]',
-            'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
             'status'        => 'required|in_list[Aktif,Non-aktif]',
         ];
 
@@ -171,7 +231,6 @@ class UserManagement extends BaseController
         $namaPengguna = $request->getPost('nama_pengguna');
         $email        = $request->getPost('email');
         $kataSandi    = $request->getPost('kata_sandi');
-        $role         = $request->getPost('role');
         $status       = $request->getPost('status');
 
         // Hash the password
@@ -183,7 +242,6 @@ class UserManagement extends BaseController
             'nama_pengguna' => $namaPengguna,
             'email'         => $email,
             'password'      => $hashedPassword,
-            'role'          => $role,
             'status'        => $status,
             'created_at'    => date('Y-m-d H:i:s'),
         ];
@@ -213,7 +271,6 @@ class UserManagement extends BaseController
             'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
             'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna,id,{$id}]",
             'email'         => "required|valid_email|is_unique[users.email,id,{$id}]",
-            'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
             'status'        => 'required|in_list[Aktif,Non-aktif]',
         ];
 
@@ -225,15 +282,14 @@ class UserManagement extends BaseController
         $namaLengkap  = $request->getPost('nama_lengkap');
         $namaPengguna = $request->getPost('nama_pengguna');
         $email        = $request->getPost('email');
-        $role         = $request->getPost('role');
         $status       = $request->getPost('status');
+        $features     = $request->getPost('features');
 
         // Prepare data for update
         $data = [
             'nama_lengkap'  => $namaLengkap,
             'nama_pengguna' => $namaPengguna,
             'email'         => $email,
-            'role'          => $role,
             'status'        => $status,
         ];
 
@@ -248,6 +304,20 @@ class UserManagement extends BaseController
             $builder = $this->db->table('users');
             $builder->where('id', $id);
             $builder->update($data);
+
+            // Update feature access
+            $featureTable = $this->db->table('user_feature_access');
+            $featureTable->where('user_id', $id)->delete(); // Remove old access
+            if ($features) {
+                $featureData = [];
+                foreach ($features as $feature) {
+                    $featureData[] = [
+                        'user_id' => $id,
+                        'feature' => $feature,
+                    ];
+                }
+                $featureTable->insertBatch($featureData);
+            }
 
             return redirect()->to('/admin/users')->with('success', 'Pengguna berhasil diperbarui!');
         } catch (\Exception $e) {
@@ -326,7 +396,7 @@ class UserManagement extends BaseController
                 'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.{$usernameField}]",
                 'email'         => 'required|valid_email|is_unique[users.email]',
                 'password'      => 'required|min_length[6]',
-                'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
+                'role'          => 'required|in_list[Super Admin,Admin]',
                 'status'        => 'required|in_list[Aktif,Non-Aktif]',
             ];
 
@@ -352,6 +422,11 @@ class UserManagement extends BaseController
                 
                 if ($result) {
                     $newId = $this->db->insertID();
+                    
+                    // Sync user feature access based on role
+                    helper('feature_access');
+                    sync_user_feature_access($newId, $input['role']);
+                    
                     $newUser = $builder->where('id', $newId)->get()->getRowArray();
                     
                     // Format for frontend - normalize field names
@@ -420,7 +495,6 @@ class UserManagement extends BaseController
             $rules = [
                 'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
                 'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.{$usernameField},id,{$id}]",
-                'role'          => 'required|in_list[Super Admin,Admin,Pustakawan,Staff]',
                 'status'        => 'required|in_list[Aktif,Non-Aktif]',
             ];
 
@@ -431,7 +505,6 @@ class UserManagement extends BaseController
             $data = [
                 'nama_lengkap'  => $input['nama_lengkap'],
                 $usernameField  => $input['nama_pengguna'],
-                'role'          => $input['role'],
                 'status'        => $input['status'],
             ];
 
@@ -759,6 +832,265 @@ class UserManagement extends BaseController
                 'success' => false,
                 'message' => 'Error fetching users: ' . $e->getMessage()
             ]);
+        }
+    }
+    
+    /**
+     * User history page - shows all users activity logs
+     */
+    public function history($id = null)
+    {
+        // Check if user has permission to view users (only Super Admin)
+        if (!can_edit_users()) {
+            return redirect()->to(base_url('admin/dashboard'))->with('error', 'Access denied. Only Super Admin can view activity logs.');
+        }
+        
+        try {
+            $activityModel = new \App\Models\ActivityLogModel();
+            $request = $this->request;
+            
+            // Get filters from request
+            $filters = [
+                'date_from' => $request->getGet('date_from'),
+                'date_to' => $request->getGet('date_to'),
+                'activity_type' => $request->getGet('activity_type'),
+                'user_id' => $request->getGet('user_id'),
+                'search' => $request->getGet('search')
+            ];
+            
+            // Pagination
+            $perPage = 15;
+            $page = $request->getGet('page') ?? 1;
+            
+            // Get logs with filters and pagination
+            $logs = $activityModel->getLogs($filters, $perPage, $page);
+            $totalLogs = $activityModel->getLogsCount($filters);
+            
+            // Get unique activity types for filter dropdown
+            $activityTypes = $activityModel->getActivityTypes();
+            
+            // Get active users for filter dropdown
+            $userBuilder = $this->db->table('users');
+            $users = $userBuilder->select('id, nama_lengkap, email')
+                                ->where('status', 'Aktif')
+                                ->orderBy('nama_lengkap', 'ASC')
+                                ->get()
+                                ->getResultArray();
+            
+            // Calculate pagination
+            $totalPages = ceil($totalLogs / $perPage);
+            
+            $data = [
+                'title' => 'Activity History - INLISLite v3.0',
+                'logs' => $logs,
+                'filters' => $filters,
+                'activityTypes' => $activityTypes,
+                'users' => $users,
+                'pagination' => [
+                    'current_page' => $page,
+                    'per_page' => $perPage,
+                    'total_pages' => $totalPages,
+                    'total_records' => $totalLogs
+                ]
+            ];
+            
+            return view('admin/users_history', $data);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error fetching activity history: ' . $e->getMessage());
+            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Error fetching activity history.');
+        }
+    }
+    
+    /**
+     * Individual user history page
+     */
+    public function userHistory($id)
+    {
+        // Check if user has permission to view users
+        if (!can_view_users()) {
+            return redirect()->to(base_url('admin/dashboard'))->with('error', 'Access denied. You need to be logged in to view users.');
+        }
+        
+        try {
+            // Get user information
+            $builder = $this->db->table('users');
+            $user = $builder->where('id', $id)->get()->getRowArray();
+            
+            if (!$user) {
+                return redirect()->to(base_url('admin/users'))->with('error', 'User not found.');
+            }
+            
+            // Get user activity logs
+            $activityModel = new \App\Models\ActivityLogModel();
+            $activities = $activityModel->getFormattedUserActivities($id, 100);
+            
+            $data = [
+                'title' => 'User Activity History - ' . ($user['nama_lengkap'] ?? $user['nama_pengguna'] ?? 'Unknown'),
+                'user' => $user,
+                'activities' => $activities
+            ];
+            
+            return view('admin/user_history', $data);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error fetching user history: ' . $e->getMessage());
+            return redirect()->to(base_url('admin/users'))->with('error', 'Error fetching user history.');
+        }
+    }
+    
+    /**
+     * Create user page
+     */
+    public function create()
+    {
+        // Check if user has permission to create users
+        if (!can_edit_users()) {
+            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Access denied. Only Super Admin can create users.');
+        }
+        
+        $data = [
+            'title' => 'Create New User - INLISLite v3.0'
+        ];
+        
+        return view('admin/user_create', $data);
+    }
+    
+    /**
+     * Edit user page
+     */
+    public function edit($id)
+    {
+        // Check if user has permission to edit users
+        if (!can_edit_users()) {
+            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Access denied. Only Super Admin can edit users.');
+        }
+        
+        try {
+            // Get user information
+            $builder = $this->db->table('users');
+            $user = $builder->where('id', $id)->get()->getRowArray();
+            
+            if (!$user) {
+                return redirect()->to(base_url('admin/users-edit'))->with('error', 'User not found.');
+            }
+            
+            $data = [
+                'title' => 'Edit User - ' . ($user['nama_lengkap'] ?? $user['nama_pengguna'] ?? 'Unknown'),
+                'user' => $user
+            ];
+            
+            return view('admin/user_edit', $data);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error fetching user for edit: ' . $e->getMessage());
+            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Error fetching user data.');
+        }
+    }
+    
+    /**
+     * Update user method
+     */
+    public function update($id)
+    {
+        // Check if user has permission to update users
+        if (!can_edit_users()) {
+            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Access denied. Only Super Admin can update users.');
+        }
+        
+        $request = $this->request;
+        
+        // Validate input
+        $rules = [
+            'nama_lengkap'  => 'required|min_length[3]|max_length[255]',
+            'nama_pengguna' => "required|min_length[3]|max_length[50]|is_unique[users.nama_pengguna,id,{$id}]",
+            'email'         => "required|valid_email|is_unique[users.email,id,{$id}]",
+            'status'        => 'required|in_list[Aktif,Non-Aktif]',
+        ];
+        
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        
+        // Get form data
+        $namaLengkap  = $request->getPost('nama_lengkap');
+        $namaPengguna = $request->getPost('nama_pengguna');
+        $email        = $request->getPost('email');
+        $status       = $request->getPost('status');
+        
+        // Prepare data for update
+        $data = [
+            'nama_lengkap'  => $namaLengkap,
+            'nama_pengguna' => $namaPengguna,
+            'email'         => $email,
+            'status'        => $status,
+        ];
+        
+        // Update password if provided
+        $password = $request->getPost('password');
+        if (!empty($password)) {
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+        }
+        
+        // Update data in the database
+        try {
+            $builder = $this->db->table('users');
+            $builder->where('id', $id);
+            $builder->update($data);
+            
+            // Log the activity
+            $activityModel = new \App\Models\ActivityLogModel();
+            $activityModel->logActivity(
+                session('user_id'),
+                'user_update',
+                'Updated user: ' . $namaPengguna,
+                null,
+                $data
+            );
+            
+            return redirect()->to(base_url('admin/users-edit'))->with('success', 'User updated successfully!');
+        } catch (\Exception $e) {
+            log_message('error', 'Error updating user: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Failed to update user: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Delete user method
+     */
+    public function delete($id)
+    {
+        // Check if user has permission to delete users
+        if (!can_edit_users()) {
+            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Access denied. Only Super Admin can delete users.');
+        }
+        
+        try {
+            $builder = $this->db->table('users');
+            
+            // Get user info for logging
+            $user = $builder->where('id', $id)->get()->getRowArray();
+            if (!$user) {
+                return redirect()->to(base_url('admin/users-edit'))->with('error', 'User not found.');
+            }
+            
+            // Delete user
+            $builder->where('id', $id)->delete();
+            
+            // Log the activity
+            $activityModel = new \App\Models\ActivityLogModel();
+            $activityModel->logActivity(
+                session('user_id'),
+                'user_delete',
+                'Deleted user: ' . ($user['nama_pengguna'] ?? $user['username']),
+                $user,
+                null
+            );
+            
+            return redirect()->to(base_url('admin/users-edit'))->with('success', 'User deleted successfully!');
+        } catch (\Exception $e) {
+            log_message('error', 'Error deleting user: ' . $e->getMessage());
+            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Failed to delete user: ' . $e->getMessage());
         }
     }
 }

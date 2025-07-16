@@ -147,9 +147,9 @@
                         <div class="panel-header">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h3 class="panel-title">Manajemen User System</h3>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                                    <i class="bi bi-plus-circle me-2"></i>Tambah User
-                                </button>
+                                <a href="<?= base_url('admin/users-edit/create') ?>" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>Tambah
+                                </a>
                             </div>
                         </div>
                         <div class="panel-content">
@@ -162,9 +162,9 @@
                                             <th>Nama Lengkap</th>
                                             <th>Username</th>
                                             <th>Email</th>
-                                            <th>Role</th>
                                             <th>Status</th>
                                             <th>Last Login</th>
+                                            <th>History</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -178,149 +178,185 @@
                 </div>
             </div>
         </div>
-        </div>
     </main>
     <?php endif; ?>
 
-    <!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah User Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addUserForm">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="userNamaLengkap" class="form-label">Nama Lengkap *</label>
-                                    <input type="text" class="form-control" id="userNamaLengkap" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="userNamaPengguna" class="form-label">Username *</label>
-                                    <input type="text" class="form-control" id="userNamaPengguna" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="userEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="userEmail" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="userPassword" class="form-label">Password *</label>
-                                    <input type="password" class="form-control" id="userPassword" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="userRole" class="form-label">Role *</label>
-                                    <select class="form-select" id="userRole" required>
-                                        <option value="">Pilih Role</option>
-                                        <option value="Staff">Staff</option>
-                                        <option value="Pustakawan">Pustakawan</option>
-                                        <option value="Admin">Admin</option>
-                                        <option value="Super Admin">Super Admin</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="userStatus" class="form-label">Status *</label>
-                                    <select class="form-select" id="userStatus" required>
-                                        <option value="">Pilih Status</option>
-                                        <option value="Aktif">Aktif</option>
-                                        <option value="Non-Aktif">Non-Aktif</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" onclick="saveUser()">Simpan</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editModalLabel">
+                        <i class="bi bi-pencil-square me-2"></i>Edit User
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="editForm">
-                        <input type="hidden" id="editId">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="editNamaLengkap" class="form-label">Nama Lengkap *</label>
-                                    <input type="text" class="form-control" id="editNamaLengkap" required>
-                                </div>
+                <div class="modal-body p-4">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editId" name="id">
+                        
+                        <!-- Basic Information Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0"><i class="bi bi-person-circle me-2"></i>Basic Information</h6>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="editNamaPengguna" class="form-label">Username *</label>
-                                    <input type="text" class="form-control" id="editNamaPengguna" required>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editNamaLengkap" class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                            <input type="text" class="form-control" id="editNamaLengkap" name="nama_lengkap" required placeholder="Enter full name">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editNamaPengguna" class="form-label fw-bold">Username <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-at"></i></span>
+                                            <input type="text" class="form-control" id="editNamaPengguna" name="nama_pengguna" required placeholder="Enter username">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editEmail" class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            <input type="email" class="form-control" id="editEmail" name="email" required placeholder="Enter email address">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editPassword" class="form-label fw-bold">Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                            <input type="password" class="form-control" id="editPassword" name="password" placeholder="Leave blank to keep current">
+                                            <button class="btn btn-outline-secondary" type="button" id="togglePassword" onclick="togglePasswordVisibility('editPassword')">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                        <small class="form-text text-muted">Leave blank to keep current password</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editStatus" class="form-label fw-bold">Status <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
+                                            <select class="form-select" id="editStatus" name="status" required>
+                                                <option value="">Select Status</option>
+                                                <option value="Aktif">Active</option>
+                                                <option value="Non-Aktif">Inactive</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="editEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="editEmail" required>
-                                </div>
+                        
+                        <!-- Access Features Section -->
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0"><i class="bi bi-gear me-2"></i>Access Features</h6>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="editPassword" class="form-label">Password Baru</label>
-                                    <input type="password" class="form-control" id="editPassword">
-                                    <div class="form-text">Kosongkan jika tidak ingin mengubah password</div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input feature-checkbox" type="checkbox" name="features[]" value="tentang" id="editFeatureTentang">
+                                            <label class="form-check-label" for="editFeatureTentang">
+                                                <i class="bi bi-info-circle me-2"></i>Tentang INLISLite
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input feature-checkbox" type="checkbox" name="features[]" value="panduan" id="editFeaturePanduan">
+                                            <label class="form-check-label" for="editFeaturePanduan">
+                                                <i class="bi bi-book me-2"></i>Panduan
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input feature-checkbox" type="checkbox" name="features[]" value="fitur" id="editFeatureFitur">
+                                            <label class="form-check-label" for="editFeatureFitur">
+                                                <i class="bi bi-puzzle me-2"></i>Fitur dan Program
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input feature-checkbox" type="checkbox" name="features[]" value="aplikasi" id="editFeatureAplikasi">
+                                            <label class="form-check-label" for="editFeatureAplikasi">
+                                                <i class="bi bi-app-indicator me-2"></i>Aplikasi Pendukung
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input feature-checkbox" type="checkbox" name="features[]" value="bimbingan" id="editFeatureBimbingan">
+                                            <label class="form-check-label" for="editFeatureBimbingan">
+                                                <i class="bi bi-person-workspace me-2"></i>Bimbingan Teknis
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input feature-checkbox" type="checkbox" name="features[]" value="dukungan" id="editFeatureDukungan">
+                                            <label class="form-check-label" for="editFeatureDukungan">
+                                                <i class="bi bi-headset me-2"></i>Dukungan Teknis
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input feature-checkbox" type="checkbox" name="features[]" value="demo" id="editFeatureDemo">
+                                            <label class="form-check-label" for="editFeatureDemo">
+                                                <i class="bi bi-play-circle me-2"></i>Demo Program
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input feature-checkbox" type="checkbox" name="features[]" value="patch" id="editFeaturePatch">
+                                            <label class="form-check-label" for="editFeaturePatch">
+                                                <i class="bi bi-patch-check me-2"></i>Patch and Updater
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input feature-checkbox" type="checkbox" name="features[]" value="installer" id="editFeatureInstaller">
+                                            <label class="form-check-label" for="editFeatureInstaller">
+                                                <i class="bi bi-download me-2"></i>Installer
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="editRole" class="form-label">Role *</label>
-                                    <select class="form-select" id="editRole" required>
-                                        <option value="Staff">Staff</option>
-                                        <option value="Pustakawan">Pustakawan</option>
-                                        <option value="Admin">Admin</option>
-                                        <option value="Super Admin">Super Admin</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="editStatus" class="form-label">Status *</label>
-                                    <select class="form-select" id="editStatus" required>
-                                        <option value="Aktif">Aktif</option>
-                                        <option value="Non-Aktif">Non-Aktif</option>
-                                    </select>
+                                
+                                <!-- Select All / Deselect All -->
+                                <div class="d-flex gap-2 mt-3">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllFeatures()">
+                                        <i class="bi bi-check-all me-1"></i>Select All
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="deselectAllFeatures()">
+                                        <i class="bi bi-x-square me-1"></i>Deselect All
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" onclick="updateUser()">Update</button>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="updateUser()">
+                        <i class="bi bi-check-circle me-2"></i>Update User
+                    </button>
                 </div>
             </div>
         </div>
