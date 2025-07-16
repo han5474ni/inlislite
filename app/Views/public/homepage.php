@@ -156,7 +156,7 @@
                     <div class="card-icon-large">
                         <i class="bi bi-gear-wide-connected"></i>
                     </div>
-                    <img src="/assets/images/digital-canva.png" alt="Otomasi Digital" class="card-illustration">
+                    <img src="/assets/images/digital canva.png" alt="Otomasi Digital" class="card-illustration">
                 </div>
                 <div class="card-content-full">
                     <h3 class="card-title-large">Otomasi & Digitalisasi Terdepan</h3>
