@@ -25,11 +25,11 @@
         }
         
         .forgot-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgb(255, 255, 255);
             backdrop-filter: blur(10px);
             border: none;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 40px rgb(0, 0, 0);
             overflow: hidden;
         }
         
@@ -48,7 +48,7 @@
         
         .forgot-header p {
             margin: 0.5rem 0 0 0;
-            opacity: 0.9;
+            opacity: 1;
             font-size: 0.9rem;
         }
         
@@ -70,7 +70,7 @@
         
         .form-floating > .form-control:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            box-shadow: 0 0 0 0.2rem rgb(102, 126, 234);
         }
         
         .form-floating > label {
@@ -89,10 +89,7 @@
             transition: all 0.3s ease;
         }
         
-        .btn-reset:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
+
         
         .alert {
             border: none;
@@ -109,7 +106,7 @@
         .logo {
             width: 60px;
             height: 60px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgb(255, 255, 255);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -125,10 +122,7 @@
             transition: color 0.3s ease;
         }
         
-        .back-to-login:hover {
-            color: #764ba2;
-            text-decoration: underline;
-        }
+
         
         @media (max-width: 576px) {
             .forgot-container {
@@ -139,7 +133,7 @@
             .forgot-body {
                 padding: 1.5rem;
             }
-        }
+        } 
     </style>
 </head>
 <body>

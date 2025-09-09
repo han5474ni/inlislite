@@ -7,23 +7,33 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-body {
-    background: linear-gradient(135deg, #1C6EC4 0%, #2DA84D 100%);
-    color: #212529;
+/* Namespacing agar style hanya berlaku di halaman profil */
+.profile-page body,
+.profile-page {
+    background: #f8fafc; /* paksa latar netral */
+    color: #1f2937;
     min-height: 100vh;
 }
 
 .page-container {
-    max-width: 1200px;
+    max-width: 1040px; /* sedikit lebih ramping */
     margin: 0 auto;
-    padding: 1rem;
+    padding: 1.25rem;
 }
 
-/* Override main-content background for this page */
-.main-content {
-    background: linear-gradient(135deg, #1C6EC4 0%, #2DA84D 100%);
-    min-height: 100vh;
+/* Hilangkan gradient & paksa latar bersih di profil */
+.profile-page .main-content,
+.profile-page .enhanced-main-content {
+    background: #f8fafc;
+    min-height: auto;
 }
+
+/* Minimal header for profile page (scoped) */
+.profile-page .dashboard-container { max-width: 1040px; margin: 0 auto; padding: 1.25rem; }
+.profile-page .header-card { background: transparent; border-bottom: 1px solid #e5e7eb; padding: 0 0 0.75rem 0; box-shadow: none; margin-bottom: 1rem; border-radius: 10px; }
+.profile-page .content-header { display: flex; align-items: flex-end; justify-content: space-between; }
+.profile-page .main-title { font-size: 1.25rem; font-weight: 600; color: #0f172a; margin: 0; }
+.profile-page .main-subtitle { font-size: 0.9rem; color: #6b7280; margin: 0.25rem 0 0; }
 
 
 .header-top {
@@ -64,35 +74,35 @@ body {
     font-size: 0.95rem;
 }
 
-/* Section Styles */
+/**** Section Styles - Simplified ****/
 .profile-info-section,
 .edit-name-section,
 .password-section {
-    background: white;
-    border-radius: 12px;
+    background: #ffffff;
+    border-radius: 10px;
     padding: 0;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    border: 1px solid #e9ecef;
+    margin-bottom: 1.25rem; /* lebih rapat */
+    box-shadow: 0 1px 2px rgb(16, 24, 40); /* shadow lembut */
+    border: 1px solid #e5e7eb; /* abu muda */
     overflow: hidden;
 }
 
 .section-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.25rem; /* dipadatkan */
+    border-bottom: 1px solid #eef2f7;
 }
 
 .section-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1a1a1a;
+    font-size: 1.1rem; /* lebih kecil */
+    font-weight: 600;
+    color: #0f172a;
     margin: 0;
 }
 
 .section-subtitle {
-    color: #6c757d;
+    color: #6b7280;
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 /* Profile Info Container */
@@ -115,21 +125,16 @@ body {
 }
 
 .profile-avatar {
-    width: 120px;
-    height: 120px;
+    width: 96px;
+    height: 96px;
     border-radius: 50%;
     overflow: hidden;
     position: relative;
-    border: 4px solid #fff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 3px solid #fff;
+    box-shadow: 0 1px 2px rgb(16, 24, 40);
     cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.profile-avatar:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
+    transition: box-shadow 0.2s ease;
+} 
 
 .profile-avatar img,
 .profile-photo {
@@ -139,29 +144,32 @@ body {
     border-radius: 50%;
 }
 
+/* Fallback saat foto gagal dimuat */
+.profile-photo[onerror],
+.profile-photo:not([src]),
+.profile-photo[src=""],
+.profile-photo[src*="data:"] {
+    display: none;
+}
+
 /* Ensure standalone profile photo has consistent sizing */
 .profile-photo {
     width: 120px;
     height: 120px;
     border: 4px solid #fff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgb(0, 0, 0);
     transition: all 0.3s ease;
-}
-
-.profile-photo:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
+} 
 
 .avatar-initials {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #2DA84D 0%, #0B8F1C 100%);
+    background: #2563eb; /* warna solid sederhana */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
-    font-weight: bold;
+    font-size: 2rem;
+    font-weight: 700;
     color: white;
     text-transform: uppercase;
 }
@@ -172,21 +180,17 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgb(0, 0, 0);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.3s ease;
     cursor: pointer;
     border-radius: 50%;
-}
-
-.profile-avatar:hover .avatar-upload-overlay {
-    opacity: 1;
-}
+} 
 
 .avatar-upload-overlay i {
     font-size: 1.5rem;
@@ -229,31 +233,26 @@ body {
 }
 
 .profile-detail-card {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    transition: all 0.2s ease;
-}
-
-.profile-detail-card:hover {
-    background: #f1f3f4;
-    border-color: #dee2e6;
-}
+    transition: background 0.2s ease, border-color 0.2s ease;
+} 
 
 .detail-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #2DA84D 0%, #0B8F1C 100%);
+    width: 36px;
+    height: 36px;
+    background: #e5e7eb; /* icon chip sederhana */
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 1.1rem;
+    color: #374151;
+    font-size: 1rem;
     flex-shrink: 0;
 }
 
@@ -299,34 +298,19 @@ body {
 
 /* Role Badges */
 .badge-role {
-    padding: 0.375rem 0.75rem;
+    padding: 0.25rem 0.5rem;
     border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.75rem;
+    font-weight: 600;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
     margin-right: 0.5rem;
 }
 
-.badge-super-admin {
-    background: #004AAD;
-    color: white;
-}
-
-.badge-admin {
-    background: #1C6EC4;
-    color: white;
-}
-
-.badge-pustakawan {
-    background: #2DA84D;
-    color: white;
-}
-
-.badge-staff {
-    background: #0B8F1C;
-    color: white;
-}
+.badge-super-admin { background: #ef4444; color: white; }
+.badge-admin { background: #2563eb; color: white; }
+.badge-pustakawan { background: #10b981; color: white; }
+.badge-staff { background: #06b6d4; color: white; }
 
 /* Status Badges */
 .badge-status {
@@ -375,20 +359,20 @@ body {
 /* Modern Form Inputs */
 .modern-input {
     font-family: 'Inter', sans-serif;
-    background: rgba(255, 255, 255, 0.95);
-    border: 2px solid #dee2e6;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-    color: #2d3748;
-    transition: all 0.3s ease;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.95rem;
+    color: #111827;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .modern-input:focus {
     outline: none;
-    border-color: #1C6EC4;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 0 0 0.2rem rgba(28, 110, 196, 0.25);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgb(37, 99, 235);
+    background: #ffffff;
 }
 
 .modern-input::placeholder {
@@ -396,18 +380,18 @@ body {
     font-weight: 400;
 }
 
-/* Readonly input styling */
+/* Readonly input styling - minimal */
 .form-control[readonly] {
-    background-color: #f8f9fa !important;
-    color: #6c757d !important;
-    border-color: #e9ecef !important;
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border-color: #e5e7eb;
     cursor: not-allowed;
 }
 
 .form-control[readonly]:focus {
-    background-color: #f8f9fa !important;
-    border-color: #e9ecef !important;
-    box-shadow: none !important;
+    background-color: #f3f4f6;
+    border-color: #e5e7eb;
+    box-shadow: none;
 }
 
 .invalid-feedback {
@@ -435,11 +419,7 @@ body {
     padding: 0;
     font-size: 1rem;
     z-index: 10;
-}
-
-.password-toggle:hover {
-    color: #495057;
-}
+} 
 
 .password-strength {
     margin-top: 0.5rem;
@@ -477,16 +457,9 @@ body {
     font-weight: 600;
     color: white;
     font-size: 0.85rem;
-    box-shadow: 0 2px 8px rgba(0, 74, 173, 0.3);
+    box-shadow: 0 2px 8px rgb(0, 74, 173);
     transition: all 0.2s ease;
-}
-
-.btn-change-photo:hover {
-    background: #003d91;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 74, 173, 0.4);
-    color: white;
-}
+} 
 
 .btn-update-name,
 .btn-update-password {
@@ -498,20 +471,12 @@ body {
     font-weight: 600;
     font-size: 0.9rem;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
-}
-
-.btn-update-name:hover,
-.btn-update-password:hover {
-    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
-    color: white;
-}
+    box-shadow: 0 4px 12px rgb(72, 187, 120);
+} 
 
 .btn-update-name:disabled,
 .btn-update-password:disabled {
-    opacity: 0.7;
+    opacity: 1;
     transform: none;
     cursor: not-allowed;
 }
@@ -523,17 +488,17 @@ body {
     padding: 1rem 1.5rem;
     margin-bottom: 1.5rem;
     font-size: 0.9rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 4px rgb(0, 0, 0);
 }
 
 .alert-success {
-    background-color: rgba(11, 143, 28, 0.1);
+    background-color: rgb(11, 143, 28);
     border-left: 4px solid #0B8F1C;
     color: #0B8F1C;
 }
 
 .alert-danger {
-    background-color: rgba(215, 121, 54, 0.1);
+    background-color: rgb(215, 121, 54);
     border-left: 4px solid #D77936;
     color: #D77936;
 }
@@ -629,7 +594,7 @@ body {
 
 /* Loading States */
 .loading {
-    opacity: 0.7;
+    opacity: 1;
     pointer-events: none;
 }
 
@@ -640,7 +605,7 @@ body {
 
 @keyframes fadeIn {
     from {
-        opacity: 0;
+        opacity: 1;
         transform: translateY(20px);
     }
     to {
@@ -663,8 +628,8 @@ img[src*="profile"],
 img[src*="avatar"],
 img[alt*="Profile"],
 img[alt*="Avatar"] {
-    border-radius: 50% !important;
-    object-fit: cover !important;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 /* Custom Scrollbar */
@@ -680,21 +645,17 @@ img[alt*="Avatar"] {
 ::-webkit-scrollbar-thumb {
     background: #c1c1c1;
     border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
+} 
         /* Logout button styling - matching login button style */
         .logout-item {
             margin-top: auto;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgb(255, 255, 255);
             padding-top: 1rem;
         }
 
         .logout-link {
             background: transparent !important;
-            color: rgba(255, 255, 255, 0.8) !important;
+            color: rgb(255, 255, 255) !important;
             border-radius: 0.25rem;
             margin: 0.25rem;
             transition: all 0.3s ease;
@@ -703,18 +664,7 @@ img[alt*="Avatar"] {
             font-weight: 400;
             font-size: 0.875rem;
             padding: 0.5rem 0.75rem;
-        }
-
-        .logout-link:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: white !important;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .logout-link:hover .nav-icon {
-            transform: translateX(3px);
-        }
+        }  
 
         /* Ensure sidebar nav takes full height and logout stays at bottom */
         .sidebar-nav {
@@ -727,3 +677,5 @@ img[alt*="Avatar"] {
         .sidebar-nav .nav-item:not(.logout-item) {
             flex-shrink: 0;
         }
+
+

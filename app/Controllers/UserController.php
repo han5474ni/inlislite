@@ -26,7 +26,7 @@ class UserController extends BaseController
             'page_subtitle' => 'Kelola pengguna sistem dan hak aksesnya'
         ];
 
-        return view('user/list', $data);
+        return redirect()->to(base_url('admin/users'));
     }
 
     /**

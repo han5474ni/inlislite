@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeApp() {
     initializeDataTables();
     initializeEventListeners();
-    loadStatistics();
+    // loadStatistics(); // disabled because stats cards are removed
     loadPatches();
     loadVersions();
 }
@@ -29,57 +29,82 @@ function initializeApp() {
  * Initialize DataTables
  */
 function initializeDataTables() {
-    // Initialize patches table
-    patchesTable = $('#patchesTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        order: [[6, 'desc']], // Sort by release date
-        columnDefs: [
-            { orderable: false, targets: [7] }, // Disable sorting for actions
-            { searchable: false, targets: [7] }, // Disable search for actions
-            { width: "60px", targets: [0] }, // ID column width
-            { width: "100px", targets: [1] }, // Version column width
-            { width: "100px", targets: [3] }, // Category column width
-            { width: "80px", targets: [4] }, // Priority column width
-            { width: "100px", targets: [5] }, // Status column width
-            { width: "120px", targets: [6] }, // Release date column width
-            { width: "120px", targets: [7] } // Actions column width
-        ],
-        language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
-        },
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-             '<"row"<"col-sm-12"tr>>' +
-             '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-        drawCallback: function() {
-            initializeTooltips();
+    try {
+        // Ensure jQuery and DataTables are available to avoid breaking the page
+        if (!window.jQuery) {
+            console.warn('jQuery is not loaded; skipping DataTables initialization');
+            return;
         }
-    });
+        if (!$.fn || !$.fn.DataTable) {
+            console.warn('DataTables plugin not available; skipping tables initialization');
+            return;
+        }
 
-    // Initialize versions table
-    versionsTable = $('#versionsTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        order: [[4, 'desc']], // Sort by release date
-        columnDefs: [
-            { orderable: false, targets: [5] }, // Disable sorting for actions
-            { searchable: false, targets: [5] }, // Disable search for actions
-            { width: "60px", targets: [0] }, // ID column width
-            { width: "100px", targets: [1] }, // Version column width
-            { width: "100px", targets: [3] }, // Status column width
-            { width: "120px", targets: [4] }, // Release date column width
-            { width: "120px", targets: [5] } // Actions column width
-        ],
-        language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
-        },
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-             '<"row"<"col-sm-12"tr>>' +
-             '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-        drawCallback: function() {
-            initializeTooltips();
-        }
-    });
+        // Initialize patches table
+        patchesTable = $('#patchesTable').DataTable({
+            responsive: {
+                details: { type: 'inline', display: $.fn.dataTable.Responsive.display.childRowImmediate }
+            },
+            pageLength: 10,
+            order: [[5, 'desc']], // Sort by release date (now column index 5)
+            columnDefs: [
+                // Disable sorting/searching where not needed
+                { orderable: false, targets: [4,6] },
+                { searchable: false, targets: [4,6] },
+                // Responsive priorities (1 = keep visible)
+                { responsivePriority: 1, targets: 6 }, // actions
+                { responsivePriority: 2, targets: 2 }, // title
+                { responsivePriority: 3, targets: 5 }, // release date
+                { responsivePriority: 4, targets: 4 }, // file
+                { responsivePriority: 5, targets: 3 }, // category
+                { responsivePriority: 6, targets: 1 }, // version
+                { responsivePriority: 7, targets: 0 }, // id
+                // No hard widths; allow flexible layout. Keep some nowrap classes on compact cols
+                { className: 'text-nowrap', targets: [0,1,5,6] }
+            ],
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
+            },
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                 '<"row"<"col-sm-12"tr>>' +
+                 '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+            drawCallback: function() {
+                initializeTooltips();
+            },
+            createdRow: function(row) {
+                const fileCell = $('td', row).eq(3);
+                fileCell.addClass('text-center');
+            }
+        });
+
+        // Initialize versions table
+        versionsTable = $('#versionsTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            order: [[4, 'desc']], // Sort by release date
+            columnDefs: [
+                { orderable: false, targets: [3,5] }, // Disable sorting for file and actions
+                { searchable: false, targets: [3,5] }, // Disable search for file and actions
+                { width: "60px", targets: [0] }, // ID column width
+                { width: "100px", targets: [1] }, // Version column width
+                { width: "140px", targets: [3] }, // File column width
+                { width: "120px", targets: [4] }, // Release date column width
+                { width: "120px", targets: [5] } // Actions column width
+            ],
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
+            },
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                 '<"row"<"col-sm-12"tr>>' +
+                 '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+            drawCallback: function() {
+                initializeTooltips();
+            }
+        });
+    } catch (error) {
+        console.error('Error initializing DataTables:', error);
+        // Do not rethrow; allow the rest of the page (buttons, forms) to keep working
+    }
 }
 
 /**
@@ -91,6 +116,41 @@ function initializeEventListeners() {
         e.preventDefault();
         savePatch();
     });
+
+    // Toggle Add Patch Card
+    const openAddCardBtn = document.getElementById('openAddCardBtn');
+    const addPatchCard = document.getElementById('addPatchCard');
+    const tablePanel = document.getElementById('tablePanel');
+    const closeAddCardBtn = document.getElementById('closeAddCardBtn');
+    const cancelAddCardBtn = document.getElementById('cancelAddCardBtn');
+
+    if (openAddCardBtn) {
+        openAddCardBtn.addEventListener('click', function() {
+            addPatchCard.classList.remove('d-none');
+            tablePanel.classList.add('d-none');
+        });
+    }
+    if (closeAddCardBtn) {
+        closeAddCardBtn.addEventListener('click', function() {
+            addPatchCard.classList.add('d-none');
+            tablePanel.classList.remove('d-none');
+        });
+    }
+    if (cancelAddCardBtn) {
+        cancelAddCardBtn.addEventListener('click', function() {
+            addPatchCard.classList.add('d-none');
+            tablePanel.classList.remove('d-none');
+        });
+    }
+
+    // Submit add card form
+    const addPatchCardForm = document.getElementById('addPatchCardForm');
+    if (addPatchCardForm) {
+        addPatchCardForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            savePatchFromCard();
+        });
+    }
     
     document.getElementById('editPatchForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -124,10 +184,46 @@ function initializeEventListeners() {
         resetEditVersionForm();
     });
 
-    // Tab change events
-    document.getElementById('versions-tab').addEventListener('shown.bs.tab', function() {
-        versionsTable.columns.adjust().draw();
-    });
+    // Toggle Add Version Card
+    const openAddVersionCardBtn = document.getElementById('openAddVersionCardBtn');
+    const addVersionCard = document.getElementById('addVersionCard');
+    const closeAddVersionCardBtn = document.getElementById('closeAddVersionCardBtn');
+    const cancelAddVersionCardBtn = document.getElementById('cancelAddVersionCardBtn');
+
+    if (openAddVersionCardBtn) {
+        openAddVersionCardBtn.addEventListener('click', function() {
+            addVersionCard.classList.remove('d-none');
+            document.getElementById('tablePanel').classList.add('d-none');
+        });
+    }
+    if (closeAddVersionCardBtn) {
+        closeAddVersionCardBtn.addEventListener('click', function() {
+            addVersionCard.classList.add('d-none');
+            document.getElementById('tablePanel').classList.remove('d-none');
+        });
+    }
+    if (cancelAddVersionCardBtn) {
+        cancelAddVersionCardBtn.addEventListener('click', function() {
+            addVersionCard.classList.add('d-none');
+            document.getElementById('tablePanel').classList.remove('d-none');
+        });
+    }
+
+    const addVersionCardForm = document.getElementById('addVersionCardForm');
+    if (addVersionCardForm) {
+        addVersionCardForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveVersionFromCard();
+        });
+    }
+
+    // Tab change events (guarded if tabs exist)
+    const versionsTabEl = document.getElementById('versions-tab');
+    if (versionsTabEl) {
+        versionsTabEl.addEventListener('shown.bs.tab', function() {
+            versionsTable.columns.adjust().draw();
+        });
+    }
 }
 
 /**
@@ -138,6 +234,12 @@ function initializeTooltips() {
     tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+}
+
+// Utility: detect image vs PDF by extension
+function isImageFile(url) {
+    const lower = (url || '').toLowerCase();
+    return lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.gif') || lower.endsWith('.webp');
 }
 
 /**
@@ -156,8 +258,8 @@ async function loadStatistics() {
         updateStatistics(stats);
         
     } catch (error) {
-        console.error('Error loading statistics:', error);
-        showError('Gagal memuat statistik');
+        // console.error('Error loading statistics:', error);
+        // showError('Gagal memuat statistik');
     }
 }
 
@@ -165,10 +267,10 @@ async function loadStatistics() {
  * Update statistics display
  */
 function updateStatistics(stats) {
-    document.getElementById('totalPatches').textContent = stats.total_patches || 0;
-    document.getElementById('activePatches').textContent = stats.active_patches || 0;
-    document.getElementById('criticalPatches').textContent = stats.critical_patches || 0;
-    document.getElementById('pendingPatches').textContent = stats.pending_patches || 0;
+    if (document.getElementById('totalPatches')) document.getElementById('totalPatches').textContent = stats.total_patches || 0;
+    if (document.getElementById('activePatches')) document.getElementById('activePatches').textContent = stats.active_patches || 0;
+    if (document.getElementById('criticalPatches')) document.getElementById('criticalPatches').textContent = stats.critical_patches || 0;
+    if (document.getElementById('pendingPatches')) document.getElementById('pendingPatches').textContent = stats.pending_patches || 0;
 }
 
 /**
@@ -239,21 +341,21 @@ async function loadVersions() {
                 id: 1,
                 version: "3.0.0",
                 name: "Initial Release",
-                status: "stable",
+                file_url: null,
                 release_date: "2024-01-01"
             },
             {
                 id: 2,
                 version: "3.0.1",
                 name: "Security Update",
-                status: "stable",
+                file_url: "https://example.com/release-3.0.1.pdf",
                 release_date: "2024-01-15"
             },
             {
                 id: 3,
                 version: "3.1.0",
                 name: "Feature Update",
-                status: "development",
+                file_url: null,
                 release_date: "2024-02-01"
             }
         ];
@@ -278,19 +380,19 @@ function populatePatchesTable(patches) {
             `<span class="version-badge">${patch.version}</span>`,
             `<div>
                 <div class="fw-semibold">${patch.title}</div>
-                <small class="text-muted">${patch.description}</small>
+                <small class="text-muted">${patch.description || ''}</small>
             </div>`,
-            `<span class="category-badge ${patch.category}">${getCategoryLabel(patch.category)}</span>`,
-            `<span class="priority-badge ${patch.priority}">${getPriorityLabel(patch.priority)}</span>`,
-            `<span class="status-badge ${patch.status}">${getStatusLabel(patch.status)}</span>`,
+            `<span class="badge bg-light text-dark">${(patch.type || patch.category_type || 'patch').toLowerCase() === 'updater' ? 'Updater' : 'Patch'}</span>`,
+            patch.file_url
+                ? (isImageFile(patch.file_url)
+                    ? `<a href="${patch.file_url}" target="_blank" class="btn btn-outline-secondary btn-sm"><i class="bi bi-image"></i> ${patch.file_label ? escapeHtml(patch.file_label) : 'Lihat'}</a>`
+                    : `<a href="${patch.file_url}" target="_blank" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-pdf"></i> ${patch.file_label ? escapeHtml(patch.file_label) : 'Buka'}</a>`)
+                : '<span class="text-muted">-</span>',
             formatDate(patch.release_date),
             `<div class="d-flex justify-content-center">
                 <button class="btn-action edit" onclick="editPatch(${patch.id})" title="Edit">
                     <i class="bi bi-pencil"></i>
                 </button>
-                ${patch.file_url ? `<button class="btn-action download" onclick="downloadPatch('${patch.file_url}')" title="Download">
-                    <i class="bi bi-download"></i>
-                </button>` : ''}
                 <button class="btn-action delete" onclick="deletePatch(${patch.id})" title="Hapus">
                     <i class="bi bi-trash"></i>
                 </button>
@@ -314,7 +416,11 @@ function populateVersionsTable(versions) {
             version.id,
             `<span class="version-badge">${version.version}</span>`,
             version.name || '-',
-            `<span class="status-badge ${version.status}">${getVersionStatusLabel(version.status)}</span>`,
+            version.file_url
+                ? (isImageFile(version.file_url)
+                    ? `<a href="${version.file_url}" target="_blank" class="btn btn-outline-secondary btn-sm"><i class="bi bi-image"></i> ${version.file_label ? escapeHtml(version.file_label) : 'Lihat'}</a>`
+                    : `<a href="${version.file_url}" target="_blank" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-pdf"></i> ${version.file_label ? escapeHtml(version.file_label) : 'Buka'}</a>`)
+                : '<span class="text-muted">-</span>',
             formatDate(version.release_date),
             `<div class="d-flex justify-content-center">
                 <button class="btn-action edit" onclick="editVersion(${version.id})" title="Edit">
@@ -398,47 +504,108 @@ function formatDate(dateString) {
     });
 }
 
+// Escape HTML for safe insertion into DOM
+function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 /**
  * Save new patch
  */
 async function savePatch() {
     try {
+        showLoading();
+        const fileInput = document.getElementById('patchFile');
+        let fileUrl = document.getElementById('patchFileUrl') ? document.getElementById('patchFileUrl').value : '';
+        if (!fileUrl && fileInput && fileInput.files && fileInput.files[0]) {
+            const fd = new FormData();
+            fd.append('file', fileInput.files[0]);
+            const res = await fetch(baseUrl + '/patches/upload', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Upload gagal');
+            fileUrl = data.url;
+        } else if (!fileUrl && document.getElementById('patchFileUrl')) {
+            fileUrl = document.getElementById('patchFileUrl').value || '';
+        }
+
         const formData = {
             version: document.getElementById('patchVersion').value,
             title: document.getElementById('patchTitle').value,
             description: document.getElementById('patchDescription').value,
             changelog: document.getElementById('patchChangelog').value,
-            category: document.getElementById('patchCategory').value,
-            priority: document.getElementById('patchPriority').value,
-            status: document.getElementById('patchStatus').value,
             release_date: document.getElementById('patchReleaseDate').value,
-            file_url: document.getElementById('patchFileUrl').value
+            file_url: fileUrl,
+            file_label: (document.getElementById('patchFileLabel') ? document.getElementById('patchFileLabel').value : '')
         };
         
-        // Validate required fields
-        if (!formData.version || !formData.title || !formData.description || !formData.category || !formData.priority) {
+        if (!formData.version || !formData.title || !formData.description) {
             showError('Harap lengkapi semua field yang wajib diisi');
             return;
         }
         
-        showLoading();
-        
-        // TODO: Replace with actual API call
         console.log('Saving patch:', formData);
-        
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Close modal and refresh data
         const modal = bootstrap.Modal.getInstance(document.getElementById('addPatchModal'));
-        modal.hide();
+        if (modal) modal.hide();
         
         showSuccess('Patch berhasil ditambahkan');
         loadPatches();
-        loadStatistics();
-        
     } catch (error) {
         console.error('Error saving patch:', error);
+        showError('Gagal menyimpan patch');
+    } finally {
+        hideLoading();
+    }
+}
+
+// Save from Add Card form
+async function savePatchFromCard() {
+    try {
+        showLoading();
+        const fileInput = document.getElementById('cardPatchFile');
+        let fileUrl = '';
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            const fd = new FormData();
+            fd.append('file', fileInput.files[0]);
+            const res = await fetch(baseUrl + '/patches/upload', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Upload gagal');
+            fileUrl = data.url;
+        } else if (document.getElementById('cardPatchFileUrl')) {
+            fileUrl = document.getElementById('cardPatchFileUrl').value || '';
+        }
+
+        const formData = {
+            version: document.getElementById('cardPatchVersion').value,
+            title: document.getElementById('cardPatchTitle').value,
+            description: document.getElementById('cardPatchDescription').value,
+            release_date: document.getElementById('cardPatchReleaseDate').value,
+            file_url: fileUrl,
+            file_label: (document.getElementById('cardPatchFileLabel') ? document.getElementById('cardPatchFileLabel').value : ''),
+            changelog: document.getElementById('cardPatchChangelog').value
+        };
+
+        if (!formData.version || !formData.title || !formData.description) {
+            showError('Harap lengkapi semua field yang wajib diisi');
+            return;
+        }
+
+        console.log('Saving patch (card):', formData);
+        // TODO: POST to your create API if available, else just refresh
+        // await fetch(baseUrl + '/patches/store-json', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+
+        // After save, go back to table and refresh
+        document.getElementById('addPatchCard').classList.add('d-none');
+        document.getElementById('tablePanel').classList.remove('d-none');
+        showSuccess('Patch berhasil ditambahkan');
+        loadPatches();
+    } catch (err) {
+        console.error(err);
         showError('Gagal menyimpan patch');
     } finally {
         hideLoading();
@@ -503,11 +670,9 @@ function editPatch(id) {
     document.getElementById('editPatchTitle').value = patch.title;
     document.getElementById('editPatchDescription').value = patch.description;
     document.getElementById('editPatchChangelog').value = patch.changelog || '';
-    document.getElementById('editPatchCategory').value = patch.category;
-    document.getElementById('editPatchPriority').value = patch.priority;
-    document.getElementById('editPatchStatus').value = patch.status;
     document.getElementById('editPatchReleaseDate').value = patch.release_date;
     document.getElementById('editPatchFileUrl').value = patch.file_url || '';
+    if (document.getElementById('editPatchFileLabel')) document.getElementById('editPatchFileLabel').value = patch.file_label || '';
     
     // Show modal
     const modal = new bootstrap.Modal(document.getElementById('editPatchModal'));
@@ -525,15 +690,13 @@ async function updatePatch() {
             title: document.getElementById('editPatchTitle').value,
             description: document.getElementById('editPatchDescription').value,
             changelog: document.getElementById('editPatchChangelog').value,
-            category: document.getElementById('editPatchCategory').value,
-            priority: document.getElementById('editPatchPriority').value,
-            status: document.getElementById('editPatchStatus').value,
             release_date: document.getElementById('editPatchReleaseDate').value,
-            file_url: document.getElementById('editPatchFileUrl').value
+            file_url: document.getElementById('editPatchFileUrl').value,
+            file_label: (document.getElementById('editPatchFileLabel') ? document.getElementById('editPatchFileLabel').value : '')
         };
         
         // Validate required fields
-        if (!formData.version || !formData.title || !formData.description || !formData.category || !formData.priority) {
+        if (!formData.version || !formData.title || !formData.description) {
             showError('Harap lengkapi semua field yang wajib diisi');
             return;
         }
@@ -767,7 +930,6 @@ async function deleteVersion(id) {
  */
 function resetAddPatchForm() {
     document.getElementById('addPatchForm').reset();
-    document.getElementById('patchStatus').value = 'draft';
 }
 
 /**

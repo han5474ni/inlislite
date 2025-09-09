@@ -1,205 +1,281 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitur dan Modul Program - INLISLite v3.0</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Dashboard CSS -->
-    <link href="<?= base_url('assets/css/admin/dashboard.css') ?>" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="<?= base_url('assets/css/admin/fitur.css') ?>" rel="stylesheet">
-    
-    <style>
-    body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+<?= $this->extend('layout') ?>
+
+<?= $this->section('head') ?>
+<link href="<?= base_url('assets/css/admin/fitur.css') ?>" rel="stylesheet">
+<?= $this->endSection() ?>
+
+<?= $this->section('page_header') ?>
+<?= view('admin/components/page_header', [
+    'title' => 'Fitur dan Modul Program',
+    'subtitle' => 'Informasi lengkap tentang sistem otomasi perpustakaan',
+    'icon' => 'puzzle-fill',
+    'backUrl' => base_url('admin'),
+    'bg' => 'green',
+    'actionUrl' => base_url('admin/fitur#managementSection'),
+    'actionText' => 'Kelola',
+    'actionIcon' => 'sliders',
+]) ?>
+<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
+<div class="dashboard-container">
+    <div class="container">
+
+
+
+
+        <section class="features-section mb-5">
+            <div class="features-grid">
+                <div class="row g-4" id="featuresContainer">
+                    <!-- Features will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Manajemen Inline (gabungan dari fitur-edit) -->
+        <section id="managementSection" class="mb-5">
+            <div class="section-header mb-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h2 class="section-title mb-0">Kelola Fitur & Modul</h2>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshAll()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addFeatureModal">
+                            <i class="bi bi-plus-circle me-1"></i>Tambah Fitur
+                        </button>
+                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addModuleModal">
+                            <i class="bi bi-plus-circle me-1"></i>Tambah Modul
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">Manajemen Fitur</div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="featuresTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width:50px" class="text-center">#</th>
+                                            <th style="width:60px" class="text-center">Icon</th>
+                                            <th>Judul</th>
+                                            <th>Deskripsi</th>
+                                            <th style="width:100px" class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><!-- dynamic --></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">Manajemen Modul</div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="modulesTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width:50px" class="text-center">#</th>
+                                            <th style="width:60px" class="text-center">Icon</th>
+                                            <th>Judul</th>
+                                            <th>Deskripsi</th>
+                                            <th style="width:140px" class="text-center">Tipe</th>
+                                            <th style="width:100px" class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><!-- dynamic --></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="modules-section">
+            <div class="modules-grid">
+                <div class="row g-4" id="modulesContainer">
+                    <!-- Modules will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+  window.baseUrl = "<?= base_url() ?>";
+
+  // Simple fetch + render using existing endpoints handled by Admin\FiturController
+  function refreshContent() { refreshFeatures(); refreshModules(); }
+  function refreshAll() { refreshContent(); }
+
+  async function fetchJSON(url, opts = {}) {
+    const res = await fetch(url, opts);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+
+  function iconHtml(icon) { return `<i class="bi ${icon || 'bi-star'}"></i>`; }
+
+  function featureRowHtml(item, idx) {
+    return `<tr>
+      <td class="text-center">${idx}</td>
+      <td class="text-center">${iconHtml(item.icon)}</td>
+      <td>${item.title || ''}</td>
+      <td>${item.description || ''}</td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-outline-primary" onclick="openEdit('feature', ${item.id})"><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="removeItem('feature', ${item.id})"><i class="bi bi-trash"></i></button>
+      </td>
+    </tr>`;
+  }
+
+  function moduleRowHtml(item, idx) {
+    return `<tr>
+      <td class="text-center">${idx}</td>
+      <td class="text-center">${iconHtml(item.icon)}</td>
+      <td>${item.title || ''}</td>
+      <td>${item.description || ''}</td>
+      <td class="text-center">${item.module_type || '-'}</td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-outline-primary" onclick="openEdit('module', ${item.id})"><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="removeItem('module', ${item.id})"><i class="bi bi-trash"></i></button>
+      </td>
+    </tr>`;
+  }
+
+  async function refreshFeatures() {
+    try {
+      const data = await fetchJSON(`${baseUrl}/admin/fitur/data?type=feature`);
+      if (!data.success) return;
+      const tbody = document.querySelector('#featuresTable tbody');
+      if (!tbody) return;
+      tbody.innerHTML = (data.data || []).map((it, i) => featureRowHtml(it, i+1)).join('');
+    } catch (e) { console.error(e); }
+  }
+
+  async function refreshModules() {
+    try {
+      const data = await fetchJSON(`${baseUrl}/admin/fitur/data?type=module`);
+      if (!data.success) return;
+      const tbody = document.querySelector('#modulesTable tbody');
+      if (!tbody) return;
+      tbody.innerHTML = (data.data || []).map((it, i) => moduleRowHtml(it, i+1)).join('');
+    } catch (e) { console.error(e); }
+  }
+
+  function openEdit(type, id) {
+    alert('Edit ' + type + ' #' + id + ' — form inline bisa ditambahkan sesuai kebutuhan.');
+  }
+
+  async function removeItem(type, id) {
+    if (!confirm('Hapus ' + type + ' #' + id + '?')) return;
+    try {
+      const res = await fetch(`${baseUrl}/admin/fitur/delete/` + id, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        refreshContent();
+      } else {
+        alert(data.message || 'Gagal menghapus');
+      }
+    } catch (e) {
+      alert('Gagal menghapus');
     }
-    </style>
-</head>
-<body>
-    <!-- Include Enhanced Sidebar -->
-    <?= $this->include('admin/partials/sidebar') ?>
-    
-    <!-- Main Content -->
-    <main class="enhanced-main-content">
-        <div class="dashboard-container">
-            <div class="header-card">
-                <div class="content-header">
-                    <h1 class="main-title">Fitur dan Modul Program</h1>
-                    <p class="main-subtitle">Informasi lengkap tentang sistem otomasi perpustakaan</p>
-                </div>
-            </div>
-            
+  }
 
-        <div class="container">
-            <!-- Page Banner Card -->
-            <div class="banner-card mb-5 shadow-sm">
-                <div class="banner-icon">
-                    <i class="bi bi-puzzle-fill"></i>
-                </div>
-                <div class="banner-content">
-                    <h2 class="banner-title">Fitur dan Modul Program</h2>
-                    <h3 class="banner-subtitle">INLISLite V3</h3>
-                    <p class="banner-description">
-                        Dokumentasi lengkap tentang fitur-fitur canggih dan modul program yang menjadikan INLISLite v3 
-                        sebagai solusi manajemen perpustakaan yang komprehensif.
-                    </p>
-                </div>
-            </div>
+  document.addEventListener('DOMContentLoaded', () => {
+    refreshContent();
+  });
+</script>
 
-            <!-- Search and Action Section -->
-            <div class="search-action-section mb-4 shadow-sm">
-                <div class="row align-items-center g-2">
-                    <div class="col-md-7">
-                        <div class="search-box">
-                            <i class="bi bi-search search-icon"></i>
-                            <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Cari fitur atau modul...">
-                        </div>
-                    </div>
-                    <div class="col-md-5 text-md-end">
-                        <div class="btn-group btn-group-sm" role="group">
-                            <a href="<?= base_url('admin/fitur-edit') ?>" class="btn btn-primary">
-                                <i class="bi bi-plus-circle me-1"></i>Tambah Modul
-                            </a>
-                            <a href="<?= base_url('admin/fitur-edit') ?>" class="btn btn-outline-primary">
-                                <i class="bi bi-gear me-1"></i>Kelola
-                            </a>
-                            <button class="btn btn-outline-secondary" onclick="refreshContent()">
-                                <i class="bi bi-arrow-clockwise"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Features Section -->
-            <section class="features-section mb-5">
-                <div class="section-header mb-4">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h2 class="section-title">Fitur-fitur INLISLite V3</h2>
-                            <p class="section-subtitle">
-                                Fitur-fitur canggih yang memudahkan pengelolaan perpustakaan modern dengan teknologi terdepan
-                            </p>
-                        </div>
-                        <div class="section-actions">
-                            <div class="badge bg-primary-subtle text-primary px-3 py-2">
-                                <i class="bi bi-star-fill me-1"></i>Fitur Utama
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="features-grid">
-                    <div class="row g-4" id="featuresContainer">
-                        <!-- Features will be loaded here -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- Modules Section -->
-            <section class="modules-section">
-                <div class="section-header mb-4">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h2 class="section-title">Modul Program INLISLite V3</h2>
-                            <p class="section-subtitle">
-                                Arsitektur modular yang memungkinkan integrasi dan kustomisasi sesuai kebutuhan perpustakaan
-                            </p>
-                        </div>
-                        <div class="section-actions">
-                            <div class="badge bg-success-subtle text-success px-3 py-2">
-                                <i class="bi bi-puzzle-fill me-1"></i>Modul Sistem
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="modules-grid">
-                    <div class="row g-4" id="modulesContainer">
-                        <!-- Modules will be loaded here -->
-                    </div>
-                </div>
-            </section>
-        </div>
-        </div>
-    </main>
-
-
-
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalTitle">Edit Item</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editForm">
-                        <input type="hidden" id="editId">
-                        <input type="hidden" id="editType">
-                        <div class="mb-3">
-                            <label for="editTitle" class="form-label">Judul</label>
-                            <input type="text" class="form-control" id="editTitle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editDescription" class="form-label">Deskripsi</label>
-                            <textarea class="form-control" id="editDescription" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editIcon" class="form-label">Icon (Bootstrap Icons)</label>
-                            <input type="text" class="form-control" id="editIcon" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editColor" class="form-label">Warna</label>
-                            <select class="form-select" id="editColor" required>
-                                <option value="blue">Biru</option>
-                                <option value="green">Hijau</option>
-                                <option value="orange">Orange</option>
-                                <option value="purple">Ungu</option>
-                            </select>
-                        </div>
-                        <div class="mb-3" id="editTypeContainer" style="display: none;">
-                            <label for="editModuleType" class="form-label">Tipe Modul</label>
-                            <select class="form-select" id="editModuleType">
-                                <option value="application">Application-based</option>
-                                <option value="database">Database/Backend</option>
-                                <option value="utility">Utility</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" onclick="updateItem()">Update</button>
-                </div>
-            </div>
-        </div>
+<!-- Modals (inline, ringkas) -->
+<div class="modal fade" id="addFeatureModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Tambah Fitur</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <form id="addFeatureForm">
+          <?= csrf_field() ?>
+          <div class="mb-2"><label class="form-label">Judul</label><input name="title" class="form-control" required></div>
+          <div class="mb-2"><label class="form-label">Deskripsi</label><textarea name="description" class="form-control" rows="3" required></textarea></div>
+          <div class="mb-2"><label class="form-label">Icon</label><input name="icon" class="form-control" placeholder="bi-star" required></div>
+          <div class="mb-2"><label class="form-label">Warna</label>
+            <select name="color" class="form-select" required>
+              <option value="blue">Biru</option>
+              <option value="green">Hijau</option>
+              <option value="orange">Orange</option>
+              <option value="purple">Ungu</option>
+            </select>
+          </div>
+          <input type="hidden" name="type" value="feature">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button class="btn btn-primary" onclick="submitAdd('feature')">Simpan</button>
+      </div>
     </div>
+  </div>
+</div>
 
-    <!-- Loading Spinner -->
-    <div class="loading-spinner" id="loadingSpinner" style="display: none;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
+<div class="modal fade" id="addModuleModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Tambah Modul</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <form id="addModuleForm">
+          <?= csrf_field() ?>
+          <div class="mb-2"><label class="form-label">Judul</label><input name="title" class="form-control" required></div>
+          <div class="mb-2"><label class="form-label">Deskripsi</label><textarea name="description" class="form-control" rows="3" required></textarea></div>
+          <div class="mb-2"><label class="form-label">Icon</label><input name="icon" class="form-control" placeholder="bi-gear" required></div>
+          <div class="mb-2"><label class="form-label">Warna</label>
+            <select name="color" class="form-select" required>
+              <option value="blue">Biru</option>
+              <option value="green">Hijau</option>
+              <option value="orange">Orange</option>
+              <option value="purple">Ungu</option>
+            </select>
+          </div>
+          <div class="mb-2"><label class="form-label">Tipe</label>
+            <select name="module_type" class="form-select" required>
+              <option value="application">Application</option>
+              <option value="database">Database</option>
+              <option value="utility">Utility</option>
+            </select>
+          </div>
+          <input type="hidden" name="type" value="module">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button class="btn btn-success" onclick="submitAdd('module')">Simpan</button>
+      </div>
     </div>
+  </div>
+</div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script>
-        window.baseUrl = "<?= base_url() ?>";
-    </script>
-    <script src="<?= base_url('assets/js/admin/fitur-edit.js') ?>"></script>
-</body>
-</html>
+<script>
+  async function submitAdd(kind) {
+    const form = document.getElementById(kind === 'feature' ? 'addFeatureForm' : 'addModuleForm');
+    const fd = new FormData(form);
+    try {
+      const res = await fetch(`${baseUrl}/admin/fitur/store`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.success) {
+        bootstrap.Modal.getInstance(document.getElementById(kind === 'feature' ? 'addFeatureModal' : 'addModuleModal')).hide();
+        refreshContent();
+      } else {
+        alert(data.message || 'Gagal menyimpan');
+      }
+    } catch (e) { alert('Gagal menyimpan'); }
+  }
+</script>
+<?= $this->endSection() ?>

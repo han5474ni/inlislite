@@ -27,7 +27,7 @@ $(document).ready(function() {
 function setupSyncListeners() {
     if (window.userDataSync) {
         window.userDataSync.onSync(function(syncData) {
-            console.log('🔄 Sync event received in users-edit:', syncData.type);
+            console.log('🔄 Sync event received in users/edit:', syncData.type);
             
             switch (syncData.type) {
                 case 'userAdded':
@@ -128,8 +128,10 @@ function initializeDataTable() {
             zeroRecords: "Tidak ada data yang cocok"
         },
         columnDefs: [
-            { orderable: false, targets: [1, 7, 8] }, // Avatar, History and Actions columns
-            { className: "text-center", targets: [0, 1, 6, 7, 8] }
+            { orderable: false, targets: [5, 6] }, // History and Aksi columns
+            { className: "text-center", targets: [0, 4, 5, 6] },
+            { responsivePriority: 1, targets: 6 }, // Keep Aksi always visible
+            { responsivePriority: 2, targets: 5 }  // Keep History next priority
         ]
     });
 }
@@ -247,16 +249,12 @@ function populateTable(data) {
             getInitials(user.nama_lengkap);
         const roleClass = getRoleClass(user.role);
         const statusClass = getStatusClass(user.status);
-        const lastLogin = formatLastLogin(user.last_login);
-        
         usersTable.row.add([
             sequentialId, // Use sequential ID instead of database ID
-            `<div class="user-avatar">${avatar}</div>`,
             escapeHtml(user.nama_lengkap),
             escapeHtml(user.nama_pengguna),
             escapeHtml(user.email),
             `<span class="status-badge ${statusClass}">${escapeHtml(user.status)}</span>`,
-            lastLogin,
             `
                 <button class="btn-action view-history" onclick="viewUserHistory(${user.id})" title="View History" data-user-id="${user.id}">
                     <i class="bi bi-clock-history"></i>
@@ -425,19 +423,39 @@ function editUser(userId) {
     document.getElementById('editPassword').value = ''; // Always empty for security
     document.getElementById('editStatus').value = user.status;
 
-    // Populate feature checkboxes
+    // Reset all feature checkboxes initially
     document.querySelectorAll('.feature-checkbox').forEach(checkbox => {
-        if (user.features && Array.isArray(user.features)) {
-            checkbox.checked = user.features.includes(checkbox.value);
-        } else {
-            checkbox.checked = false;
-        }
+        checkbox.checked = false;
     });
-    
-    // Show modal
+
+    // Show modal first for immediate feedback
     const modal = new bootstrap.Modal(document.getElementById('editModal'));
     modal.show();
-    
+
+    // Load current user features from server
+    (async () => {
+        try {
+            const resp = await fetch(`${window.baseUrl || ''}/admin/users/ajax/features/${userId}`, {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const res = await resp.json();
+            if (res && res.success && res.data && Array.isArray(res.data.features)) {
+                const userFeatures = res.data.features;
+                document.querySelectorAll('.feature-checkbox').forEach(cb => {
+                    cb.checked = userFeatures.includes(cb.value);
+                });
+            } else if (user.features && Array.isArray(user.features)) {
+                // Fallback to local usersData if available
+                document.querySelectorAll('.feature-checkbox').forEach(cb => {
+                    cb.checked = user.features.includes(cb.value);
+                });
+            }
+        } catch (e) {
+            console.warn('Failed to load user features:', e);
+        }
+    })();
+
     console.log('✏️ Editing user:', user.nama_lengkap);
 }
 
@@ -476,6 +494,7 @@ status: document.getElementById('editStatus').value,
             }
         }
         
+        // First, update core user fields
         const response = await fetch(`${window.baseUrl || ''}/admin/users/ajax/update/${userId}`, {
             method: 'POST',
             headers: {
@@ -484,8 +503,23 @@ status: document.getElementById('editStatus').value,
             },
             body: JSON.stringify(requestData)
         });
-        
         const result = await response.json();
+        
+        // If core update succeeded, also persist features to dedicated endpoint
+        if (result && result.success) {
+            try {
+                await fetch(`${window.baseUrl || ''}/admin/users/ajax/features/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ features: formData.features, ...(typeof getCSRFData === 'function' ? getCSRFData() : {}) })
+                });
+            } catch (e) {
+                console.warn('Features update failed (non-blocking):', e);
+            }
+        }
         
         if (result.success) {
             // Update CSRF hash
@@ -794,3 +828,18 @@ function deselectAllFeatures() {
 }
 
 console.log('📦 Users Edit JavaScript loaded successfully');
+
+/**
+ * Open edit modal focused on Access Features section for a user
+ */
+function manageAccess(userId) {
+    // Reuse edit flow to populate user data
+    editUser(userId);
+    // After modal shown, scroll to Access Features
+    setTimeout(() => {
+        const card = document.getElementById('accessFeaturesCard');
+        if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 300);
+}

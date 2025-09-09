@@ -1,4 +1,5 @@
-<?= view('public/layout/header', ['page_title' => $page_title ?? 'Bimbingan Teknis']) ?>
+<?= $this->extend('layout') ?>
+<?= $this->section('content') ?>
 
 <!-- Page Header -->
 <section class="page-header">
@@ -517,4 +518,4 @@ function submitTrainingRegistration() {
 }
 </script>
 
-<?= view('public/layout/footer') ?>
+<?= $this->endSection() ?>

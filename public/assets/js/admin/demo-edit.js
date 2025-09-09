@@ -46,8 +46,8 @@ function initializeDataTable() {
             zeroRecords: "Tidak ada data yang cocok"
         },
         columnDefs: [
-            { orderable: false, targets: [1, 7] }, // Icon and Actions columns
-            { className: "text-center", targets: [0, 1, 4, 5, 6] }
+            { orderable: false, targets: [5] }, // Actions columns
+            { className: "text-center", targets: [0, 3] }
         ]
     });
 }
@@ -111,10 +111,6 @@ function populateTable(data) {
     
     // Add new data
     data.forEach((demo) => {
-        const icon = demo.icon ? 
-            `<i class="bi bi-${demo.icon}"></i>` : 
-            `<i class="bi bi-play-circle"></i>`;
-        const statusClass = getStatusClass(demo.status);
         const categoryBadge = getCategoryBadge(demo.category);
         const typeBadge = getTypeBadge(demo.demo_type || 'interactive');
         
@@ -128,16 +124,13 @@ function populateTable(data) {
         
         demoTable.row.add([
             demo.id,
-            `<div class="demo-icon">${icon}</div>`,
             `<div class="demo-info">
                 <strong>${escapeHtml(demo.title)}</strong>
                 ${demo.subtitle ? `<br><small class="text-muted">${escapeHtml(demo.subtitle)}</small>` : ''}
-                <br><small>${escapeHtml(demo.description).substring(0, 100)}${demo.description.length > 100 ? '...' : ''}</small>
+                ${demo.description ? `<br><small>${escapeHtml(demo.description).substring(0, 100)}${demo.description.length > 100 ? '...' : ''}</small>` : ''}
             </div>`,
             categoryBadge,
             typeBadge,
-            `<span class="status-badge ${statusClass}">${escapeHtml(demo.status)}</span>`,
-            demo.view_count || 0,
             fileInfo,
             `
                 <button class="btn-action edit" onclick="editDemo(${demo.id})" title="Edit">
@@ -148,6 +141,13 @@ function populateTable(data) {
                 </button>
             `
         ]);
+    });
+    
+    // Redraw table
+    demoTable.draw();
+    
+    console.log(`📊 Table populated with ${data.length} demos`);
+}
     });
     
     // Redraw table

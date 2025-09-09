@@ -37,7 +37,7 @@ class SecureUserController extends BaseController
             'title' => 'Tambah User Baru - INLISLite v3.0'
         ];
 
-        return view('admin/users/add_user_secure', $data);
+        return view('admin/users_add', $data);
     }
 
     /**

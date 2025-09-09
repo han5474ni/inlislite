@@ -1,6 +1,6 @@
 /**
  * INLISLite v3.0 User Data Synchronization
- * Ensures data consistency between /admin/users and /admin/users-edit pages
+ * Ensures data consistency between /admin/users and /admin/users/edit pages
  */
 
 class UserDataSync {

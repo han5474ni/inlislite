@@ -17,7 +17,7 @@
             /* Modern Color Palette - Solid Colors */
             --primary-blue: #2563eb;
             --primary-blue-dark: #1d4ed8;
-            --secondary-green: #059669;
+            --secondary-green: var(--brand-green);
             --white: #ffffff;
             --gray-50: #f9fafb;
             --gray-100: #f3f4f6;
@@ -31,7 +31,7 @@
             /* Design System */
             --border-radius: 16px;
             --border-radius-small: 8px;
-            --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --box-shadow-lg: 0 10px 15px -3px rgb(0, 0, 0), 0 4px 6px -2px rgb(0, 0, 0);
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -119,7 +119,7 @@
         
         .form-control:focus {
             border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 3px rgb(37, 99, 235);
             outline: none;
         }
         
@@ -145,10 +145,7 @@
             transition: var(--transition);
         }
         
-        .password-toggle:hover {
-            color: var(--gray-800);
-            background-color: var(--gray-100);
-        }
+
         
         .login-btn {
             background-color: var(--primary-blue);
@@ -167,13 +164,10 @@
             gap: 0.5rem;
         }
         
-        .login-btn:hover {
-            background-color: var(--primary-blue-dark);
-            transform: translateY(-1px);
-        }
+
         
         .login-btn:disabled {
-            opacity: 0.6;
+            opacity: 1;
             cursor: not-allowed;
             transform: none;
         }
@@ -221,14 +215,9 @@
             font-weight: 500;
             padding: 0.5rem 1rem;
             border-radius: var(--border-radius-small);
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgb(255, 255, 255);
             transition: var(--transition);
-        }
-        
-        .back-link:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: var(--white);
-        }
+        } 
         
         /* Responsive Design */
         @media (max-width: 576px) {

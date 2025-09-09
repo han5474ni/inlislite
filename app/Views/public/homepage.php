@@ -1,4 +1,5 @@
-<?php echo view('public/layout/header', ['page_title' => 'Home']); ?>
+<?= $this->extend('layout') ?>
+<?= $this->section('content') ?>
 
 <!-- Hero Section -->
 <section class="hero-section" style="background: none; min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; margin-top: 76px; padding: 2.5rem 1.5rem;">
@@ -16,10 +17,10 @@
 
                 <!-- Teks kanan (bergerak) -->
                 <div class="text-center text-md-center fade-in-up" style="flex: 1; color: white;">
-                    <h1 style="font-size: 3.2rem; font-weight: 700; margin-bottom: 1rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); font-family: 'Poppins', sans-serif; color: #ffffff;">
+                    <h1 style="font-size: 3.2rem; font-weight: 700; margin-bottom: 1rem; text-shadow: 1px 1px 3px rgb(0, 0, 0); font-family: 'Poppins', sans-serif; color: #ffffff;">
                         Selamat datang di InlisLite V3
                     </h1>
-                    <p style="font-size: 1.25rem; line-height: 1.6; max-width: 800px; margin: 0 auto; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); font-family: 'Poppins', sans-serif;">
+                    <p style="font-size: 1.25rem; line-height: 1.6; max-width: 800px; margin: 0 auto; text-shadow: 1px 1px 2px rgb(0, 0, 0); font-family: 'Poppins', sans-serif;">
                         Sebuah sistem otomasi perpustakaan yang modern, terintegrasi, dan bersifat open-source, dikembangkan oleh Perpustakaan Nasional Republik Indonesia.
                     </p>
                 </div>
@@ -56,22 +57,22 @@
     <!-- Morphing SVG Shapes -->
     <div class="morphing-shapes">
         <svg class="morph-shape" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="rgba(59, 130, 246, 0.1)" d="M40.7,-69.8C50.9,-59.4,56.3,-43.2,64.4,-27.5C72.5,-11.8,83.3,3.4,83.6,19.1C83.9,34.8,73.7,51,59.6,61.5C45.5,72,27.5,76.8,8.9,75.2C-9.7,73.6,-28.9,65.6,-43.8,54.1C-58.7,42.6,-69.3,27.6,-74.4,10.1C-79.5,-7.4,-79.1,-27.4,-71.2,-42.8C-63.3,-58.2,-47.9,-69,-31.1,-68.9C-14.3,-68.8,3.9,-57.8,22.6,-52.4C41.3,-47,60.5,-47.2,40.7,-69.8Z" transform="translate(100 100)" />
+            <path fill="rgb(59, 130, 246)" d="M40.7,-69.8C50.9,-59.4,56.3,-43.2,64.4,-27.5C72.5,-11.8,83.3,3.4,83.6,19.1C83.9,34.8,73.7,51,59.6,61.5C45.5,72,27.5,76.8,8.9,75.2C-9.7,73.6,-28.9,65.6,-43.8,54.1C-58.7,42.6,-69.3,27.6,-74.4,10.1C-79.5,-7.4,-79.1,-27.4,-71.2,-42.8C-63.3,-58.2,-47.9,-69,-31.1,-68.9C-14.3,-68.8,3.9,-57.8,22.6,-52.4C41.3,-47,60.5,-47.2,40.7,-69.8Z" transform="translate(100 100)" />
         </svg>
         
         <svg class="morph-shape morph-shape-2" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="rgba(29, 78, 216, 0.08)" d="M44.3,-76.1C56.2,-68.3,64.4,-53.4,69.8,-37.8C75.2,-22.2,77.8,-5.9,75.9,9.7C74,25.3,67.6,40.2,57.8,51.8C48,63.4,34.8,71.7,20.2,75.4C5.6,79.1,-10.4,78.2,-25.1,73.8C-39.8,69.4,-53.2,61.5,-63.4,50.2C-73.6,38.9,-80.6,24.2,-82.1,8.8C-83.6,-6.6,-79.6,-22.7,-71.8,-36.4C-64,-50.1,-52.4,-61.4,-39.2,-68.8C-26,-76.2,-11.2,-79.7,4.2,-86.4C19.6,-93.1,32.4,-83.9,44.3,-76.1Z" transform="translate(100 100)" />
+            <path fill="rgb(29, 78, 216)" d="M44.3,-76.1C56.2,-68.3,64.4,-53.4,69.8,-37.8C75.2,-22.2,77.8,-5.9,75.9,9.7C74,25.3,67.6,40.2,57.8,51.8C48,63.4,34.8,71.7,20.2,75.4C5.6,79.1,-10.4,78.2,-25.1,73.8C-39.8,69.4,-53.2,61.5,-63.4,50.2C-73.6,38.9,-80.6,24.2,-82.1,8.8C-83.6,-6.6,-79.6,-22.7,-71.8,-36.4C-64,-50.1,-52.4,-61.4,-39.2,-68.8C-26,-76.2,-11.2,-79.7,4.2,-86.4C19.6,-93.1,32.4,-83.9,44.3,-76.1Z" transform="translate(100 100)" />
         </svg>
     </div>
     
     <!-- Gradient Waves -->
     <div class="gradient-waves">
         <svg class="wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path fill="rgba(37, 99, 235, 0.1)" fill-opacity="1" d="M0,96L48,122.7C96,149,192,203,288,192C384,181,480,107,576,112C672,117,768,203,864,224C960,245,1056,203,1152,176C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            <path fill="rgb(37, 99, 235)" fill-opacity="1" d="M0,96L48,122.7C96,149,192,203,288,192C384,181,480,107,576,112C672,117,768,203,864,224C960,245,1056,203,1152,176C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
         </svg>
         
         <svg class="wave wave-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path fill="rgba(29, 78, 216, 0.08)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,149.3C672,149,768,203,864,208C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            <path fill="rgb(29, 78, 216)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,149.3C672,149,768,203,864,208C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
         </svg>
     </div>
 
@@ -156,7 +157,7 @@
                     <div class="card-icon-large">
                         <i class="bi bi-gear-wide-connected"></i>
                     </div>
-                    <img src="/assets/images/digital canva.png" alt="Otomasi Digital" class="card-illustration">
+                    <img src="/assets/images/digital-canva.png" alt="Otomasi Digital" class="card-illustration">
                 </div>
                 <div class="card-content-full">
                     <h3 class="card-title-large">Otomasi & Digitalisasi Terdepan</h3>
@@ -192,7 +193,7 @@
                     <div class="card-icon-large">
                         <i class="bi bi-code-slash"></i>
                     </div>
-                    <img src="/assets/images/book canva.png" alt="Open Source" class="card-illustration">
+                    <img src="/assets/images/book-canva.png" alt="Open Source" class="card-illustration">
                 </div>
                 <div class="card-content-full">
                     <h3 class="card-title-large">Gratis & Open Source Selamanya</h3>
@@ -228,7 +229,7 @@
                     <div class="card-icon-large">
                         <i class="bi bi-shield-check"></i>
                     </div>
-                    <img src="/assets/images/ceklis canva.png" alt="Etis dan Aman" class="card-illustration">
+                    <img src="/assets/images/ceklis-canva.png" alt="Etis dan Aman" class="card-illustration">
                 </div>
                 <div class="card-content-full">
                     <h3 class="card-title-large">Etis, Aman & Dapat Dimodifikasi</h3>
@@ -264,19 +265,7 @@
 <!-- Custom Style -->
 <style>
 /* Dropdown effect */
-.dropdown-menu {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-    display: block;
-    visibility: hidden;
-}
-
-.dropdown:hover .dropdown-menu {
-    opacity: 1;
-    transform: translateY(0);
-    visibility: visible;
-}
+.dropdown-menu { 
 
 /* Combined Features Section */
 .combined-features-section {
@@ -295,30 +284,30 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(45deg, 
-        rgba(30, 58, 138, 0.8) 0%, 
-        rgba(29, 78, 216, 0.6) 25%, 
-        rgba(37, 99, 235, 0.4) 50%, 
-        rgba(59, 130, 246, 0.6) 75%, 
-        rgba(15, 23, 42, 0.8) 100%);
+        rgb(30, 58, 138) 0%, 
+        rgb(29, 78, 216) 25%, 
+        rgb(37, 99, 235) 50%, 
+        rgb(59, 130, 246) 75%, 
+        rgb(15, 23, 42) 100%);
     animation: gradientShift 8s ease-in-out infinite;
 }
 
 @keyframes gradientShift {
     0%, 100% { 
         background: linear-gradient(45deg, 
-            rgba(30, 58, 138, 0.8) 0%, 
-            rgba(29, 78, 216, 0.6) 25%, 
-            rgba(37, 99, 235, 0.4) 50%, 
-            rgba(59, 130, 246, 0.6) 75%, 
-            rgba(15, 23, 42, 0.8) 100%);
+            rgb(30, 58, 138) 0%, 
+            rgb(29, 78, 216) 25%, 
+            rgb(37, 99, 235) 50%, 
+            rgb(59, 130, 246) 75%, 
+            rgb(15, 23, 42) 100%);
     }
     50% { 
         background: linear-gradient(225deg, 
-            rgba(15, 23, 42, 0.8) 0%, 
-            rgba(59, 130, 246, 0.6) 25%, 
-            rgba(37, 99, 235, 0.4) 50%, 
-            rgba(29, 78, 216, 0.6) 75%, 
-            rgba(30, 58, 138, 0.8) 100%);
+            rgb(15, 23, 42) 0%, 
+            rgb(59, 130, 246) 25%, 
+            rgb(37, 99, 235) 50%, 
+            rgb(29, 78, 216) 75%, 
+            rgb(30, 58, 138) 100%);
     }
 }
 
@@ -336,7 +325,7 @@
     position: absolute;
     width: 4px;
     height: 4px;
-    background: rgba(255, 255, 255, 0.6);
+    background: rgb(255, 255, 255);
     border-radius: 50%;
     animation: float 6s ease-in-out infinite;
 }
@@ -353,7 +342,7 @@
 @keyframes float {
     0%, 100% { 
         transform: translateY(0px) translateX(0px) scale(1);
-        opacity: 0.6;
+        opacity: 1;
     }
     25% { 
         transform: translateY(-20px) translateX(10px) scale(1.2);
@@ -361,11 +350,11 @@
     }
     50% { 
         transform: translateY(-40px) translateX(-10px) scale(0.8);
-        opacity: 0.8;
+        opacity: 1;
     }
     75% { 
         transform: translateY(-20px) translateX(15px) scale(1.1);
-        opacity: 0.9;
+        opacity: 1;
     }
 }
 
@@ -383,13 +372,13 @@
     color: #ffffff;
     margin-bottom: 1rem;
     font-family: 'Poppins', sans-serif;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 4px 20px rgb(0, 0, 0);
     letter-spacing: -0.02em;
 }
 
 .section-subtitle {
     font-size: 1.25rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255, 255, 255);
     max-width: 600px;
     margin: 0 auto;
     line-height: 1.6;
@@ -407,9 +396,9 @@
 
 /* Glass Cards */
 .glass-card {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgb(255, 255, 255);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgb(255, 255, 255);
     border-radius: 24px;
     padding: 2.5rem;
     display: flex;
@@ -418,55 +407,26 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgb(0, 0, 0);
 }
 
-.glass-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.6s ease;
-}
-
-.glass-card:hover::before {
-    left: 100%;
-}
-
-.glass-card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-}
+.glass-card::before {  
 
 /* Card Icon */
 .card-icon {
     flex-shrink: 0;
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 197, 253, 0.3));
+    background: linear-gradient(135deg, rgb(59, 130, 246), rgb(147, 197, 253));
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgb(255, 255, 255);
     transition: all 0.3s ease;
 }
 
-.card-icon i {
-    font-size: 2rem;
-    color: #ffffff;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
-
-.glass-card:hover .card-icon {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(147, 197, 253, 0.5));
-    transform: scale(1.1);
-}
+.card-icon i { 
 
 /* Card Content */
 .card-content {
@@ -483,7 +443,7 @@
 
 .card-description {
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgb(255, 255, 255);
     line-height: 1.6;
     margin-bottom: 1.5rem;
 }
@@ -495,21 +455,7 @@
     gap: 0.5rem;
 }
 
-.feature-tag {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-}
-
-.glass-card:hover .feature-tag {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-}
+.feature-tag { 
 
 /* Morphing SVG Shapes */
 .morphing-shapes {
@@ -540,19 +486,19 @@
 @keyframes morphShape {
     0%, 100% { 
         transform: rotate(0deg) scale(1);
-        opacity: 0.6;
+        opacity: 1;
     }
     25% { 
         transform: rotate(90deg) scale(1.2);
-        opacity: 0.8;
+        opacity: 1;
     }
     50% { 
         transform: rotate(180deg) scale(0.8);
-        opacity: 0.4;
+        opacity: 1;
     }
     75% { 
         transform: rotate(270deg) scale(1.1);
-        opacity: 0.7;
+        opacity: 1;
     }
 }
 
@@ -580,11 +526,11 @@
 @keyframes waveMove {
     0%, 100% { 
         transform: translateX(0px);
-        opacity: 0.6;
+        opacity: 1;
     }
     50% { 
         transform: translateX(-50px);
-        opacity: 0.8;
+        opacity: 1;
     }
 }
 
@@ -602,13 +548,13 @@
     color: #ffffff;
     margin-bottom: 1.5rem;
     font-family: 'Poppins', sans-serif;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 4px 20px rgb(0, 0, 0);
     letter-spacing: -0.02em;
 }
 
 .section-subtitle-why {
     font-size: 1.3rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255, 255, 255);
     max-width: 700px;
     margin: 0 auto;
     line-height: 1.6;
@@ -626,9 +572,9 @@
 
 /* Full Width Cards */
 .full-width-card {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgb(255, 255, 255);
     backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid rgb(255, 255, 255);
     border-radius: 32px;
     padding: 4rem;
     display: flex;
@@ -637,32 +583,12 @@
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 40px rgb(0, 0, 0);
     width: 100%;
     max-width: 100%;
 }
 
-.full-width-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.8s ease;
-}
-
-.full-width-card:hover::before {
-    left: 100%;
-}
-
-.full-width-card:hover {
-    transform: translateY(-12px);
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
-}
+.full-width-card::before {  
 
 /* Card Visual */
 .card-visual {
@@ -676,36 +602,18 @@
 .card-icon-large {
     width: 120px;
     height: 120px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(147, 197, 253, 0.4));
+    background: linear-gradient(135deg, rgb(59, 130, 246), rgb(147, 197, 253));
     border-radius: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgb(255, 255, 255);
     transition: all 0.4s ease;
 }
 
-.card-icon-large i {
-    font-size: 3rem;
-    color: #ffffff;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
+.card-icon-large i { 
 
-.full-width-card:hover .card-icon-large {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(147, 197, 253, 0.6));
-    transform: scale(1.1) rotate(5deg);
-}
-
-.card-illustration {
-    width: 150px;
-    height: auto;
-    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
-    transition: all 0.4s ease;
-}
-
-.full-width-card:hover .card-illustration {
-    transform: scale(1.05);
-}
+.card-illustration { 
 
 /* Card Content Full */
 .card-content-full {
@@ -723,7 +631,7 @@
 
 .card-description-large {
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgb(255, 255, 255);
     line-height: 1.7;
     margin-bottom: 2rem;
 }
@@ -735,26 +643,12 @@
     gap: 1rem;
 }
 
-.benefit-item {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 0.8rem 1.2rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-}
-
-.benefit-item:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-}
+.benefit-item { 
 
 .benefit-item i {
     color: #10b981;
     font-size: 1.2rem;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 2px 4px rgb(0, 0, 0));
 }
 
 .benefit-item span {
@@ -882,23 +776,22 @@
 }
 </style>
 
-<link rel="stylesheet" href="/assets/css/public/homepage.css" /<script src="/assets/js/public/homepage.js"></script>
 
 <!-- Enhanced Glassmorphism Feature Tags -->
 <style/* Enhanced Glassmorphism Feature Tags Override */
 .feature-tag {
     /* Glassmorphism Background */
     background: linear-gradient(135deg, 
-        rgba(16, 185, 129, 0.3) 0%, 
-        rgba(5, 150, 105, 0.4) 50%, 
-        rgba(4, 120, 87, 0.3) 100%) !important;
+        rgb(16, 185, 129) 0%, 
+        rgb(5, 150, 105) 50%, 
+        rgb(4, 120, 87) 100%) !important;
     
     /* Backdrop Blur Effect */
     backdrop-filter: blur(15px) !important;
     -webkit-backdrop-filter: blur(15px) !important;
     
     /* Soft Green Border with Transparency */
-    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+    border: 1px solid rgb(16, 185, 129) !important;
     border-radius: 18px !important;
     
     /* Enhanced Typography for Better Readability */
@@ -907,18 +800,18 @@
     font-weight: 700 !important;
     letter-spacing: 0.03em !important;
     text-shadow: 
-        0 1px 3px rgba(0, 0, 0, 0.3),
-        0 0 8px rgba(16, 185, 129, 0.2) !important;
+        0 1px 3px rgb(0, 0, 0),
+        0 0 8px rgb(16, 185, 129) !important;
     
     /* Spacing */
     padding: 0.5rem 1rem !important;
     
     /* Enhanced Shadows for Better Depth */
     box-shadow: 
-        0 6px 16px rgba(16, 185, 129, 0.2),
-        0 3px 8px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.25),
-        inset 0 -1px 0 rgba(16, 185, 129, 0.1) !important;
+        0 6px 16px rgb(16, 185, 129),
+        0 3px 8px rgb(0, 0, 0),
+        inset 0 1px 0 rgb(255, 255, 255),
+        inset 0 -1px 0 rgb(16, 185, 129) !important;
     
     /* Smooth Transitions */
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -942,7 +835,7 @@
     height: 100%;
     background: linear-gradient(90deg, 
         transparent, 
-        rgba(255, 255, 255, 0.2), 
+        rgb(255, 255, 255), 
         transparent);
     transition: left 0.6s ease;
 }
@@ -955,34 +848,34 @@
 .feature-tag:hover {
     /* Enhanced Background */
     background: linear-gradient(135deg, 
-        rgba(16, 185, 129, 0.4) 0%, 
-        rgba(5, 150, 105, 0.5) 50%, 
-        rgba(4, 120, 87, 0.4) 100%) !important;
+        rgb(16, 185, 129) 0%, 
+        rgb(5, 150, 105) 50%, 
+        rgb(4, 120, 87) 100%) !important;
     
     /* Stronger Border */
-    border-color: rgba(16, 185, 129, 0.5) !important;
+    border-color: rgb(16, 185, 129) !important;
     
     /* Enhanced Shadows */
     box-shadow: 
-        0 8px 24px rgba(16, 185, 129, 0.25),
-        0 4px 12px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+        0 8px 24px rgb(16, 185, 129),
+        0 4px 12px rgb(0, 0, 0),
+        inset 0 1px 0 rgb(255, 255, 255) !important;
     
     /* Lift Effect */
     transform: translateY(-3px) scale(1.02) !important;
     
     /* Brighter Text */
-    color: rgba(255, 255, 255, 1) !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    color: rgb(255, 255, 255) !important;
+    text-shadow: 0 2px 4px rgb(0, 0, 0) !important;
 }
 
 .glass-card:hover .feature-tag {
     /* Subtle Enhancement when Parent is Hovered */
-    border-color: rgba(16, 185, 129, 0.4) !important;
+    border-color: rgb(16, 185, 129) !important;
     box-shadow: 
-        0 6px 18px rgba(16, 185, 129, 0.2),
-        0 3px 8px rgba(0, 0, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+        0 6px 18px rgb(16, 185, 129),
+        0 3px 8px rgb(0, 0, 0),
+        inset 0 1px 0 rgb(255, 255, 255) !important;
 }
 
 /* Enhanced Card Features Container */
@@ -1020,7 +913,7 @@
 <style>
 @keyframes fadeInUp {
     0% {
-        opacity: 0;
+        opacity: 1;
         transform: translateY(40px);
     }
     100% {
@@ -1030,9 +923,10 @@
 }
 
 .fade-in-up {
-    opacity: 0;
+    opacity: 1;
     animation: fadeInUp 1.1s ease-out 0.3s forwards;
 }
 </style>
 
-<?= view('public/layout/footer') ?>
+<?= $this->endSection() ?>
+

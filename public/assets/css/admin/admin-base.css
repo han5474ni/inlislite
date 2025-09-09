@@ -1,0 +1,65 @@
+/* INLISLite Admin Base - Minimal, clean, consistent UI */
+:root {
+  --brand-green: #0E7A52;
+  --brand-blue: #2563eb;
+  --brand-orange: #ea580c;
+  --brand-purple: #7c3aed;
+}
+
+/* Base background for admin */
+.admin-body { background-color: #f8fafc; }
+
+/* Gentle container padding (works with layout px override) */
+.enhanced-main-content .container-fluid { padding-left: .75rem; padding-right: .75rem; }
+
+/* Minimal card surface */
+.card-minimal { background:#fff; border:1px solid #e9ecef; border-radius:10px; box-shadow:none; }
+.card-minimal .card-header { border-bottom:1px solid #eef2f7; }
+
+/* Icon tiles with fixed size */
+.icon-40, .icon-48, .icon-64 { display:flex; align-items:center; justify-content:center; color:#fff; border-radius:.5rem; }
+.icon-40 { width:40px; height:40px; }
+.icon-48 { width:48px; height:48px; }
+.icon-64 { width:64px; height:64px; }
+
+/* Solid tile backgrounds (avoid gradients for a minimalist look) */
+.tile-bg-primary { background-color: var(--brand-blue) !important; }
+.tile-bg-success { background-color: var(--brand-green) !important; }
+.tile-bg-orange  { background-color: var(--brand-orange) !important; }
+.tile-bg-purple  { background-color: var(--brand-purple) !important; }
+
+/* Tighten default gaps slightly */
+.gap-2-tight { gap: .4rem !important; }
+
+/* Text helpers */
+.text-muted-600 { color: #6b7280 !important; }
+
+/* Tables inside admin pages */
+.table-clean { background:#fff; border:1px solid #e9ecef; border-radius: .5rem; overflow: hidden; }
+.table-clean thead th { background:#f3f4f6; color:#374151; font-weight:600; }
+.table-clean td, .table-clean th { vertical-align: middle; }
+
+/* Page header (global admin) */
+.admin-page-header { border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; display:flex; align-items:center; }
+.admin-page-header-green { background-color: #24a259; }
+.admin-page-header-blue { background-color: #2563eb; }
+.admin-page-header-purple { background-color: #7c3aed; }
+.admin-page-header-orange { background-color: #ea580c; }
+.admin-back-btn { width: 40px; height: 40px; display:flex; align-items:center; justify-content:center; color:#0f172a; font-size:22px; border-radius:8px; text-decoration:none; margin-right: 4px; }
+.admin-back-btn:hover { background: rgba(255,255,255,.15); color:#0f172a; }
+.admin-page-title { font-weight: 800; font-size: 28px; color:#0f172a; }
+.admin-page-subtitle { color: #0f172a; opacity:.85; font-size:14px; margin-top:2px; }
+
+/* --- Global DataTables polish across admin --- */
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label { margin-bottom: .75rem; gap: .5rem; font-weight: 600; color:#334155; }
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input { border:1px solid #e2e8f0; border-radius: 10px; box-shadow: none; padding:.45rem .6rem; }
+.dataTables_wrapper .dataTables_filter input:focus { border-color: var(--brand-blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); outline: none; }
+
+/* Bottom bar spacing */
+.dataTables_wrapper .dataTables_info { margin: .5rem 0; color:#0f172a; }
+.dataTables_wrapper .dataTables_paginate { margin: .5rem 0; display: inline-flex; gap: 6px; background: transparent; }
+.dataTables_wrapper .dataTables_paginate .paginate_button { margin: 0; border: 0; border-radius: 6px; padding: .4rem .7rem; color: var(--brand-blue) !important; background: transparent; }
+.dataTables_wrapper .dataTables_paginate .paginate_button.current { background: var(--brand-blue) !important; color:#fff !important; }
+.dataTables_wrapper .dataTables_paginate .paginate_button:not(.current):hover { background: rgba(0,0,0,.04); }

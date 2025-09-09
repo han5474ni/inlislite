@@ -140,23 +140,24 @@ function renderContent() {
         const cardContent = formatContent(card.content);
         
         html += `
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                <div class="flex items-start space-x-4">
-                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <i class="${cardIcon} text-white text-lg"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">${card.title}</h3>
-                        ${card.subtitle ? `<p class="text-gray-600 text-sm mb-3 font-medium">${card.subtitle}</p>` : ''}
-                        <div class="text-gray-600 text-sm leading-relaxed mb-3">${cardContent}</div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                <span class="text-xs font-medium text-green-600">Aktif</span>
-                            </div>
-                            <a href="/admin/tentang-edit" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</a>
+            <div class="content-card" data-type="${card.type}">
+                <div class="card-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="card-icon">
+                            <i class="${cardIcon} text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title mb-1">${card.title}</h3>
+                            ${card.subtitle ? `<p class="card-subtitle mb-0">${card.subtitle}</p>` : ''}
                         </div>
                     </div>
+                    <div class="card-actions d-flex align-items-center gap-2">
+                        <span class="badge bg-success">Aktif</span>
+                        <a href="/admin/tentang-edit" class="btn btn-sm btn-primary">Edit</a>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-description">${cardContent}</div>
                 </div>
             </div>
         `;

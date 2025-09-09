@@ -33,7 +33,7 @@ class FiturController extends BaseController
             'page_title' => 'Fitur dan Modul Program'
         ];
 
-        return view('admin/fitur_new', $data);
+        return view('admin/fitur', $data);
     }
 
     /**
@@ -46,7 +46,7 @@ class FiturController extends BaseController
             'page_title' => 'Manajemen Fitur dan Modul'
         ];
 
-        return view('admin/fitur-edit', $data);
+        return view('admin/fitur', $data);
     }
 
     /**

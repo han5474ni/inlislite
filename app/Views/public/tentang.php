@@ -1,4 +1,5 @@
-<?= view('public/layout/header', ['page_title' => $page_title ?? 'Tentang INLISLite Versi 3']) ?>
+<?= $this->extend('layout') ?>
+<?= $this->section('content') ?>
 
 <!-- Page Header -->
 <!-- Page Header -->
@@ -20,7 +21,7 @@
         position: absolute;
         inset: 0;
         backdrop-filter: blur(2px);
-        background: rgba(0, 0, 0, 0.5);
+        background: rgb(0, 0, 0);
         z-index: 1;
     "></div>
 
@@ -35,7 +36,7 @@
                     <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
                         Tentang INLISLite Versi 3
                     </h1>
-                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 700px; margin: 0 auto; opacity: 0.85;">
+                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 700px; margin: 0 auto; opacity: 1;">
                         Halaman ini berisi informasi lengkap tentang sistem otomasi perpustakaan berbasis web dan open source.
                     </p>
                 </div>
@@ -330,18 +331,7 @@
     font-weight: 600;
 }
 
-.platform-card {
-    text-align: center;
-    padding: 2rem 1rem;
-    border: 1px solid #F9F9F9;
-    border-radius: 0.5rem;
-    transition: all 0.3s ease;
-}
-
-.platform-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
-}
+.platform-card { 
 
 .platform-icon {
     font-size: 3rem;
@@ -391,4 +381,5 @@
 </style>
 
 
-<?= view('public/layout/footer') ?>
+<?= $this->endSection() ?>
+

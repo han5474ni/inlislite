@@ -41,33 +41,8 @@ class Home extends BaseController
 
     public function registration(): string
     {
-        $stats = ['total' => 0, 'active' => 0, 'inactive' => 0, 'pending' => 0];
-        $registrations = [];
-        
-        try {
-            $registrationModel = new \App\Models\RegistrationModel();
-            $stats = $registrationModel->getTotalStats();
-            $registrations = $registrationModel->orderBy('created_at', 'DESC')->findAll();
-            
-            // Ensure stats have all required keys
-            if (!isset($stats['active'])) $stats['active'] = 0;
-            if (!isset($stats['inactive'])) $stats['inactive'] = 0;
-            if (!isset($stats['pending'])) $stats['pending'] = 0;
-            
-        } catch (\Exception $e) {
-            // Table doesn't exist yet, use default values
-            log_message('error', 'Registration table error: ' . $e->getMessage());
-            $stats = ['total' => 0, 'active' => 0, 'inactive' => 0, 'pending' => 0];
-            $registrations = [];
-        }
-        
-        $data = [
-            'title' => 'Inlislite Registration - INLISlite v3.0',
-            'stats' => $stats,
-            'registrations' => $registrations
-        ];
-        
-        return view('admin/registration', $data);
+        // Registration feature removed
+        return redirect()->to('/');
     }
 
     public function getRegistrationStats(): string
@@ -105,170 +80,14 @@ return json_encode($monthlyStats);
 
     public function addRegistrationForm(): string
     {
-        $data = [
-            'title' => 'Add Registration - INLISlite v3.0',
-            'page_title' => 'Add New Registration',
-            'page_subtitle' => 'Register a new library in the system'
-        ];
-        
-        return view('admin/registration_add', $data);
+        // Registration feature removed
+        return redirect()->to('/');
     }
 
     public function addRegistration()
     {
-        try {
-            $registrationModel = new \App\Models\RegistrationModel();
-            
-            // Validation rules
-            $rules = [
-                'library_name' => 'required|min_length[3]|max_length[255]',
-                'library_code' => 'permit_empty|max_length[50]',
-                'library_type' => 'required|in_list[Public,Academic,School,Special]',
-                'province' => 'required|min_length[2]|max_length[100]',
-                'city' => 'required|min_length[2]|max_length[100]',
-                'address' => 'permit_empty|max_length[500]',
-                'postal_code' => 'permit_empty|max_length[10]',
-                'coordinates' => 'permit_empty|max_length[100]',
-                'contact_name' => 'required|min_length[3]|max_length[255]',
-                'contact_position' => 'permit_empty|max_length[100]',
-                'email' => 'required|valid_email|max_length[255]',
-                'phone' => 'required|min_length[6]|max_length[20]',
-                'website' => 'permit_empty|max_length[255]',
-                'fax' => 'permit_empty|max_length[20]',
-                'established_year' => 'permit_empty|max_length[4]',
-                'collection_count' => 'permit_empty|max_length[10]',
-                'member_count' => 'permit_empty|max_length[10]',
-                'notes' => 'permit_empty|max_length[1000]',
-                'status' => 'permit_empty|in_list[Active,Inactive,Pending]'
-            ];
-            
-            // Set custom validation messages
-            $messages = [
-                'library_name' => [
-                    'required' => 'Library name is required',
-                    'min_length' => 'Library name must be at least 3 characters long',
-                    'max_length' => 'Library name cannot exceed 255 characters'
-                ],
-                'library_type' => [
-                    'required' => 'Library type is required',
-                    'in_list' => 'Please select a valid library type'
-                ],
-                'province' => [
-                    'required' => 'Province is required',
-                    'min_length' => 'Province must be at least 2 characters long',
-                    'max_length' => 'Province cannot exceed 100 characters'
-                ],
-                'city' => [
-                    'required' => 'City is required',
-                    'min_length' => 'City must be at least 2 characters long',
-                    'max_length' => 'City cannot exceed 100 characters'
-                ],
-                'contact_name' => [
-                    'required' => 'Contact name is required',
-                    'min_length' => 'Contact name must be at least 3 characters long',
-                    'max_length' => 'Contact name cannot exceed 255 characters'
-                ],
-                'email' => [
-                    'required' => 'Email is required',
-                    'valid_email' => 'Please enter a valid email address',
-                    'max_length' => 'Email cannot exceed 255 characters'
-                ],
-                'phone' => [
-                    'required' => 'Phone number is required',
-                    'min_length' => 'Phone number must be at least 6 characters long',
-                    'max_length' => 'Phone number cannot exceed 20 characters'
-                ],
-                'status' => [
-                    'in_list' => 'Please select a valid status'
-                ]
-            ];
-            
-            // Use the validate method from the parent Controller class
-            if (!$this->validate($rules, $messages)) {
-                $errors = $this->validator->getErrors();
-                
-                // Log validation errors for debugging
-                log_message('error', 'Registration add validation failed: ' . json_encode($errors));
-                
-                // Check if this is an AJAX request
-                if ($this->request->isAJAX()) {
-                    return $this->response->setJSON([
-                        'success' => false,
-                        'message' => 'Please fix the errors before submitting',
-                        'errors' => $errors
-                    ]);
-                }
-                
-                return redirect()->back()
-                    ->withInput()
-                    ->with('error', 'Please fix the errors before submitting')
-                    ->with('errors', $errors);
-            }
-            
-            // Process form data with proper handling for empty values
-            $data = [
-                'library_name' => $this->request->getPost('library_name'),
-                'library_code' => $this->request->getPost('library_code') ?: null,
-                'library_type' => $this->request->getPost('library_type'),
-                'status' => $this->request->getPost('status') ?: 'Pending',
-                'province' => $this->request->getPost('province'),
-                'city' => $this->request->getPost('city'),
-                'address' => $this->request->getPost('address') ?: null,
-                'postal_code' => $this->request->getPost('postal_code') ?: null,
-                'coordinates' => $this->request->getPost('coordinates') ?: null,
-                'contact_name' => $this->request->getPost('contact_name'),
-                'contact_position' => $this->request->getPost('contact_position') ?: null,
-                'email' => $this->request->getPost('email'),
-                'phone' => $this->request->getPost('phone'),
-                'website' => $this->request->getPost('website') ?: null,
-                'fax' => $this->request->getPost('fax') ?: null,
-                'established_year' => $this->request->getPost('established_year') ?: null,
-                'collection_count' => $this->request->getPost('collection_count') ?: null,
-                'member_count' => $this->request->getPost('member_count') ?: null,
-                'notes' => $this->request->getPost('notes') ?: null,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ];
-            
-            $result = $registrationModel->insert($data);
-            
-            if ($result) {
-                // Check if this is an AJAX request
-                if ($this->request->isAJAX()) {
-                    return $this->response->setJSON([
-                        'success' => true,
-                        'message' => 'Registrasi berhasil disimpan!'
-                    ]);
-                }
-                
-                return redirect()->to('/admin/registration')
-                    ->with('success', 'Registrasi berhasil disimpan!');
-            } else {
-                // Check if this is an AJAX request
-                if ($this->request->isAJAX()) {
-                    return $this->response->setJSON([
-                        'success' => false,
-                        'message' => 'Gagal menyimpan registrasi'
-                    ]);
-                }
-                
-                return redirect()->back()
-                    ->withInput()
-                    ->with('error', 'Gagal menyimpan registrasi');
-            }
-        } catch (\Exception $e) {
-            // Check if this is an AJAX request
-            if ($this->request->isAJAX()) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Error: ' . $e->getMessage()
-                ]);
-            }
-            
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Error: ' . $e->getMessage());
-        }
+        // Registration feature removed
+        return redirect()->to('/');
     }
 
     public function editRegistrationForm($id): string

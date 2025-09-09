@@ -22,7 +22,9 @@ class PublicController extends BaseController
         $data = [
             'title' => 'INLISLite v3 - Sistem Otomasi Perpustakaan',
             'page_title' => 'Home',
-            'meta_description' => 'Sistem otomasi perpustakaan modern dengan teknologi terdepan untuk mengelola perpustakaan secara digital dan terintegrasi.'
+            'meta_description' => 'Sistem otomasi perpustakaan modern dengan teknologi terdepan untuk mengelola perpustakaan secara digital dan terintegrasi.',
+            'page_css' => ['assets/css/public/home.css'],
+            'page_js'  => ['assets/js/public/home.js'],
         ];
         
         return view('public/homepage', $data);
@@ -42,7 +44,9 @@ class PublicController extends BaseController
             'title' => 'Tentang Kami - INLISLite v3',
             'page_title' => 'Tentang Kami',
             'meta_description' => 'Informasi lengkap tentang INLISLite v3, sistem otomasi perpustakaan yang dikembangkan oleh Perpustakaan Nasional RI.',
-            'about_content' => $aboutContent
+            'about_content' => $aboutContent,
+            'page_css' => ['assets/css/public/tentang.css'],
+            'page_js'  => ['assets/js/public/tentang.js'],
         ];
         
         return view('public/tentang_dynamic', $data);
@@ -76,7 +80,9 @@ class PublicController extends BaseController
             'meta_description' => 'Fitur lengkap dan modul-modul canggih dalam sistem INLISLite v3 untuk manajemen perpustakaan modern.',
             'features' => $features ?? [],
             'modules' => $modules ?? [],
-            'all_items' => $allItems
+            'all_items' => $allItems,
+            'page_css' => ['assets/css/public/fitur.css'],
+            'page_js'  => ['assets/js/public/fitur.js'],
         ];
         
         return view('public/fitur', $data);
@@ -98,7 +104,9 @@ class PublicController extends BaseController
             'title' => 'Installer - INLISLite v3',
             'page_title' => 'Installer',
             'meta_description' => 'Download installer dan paket instalasi INLISLite v3. Dapatkan sistem perpustakaan terbaru.',
-            'packages' => $packages
+            'packages' => $packages,
+            'page_css' => ['assets/css/public/installer.css'],
+            'page_js'  => ['assets/js/public/installer.js'],
         ];
         
         return view('public/installer', $data);
@@ -122,7 +130,9 @@ class PublicController extends BaseController
             'meta_description' => 'Download patch dan update terbaru untuk INLISLite v3. Dapatkan fitur terbaru dan perbaikan bug.',
             'patches' => $patches,
             'current_version' => '3.0.5',
-            'latest_version' => '3.0.8'
+            'latest_version' => '3.0.8',
+            'page_css' => ['assets/css/public/patch.css'],
+            'page_js'  => ['assets/js/public/patch.js'],
         ];
         
         return view('public/patch', $data);
@@ -144,7 +154,9 @@ class PublicController extends BaseController
             'title' => 'Aplikasi Pendukung - INLISLite v3',
             'page_title' => 'Aplikasi Pendukung',
             'meta_description' => 'Download aplikasi pendukung dan tools untuk INLISLite v3. Tingkatkan produktivitas dengan aplikasi tambahan.',
-            'applications' => $applications
+            'applications' => $applications,
+            'page_css' => ['assets/css/public/aplikasi.css'],
+            'page_js'  => ['assets/js/public/aplikasi.js'],
         ];
         
         return view('public/aplikasi', $data);
@@ -166,7 +178,9 @@ class PublicController extends BaseController
             'title' => 'Panduan - INLISLite v3',
             'page_title' => 'Panduan',
             'meta_description' => 'Panduan lengkap instalasi, konfigurasi, dan penggunaan INLISLite v3. Tutorial step-by-step untuk pemula.',
-            'guides' => $guides
+            'guides' => $guides,
+            'page_css' => ['assets/css/public/panduan.css'],
+            'page_js'  => ['assets/js/public/panduan.js'],
         ];
         
         return view('public/panduan', $data);
@@ -189,7 +203,9 @@ class PublicController extends BaseController
             'page_title' => 'Dukungan Teknis',
             'meta_description' => 'Dapatkan dukungan teknis untuk INLISLite v3. Tim support siap membantu mengatasi masalah teknis Anda.',
             'support_channels' => $supportChannels,
-            'faq' => $this->getDefaultFaqData()
+            'faq' => $this->getDefaultFaqData(),
+            'page_css' => ['assets/css/public/dukungan.css'],
+            'page_js'  => ['assets/js/public/dukungan.js'],
         ];
         
         return view('public/dukungan', $data);
@@ -212,7 +228,9 @@ class PublicController extends BaseController
             'page_title' => 'Bimbingan Teknis',
             'meta_description' => 'Layanan bimbingan teknis dan pelatihan untuk INLISLite v3. Tingkatkan kemampuan tim perpustakaan Anda.',
             'training_programs' => $trainingPrograms,
-            'schedules' => $this->getDefaultTrainingSchedules()
+            'schedules' => $this->getDefaultTrainingSchedules(),
+            'page_css' => ['assets/css/public/bimbingan.css'],
+            'page_js'  => ['assets/js/public/bimbingan.js'],
         ];
         
         return view('public/bimbingan', $data);
@@ -234,7 +252,9 @@ class PublicController extends BaseController
             'title' => 'Demo Program - INLISLite v3',
             'page_title' => 'Demo Program',
             'meta_description' => 'Coba demo INLISLite v3 secara online. Jelajahi fitur-fitur lengkap sebelum menggunakan sistem.',
-            'demos' => $demos
+            'demos' => $demos,
+            'page_css' => ['assets/css/public/demo.css'],
+            'page_js'  => ['assets/js/public/demo.js'],
         ];
         
         return view('public/demo', $data);

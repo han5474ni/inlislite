@@ -18,7 +18,32 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeApp() {
     initializeDataTable();
     initializeEventListeners();
-    loadStatistics();
+
+    // Bind Add button -> open inline card
+    const addBtn = document.getElementById('btnAddApp');
+    const addCard = document.getElementById('addAppCard');
+    const closeAddBtn = document.getElementById('btnCloseAddApp');
+    const cancelAddBtn = document.getElementById('btnCancelAdd');
+    const tableWrapper = document.querySelector('#appsTable')?.closest('.dataTables_wrapper') || document.querySelector('#appsTable')?.closest('.table-responsive');
+    if (addBtn && addCard) {
+        addBtn.addEventListener('click', () => {
+            addCard.classList.remove('d-none');
+            // hide table and controls while adding
+            if (tableWrapper) tableWrapper.classList.add('d-none');
+            // focus first field
+            document.getElementById('appTitle')?.focus();
+            addCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+    // Close handlers
+    [closeAddBtn, cancelAddBtn].forEach(btn => {
+        btn?.addEventListener('click', () => {
+            addCard?.classList.add('d-none');
+            if (tableWrapper) tableWrapper.classList.remove('d-none');
+            resetAddForm();
+        });
+    });
+    // loadStatistics(); // disabled - stats section removed
     loadApps();
 }
 
@@ -31,15 +56,13 @@ function initializeDataTable() {
         pageLength: 10,
         order: [[0, 'desc']], // Sort by ID
         columnDefs: [
-            { orderable: false, targets: [1, 7] }, // Disable sorting for icon and actions
-            { searchable: false, targets: [1, 7] }, // Disable search for icon and actions
-            { width: "60px", targets: [0] }, // ID column width
-            { width: "80px", targets: [1] }, // Icon column width
-            { width: "100px", targets: [3] }, // Category column width
-            { width: "80px", targets: [4] }, // Version column width
-            { width: "100px", targets: [5] }, // Status column width
-            { width: "80px", targets: [6] }, // Downloads column width
-            { width: "120px", targets: [7] } // Actions column width
+            { orderable: false, targets: [1, 5] }, // Disable sorting for icon and actions
+            { searchable: false, targets: [1, 5] }, // Disable search for icon and actions
+            { width: "60px", targets: [0] }, // ID
+            { width: "80px", targets: [1] }, // Icon
+            { width: "100px", targets: [3] }, // Version
+            { width: "90px", targets: [4] }, // Downloads
+            { width: "120px", targets: [5] } // Actions
         ],
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
@@ -57,34 +80,52 @@ function initializeDataTable() {
  * Initialize event listeners
  */
 function initializeEventListeners() {
-    // Icon preview functionality
-    document.getElementById('appIcon').addEventListener('input', function() {
-        updateIconPreview(this.value, 'appIconPreview');
-    });
+    // Icon preview functionality (guarded)
+    const appIconEl = document.getElementById('appIcon');
+    if (appIconEl) {
+        appIconEl.addEventListener('input', function() {
+            updateIconPreview(this.value, 'appIconPreview');
+        });
+    }
+
+    const editAppIconEl = document.getElementById('editAppIcon');
+    if (editAppIconEl) {
+        editAppIconEl.addEventListener('input', function() {
+            updateIconPreview(this.value, 'editAppIconPreview');
+        });
+    }
     
-    document.getElementById('editAppIcon').addEventListener('input', function() {
-        updateIconPreview(this.value, 'editAppIconPreview');
-    });
+    // Form submissions (guarded)
+    const addForm = document.getElementById('addAppForm');
+    if (addForm) {
+        addForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveApp();
+        });
+    }
     
-    // Form submissions
-    document.getElementById('addAppForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        saveApp();
-    });
+    const editForm = document.getElementById('editAppForm');
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            updateApp();
+        });
+    }
     
-    document.getElementById('editAppForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        updateApp();
-    });
+    // Modal events (guarded)
+    const addModal = document.getElementById('addAppModal');
+    if (addModal) {
+        addModal.addEventListener('hidden.bs.modal', function() {
+            resetAddForm();
+        });
+    }
     
-    // Modal events
-    document.getElementById('addAppModal').addEventListener('hidden.bs.modal', function() {
-        resetAddForm();
-    });
-    
-    document.getElementById('editAppModal').addEventListener('hidden.bs.modal', function() {
-        resetEditForm();
-    });
+    const editModal = document.getElementById('editAppModal');
+    if (editModal) {
+        editModal.addEventListener('hidden.bs.modal', function() {
+            resetEditForm();
+        });
+    }
 }
 
 /**
@@ -113,8 +154,8 @@ async function loadStatistics() {
         updateStatistics(stats);
         
     } catch (error) {
-        console.error('Error loading statistics:', error);
-        showError('Gagal memuat statistik');
+        // console.error('Error loading statistics:', error);
+        // showError('Gagal memuat statistik');
     }
 }
 
@@ -207,9 +248,7 @@ function populateTable(apps) {
                 <div class="fw-semibold">${app.title}</div>
                 ${app.subtitle ? `<small class="text-muted">${app.subtitle}</small>` : ''}
             </div>`,
-            `<span class="category-badge ${app.category}">${getCategoryLabel(app.category)}</span>`,
             app.version ? `<span class="version-badge">${app.version}</span>` : '-',
-            `<span class="status-badge ${app.status}">${getStatusLabel(app.status)}</span>`,
             app.download_count || 0,
             `<div class="d-flex justify-content-center">
                 <button class="btn-action edit" onclick="editApp(${app.id})" title="Edit">

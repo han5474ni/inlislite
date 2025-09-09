@@ -1,4 +1,5 @@
-<?= view('public/layout/header', ['page_title' => $page_title ?? 'Aplikasi Pendukung']) ?>
+<?= $this->extend('layout') ?>
+<?= $this->section('content') ?>
 
 <!-- Page Header -->
 <header class="page-header" style="
@@ -19,7 +20,7 @@
         position: absolute;
         inset: 0;
         backdrop-filter: blur(2px);
-        background: rgba(0, 0, 0, 0.5);
+        background: rgb(0, 0, 0);
         z-index: 1;
     "></div>
 
@@ -34,7 +35,7 @@
                     <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
                         Aplikasi Pendukung
                     </h1>
-                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 0.85;">
+                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 1;">
                         Modul dan layanan penting yang memperluas fungsionalitas sistem manajemen perpustakaan INLISLite Anda. Aplikasi-aplikasi ini menyediakan fitur tambahan untuk komunikasi, integrasi data, dan peningkatan sistem.
                     </p>
                 </div>
@@ -503,14 +504,8 @@
 </main>
 
 <style>
-.download-card {
-    transition: all 0.3s ease;
-}
-
-.download-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
-}
+.download-card { 
 </style>
 
-<?= view('public/layout/footer') ?>
+<?= $this->endSection() ?>
+

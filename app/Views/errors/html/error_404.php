@@ -9,7 +9,7 @@
             height: 200px;
             width: 155px;
             display: inline-block;
-            opacity: 0.08;
+            opacity: 1;
             position: absolute;
             top: 2rem;
             left: 50%;
@@ -82,3 +82,4 @@
     </div>
 </body>
 </html>
+

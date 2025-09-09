@@ -56,8 +56,7 @@ $routes->get('modern-dashboard', 'Admin\AdminController::modernDashboard');
 $routes->get('user-management-demo', 'Admin\UserManagement::index');
 $routes->get('profile-demo', 'Home::profile');
 
-// Test registration view (REMOVE IN PRODUCTION)
-$routes->get('test-registration-view/(:num)', 'Home::viewRegistration/$1');
+// Test registration view removed
 
 // Debug routes (REMOVE IN PRODUCTION)
 // Temporary upload routes for testing (REMOVE IN PRODUCTION)
@@ -88,8 +87,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($rout
     $routes->post('logout', 'AuthController::logout');
     $routes->post('check-password-strength', 'AuthController::checkPasswordStrength');
     
-    // Registration routes (accessible without authentication)
-    $routes->get('registration', '\App\Controllers\Home::registration');
+    // Registration routes removed
     
     // Legacy secure routes (redirect to main login)
     $routes->get('secure-login', function() {
@@ -104,7 +102,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($rout
 // PROTECTED ADMIN ROUTES (Require authentication)
 // ============================================================================
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'adminauth'], function($routes) {
+$routes->group('admin', ['namespace' => 'App\\Controllers\\Admin', 'filter' => 'adminauth'], function($routes) {
+    // Unified UI routes (single-file views)
+    $routes->get('ui', 'UiController::index');
+    $routes->get('ui/(:segment)', 'UiController::index/$1');
     // Admin Dashboard
     $routes->get('/', 'AdminController::index');
     $routes->get('dashboard', 'AdminController::index');
@@ -122,7 +123,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     
     // Features and Modules Management
     $routes->get('fitur', 'FiturController::index');
-    $routes->get('fitur-edit', 'FiturController::edit');
+    $routes->get('fitur-edit', 'FiturController::index');
     $routes->group('fitur', function($routes) {
         $routes->get('data', 'FiturController::getData');
         $routes->get('statistics', 'FiturController::getStatistics');
@@ -197,8 +198,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     
     // User Management - Complete routes
     $routes->get('users', 'UserManagement::index');
-    $routes->get('users-edit', 'UserManagement::userEdit');
-    $routes->get('users-edit/create', 'UserManagement::create');
+    $routes->get('users/add', 'UserManagement::addForm');
+    $routes->get('users/edit', 'UserManagement::userEdit');
+    $routes->get('users/edit/create', 'UserManagement::create');
     $routes->post('users/store', 'UserManagement::store');
     $routes->get('users/edit/(:num)', 'UserManagement::edit/$1');
     $routes->post('users/update/(:num)', 'UserManagement::update/$1');
@@ -213,6 +215,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('users/ajax/create', 'UserManagement::addUserAjax');
     $routes->post('users/ajax/update/(:num)', 'UserManagement::editUserAjax/$1');
     $routes->post('users/ajax/delete/(:num)', 'UserManagement::deleteUserAjax/$1');
+    // User feature access endpoints
+    $routes->get('users/ajax/features/(:num)', 'UserManagement::getUserFeatures/$1');
+    $routes->post('users/ajax/features/(:num)', 'UserManagement::updateUserFeatures/$1');
     $routes->get('users/reloadUsers', 'UserManagement::reloadUsers');
     
     // Profile Management
@@ -243,6 +248,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->get('delete/(:num)', 'PatchController::delete/$1');
         $routes->get('download/(:num)', 'PatchController::download/$1');
         $routes->post('toggle/(:num)', 'PatchController::toggle/$1');
+        $routes->post('upload', 'PatchController::uploadFile');
     });
     
     // Application Management
@@ -254,25 +260,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('ajax', 'AplikasiPendukung::ajaxHandler');
     });
     
-    // Registration Management
-    $routes->group('registration', function($routes) {
-        $routes->get('/', '\App\Controllers\Home::registration');
-        $routes->get('add', '\App\Controllers\Home::addRegistrationForm');
-        $routes->post('add', '\App\Controllers\Home::addRegistration');
-        $routes->get('edit/(:num)', '\App\Controllers\Home::editRegistrationForm/$1');
-        $routes->post('edit/(:num)', '\App\Controllers\Home::updateRegistration/$1');
-        $routes->get('view/(:num)', '\App\Controllers\Home::viewRegistration/$1');
-        $routes->get('delete/(:num)', '\App\Controllers\Home::deleteRegistration/$1');
-    });
+    // Registration Management removed
     
-    // Database Replication Management
-    $routes->group('replication', function($routes) {
-        $routes->get('/', 'ReplicationController::index');
-        $routes->get('settings', 'ReplicationController::settings');
-        $routes->post('update-settings', 'ReplicationController::updateSettings');
-        $routes->get('check-status', 'ReplicationController::checkStatus');
-        $routes->post('test-connection', 'ReplicationController::testConnection');
-    });
     
     // Demo Program
     $routes->get('demo_program', 'DemoController::demo_program');

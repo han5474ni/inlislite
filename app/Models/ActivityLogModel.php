@@ -17,10 +17,10 @@ class ActivityLogModel extends Model
         'user_agent', 'old_data', 'new_data'
     ];
 
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $dateFormat = 'datetime';
     protected $createdField = 'created_at';
-    protected $updatedField = '';
+    protected $updatedField = null;
 
     /**
      * Log user activity

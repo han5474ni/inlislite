@@ -31,7 +31,7 @@ class AuthController extends BaseController
             'title' => 'Login Admin - INLISLite v3.0'
         ];
 
-        return view('admin/auth/main_login', $data);
+        return view('admin/auth/login', $data);
     }
 
     /**

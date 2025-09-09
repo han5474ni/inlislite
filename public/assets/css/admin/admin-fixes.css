@@ -1,0 +1,106 @@
+/* Admin quick fixes for header contrast, table compactness, and DataTables spacing */
+
+/* 1) Ensure header text/buttons are white on colored backgrounds */
+.admin-page-header .admin-back-btn { color: #ffffff; }
+.admin-page-header .admin-back-btn:hover { color: #ffffff; background: rgba(255,255,255,0.15); }
+.admin-page-header .admin-page-title { color: #ffffff; }
+.admin-page-header .admin-page-subtitle { color: #ffffff; opacity: .95; }
+
+/* 2) Compact, clean admin tables */
+.table-admin { background:#fff; border:1px solid #e9ecef; border-radius: 12px; overflow: hidden; }
+.table-admin thead th { background:#f3f4f6; color:#374151; font-weight:600; }
+.table-admin.table-sm th,
+.table-admin.table-sm td { padding: .5rem .75rem; }
+.table-admin td, .table-admin th { vertical-align: middle; }
+
+/* Enhanced rounded header style (matches provided design) */
+.table-admin thead tr th {
+  background: #f8fafc;         /* very light background */
+  color: #1f2937;              /* dark slate text */
+  font-weight: 700;            /* bolder */
+  text-transform: uppercase;   /* uppercase labels */
+  letter-spacing: .5px;        /* slight spacing */
+  border-bottom: 2px solid #e5e7eb;
+}
+.table-admin thead tr:first-child th:first-child { border-top-left-radius: 16px; }
+.table-admin thead tr:first-child th:last-child  { border-top-right-radius: 16px; }
+
+/* Soft bottom shadow under header block */
+.table-admin thead { box-shadow: 0 2px 0 0 #e5e7eb; }
+
+/* Keep header visible when scrolling inside responsive container */
+.table-responsive .table-admin thead th { position: sticky; top: 0; z-index: 2; }
+
+/* 3) Reduce double paddings from nested containers around DataTables controls */
+.dataTables_wrapper .row { margin-left: 0; margin-right: 0; }
+.dataTables_wrapper .row > [class^="col-"] { padding-left: 0; padding-right: 0; }
+
+/* Space between header and content cards */
+.management-tabs { margin-top: .5rem; }
+
+/* Remove borders when tabs header is removed on Panduan page */
+.page-panduan .panel-content { border: 0 !important; border-radius: 0 !important; background: transparent !important; padding-left: 0; padding-right: 0; }
+.page-panduan .panel-title { margin-left: .25rem; }
+
+/* Remove borders when tabs header is removed on Dukungan page */
+.page-dukungan .panel-content { border: 0 !important; border-radius: 0 !important; background: transparent !important; padding-left: 0; padding-right: 0; }
+.page-dukungan .panel-title { margin-left: .25rem; }
+
+/* Remove borders when tabs header is removed on Bimbingan page */
+.page-bimbingan .panel-content { border: 0 !important; border-radius: 0 !important; background: transparent !important; padding-left: 0; padding-right: 0; }
+.page-bimbingan .panel-title { margin-left: .25rem; }
+
+/* Rounded search/select controls to match UI */
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input { border: 2px solid #e5e7eb; border-radius: 8px; padding: .45rem .65rem; height: 38px; }
+.dataTables_wrapper .dataTables_filter input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.25); outline: none; }
+
+/* Space to host custom actions inline with search */
+.dt-actions { display: inline-flex; align-items: center; }
+.dt-actions .btn { height: 38px; }
+
+/* Prevent duplicated length control on narrow screens */
+.dataTables_wrapper .row > [class*="col-"] + [class*="col-"] .dataTables_length { display: none; }
+
+/******* Table container  *******/
+.table-admin { border-radius: 14px; overflow: hidden; }
+
+/* Bottom bar alignment: info left, pagination right */
+.dataTables_wrapper .row .dataTables_info { margin: .5rem 0; font-weight: 500; color:#0f172a; }
+.dataTables_wrapper .row .dataTables_paginate { margin: .5rem 0; }
+
+/* Smaller pagination spacing */
+.dataTables_wrapper .dataTables_paginate .paginate_button { padding: .4rem .65rem; }
+
+/* Improve category badge contrast */
+.category-badge.overview { color: #fff; background-color: #2563eb; }
+.category-badge.legal { color: #fff; background-color: #059669; }
+.category-badge.features { color: #fff; background-color: #ea580c; }
+.category-badge.technical { color: #fff; background-color: #7c3aed; }
+.category-badge.other { color: #fff; background-color: #6b7280; }
+
+/* ========================= */
+/* UI tidy-up for DataTables */
+/* ========================= */
+/* Top controls row: center align vertically and tighten spacing */
+.dataTables_wrapper > .row:first-child { align-items: center; margin-bottom: .25rem; }
+.dataTables_wrapper .dataTables_length label { margin: 0; display: inline-flex; align-items: center; gap: .5rem; }
+.dataTables_wrapper .dataTables_filter { text-align: right; }
+.dataTables_wrapper .dataTables_filter label { margin: 0; display: inline-flex; align-items: center; gap: .5rem; justify-content: flex-end; }
+
+/* Bottom controls row: force pagination to the right */
+.dataTables_wrapper > .row:last-child { align-items: center; }
+.dataTables_wrapper > .row:last-child > div:nth-child(1) { display: flex; align-items: center; }
+.dataTables_wrapper > .row:last-child > div:nth-child(2) { display: flex; align-items: center; justify-content: flex-end; }
+
+/* Make pagination container flex and right aligned */
+.dataTables_wrapper .dataTables_paginate { display: flex; justify-content: flex-end; width: 100%; }
+
+/* Slightly reduce top/bottom whitespace around the whole wrapper */
+.dataTables_wrapper { padding-top: .25rem; padding-bottom: .25rem; }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .dataTables_wrapper .dataTables_filter { text-align: left; margin-top: .5rem; }
+  .dataTables_wrapper > .row:last-child > div:nth-child(2) { justify-content: center; }
+}

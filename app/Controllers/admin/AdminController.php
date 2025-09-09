@@ -19,9 +19,9 @@ class AdminController extends BaseController
     {
         // Load models
         $userModel = new \App\Models\UserModel();
-        $registrationModel = model('RegistrationModel');
         $fiturModel = model('FiturModel'); 
         $db = \Config\Database::connect();
+        $registrationModel = null;
         
         // Get user statistics
         $totalUsers = $userModel->countAll();
@@ -35,7 +35,8 @@ class AdminController extends BaseController
         $thisWeekRegistrations = 0;
         $pendingRegistrations = 0;
         
-        if ($db->tableExists('registrations')) {
+        if ($db->tableExists('registrations') && class_exists('App\\Models\\RegistrationModel', false)) {
+            $registrationModel = model('RegistrationModel');
             $totalRegistrations = $registrationModel->countAll();
             $activeRegistrations = $registrationModel->where('status', 'active')->countAllResults();
             $thisWeekStart = date('Y-m-d', strtotime('-7 days'));
@@ -65,7 +66,8 @@ class AdminController extends BaseController
         
         // Get recent registrations
         $recentRegistrations = [];
-        if ($db->tableExists('registrations')) {
+        if ($db->tableExists('registrations') && class_exists('App\\Models\\RegistrationModel', false)) {
+            $registrationModel = $registrationModel ?? model('RegistrationModel');
             $recentRegistrations = $registrationModel->orderBy('created_at', 'DESC')->limit(5)->findAll();
         }
         
@@ -106,7 +108,6 @@ class AdminController extends BaseController
     private function _getChartData()
     {
         $userModel = new \App\Models\UserModel();
-        $registrationModel = model('RegistrationModel');
         $db = \Config\Database::connect();
 
         $labels = [];
@@ -123,7 +124,8 @@ class AdminController extends BaseController
 
             // Get registration count
             $regCount = 0;
-            if ($db->tableExists('registrations')) {
+            if ($db->tableExists('registrations') && class_exists('App\\Models\\RegistrationModel', false)) {
+                $registrationModel = model('RegistrationModel');
                 $regCount = $registrationModel->where('DATE(created_at)', $date)->countAllResults();
             }
             $registrations[] = $regCount;
@@ -417,54 +419,8 @@ class AdminController extends BaseController
     
     public function registration()
     {
-        // Sample registration data
-        $registrations = [
-            [
-                'id' => 1,
-                'library_name' => 'Perpustakaan Nasional RI',
-                'library_type' => 'National',
-                'province' => 'DKI Jakarta',
-                'status' => 'Active',
-                'created_at' => '2024-01-15 10:30:00',
-                'updated_at' => '2024-01-15 10:30:00'
-            ],
-            [
-                'id' => 2,
-                'library_name' => 'Perpustakaan Universitas Indonesia',
-                'library_type' => 'Academic',
-                'province' => 'Jawa Barat',
-                'status' => 'Active',
-                'created_at' => '2024-01-14 14:20:00',
-                'updated_at' => '2024-01-14 14:20:00'
-            ],
-            [
-                'id' => 3,
-                'library_name' => 'Perpustakaan Kota Bandung',
-                'library_type' => 'Public',
-                'province' => 'Jawa Barat',
-                'status' => 'Pending',
-                'created_at' => '2024-01-13 09:15:00',
-                'updated_at' => '2024-01-13 09:15:00'
-            ]
-        ];
-        
-        // Calculate statistics
-        $stats = [
-            'total' => count($registrations),
-            'active' => count(array_filter($registrations, fn($r) => $r['status'] === 'Active')),
-            'inactive' => count(array_filter($registrations, fn($r) => $r['status'] === 'Inactive')),
-            'pending' => count(array_filter($registrations, fn($r) => $r['status'] === 'Pending'))
-        ];
-        
-        $data = [
-            'title' => 'Inlislite Registration - INLISlite v3.0',
-            'page_title' => 'Inlislite Registration',
-            'page_subtitle' => 'Manage and monitor library registration data',
-            'registrations' => $registrations,
-            'stats' => $stats
-        ];
-        
-        return view('admin/registration', $data);
+        // Registration feature removed
+        return redirect()->to('/');
     }
     
     public function profile()

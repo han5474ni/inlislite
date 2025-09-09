@@ -1,4 +1,5 @@
-<?= view('public/layout/header', ['page_title' => $page_title ?? 'Panduan']) ?>
+<?= $this->extend('layout') ?>
+<?= $this->section('content') ?>
 
 <!-- Page Header -->
 <header class="page-header" style="
@@ -19,7 +20,7 @@
         position: absolute;
         inset: 0;
         backdrop-filter: blur(2px);
-        background: rgba(0, 0, 0, 0.5);
+        background: rgb(0, 0, 0);
         z-index: 1;
     "></div>
 
@@ -34,7 +35,7 @@
                     <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
                         Panduan
                     </h1>
-                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 0.85;">
+                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 1;">
                         Panduan Pengguna INLISLite Versi 3 PHP Opensource
                     </p>
                 </div>
@@ -346,7 +347,7 @@
 
 .search-container .form-control:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    box-shadow: 0 0 0 0.2rem rgb(37, 99, 235);
 }
 
 /* Section Header */
@@ -371,27 +372,7 @@
     overflow: hidden;
 }
 
-.document-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(135deg, #2563eb, #10b981);
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-}
-
-.document-card:hover::before {
-    transform: scaleX(1);
-}
-
-.document-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-    border-color: #d1d5db;
-}
+.document-card::before {  
 
 .document-icon {
     flex-shrink: 0;
@@ -464,21 +445,7 @@
 }
 
 /* Resource Items */
-.resource-item {
-    display: flex;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: #f8fafc;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    transition: all 0.3s ease;
-}
-
-.resource-item:hover {
-    background: #f1f5f9;
-    border-color: #d1d5db;
-    transform: translateY(-2px);
-}
+.resource-item { 
 
 .resource-icon {
     flex-shrink: 0;
@@ -513,20 +480,7 @@
     margin-bottom: 0.75rem;
 }
 
-.resource-link {
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.875rem;
-    display: inline-flex;
-    align-items: center;
-    transition: all 0.3s ease;
-}
-
-.resource-link:hover {
-    color: #1d4ed8;
-    gap: 0.5rem;
-}
+.resource-link { 
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -551,4 +505,5 @@
 }
 </style>
 
-<?= view('public/layout/footer') ?>
+<?= $this->endSection() ?>
+

@@ -67,10 +67,11 @@ class UserManagement extends BaseController
         $data = [
             'title' => 'User Manajemen - INLISLite v3.0',
             'users' => $users,
-            'can_edit_users' => can_edit_users() // Pass edit permission to view
+            'can_edit_users' => can_edit_users(), // Pass edit permission to view
+            'is_edit_mode' => false
         ];
 
-        // Pass users data to the view (use the user_management view for overview)
+        // Render the users index (simplified columns)
         return view('admin/user_management', $data);
     }
 
@@ -131,11 +132,28 @@ class UserManagement extends BaseController
         $data = [
             'title' => 'User Management - INLISLite v3.0',
             'users' => $users,
-            'can_edit_users' => can_edit_users() // Pass edit permission to view
+            'can_edit_users' => can_edit_users(), // Pass edit permission to view
+            'is_edit_mode' => true
         ];
 
-        // Use the users-edit view for full functionality
-        return view('admin/users-edit', $data);
+        // Use unified view after consolidation
+        return view('admin/user_management', $data);
+    }
+
+    public function addForm()
+    {
+        // Only Super Admin can create users
+        if (!can_edit_users()) {
+            return redirect()->to(base_url('admin/users'))
+                ->with('error', 'Access denied. Only Super Admin can add users.');
+        }
+
+        $data = [
+            'title' => 'Tambah Pengguna - INLISLite v3.0',
+            'is_add_mode' => true,
+        ];
+
+        return view('admin/user_add', $data);
     }
 
     public function store()
@@ -578,6 +596,85 @@ class UserManagement extends BaseController
         return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid request']);
     }
 
+    /**
+     * Get user features by user ID (AJAX)
+     */
+    public function getUserFeatures($id)
+    {
+        if (!can_edit_users()) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Access denied.']);
+        }
+
+        if ($this->request->isAJAX()) {
+            try {
+                $features = [];
+                try {
+                    $rows = $this->db->table('user_feature_access')->where('user_id', $id)->get()->getResultArray();
+                    $features = array_column($rows, 'feature');
+                } catch (\Throwable $t) {
+                    // Table may not exist yet
+                    log_message('warning', 'getUserFeatures: ' . $t->getMessage());
+                }
+
+                return $this->response->setJSON([
+                    'success' => true,
+                    'data' => [
+                        'features' => $features
+                    ]
+                ]);
+            } catch (\Exception $e) {
+                return $this->response->setJSON(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+            }
+        }
+
+        return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid request']);
+    }
+
+    /**
+     * Update user features (AJAX)
+     */
+    public function updateUserFeatures($id)
+    {
+        if (!can_edit_users()) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Access denied.']);
+        }
+
+        if ($this->request->isAJAX()) {
+            $input = $this->request->getJSON(true);
+            $features = $input['features'] ?? [];
+
+            try {
+                // Ensure table exists
+                try {
+                    $this->db->table('user_feature_access')->get(1);
+                } catch (\Throwable $t) {
+                    log_message('error', 'user_feature_access table missing: ' . $t->getMessage());
+                    return $this->response->setJSON(['success' => false, 'message' => 'Tabel akses fitur belum tersedia. Jalankan migrasi.']);
+                }
+
+                $tbl = $this->db->table('user_feature_access');
+                $this->db->transStart();
+                $tbl->where('user_id', $id)->delete();
+
+                if (!empty($features)) {
+                    $batch = [];
+                    foreach ($features as $f) {
+                        $batch[] = [ 'user_id' => $id, 'feature' => $f ];
+                    }
+                    $tbl->insertBatch($batch);
+                }
+                $this->db->transComplete();
+
+                return $this->response->setJSON(['success' => true, 'message' => 'Hak akses berhasil diperbarui']);
+            } catch (\Exception $e) {
+                $this->db->transRollback();
+                return $this->response->setJSON(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+            }
+        }
+
+        return $this->response->setStatusCode(400)->setJSON(['success' => false, 'message' => 'Invalid request']);
+    }
+
     public function getUsersAjax()
     {
         if ($this->request->isAJAX()) {
@@ -894,11 +991,12 @@ class UserManagement extends BaseController
                 ]
             ];
             
-            return view('admin/users_history', $data);
+            // Render history inline page inside unified management view if desired; keeping dedicated page for now
+            return view('admin/user_management', $data);
             
         } catch (\Exception $e) {
             log_message('error', 'Error fetching activity history: ' . $e->getMessage());
-            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Error fetching activity history.');
+            return redirect()->to(base_url('admin/users/edit'))->with('error', 'Error fetching activity history.');
         }
     }
     
@@ -946,14 +1044,14 @@ class UserManagement extends BaseController
     {
         // Check if user has permission to create users
         if (!can_edit_users()) {
-            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Access denied. Only Super Admin can create users.');
+            return redirect()->to(base_url('admin/users/edit'))->with('error', 'Access denied. Only Super Admin can create users.');
         }
         
         $data = [
             'title' => 'Create New User - INLISLite v3.0'
         ];
         
-        return view('admin/user_create', $data);
+        return view('admin/user_management', $data);
     }
     
     /**
@@ -963,7 +1061,7 @@ class UserManagement extends BaseController
     {
         // Check if user has permission to edit users
         if (!can_edit_users()) {
-            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Access denied. Only Super Admin can edit users.');
+            return redirect()->to(base_url('admin/users/edit'))->with('error', 'Access denied. Only Super Admin can edit users.');
         }
         
         try {
@@ -972,7 +1070,7 @@ class UserManagement extends BaseController
             $user = $builder->where('id', $id)->get()->getRowArray();
             
             if (!$user) {
-                return redirect()->to(base_url('admin/users-edit'))->with('error', 'User not found.');
+                return redirect()->to(base_url('admin/users/edit'))->with('error', 'User not found.');
             }
             
             $data = [
@@ -984,7 +1082,7 @@ class UserManagement extends BaseController
             
         } catch (\Exception $e) {
             log_message('error', 'Error fetching user for edit: ' . $e->getMessage());
-            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Error fetching user data.');
+            return redirect()->to(base_url('admin/users/edit'))->with('error', 'Error fetching user data.');
         }
     }
     
@@ -995,7 +1093,7 @@ class UserManagement extends BaseController
     {
         // Check if user has permission to update users
         if (!can_edit_users()) {
-            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Access denied. Only Super Admin can update users.');
+            return redirect()->to(base_url('admin/users/edit'))->with('error', 'Access denied. Only Super Admin can update users.');
         }
         
         $request = $this->request;
@@ -1048,7 +1146,7 @@ class UserManagement extends BaseController
                 $data
             );
             
-            return redirect()->to(base_url('admin/users-edit'))->with('success', 'User updated successfully!');
+            return redirect()->to(base_url('admin/users/edit'))->with('success', 'User updated successfully!');
         } catch (\Exception $e) {
             log_message('error', 'Error updating user: ' . $e->getMessage());
             return redirect()->back()->withInput()->with('error', 'Failed to update user: ' . $e->getMessage());
@@ -1062,7 +1160,7 @@ class UserManagement extends BaseController
     {
         // Check if user has permission to delete users
         if (!can_edit_users()) {
-            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Access denied. Only Super Admin can delete users.');
+            return redirect()->to(base_url('admin/users/edit'))->with('error', 'Access denied. Only Super Admin can delete users.');
         }
         
         try {
@@ -1071,7 +1169,7 @@ class UserManagement extends BaseController
             // Get user info for logging
             $user = $builder->where('id', $id)->get()->getRowArray();
             if (!$user) {
-                return redirect()->to(base_url('admin/users-edit'))->with('error', 'User not found.');
+                return redirect()->to(base_url('admin/users/edit'))->with('error', 'User not found.');
             }
             
             // Delete user
@@ -1087,10 +1185,10 @@ class UserManagement extends BaseController
                 null
             );
             
-            return redirect()->to(base_url('admin/users-edit'))->with('success', 'User deleted successfully!');
+            return redirect()->to(base_url('admin/users/edit'))->with('success', 'User deleted successfully!');
         } catch (\Exception $e) {
             log_message('error', 'Error deleting user: ' . $e->getMessage());
-            return redirect()->to(base_url('admin/users-edit'))->with('error', 'Failed to delete user: ' . $e->getMessage());
+            return redirect()->to(base_url('admin/users/edit'))->with('error', 'Failed to delete user: ' . $e->getMessage());
         }
     }
 }

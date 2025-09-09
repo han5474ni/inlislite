@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeApp() {
     initializeDataTable();
     initializeEventListeners();
-    loadStatistics();
+    // loadStatistics(); // removed: no statistics cards on this page
     loadCards();
 }
 
@@ -50,23 +50,34 @@ function initializeDataTable() {
     cardsTable = $('#cardsTable').DataTable({
         responsive: true,
         pageLength: 10,
-        order: [[0, 'asc']], // Sort by ID column
+        order: [[0, 'asc']],
         columnDefs: [
-            { orderable: false, targets: [1, 5] }, // Disable sorting for icon and actions
-            { searchable: false, targets: [1, 5] }, // Disable search for icon and actions
-            { width: "60px", targets: [0] }, // ID column width
-            { width: "80px", targets: [1] }, // Icon column width
-            { width: "100px", targets: [4] }, // Status column width
-            { width: "120px", targets: [5] } // Actions column width
+            { orderable: false, targets: [1, 4] }, // Icon and Actions columns (indexes 1 and 4)
+            { searchable: false, targets: [1, 4] },
+            { width: "60px", targets: [0] }, // ID
+            { width: "80px", targets: [1] }, // Icon
+            { width: "160px", targets: [3] }, // Kategori
+            { width: "120px", targets: [4] } // Aksi
         ],
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
         },
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-             '<"row"<"col-sm-12"tr>>' +
-             '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+        // Toolbar: left=length, right=search + actions (no duplicates)
+        dom: '<"row g-2 align-items-center"<"col-12 col-md-6 d-flex align-items-center"l><"col-12 col-md-6 d-flex justify-content-end align-items-center gap-2"f<"dt-actions ms-2">>>' +
+             '<"row"<"col-12"tr>>' +
+             // Bottom: info left, pagination right, kept on one line responsively
+             '<"row align-items-center justify-content-between g-2"<"col-12 col-md-auto"i><"col-12 col-md-auto d-flex justify-content-md-end"p>>',
         drawCallback: function() {
-            // Re-initialize tooltips after table redraw
+            // Inject Add button once per draw if not present
+            const container = document.querySelector('.dt-actions');
+            if (container && !container.querySelector('.btn-add-card')) {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-primary btn-add-card';
+                btn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Tambah Kartu';
+                btn.setAttribute('data-bs-toggle', 'modal');
+                btn.setAttribute('data-bs-target', '#addCardModal');
+                container.appendChild(btn);
+            }
             initializeTooltips();
         }
     });
@@ -150,8 +161,8 @@ async function loadStatistics() {
         }
         
     } catch (error) {
-        console.error('Error loading statistics:', error);
-        showError('Gagal memuat statistik');
+        // console.error('Error loading statistics:', error);
+        // showError('Gagal memuat statistik');
     }
 }
 
@@ -220,7 +231,6 @@ function populateTable(cards) {
                 ${card.subtitle ? `<small class="text-muted">${card.subtitle}</small>` : ''}
             </div>`,
             `<span class="category-badge ${card.card_type || 'info'}">${getCategoryLabel(card.card_type || 'info')}</span>`,
-            `<span class="status-badge ${card.is_active == 1 ? 'active' : 'inactive'}">${getStatusLabel(card.is_active == 1 ? 'active' : 'inactive')}</span>`,
             `<div class="d-flex justify-content-center">
                 <button class="btn-action edit" onclick="editCard(${card.id})" title="Edit">
                     <i class="bi bi-pencil"></i>

@@ -1,0 +1,110 @@
+/* INLISLite Admin Sidebar CSS (extracted from dashboard.css)
+   Purpose: isolate all sidebar-only rules here */
+
+:root {
+  /* Sidebar widths (can be adjusted) */
+  --sidebar-width: 200px;           /* default fallback (reduced) */
+  --sidebar-collapsed-width: 72px;  /* collapsed width (reduced) */
+  --sidebar-current-width: var(--sidebar-width);
+}
+
+/* Sidebar container for enhanced layout */
+.enhanced-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1030;
+  display: block;
+  /* Brand green theme to match dashboard */
+  background: linear-gradient(180deg, #0E7A52 0%, #1FA166 100%);
+  color: #ffffff;
+}
+
+/* Sidebar text and links (light theme) */
+.enhanced-sidebar .sidebar-header { border-bottom: 1px solid rgba(15,23,42,0.06); }
+.enhanced-sidebar .sidebar-logo, .enhanced-sidebar .logo-text, .enhanced-sidebar .nav-text { color: #ffffff; }
+.enhanced-sidebar .nav-link { color: #f8fafc; border-radius: 10px; }
+.enhanced-sidebar .nav-link:hover { background: rgba(255,255,255,0.12); color: #ffffff; }
+.enhanced-sidebar .nav-link.active { background: rgba(255,255,255,0.20); color: #ffffff; }
+.enhanced-sidebar .nav-icon { color: #ffffff; }
+
+.enhanced-sidebar.collapsed {
+  width: var(--sidebar-collapsed-width);
+  min-width: var(--sidebar-collapsed-width);
+  max-width: var(--sidebar-collapsed-width);
+}
+
+/* Collapsed state active/hover surfaces consistent with green theme */
+.enhanced-sidebar.collapsed .nav-link.active { background: rgba(255,255,255,0.22); color: #ffffff; }
+.enhanced-sidebar.collapsed .nav-link:hover { background: rgba(255,255,255,0.12); color: #ffffff; }
+.enhanced-sidebar.collapsed .submenu .nav-link.active { background: rgba(255,255,255,0.22); color: #ffffff; }
+
+/* Keep links on one line; ellipsis prevents layout shifts */
+.enhanced-sidebar .nav-link { white-space: nowrap; }
+.enhanced-sidebar .nav-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* Legacy admin sidebar class (if used anywhere) */
+.admin-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  z-index: 1000;
+  transition: var(--transition, all .3s ease);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar.collapsed { width: var(--sidebar-collapsed-width); }
+
+/* Sidebar header */
+.sidebar-header { padding: 1.5rem; position: relative; flex-shrink: 0; }
+.sidebar-logo { display: flex; align-items: center; text-decoration: none; font-weight: 700; font-size: 1.25rem; margin-bottom: .5rem; }
+.sidebar-logo img { width: 32px; height: 32px; margin-right: .75rem; border-radius: var(--radius, .5rem); }
+.sidebar-toggle { position: absolute; right: 1.5rem; top: 1.5rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+
+/* Nav */
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 1rem 0; }
+.nav-item { margin-bottom: .25rem; }
+.nav-link { display: flex; align-items: center; padding: .75rem 1.5rem; position: relative; text-decoration: none; }
+.nav-icon { margin-right: .75rem; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* Submenu */
+.submenu { max-height: 0; overflow: hidden; transition: max-height .3s ease; margin-left: 1.5rem; margin-right: 1rem; }
+.submenu.expanded { max-height: 500px; padding: .5rem 0; }
+.submenu-item { margin-bottom: .125rem; }
+.submenu .nav-link { padding: .5rem 1rem; margin: .125rem .5rem; border-radius: var(--radius-sm, .375rem); }
+
+/* Collapsed sidebar dropdown container overlay */
+.enhanced-sidebar.collapsed .submenu { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); border-radius: 10px; }
+
+/* Collapsed state basics */
+.admin-sidebar.collapsed .nav-text { opacity: 1; width: 0; overflow: hidden; }
+.admin-sidebar.collapsed .nav-link { padding: .75rem; justify-content: center; }
+.admin-sidebar.collapsed .nav-icon { margin-right: 0; }
+
+/* Main content offset uses CSS var set here */
+.enhanced-main-content { margin-left: var(--sidebar-current-width); transition: margin-left .2s ease; }
+.enhanced-main-content.sidebar-collapsed,
+body.sidebar-collapsed .enhanced-main-content { margin-left: var(--sidebar-collapsed-width); }
+
+/* Tighter default sidebar width to reduce gap */
+:root {
+  --sidebar-width: 200px; /* was 240px */
+  --sidebar-collapsed-width: 72px; /* was 80px */
+  --sidebar-current-width: var(--sidebar-width);
+}
+
+@media (max-width: 1200px){
+  .enhanced-main-content,
+  .enhanced-main-content.sidebar-collapsed,
+  body.sidebar-collapsed .enhanced-main-content { margin-left: 0; }
+}

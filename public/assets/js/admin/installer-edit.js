@@ -31,13 +31,12 @@ function initializeDataTable() {
         pageLength: 10,
         order: [[0, 'desc']], // Sort by ID column
         columnDefs: [
-            { orderable: false, targets: [1, 7] }, // Disable sorting for icon and actions
-            { searchable: false, targets: [1, 7] }, // Disable search for icon and actions
+            { orderable: false, targets: [1, 6] }, // Disable sorting for icon and actions
+            { searchable: false, targets: [1, 6] }, // Disable search for icon and actions
             { width: "60px", targets: [0] }, // ID column width
             { width: "80px", targets: [1] }, // Icon column width
             { width: "100px", targets: [3] }, // Type column width
-            { width: "100px", targets: [6] }, // Status column width
-            { width: "120px", targets: [7] } // Actions column width
+            { width: "120px", targets: [6] } // Actions column width
         ],
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
@@ -112,8 +111,8 @@ async function loadStatistics() {
         updateStatistics(stats);
         
     } catch (error) {
-        console.error('Error loading statistics:', error);
-        showError('Gagal memuat statistik');
+        // console.error('Error loading statistics:', error);
+        // showError('Gagal memuat statistik');
     }
 }
 
@@ -292,7 +291,6 @@ function populateTable(installers) {
             `<span class="type-badge ${installer.package_type}">${getTypeLabel(installer.package_type)}</span>`,
             installer.version || '-',
             installer.file_size || '-',
-            `<span class="status-badge ${installer.status}">${getStatusLabel(installer.status)}</span>`,
             `<div class="d-flex justify-content-center">
                 <button class="btn-action edit" onclick="editInstaller(${installer.id})" title="Edit">
                     <i class="bi bi-pencil"></i>

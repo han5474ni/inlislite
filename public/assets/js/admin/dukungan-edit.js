@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeApp() {
     initializeDataTable();
     initializeEventListeners();
-    loadStatistics();
+    // loadStatistics(); // disabled - stats section removed
     loadSupport();
 }
 
@@ -31,15 +31,13 @@ function initializeDataTable() {
         pageLength: 10,
         order: [[0, 'desc']], // Sort by ID
         columnDefs: [
-            { orderable: false, targets: [1, 7] }, // Disable sorting for icon and actions
-            { searchable: false, targets: [1, 7] }, // Disable search for icon and actions
+            { orderable: false, targets: [1, 5] }, // Disable sorting for icon and actions
+            { searchable: false, targets: [1, 5] }, // Disable search for icon and actions
             { width: "60px", targets: [0] }, // ID column width
             { width: "80px", targets: [1] }, // Icon column width
             { width: "100px", targets: [3] }, // Category column width
-            { width: "80px", targets: [4] }, // Priority column width
-            { width: "100px", targets: [5] }, // Status column width
-            { width: "150px", targets: [6] }, // Contact column width
-            { width: "120px", targets: [7] } // Actions column width
+            { width: "150px", targets: [4] }, // Contact column width
+            { width: "120px", targets: [5] } // Actions column width
         ],
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
@@ -113,8 +111,8 @@ async function loadStatistics() {
         updateStatistics(stats);
         
     } catch (error) {
-        console.error('Error loading statistics:', error);
-        showError('Gagal memuat statistik');
+        // console.error('Error loading statistics:', error);
+        // showError('Gagal memuat statistik');
     }
 }
 
@@ -217,16 +215,11 @@ function populateTable(support) {
                 ${item.is_featured ? '<span class="badge bg-warning text-dark ms-2">Unggulan</span>' : ''}
             </div>`,
             `<span class="category-badge ${item.category}">${getCategoryLabel(item.category)}</span>`,
-            `<span class="priority-badge ${item.priority}">${getPriorityLabel(item.priority)}</span>`,
-            `<span class="status-badge ${item.status}">${getStatusLabel(item.status)}</span>`,
             contactInfo,
             `<div class="d-flex justify-content-center">
                 <button class="btn-action edit" onclick="editSupport(${item.id})" title="Edit">
                     <i class="bi bi-pencil"></i>
                 </button>
-                ${item.email || item.phone ? `<button class="btn-action contact" onclick="contactSupport(${item.id})" title="Kontak">
-                    <i class="bi bi-telephone"></i>
-                </button>` : ''}
                 <button class="btn-action delete" onclick="deleteSupport(${item.id})" title="Hapus">
                     <i class="bi bi-trash"></i>
                 </button>

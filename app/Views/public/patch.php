@@ -1,4 +1,5 @@
-<?= view('public/layout/header', ['page_title' => $page_title ?? 'Patch & Updater']) ?>
+<?= $this->extend('layout') ?>
+<?= $this->section('content') ?>
 
 <!-- Page Header -->
 <section class="page-header">
@@ -321,4 +322,4 @@ function showPatchDetails(version) {
 }
 </script>
 
-<?= view('public/layout/footer') ?>
+<?= $this->endSection() ?>

@@ -224,4 +224,56 @@ class PatchController extends BaseController
         
         return round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
     }
+
+    /**
+     * Upload file (image/PDF) and return public URL
+     */
+    public function uploadFile()
+    {
+        if (!$this->request->isAJAX() && $this->request->getMethod() !== 'post') {
+            return $this->response->setStatusCode(405)->setJSON([
+                'success' => false,
+                'message' => 'Method not allowed'
+            ]);
+        }
+
+        $file = $this->request->getFile('file');
+        if (!$file || !$file->isValid()) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'success' => false,
+                'message' => 'No file uploaded or file is invalid'
+            ]);
+        }
+
+        $allowed = ['pdf', 'png', 'jpg', 'jpeg', 'gif', 'webp'];
+        $ext = strtolower($file->getClientExtension());
+        if (!in_array($ext, $allowed, true)) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'success' => false,
+                'message' => 'Invalid file type'
+            ]);
+        }
+
+        $uploadDir = FCPATH . 'uploads/patches/';
+        if (!is_dir($uploadDir)) {
+            @mkdir($uploadDir, 0775, true);
+        }
+
+        $newName = $file->getRandomName();
+        try {
+            $file->move($uploadDir, $newName);
+        } catch (\Throwable $e) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'message' => 'Failed to move uploaded file'
+            ]);
+        }
+
+        $publicUrl = base_url('uploads/patches/' . $newName);
+        return $this->response->setJSON([
+            'success' => true,
+            'url' => $publicUrl,
+            'filename' => $newName
+        ]);
+    }
 }

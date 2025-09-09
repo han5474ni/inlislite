@@ -22,47 +22,41 @@ if (ENVIRONMENT === 'development') {
 $menuItems = [
     [
         'title' => 'Dashboard',
-        'icon' => '📊',
+        'icon' => 'bi-speedometer2',
         'url' => 'admin/dashboard',
         'active_patterns' => ['admin/dashboard', 'admin$', 'dashboard'],
         'type' => 'link'
     ],
     [
         'title' => 'Fitur',
-        'icon' => '🧩',
+        'icon' => 'bi-grid',
         'url' => '#',
         'active_patterns' => ['fitur', 'tentang', 'installer', 'aplikasi', 'patch', 'panduan', 'dukungan', 'bimbingan', 'demo'],
         'type' => 'dropdown',
         'submenu' => [
-            ['title' => 'Tentang Kami', 'url' => 'admin/tentang'],
-            ['title' => 'Fitur dan Program Modul', 'url' => 'admin/fitur'],
-            ['title' => 'Installer', 'url' => 'admin/installer'],
-            ['title' => 'Patch dan Updater', 'url' => 'admin/patch'],
-            ['title' => 'Aplikasi Pendukung', 'url' => 'admin/aplikasi'],
-            ['title' => 'Panduan', 'url' => 'admin/panduan'],
-            ['title' => 'Dukungan Teknis', 'url' => 'admin/dukungan'],
-            ['title' => 'Bimbingan Teknis', 'url' => 'admin/bimbingan'],
-            ['title' => 'Demo Program', 'url' => 'admin/demo']
+            ['title' => 'Tentang Kami', 'url' => 'admin/tentang', 'icon' => 'bi-info-circle'],
+            ['title' => 'Fitur dan Program Modul', 'url' => 'admin/fitur', 'icon' => 'bi-grid-3x3-gap'],
+            ['title' => 'Installer', 'url' => 'admin/installer', 'icon' => 'bi-download'],
+            ['title' => 'Patch dan Updater', 'url' => 'admin/patch', 'icon' => 'bi-arrow-repeat'],
+            ['title' => 'Aplikasi Pendukung', 'url' => 'admin/aplikasi', 'icon' => 'bi-app-indicator'],
+            ['title' => 'Panduan', 'url' => 'admin/panduan', 'icon' => 'bi-journal-text'],
+            ['title' => 'Dukungan Teknis', 'url' => 'admin/dukungan', 'icon' => 'bi-life-preserver'],
+            ['title' => 'Bimbingan Teknis', 'url' => 'admin/bimbingan', 'icon' => 'bi-mortarboard'],
+            ['title' => 'Demo Program', 'url' => 'admin/demo', 'icon' => 'bi-play-circle']
         ]
     ],
     [
         'title' => 'Manajemen Pengguna',
-        'icon' => '👥',
+        'icon' => 'bi-people',
         'url' => 'admin/users',
         'active_patterns' => ['admin/users', 'admin/user_management', 'usermanagement', 'user-management', 'user_management'],
         'type' => 'link',
         'show_for_admin' => true
     ],
-    [
-        'title' => 'Registrasi',
-        'icon' => '📝',
-        'url' => 'admin/registration',
-        'active_patterns' => ['admin/registration', 'registration'],
-        'type' => 'link'
-    ],
+
     [
         'title' => 'Profile',
-        'icon' => '👤',
+        'icon' => 'bi-person-circle',
         'url' => 'admin/profile',
         'active_patterns' => ['admin/profile', 'profile'],
         'type' => 'link'
@@ -109,12 +103,11 @@ function isSubmenuActive($submenu, $currentPath) {
 ?>
 
 <!-- Enhanced Sidebar Styles - External CSS -->
-<link href="<?= base_url('assets/css/enhanced-sidebar.css') ?>" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<!-- Removed enhanced-sidebar.css to restore original theme colors -->
 
 <!-- Mobile Toggle Button -->
-<button class="enhanced-mobile-toggle" id="enhancedMobileToggle">
-    <span>☰</span>
-</button>
+<!-- Removed extra hamburger toggle to avoid duplication with circular toggle -->
 
 <!-- Sidebar Overlay for Mobile -->
 <div class="enhanced-sidebar-overlay" id="enhancedSidebarOverlay"></div>
@@ -128,12 +121,11 @@ function isSubmenuActive($submenu, $currentPath) {
                 <a href="<?= base_url('admin/dashboard') ?>" class="sidebar-logo">
                     INLISlite
                 </a>
-                <div class="sidebar-subtitle">V3.0</div>
             </div>
         </div>
         <!-- Collapse Toggle Button -->
-        <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
-            <span class="toggle-icon"><<</span>
+        <button class="sidebar-toggle" id="sidebarToggle" title="Collapse Sidebar" aria-label="Collapse Sidebar">
+            <i class="bi bi-chevron-left" id="toggleCollapseIcon" style="line-height:1; display:inline-block;"></i>
         </button>
     </div>
     
@@ -172,7 +164,7 @@ function isSubmenuActive($submenu, $currentPath) {
                 <?php if ($item['type'] === 'dropdown'): ?>
                     <a href="#" class="nav-link dropdown-toggle <?= $isActive ? 'active expanded' : '' ?>" 
                        data-dropdown="dropdown-<?= $index ?>" title="<?= $item['title'] ?>">
-                        <span class="nav-icon"><?= $item['icon'] ?></span>
+                        <span class="nav-icon"><i class="bi <?= $item['icon'] ?>"></i></span>
                         <span class="nav-text"><?= $item['title'] ?></span>
                     </a>
                     <div class="submenu <?= $isSubmenuActiveState ? 'expanded' : '' ?>" id="dropdown-<?= $index ?>">
@@ -183,7 +175,8 @@ function isSubmenuActive($submenu, $currentPath) {
                             ?>
                             <div class="submenu-item">
                                 <a href="<?= base_url($submenuItem['url']) ?>" 
-                                   class="nav-link <?= $isSubmenuItemActive ? 'active' : '' ?>">
+                                   class="nav-link <?= $isSubmenuItemActive ? 'active' : '' ?>" title="<?= $submenuItem['title'] ?>">
+                                    <span class="nav-icon"><i class="bi <?= $submenuItem['icon'] ?? 'bi-dot' ?>"></i></span>
                                     <span class="nav-text"><?= $submenuItem['title'] ?></span>
                                 </a>
                             </div>
@@ -192,7 +185,7 @@ function isSubmenuActive($submenu, $currentPath) {
                 <?php else: ?>
                     <a href="<?= base_url($item['url']) ?>" 
                        class="nav-link <?= $isActive ? 'active' : '' ?>" title="<?= $item['title'] ?>">
-                        <span class="nav-icon"><?= $item['icon'] ?></span>
+                        <span class="nav-icon"><i class="bi <?= $item['icon'] ?>"></i></span>
                         <span class="nav-text"><?= $item['title'] ?></span>
                     </a>
                 <?php endif; ?>
@@ -214,14 +207,60 @@ function isSubmenuActive($submenu, $currentPath) {
 <!-- Sidebar Functionality -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Mark that inline enhanced sidebar handlers are active to avoid duplicates
+    window.ENHANCED_SIDEBAR_INLINE = true;
+
     const sidebar = document.getElementById('enhancedSidebar');
     const toggleBtn = document.getElementById('sidebarToggle');
     const mainContent = document.querySelector('.enhanced-main-content') || document.querySelector('.main-content');
-    const toggleIcon = toggleBtn?.querySelector('.toggle-icon');
+    const toggleIcon = document.getElementById('toggleCollapseIcon');
     
     if (!sidebar || !toggleBtn || !toggleIcon) {
         console.error('Sidebar elements not found');
         return;
+    }
+
+    // Position the circular toggle aligned at the divider line below the header title
+    function positionFloatingToggle() {
+        const sidebarRect = sidebar.getBoundingClientRect();
+        const header = sidebar.querySelector('.sidebar-header');
+        const headerRect = header ? header.getBoundingClientRect() : sidebarRect;
+
+        // Vertical: align near the header bottom (divider line)
+        const dividerOffset = 6; // slight offset below the line
+        let targetY = headerRect.bottom + dividerOffset;
+
+        // Clamp within sidebar visible area
+        const SAFE_TOP = 8;
+        const SAFE_BOTTOM = 24;
+        const minY = sidebarRect.top + SAFE_TOP;
+        const maxY = sidebarRect.bottom - SAFE_BOTTOM;
+        targetY = Math.max(minY, Math.min(targetY, maxY));
+
+        // Horizontal: center the circle on the sidebar edge (half overlap)
+        const btnWidth = toggleBtn.offsetWidth || 44;
+        let left = sidebarRect.right - (btnWidth / 2); // half overlaps the sidebar
+
+        // Prevent going beyond viewport on the right side
+        const maxLeft = window.innerWidth - btnWidth - 8; // 8px margin from edge
+        left = Math.min(left, maxLeft);
+
+        // Apply immediately, then adjust slightly after transitions
+        toggleBtn.style.left = left + 'px';
+        toggleBtn.style.top = targetY + 'px';
+
+        // If sidebar is animating width, re-apply after a short delay
+        const td = getComputedStyle(sidebar).transitionDuration;
+        if (td && td !== '0s') {
+            const ms = Math.ceil(parseFloat(td) * 1000) + 50;
+            setTimeout(() => {
+                const sr = sidebar.getBoundingClientRect();
+                const bw = toggleBtn.offsetWidth || 44;
+                const adjLeft = sr.right - (bw / 2);
+                const maxLeft2 = window.innerWidth - bw - 8;
+                toggleBtn.style.left = Math.min(adjLeft, maxLeft2) + 'px';
+            }, ms);
+        }
     }
     
     // Function to apply collapsed state
@@ -232,20 +271,25 @@ document.addEventListener('DOMContentLoaded', function() {
             sidebar.classList.add('collapsed');
             if (mainContent) mainContent.classList.add('sidebar-collapsed');
             if (pageHeader) pageHeader.classList.add('sidebar-collapsed');
-            toggleIcon.textContent = '>>';
+            toggleIcon.classList.remove('bi-chevron-left');
+            toggleIcon.classList.add('bi-chevron-right');
             toggleBtn.title = 'Expand Sidebar';
             document.body.classList.add('sidebar-collapsed');
         } else {
             sidebar.classList.remove('collapsed');
             if (mainContent) mainContent.classList.remove('sidebar-collapsed');
             if (pageHeader) pageHeader.classList.remove('sidebar-collapsed');
-            toggleIcon.textContent = '<<';
+            toggleIcon.classList.remove('bi-chevron-right');
+            toggleIcon.classList.add('bi-chevron-left');
             toggleBtn.title = 'Collapse Sidebar';
             document.body.classList.remove('sidebar-collapsed');
         }
+        positionFloatingToggle();
     }
     
-    // Check saved state
+    // Clear any conflicting localStorage keys and check saved state
+    localStorage.removeItem('adminSidebarCollapsed');
+    
     const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
     applyCollapsedState(isCollapsed);
     
@@ -257,6 +301,11 @@ document.addEventListener('DOMContentLoaded', function() {
         applyCollapsedState(newState);
         localStorage.setItem('sidebarCollapsed', newState.toString());
     });
+
+    // Reposition on resize/scroll for safety
+    window.addEventListener('resize', positionFloatingToggle);
+    window.addEventListener('scroll', positionFloatingToggle, { passive: true });
+    setTimeout(positionFloatingToggle, 50);
     
     // Handle dropdown functionality
     document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
@@ -283,19 +332,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileToggle = document.getElementById('enhancedMobileToggle');
     const sidebarOverlay = document.getElementById('enhancedSidebarOverlay');
     
+    const setMobileState = (open) => {
+        if (open) {
+            sidebar.classList.add('mobile-open');
+            if (sidebarOverlay) sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (mobileToggle) mobileToggle.style.display = 'none';
+        } else {
+            sidebar.classList.remove('mobile-open');
+            if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            if (mobileToggle) mobileToggle.style.display = '';
+        }
+    };
+
     if (mobileToggle) {
         mobileToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('show');
-            if (sidebarOverlay) {
-                sidebarOverlay.classList.toggle('active');
-            }
+            setMobileState(!sidebar.classList.contains('mobile-open'));
         });
     }
     
     if (sidebarOverlay) {
         sidebarOverlay.addEventListener('click', function() {
-            sidebar.classList.remove('show');
-            this.classList.remove('active');
+            setMobileState(false);
         });
     }
 });
@@ -312,15 +371,20 @@ function confirmLogout() {
 <style>
 /* CSS Variables for Consistency */
 :root {
-    --sidebar-primary: #2DA84D;
-    --sidebar-secondary: #2DA84D;
+    /* Ensure brand variables are defined here for all admin pages */
+    --brand-green: #1FA166;
+    --brand-green-dark: #0E7A52;
+
+    /* Sidebar theme variables with safe fallbacks */
+    --sidebar-primary: var(--brand-green-dark, #0E7A52);
+    --sidebar-secondary: var(--brand-green, #1FA166);
     --sidebar-text: #FFFFFF;
-    --sidebar-hover: rgba(255, 255, 255, 0.1);
-    --sidebar-active: rgba(255, 255, 255, 0.15);
-    --sidebar-border: rgba(255, 255, 255, 0.1);
-    --sidebar-width: 220px;
-    --sidebar-collapsed-width: 70px;
-    --transition-duration: 0.3s;
+    --sidebar-hover: rgba(255,255,255,0.08);
+    --sidebar-active: rgba(255,255,255,0.12);
+    --sidebar-border: rgba(255,255,255,0.25);
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 80px;
+    --transition-duration: 0.15s;
 }
 
 /* Enhanced Sidebar - Base Styles */
@@ -330,15 +394,16 @@ function confirmLogout() {
     top: 0;
     height: 100vh;
     width: var(--sidebar-width);
-    background: var(--sidebar-primary);
+    background: linear-gradient(180deg, var(--sidebar-primary) 0%, var(--sidebar-secondary) 100%);
     color: var(--sidebar-text);
     font-family: 'Poppins', sans-serif;
-    z-index: 1000;
+    z-index: 1030; /* keep above content like in extracted CSS */
     transition: width var(--transition-duration) ease;
-    box-shadow: 4px 0 20px rgba(45, 168, 77, 0.15);
+    box-shadow: none; /* Remove heavy shadow for minimal look */
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    border-right: 1px solid rgba(255,255,255,0.25); /* subtle divider */
 }
 
 .enhanced-sidebar .sidebar-header {
@@ -349,6 +414,8 @@ function confirmLogout() {
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
+    position: relative;
+    z-index: 2; /* keep above sidebar-nav scrollbar */
 }
 
 /* Logo Container Styles */
@@ -371,56 +438,78 @@ function confirmLogout() {
     flex-direction: column;
 }
 
+/* Hide leftover version text area spacing if any */
+.sidebar-subtitle { display: none !important; }
+
 .enhanced-sidebar .sidebar-logo {
     color: var(--sidebar-text);
     font-weight: 700;
     transition: transform 0.3s var(--transition-smooth);
 }
 
-.enhanced-sidebar .sidebar-logo:hover {
-    color: var(--sidebar-text);
-}
 
-/* Sidebar Toggle Button */
+
+/* Sidebar Toggle Button - small, subtle */
 .sidebar-toggle {
-    background: none;
-    border: none;
-    color: var(--sidebar-text);
-    cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 4px;
-    transition: var(--transition-duration) ease;
-    display: flex;
+    position: fixed; /* positioned via JS next to sidebar edge */
+    left: auto;
+    top: 50vh; /* initial; JS will correct */
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: #ffffff;
+    color: var(--sidebar-primary);
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 50%;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
-    font-size: 12px;
-    font-weight: normal;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 2000; /* keep above content */
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    pointer-events: auto;
 }
 
-.sidebar-toggle:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
+
 
 .toggle-icon {
-    font-size: 12px;
+    font-size: 16px;
     font-weight: normal;
     line-height: 1;
 }
 
+/* Mobile fallback: keep inline inside header */
+@media (max-width: 768px) {
+    .sidebar-toggle {
+        position: relative;
+        left: 0;
+        top: 0;
+        transform: none;
+        width: 28px;
+        height: 28px;
+        color: var(--sidebar-text);
+        border: 1px solid rgba(0,0,0,0.15);
+        box-shadow: none;
+        z-index: 1;
+    }
+
+}
+
 /* Icon and text styles */
 .nav-icon {
-    font-size: 20px;
-    margin-right: 12px;
-    width: 24px;
+    font-size: 1rem;
+    margin-right: 8px;
+    width: 20px;
     text-align: center;
-    display: none; /* Hidden by default */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-text {
-    display: inline-block; /* Shown by default */
+    display: inline-block;
+    font-size: 13px; /* smaller text */
 }
 
 /* Collapsed Sidebar Styles */
@@ -458,17 +547,28 @@ function confirmLogout() {
 }
 
 .enhanced-sidebar.collapsed .submenu {
-    display: none;
+    display: block; /* allow submenu column in collapsed */
+    background: rgba(255,255,255,0.12); /* translucent overlay on green */
+    padding: 6px 4px;
+    margin: 6px 6px 8px 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: none;
 }
+
+.enhanced-sidebar.collapsed .submenu .nav-text { display: none; }
+.enhanced-sidebar.collapsed .submenu .nav-link { height: 36px; justify-content: center; }
+.enhanced-sidebar.collapsed .submenu .nav-icon { width: 22px; font-size: 1.05rem; margin: 0; }
+.enhanced-sidebar.collapsed .submenu .nav-link.active { background: rgba(255, 255, 255, 0.22); border-radius: 8px; }
 
 .enhanced-sidebar.collapsed .dropdown-toggle::after {
     display: none;
 }
 
 .enhanced-sidebar.collapsed .sidebar-toggle {
-    width: 24px;
-    height: 24px;
-    padding: 0.2rem;
+    width: 32px;
+    height: 32px;
+    padding: 2px;
 }
 
 .enhanced-sidebar.collapsed .toggle-icon {
@@ -476,33 +576,20 @@ function confirmLogout() {
 }
 
 .enhanced-sidebar.collapsed .sidebar-header {
-    padding: 15px 10px;
+    padding: 12px 8px;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
 }
 
+/* Collapsed polish */
+.enhanced-sidebar.collapsed .nav-item { margin: 6px; }
+.enhanced-sidebar.collapsed .nav-link { justify-content: center; padding: 10px; width: 100%; height: 40px; border: 0; }
+.enhanced-sidebar.collapsed .nav-link .nav-icon { width: 22px; font-size: 1.1rem; }
+.enhanced-sidebar.collapsed .nav-link.active { background: rgba(255, 255, 255, 0.22); border: 0; padding: 10px; border-radius: 8px; }
+.enhanced-sidebar.collapsed .dropdown-toggle .bi-caret-down-fill { display: none; }
 /* Tooltip styling for collapsed state */
-.enhanced-sidebar.collapsed .nav-link {
-    position: relative;
-}
-
-.enhanced-sidebar.collapsed .nav-link:hover::after {
-    content: attr(title);
-    position: absolute;
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 4px;
-    white-space: nowrap;
-    font-size: 14px;
-    margin-left: 10px;
-    z-index: 1000;
-    pointer-events: none;
-}
+.enhanced-sidebar.collapsed .nav-link { 
 
 .enhanced-sidebar .sidebar-nav {
     flex: 1;
@@ -510,6 +597,9 @@ function confirmLogout() {
     overflow-y: auto;
     overflow-x: hidden;
     max-height: calc(100vh - 120px);
+    position: relative;
+    z-index: 1;
+    background: rgba(255,255,255,0.08); /* subtle contrast for inner scroll area */
 }
 
 .enhanced-sidebar .nav-item {
@@ -529,36 +619,35 @@ function confirmLogout() {
     font-size: 14px;
 }
 
-.enhanced-sidebar .nav-link:hover {
-    background: var(--sidebar-hover);
-    color: var(--sidebar-text);
-}
+
 
 .enhanced-sidebar .nav-link.active {
-    background: var(--sidebar-secondary);
+    ; /* Minimal active */
     color: var(--sidebar-text);
-    font-weight: 700;
+    font-weight: 600;
+    border-left: 2px solid rgb(255, 255, 255); /* subtle indicator */
+    padding-left: 10px;
 }
 
 /* Dropdown functionality */
 .enhanced-sidebar .dropdown-toggle::after {
-    content: "▼";
-    margin-left: auto;
-    font-size: 12px;
-    opacity: 0.8;
+    display: none !important; /* hide Bootstrap default caret */
+    content: none !important;
+    border: 0 !important;
 }
 
-.enhanced-sidebar .dropdown-toggle.expanded::after {
-    content: "▲";
-}
+.enhanced-sidebar .dropdown-toggle .bi-caret-down-fill { margin-left: auto; font-size: 0.9rem; opacity: .95; color: #ffffff; }
+.enhanced-sidebar .dropdown-toggle.expanded .bi-caret-down-fill { transform: rotate(180deg); transition: transform .2s ease; }
 
 .enhanced-sidebar .submenu {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease;
-    background: rgba(0, 0, 0, 0.15);
-    margin: 2px 12px;
-    border-radius: 6px;
+    transition: max-height 0.2s ease;
+    background: var(--brand-green-contrast); /* light brand green background */
+    margin: 4px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: none;
 }
 
 .enhanced-sidebar .submenu.expanded {
@@ -566,26 +655,36 @@ function confirmLogout() {
 }
 
 .enhanced-sidebar .submenu .nav-link {
-    padding: 8px 12px;
+    padding: 10px 12px;
     font-size: 13px;
     margin: 0;
-    border-radius: 4px;
-    font-weight: 400;
+    border-radius: 8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    color: var(--brand-blue-dark); /* stronger contrast on light green */
 }
 
+.enhanced-sidebar .submenu .nav-link .nav-icon { width: 18px; font-size: .95rem; margin-right: 8px; text-align: center; color: var(--brand-blue-dark); opacity: 0.9; }
+
+
+
 .enhanced-sidebar .submenu .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255,255,255,0.35); /* lighter overlay for legibility */
 }
 
 .enhanced-sidebar .submenu .nav-link.active {
-    background: rgba(45, 168, 77, 0.8);
-    font-weight: 600;
+    background: rgba(255,255,255,0.55);
+    color: var(--brand-blue-dark);
+    font-weight: 700;
+    border-left: 3px solid var(--brand-blue);
+    padding-left: 9px;
 }
 
 /* Sidebar Footer Styles */
 .sidebar-footer {
     padding: 15px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgb(255, 255, 255);
     margin-top: auto;
     flex-shrink: 0;
 }
@@ -594,17 +693,7 @@ function confirmLogout() {
     margin: 0 16px;
 }
 
-.logout-link {
-    background: transparent !important;
-    color: var(--sidebar-text) !important;
-    border-radius: 6px;
-    font-weight: 500;
-}
-
-.logout-link:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    color: var(--sidebar-text) !important;
-}
+.logout-link { 
 
 /* Mobile responsive */
 @media (max-width: 768px) {
@@ -635,26 +724,18 @@ function confirmLogout() {
 
 .enhanced-sidebar::-webkit-scrollbar-track,
 .enhanced-sidebar .sidebar-nav::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgb(255, 255, 255);
     border-radius: 3px;
 }
 
 .enhanced-sidebar::-webkit-scrollbar-thumb,
-.enhanced-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
-}
-
-.enhanced-sidebar::-webkit-scrollbar-thumb:hover,
-.enhanced-sidebar .sidebar-nav::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
+.enhanced-sidebar .sidebar-nav::-webkit-scrollbar-thumb { 
 
 /* Firefox scrollbar styling */
 .enhanced-sidebar,
 .enhanced-sidebar .sidebar-nav {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    scrollbar-color: rgb(255, 255, 255) transparent;
 }
 
 /* Global page layout fixes */
@@ -664,17 +745,19 @@ body {
     overflow-x: hidden;
 }
 
-/* Header adaptations for sidebar */
+/* Header adaptations for sidebar - sticky header */
 .page-header {
-    margin-left: var(--sidebar-width);
+    margin-left: 0; /* handled by main wrapper margins */
+    position: sticky;
+    top: 0;
+    z-index: 1100; /* above content */
+    background: #ffffff; /* solid background to avoid transparency while sticky */
     transition: margin-left var(--transition-duration) ease;
-    position: relative;
-    z-index: 2;
 }
 
 .enhanced-sidebar.collapsed ~ .page-header,
 body.sidebar-collapsed .page-header {
-    margin-left: var(--sidebar-collapsed-width);
+    margin-left: 0;
 }
 
 /* Prevent page content overlap */
@@ -685,6 +768,9 @@ body.sidebar-collapsed .page-header {
     position: relative;
     z-index: 1;
 }
+
+/* Ensure content aligns exactly to sidebar edge */
+.enhanced-main-content > .container-fluid { padding-left: 12px; padding-right: 12px; }
 
 .enhanced-sidebar.collapsed ~ .enhanced-main-content,
 .enhanced-sidebar.collapsed ~ .main-content,
@@ -712,7 +798,7 @@ body.sidebar-collapsed .main-content {
     max-height: 100vh;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(0,0,0,0.3) rgba(0,0,0,0.1);
+    scrollbar-color: rgb(0, 0, 0) rgb(0, 0, 0);
 }
 
 .enhanced-main-content::-webkit-scrollbar,
@@ -724,22 +810,13 @@ body.sidebar-collapsed .main-content {
 .enhanced-main-content::-webkit-scrollbar-track,
 .main-content::-webkit-scrollbar-track,
 .page-content::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.1);
+    background: rgb(0, 0, 0);
     border-radius: 4px;
 }
 
 .enhanced-main-content::-webkit-scrollbar-thumb,
 .main-content::-webkit-scrollbar-thumb,
-.page-content::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.3);
-    border-radius: 4px;
-}
-
-.enhanced-main-content::-webkit-scrollbar-thumb:hover,
-.main-content::-webkit-scrollbar-thumb:hover,
-.page-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(0,0,0,0.5);
-}
+.page-content::-webkit-scrollbar-thumb { 
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -750,3 +827,5 @@ body.sidebar-collapsed .main-content {
     }
 }
 </style>
+
+

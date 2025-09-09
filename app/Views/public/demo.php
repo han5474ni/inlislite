@@ -1,4 +1,5 @@
-<?= view('public/layout/header', ['page_title' => $page_title ?? 'Demo Program']) ?>
+<?= $this->extend('layout') ?>
+<?= $this->section('content') ?>
 
 <!-- Page Header -->
 <header class="page-header" style="
@@ -19,7 +20,7 @@
         position: absolute;
         inset: 0;
         backdrop-filter: blur(2px);
-        background: rgba(0, 0, 0, 0.5);
+        background: rgb(0, 0, 0);
         z-index: 1;
     "></div>
 
@@ -34,7 +35,7 @@
                     <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
                         Demo Program
                     </h1>
-                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 0.85;">
+                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 1;">
                         Download and Installation Package – INLISLite Version 3 Demo
                     </p>
                 </div>
@@ -368,26 +369,14 @@
     height: 100%;
 }
 
-.login-credentials {
-    transition: all 0.3s ease;
-}
+.login-credentials { 
 
-.login-credentials:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.content-card {
-    transition: all 0.3s ease;
-}
-
-.content-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
+.content-card { 
 
 .badge {
     font-size: 0.75rem;
 }
 </style>
 
-<?= view('public/layout/footer') ?>
+<?= $this->endSection() ?>
+

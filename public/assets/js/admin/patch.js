@@ -153,10 +153,6 @@ function renderContent() {
                     <h3 class="card-title">${item.title}</h3>
                     ${item.subtitle ? `<p class="card-subtitle">${item.subtitle}</p>` : ''}
                     <div class="card-description">${item.description}</div>
-                    <div class="mt-3">
-                        <span class="badge bg-${getPriorityColor(item.priority)} me-2">${item.priority}</span>
-                        <span class="badge bg-secondary">${item.category}</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -198,8 +194,7 @@ function handleSearch() {
     filteredItems = contentItems.filter(item => 
         item.title.toLowerCase().includes(searchTerm) ||
         item.subtitle.toLowerCase().includes(searchTerm) ||
-        item.description.toLowerCase().includes(searchTerm) ||
-        item.category.toLowerCase().includes(searchTerm)
+        item.description.toLowerCase().includes(searchTerm)
     );
     
     renderContent();
@@ -213,8 +208,7 @@ async function saveItem() {
         const title = document.getElementById('itemTitle').value;
         const subtitle = document.getElementById('itemSubtitle').value;
         const description = document.getElementById('itemDescription').value;
-        const category = document.getElementById('itemCategory').value;
-        const priority = document.getElementById('itemPriority').value;
+
         
         if (!title || !description) {
             showError('Judul dan deskripsi harus diisi');
@@ -227,9 +221,7 @@ async function saveItem() {
             id: Date.now(),
             title,
             subtitle,
-            description,
-            category,
-            priority
+            description
         };
         
         contentItems.push(newItem);
@@ -265,8 +257,7 @@ function editItem(id) {
     document.getElementById('editTitle').value = item.title;
     document.getElementById('editSubtitle').value = item.subtitle || '';
     document.getElementById('editDescription').value = item.description;
-    document.getElementById('editCategory').value = item.category;
-    document.getElementById('editPriority').value = item.priority;
+
     
     const modal = new bootstrap.Modal(document.getElementById('editModal'));
     modal.show();
@@ -281,8 +272,7 @@ async function updateItem() {
         const title = document.getElementById('editTitle').value;
         const subtitle = document.getElementById('editSubtitle').value;
         const description = document.getElementById('editDescription').value;
-        const category = document.getElementById('editCategory').value;
-        const priority = document.getElementById('editPriority').value;
+
         
         if (!title || !description) {
             showError('Judul dan deskripsi harus diisi');
@@ -297,9 +287,7 @@ async function updateItem() {
                 ...contentItems[index],
                 title,
                 subtitle,
-                description,
-                category,
-                priority
+                description
             };
             filteredItems = [...contentItems];
             renderContent();

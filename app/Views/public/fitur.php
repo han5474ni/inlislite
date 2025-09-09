@@ -1,4 +1,5 @@
-<?= $this->include('public/layout/header') ?>
+<?= $this->extend('layout') ?>
+<?= $this->section('content') ?>
 
 <div class="container-fluid">
     <div class="row">
@@ -131,20 +132,7 @@
     margin-bottom: 2rem;
 }
 
-.feature-card, .module-card {
-    background: white;
-    border-radius: 15px;
-    padding: 2rem;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.feature-card:hover, .module-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
+.feature-card, .module-card { 
 
 .feature-icon, .module-icon {
     width: 60px;
@@ -252,4 +240,6 @@
 }
 </style>
 
-<?= $this->include('public/layout/footer') ?>
+<?= $this->endSection() ?>
+
+

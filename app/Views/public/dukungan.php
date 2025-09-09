@@ -1,4 +1,5 @@
-<?= view('public/layout/header', ['page_title' => $page_title ?? 'Dukungan Teknis']) ?>
+<?= $this->extend('layout') ?>
+<?= $this->section('content') ?>
 
 <!-- Page Header -->
 <header class="page-header" style="
@@ -20,7 +21,7 @@
         position: absolute;
         inset: 0;
         backdrop-filter: blur(2px);
-        background: rgba(0, 0, 0, 0.5);
+        background: rgb(0, 0, 0);
         z-index: 1;
     "></div>
 
@@ -35,7 +36,7 @@
                     <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
                         Dukungan Teknis
                     </h1>
-                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 0.85;">
+                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 1;">
                         Paket unduhan dan instalasi
                     </p>
                 </div>
@@ -252,7 +253,7 @@ body {
 .main-card {
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgb(0, 0, 0);
     border: 1px solid #e5e7eb;
     overflow: hidden;
 }
@@ -279,16 +280,7 @@ body {
     margin: 0;
 }
 
-.edit-btn {
-    border-color: #9ca3af;
-    color: #6b7280;
-    font-size: 0.875rem;
-}
-
-.edit-btn:hover {
-    border-color: #6b7280;
-    color: #374151;
-}
+.edit-btn { 
 
 .main-card-body {
     padding: 1.5rem;
@@ -305,19 +297,7 @@ body {
     margin-bottom: 2rem;
 }
 
-.info-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    height: 100%;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.info-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
+.info-card { 
 
 .blue-border {
     border: 2px solid #3b82f6;
@@ -398,20 +378,7 @@ body {
     gap: 0.75rem;
 }
 
-.service-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem;
-    background: #f0fdf4;
-    border-radius: 8px;
-    border: 1px solid #bbf7d0;
-    transition: all 0.3s ease;
-}
-
-.service-item:hover {
-    background: #dcfce7;
-    border-color: #86efac;
-}
+.service-item { 
 
 .service-item i {
     font-size: 1rem;
@@ -431,7 +398,7 @@ body {
 .bottom-box {
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgb(0, 0, 0);
     border: 1px solid #e5e7eb;
     overflow: hidden;
 }
@@ -452,7 +419,7 @@ body {
 .bottom-box-subtitle {
     font-size: 0.95rem;
     margin: 0;
-    opacity: 0.9;
+    opacity: 1;
 }
 
 .bottom-box-body {
@@ -475,21 +442,7 @@ body {
     gap: 0.75rem;
 }
 
-.support-step {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: #f8fafc;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    transition: all 0.3s ease;
-}
-
-.support-step:hover {
-    background: #f1f5f9;
-    border-color: #d1d5db;
-}
+.support-step { 
 
 .support-step i {
     font-size: 1rem;
@@ -558,4 +511,5 @@ body {
 }
 </style>
 
-<?= view('public/layout/footer') ?>
+<?= $this->endSection() ?>
+
