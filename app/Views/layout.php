@@ -63,7 +63,7 @@
             <div class="container">
                 <a class="navbar-brand" href="<?= base_url('/') ?>">
                     <div class="navbar-brand-icon me-2">
-                        <img src="<?= base_url('assets/images/logo-perpusnas.png') ?>" alt="Logo" />
+                        <img src="<?= base_url('assets/images/inlislite.png') ?>" alt="Logo" />
                     </div>
                     <span class="brand-title">INLISlite</span>
                 </a>

@@ -42,7 +42,6 @@
         }
         
         body {
-            background-color: var(--primary-blue);
             min-height: 100vh;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             display: flex;
@@ -51,19 +50,27 @@
             padding: 1rem;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            /* Background with overlay and fixed image */
+            background-image: linear-gradient(rgba(17, 24, 39, 0.55), rgba(17, 24, 39, 0.55)), url('<?= base_url('assets/images/login-bg.png') ?>');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
         
         .login-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 780px; /* wider like screenshot */
         }
         
         .login-card {
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            padding: 2.5rem;
-            box-shadow: var(--box-shadow-lg);
-            border: 1px solid var(--gray-200);
+            background: rgba(255, 255, 255, 0.88); /* translucent card */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 28px; /* more rounded */
+            padding: 2.5rem 2.75rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.35);
         }
         
         .logo-container {
@@ -72,24 +79,26 @@
         }
         
         .logo {
-            width: 64px;
-            height: 64px;
-            border-radius: var(--border-radius-small);
-            object-fit: contain;
-            margin-bottom: 1rem;
+            display: block;
+            max-width: clamp(88px, 12vw, 140px); /* responsif sesuai lebar card */
+            width: 100%;
+            height: auto; /* pertahankan rasio logo */
+            margin: 0 auto 1rem; /* center di atas judul */
+            border-radius: 0; /* biarkan bentuk asli logo */
+            opacity: .95;
         }
         
         .login-title {
-            color: var(--gray-800);
-            font-size: 1.5rem;
-            font-weight: 700;
+            color: #0f172a; /* slate-900 */
+            font-size: 2.25rem; /* bigger heading like screenshot */
+            font-weight: 800;
             text-align: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
         
         .login-subtitle {
-            color: var(--gray-600);
-            font-size: 0.875rem;
+            color: #475569; /* slate-600 */
+            font-size: 1rem;
             text-align: center;
             margin-bottom: 2rem;
         }
@@ -107,20 +116,21 @@
         }
         
         .form-control {
-            background-color: var(--white);
-            border: 2px solid var(--gray-200);
-            border-radius: var(--border-radius-small);
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
+            background-color: #f8fafc; /* light input bg */
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 1rem 1.125rem; /* taller inputs */
+            font-size: 1.05rem;
             width: 100%;
             transition: var(--transition);
             color: var(--gray-800);
         }
         
         .form-control:focus {
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgb(37, 99, 235);
+            border-color: #3b82f6;
+            box-shadow: none; /* remove extra ring */
             outline: none;
+            background-color: #fff;
         }
         
         .form-control::placeholder {
@@ -141,27 +151,28 @@
             color: var(--gray-600);
             cursor: pointer;
             padding: 0.25rem;
-            border-radius: 4px;
+            border-radius: 8px;
             transition: var(--transition);
         }
         
 
         
         .login-btn {
-            background-color: var(--primary-blue);
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
             color: var(--white);
             border: none;
-            border-radius: var(--border-radius-small);
-            padding: 0.875rem 1rem;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 14px;
+            padding: 1rem 1.125rem;
+            font-size: 1.05rem;
+            font-weight: 700;
             width: 100%;
             cursor: pointer;
-            transition: var(--transition);
+            transition: transform .08s ease, box-shadow .15s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, .35);
         }
         
 
@@ -206,17 +217,19 @@
             position: absolute;
             top: 1.5rem;
             left: 1.5rem;
-            color: var(--white);
+            color: #111827;
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius-small);
-            background-color: rgb(255, 255, 255);
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            background: rgba(255,255,255,.8);
+            backdrop-filter: blur(4px);
             transition: var(--transition);
+            box-shadow: 0 6px 16px rgba(0,0,0,.15);
         } 
         
         /* Responsive Design */
@@ -249,7 +262,6 @@
         }
         
         /* Focus styles for accessibility */
-        .form-control:focus,
         .login-btn:focus,
         .password-toggle:focus,
         .back-link:focus {
@@ -270,7 +282,7 @@
         <div class="login-card">
             <!-- Logo and Title -->
             <div class="logo-container">
-                <img src="<?= base_url('assets/images/logo-perpusnas.png') ?>" alt="INLISLite Logo" class="logo">
+                <img src="<?= base_url('assets/images/inlislite.png') ?>" alt="INLISLite Logo" class="logo">
                 <h1 class="login-title">Admin Login</h1>
                 <p class="login-subtitle">Masuk ke panel administrasi INLISLite</p>
             </div>
