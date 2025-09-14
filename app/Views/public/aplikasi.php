@@ -2,40 +2,17 @@
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
-<header class="page-header" style="
-    position: relative;
-    background: url('https://i.pinimg.com/736x/cd/66/6a/cd666a84ab3c739f356c8b5b366731bb.jpg') center/cover no-repeat;
-    background-attachment: fixed;
-    min-height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-    overflow: hidden;
-">
-    <!-- Overlay dan efek blur -->
-    <div style="
-        content: '';
-        position: absolute;
-        inset: 0;
-        backdrop-filter: blur(2px);
-        background: rgb(0, 0, 0);
-        z-index: 1;
-    "></div>
-
-    <!-- Konten header -->
-    <div class="container" style="position: relative; z-index: 2;">
+<header class="page-header page-header--image page-header--bg-fixed page-header--with-overlay" style="--header-bg-url: url('<?= base_url('assets/images/hero.jpeg') ?>');">
+    <div class="page-header__overlay"></div>
+    <div class="container">
         <div class="row">
             <div class="col-12">
-                <div class="page-header-content text-center" style="padding: 2rem;">
+                <div class="page-header-content text-center">
                     <div class="page-icon mb-3">
-                        <img src="<?= base_url('assets/images/aplikasi.svg') ?>" alt="Aplikasi Pendukung" style="height: 80px; max-width: 100%;">
+                        <img src="<?= base_url('assets/images/aplikasi.svg') ?>" alt="Aplikasi Pendukung">
                     </div>
-                    <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
-                        Aplikasi Pendukung
-                    </h1>
-                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 1;">
+                    <h1 class="page-title page-title--md fw-bold mb-2">Aplikasi Pendukung</h1>
+                    <p class="page-subtitle page-subtitle--md">
                         Modul dan layanan penting yang memperluas fungsionalitas sistem manajemen perpustakaan INLISLite Anda. Aplikasi-aplikasi ini menyediakan fitur tambahan untuk komunikasi, integrasi data, dan peningkatan sistem.
                     </p>
                 </div>

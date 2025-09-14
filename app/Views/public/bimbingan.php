@@ -2,23 +2,22 @@
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
-<section class="page-header">
+<header class="page-header page-header--image page-header--with-overlay page-header--bg-fixed" style="--header-bg-url: url('<?= base_url('assets/images/hero.jpeg') ?>');">
+    <div class="page-header__overlay"></div>
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <div class="page-header-content text-center">
-                    <div class="page-icon">
+                <div class="page-header-content text-center py-4">
+                    <div class="page-icon mb-3">
                         <i class="bi bi-mortarboard"></i>
                     </div>
-                    <h1 class="page-title">Bimbingan Teknis</h1>
-                    <p class="page-subtitle">
-                        Layanan bimbingan teknis dan pelatihan profesional untuk INLISLite v3. Tingkatkan kemampuan tim perpustakaan Anda
-                    </p>
+                    <h1 class="page-title page-title--md fw-bold mb-2">Bimbingan Teknis</h1>
+                    <p class="page-subtitle page-subtitle--md">Layanan bimbingan teknis dan pelatihan profesional untuk INLISLite v3. Tingkatkan kemampuan tim perpustakaan Anda</p>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</header>
 
 <!-- Breadcrumb -->
 <section class="breadcrumb-section">
@@ -173,8 +172,13 @@
                                                 </td>
                                                 <td>
                                                     <div class="progress" style="height: 20px;">
-                                                        <div class="progress-bar" style="width: <?= ($schedule['registered'] / $schedule['capacity']) * 100 ?>%">
-                                                            <?= $schedule['registered'] ?>/<?= $schedule['capacity'] ?>
+                                                        <?php 
+                                                            $registered = (int)($schedule['registered'] ?? 0);
+                                                            $capacity = max(1, (int)($schedule['capacity'] ?? 0)); // avoid division by zero
+                                                            $percent = min(100, max(0, ($registered / $capacity) * 100));
+                                                        ?>
+                                                        <div class="progress-bar" style="width: <?= $percent ?>%">
+                                                            <?= $registered ?>/<?= $capacity ?>
                                                         </div>
                                                     </div>
                                                 </td>

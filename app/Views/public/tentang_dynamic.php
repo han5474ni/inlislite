@@ -1,19 +1,11 @@
 <?= $this->extend('layout') ?>
 
 <?= $this->section('page_header') ?>
-<header class="page-header">
+<header class="page-header page-header--image page-header--with-overlay page-header--bg-fixed text-center" style="--header-bg-url: url('<?= base_url('assets/images/hero.jpeg') ?>');">
+    <div class="page-header__overlay"></div>
     <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-header-content text-center">
-                    <div class="page-icon mb-3">
-                        <i class="bi bi-info-circle" style="font-size: 4rem; color: white;"></i>
-                    </div>
-                    <h1 class="page-title"><?= esc($page_title ?? 'Tentang Kami') ?></h1>
-                    <p class="page-subtitle">Informasi ringkas tentang INLISLite v3</p>
-                </div>
-            </div>
-        </div>
+        <h1 class="page-title page-title--md fw-bold mb-2 text-white"><?= esc($page_title ?? 'Tentang Kami') ?></h1>
+        <p class="page-subtitle page-subtitle--md text-white-50">Informasi ringkas tentang INLISLite v3</p>
     </div>
 </header>
 <?= $this->endSection() ?>

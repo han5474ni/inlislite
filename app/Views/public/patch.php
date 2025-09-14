@@ -2,23 +2,22 @@
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
-<section class="page-header">
+<header class="page-header page-header--image page-header--with-overlay page-header--bg-fixed" style="--header-bg-url: url('<?= base_url('assets/images/hero.jpeg') ?>');">
+    <div class="page-header__overlay"></div>
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <div class="page-header-content text-center">
-                    <div class="page-icon">
+                <div class="page-header-content text-center py-4">
+                    <div class="page-icon mb-3">
                         <i class="bi bi-arrow-clockwise"></i>
                     </div>
-                    <h1 class="page-title">Patch & Updater</h1>
-                    <p class="page-subtitle">
-                        Download patch dan update terbaru untuk INLISLite v3. Dapatkan fitur terbaru, perbaikan bug, dan peningkatan keamanan
-                    </p>
+                    <h1 class="page-title page-title--md fw-bold mb-2">Patch & Updater</h1>
+                    <p class="page-subtitle page-subtitle--md">Download patch dan update terbaru untuk INLISLite v3. Dapatkan fitur terbaru, perbaikan bug, dan peningkatan keamanan</p>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</header>
 
 <!-- Breadcrumb -->
 <section class="breadcrumb-section">
@@ -89,12 +88,26 @@
                     <div class="card-body">
                         <?php if (isset($patches) && is_array($patches)): ?>
                             <?php foreach ($patches as $index => $patch): ?>
+                                <?php
+                                    // Map and fallback keys to avoid undefined index notices
+                                    $status = $patch['status'] ?? ($index === 0 ? 'latest' : 'stable');
+                                    $version = $patch['version'] ?? $patch['versi'] ?? 'N/A';
+                                    $type = $patch['type'] ?? $patch['tipe'] ?? 'patch';
+                                    $description = $patch['description'] ?? $patch['deskripsi'] ?? '';
+                                    $releaseDate = $patch['release_date'] ?? $patch['tanggal_rilis'] ?? null;
+                                    $size = $patch['size'] ?? $patch['ukuran'] ?? '';
+                                    $features = $patch['features'] ?? $patch['fitur'] ?? [];
+                                    if (is_string($features)) {
+                                        $features = array_filter(array_map('trim', preg_split('/[\r\n]+/', $features)));
+                                    }
+                                    $downloadUrl = $patch['download_url'] ?? $patch['url_download'] ?? '#';
+                                ?>
                                 <div class="patch-item border rounded p-4 mb-4 animate-on-scroll" style="animation-delay: <?= $index * 0.1 ?>s;">
                                     <div class="row align-items-center">
                                         <div class="col-lg-8">
                                             <div class="d-flex align-items-start">
                                                 <div class="patch-icon me-3">
-                                                    <?php if ($patch['status'] === 'latest'): ?>
+                                                    <?php if ($status === 'latest'): ?>
                                                         <i class="bi bi-star-fill text-warning" style="font-size: 1.5rem;"></i>
                                                     <?php else: ?>
                                                         <i class="bi bi-check-circle text-success" style="font-size: 1.5rem;"></i>
@@ -102,22 +115,22 @@
                                                 </div>
                                                 <div class="patch-info">
                                                     <div class="d-flex align-items-center mb-2">
-                                                        <h4 class="mb-0 me-3">Version <?= esc($patch['version']) ?></h4>
-                                                        <span class="badge <?= $patch['status'] === 'latest' ? 'bg-warning' : 'bg-success' ?> me-2">
-                                                            <?= $patch['status'] === 'latest' ? 'Terbaru' : 'Stabil' ?>
+                                                        <h4 class="mb-0 me-3">Version <?= esc($version) ?></h4>
+                                                        <span class="badge <?= $status === 'latest' ? 'bg-warning' : 'bg-success' ?> me-2">
+                                                            <?= $status === 'latest' ? 'Terbaru' : 'Stabil' ?>
                                                         </span>
                                                         <span class="badge bg-secondary">
-                                                            <?= esc($patch['type']) ?>
+                                                            <?= esc($type) ?>
                                                         </span>
                                                     </div>
-                                                    <p class="text-muted mb-2"><?= esc($patch['description']) ?></p>
+                                                    <p class="text-muted mb-2"><?= esc($description) ?></p>
                                                     <div class="patch-meta">
                                                         <small class="text-muted">
                                                             <i class="bi bi-calendar me-1"></i>
-                                                            <?= date('d M Y', strtotime($patch['release_date'])) ?>
+                                                            <?= $releaseDate ? date('d M Y', strtotime($releaseDate)) : '-' ?>
                                                             <span class="mx-2">•</span>
                                                             <i class="bi bi-download me-1"></i>
-                                                            <?= esc($patch['size']) ?>
+                                                            <?= esc($size) ?>
                                                         </small>
                                                     </div>
                                                 </div>
@@ -127,7 +140,7 @@
                                             <div class="mt-3">
                                                 <h6 class="mb-2">Fitur & Perbaikan:</h6>
                                                 <ul class="list-unstyled">
-                                                    <?php foreach ($patch['features'] as $feature): ?>
+                                                    <?php foreach ($features as $feature): ?>
                                                         <li class="mb-1">
                                                             <i class="bi bi-check text-success me-2"></i>
                                                             <?= esc($feature) ?>
@@ -139,11 +152,11 @@
                                         
                                         <div class="col-lg-4 text-lg-end">
                                             <div class="patch-actions">
-                                                <a href="<?= esc($patch['download_url']) ?>" class="btn btn-primary-gradient btn-lg mb-2 w-100">
+                                                <a href="<?= esc($downloadUrl) ?>" class="btn btn-primary-gradient btn-lg mb-2 w-100">
                                                     <i class="bi bi-download me-2"></i>
                                                     Download
                                                 </a>
-                                                <button class="btn btn-outline-secondary w-100" onclick="showPatchDetails('<?= esc($patch['version']) ?>')">
+                                                <button class="btn btn-outline-secondary w-100" onclick="showPatchDetails('<?= esc($version) ?>')">
                                                     <i class="bi bi-info-circle me-2"></i>
                                                     Detail
                                                 </button>

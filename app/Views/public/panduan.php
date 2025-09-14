@@ -1,41 +1,17 @@
 <?= $this->extend('layout') ?>
 <?= $this->section('content') ?>
 
-<!-- Page Header -->
-<header class="page-header" style="
-    position: relative;
-    background: url('https://i.pinimg.com/736x/cd/66/6a/cd666a84ab3c739f356c8b5b366731bb.jpg') center/cover no-repeat;
-    background-attachment: fixed;
-    min-height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-    overflow: hidden;
-">
-    <!-- Overlay dan efek blur -->
-    <div style="
-        content: '';
-        position: absolute;
-        inset: 0;
-        backdrop-filter: blur(2px);
-        background: rgb(0, 0, 0);
-        z-index: 1;
-    "></div>
-
-    <!-- Konten header -->
-    <div class="container" style="position: relative; z-index: 2;">
+<!-- Page Header (unified with homepage hero styles) -->
+<header class="page-header page-header--image page-header--with-overlay page-header--bg-fixed">
+    <div class="container">
         <div class="row">
             <div class="col-12">
-                <div class="page-header-content text-center" style="padding: 2rem;">
+                <div class="page-header-content text-center py-4">
                     <div class="page-icon mb-3">
-                        <i class="bi bi-book" style="font-size: 4rem; color: white;"></i>
+                        <i class="bi bi-book"></i>
                     </div>
-                    <h1 class="page-title" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
-                        Panduan
-                    </h1>
-                    <p class="page-subtitle" style="font-size: 1.125rem; max-width: 800px; margin: 0 auto; opacity: 1;">
+                    <h1 class="page-title page-title--md fw-bold mb-2">Panduan</h1>
+                    <p class="page-subtitle page-subtitle--md">
                         Panduan Pengguna INLISLite Versi 3 PHP Opensource
                     </p>
                 </div>

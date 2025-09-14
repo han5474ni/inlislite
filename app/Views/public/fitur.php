@@ -5,12 +5,13 @@
     <div class="row">
         <div class="col-12">
             <!-- Page Header -->
-            <div class="page-header text-center py-5 mb-5">
+            <header class="page-header page-header--image page-header--with-overlay page-header--bg-fixed text-center" style="--header-bg-url: url('<?= base_url('assets/images/hero.jpeg') ?>');">
+                <div class="page-header__overlay"></div>
                 <div class="container">
-                    <h1 class="display-4 fw-bold text-white mb-3">Fitur & Modul INLISLite v3</h1>
-                    <p class="lead text-white-50">Sistem otomasi perpustakaan yang komprehensif dengan fitur-fitur canggih</p>
+                    <h1 class="page-title page-title--md fw-bold mb-2 text-white">Fitur & Modul INLISLite v3</h1>
+                    <p class="page-subtitle page-subtitle--md text-white-50">Sistem otomasi perpustakaan yang komprehensif dengan fitur-fitur canggih</p>
                 </div>
-            </div>
+            </header>
 
             <!-- Main Content -->
             <div class="container mb-5">
@@ -115,69 +116,26 @@
     </div>
 </div>
 
+<?php /* Moved inline styles to CSS files */ ?>
 <style>
-.page-header {
-    background: linear-gradient(135deg, #1C6EC4 0%, #2DA84D 100%);
-    margin-top: 76px;
-}
+/* Keep only page-scoped styles which are not yet in main.css */
+.section-title { color:#2c3e50; font-weight:600; margin-bottom:1rem; }
+.section-subtitle { font-size:1.1rem; margin-bottom:2rem; }
 
-.section-title {
-    color: #2c3e50;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.section-subtitle {
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-}
-
-.feature-card, .module-card { 
-
-.feature-icon, .module-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-}
-
-.feature-icon i, .module-icon i {
-    font-size: 1.5rem;
-    color: white;
-}
-
+/* Icon tiles */
+.feature-icon, .module-icon { width:60px; height:60px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem; }
+.feature-icon i, .module-icon i { font-size:1.5rem; color:#fff; }
 .feature-icon.blue, .module-icon.blue { background: linear-gradient(135deg, #4A90E2, #357ABD); }
 .feature-icon.green, .module-icon.green { background: linear-gradient(135deg, #7ED321, #5BA515); }
 .feature-icon.orange, .module-icon.orange { background: linear-gradient(135deg, #F5A623, #D4941E); }
 .feature-icon.purple, .module-icon.purple { background: linear-gradient(135deg, #9013FE, #7C4DFF); }
 
-.feature-title, .module-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 1rem;
-}
+/* Title & text */
+.feature-title, .module-title { font-size:1.25rem; font-weight:600; color:#2c3e50; margin-bottom:1rem; }
+.feature-description, .module-description { color:#6c757d; line-height:1.6; margin-bottom:1.5rem; }
 
-.feature-description, .module-description {
-    color: #6c757d;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
-.feature-badge, .module-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #e9ecef;
-    color: #6c757d;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
+/* Badge */
+.feature-badge, .module-badge { position:absolute; top:15px; right:15px; background:#e9ecef; color:#6c757d; padding:4px 12px; border-radius:20px; font-size:.75rem; font-weight:500; }
 
 .module-badge {
     background: #e8f5e8;
@@ -219,24 +177,9 @@
 }
 
 @media (max-width: 768px) {
-    .page-header {
-        margin-top: 56px;
-        padding: 3rem 0;
-    }
-    
-    .feature-card, .module-card {
-        padding: 1.5rem;
-    }
-    
-    .d-flex.gap-3 {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .btn-lg {
-        width: 100%;
-        max-width: 250px;
-    }
+    .feature-card, .module-card { padding: 1.5rem; }
+    .d-flex.gap-3 { flex-direction: column; align-items: center; }
+    .btn-lg { width: 100%; max-width: 250px; }
 }
 </style>
 

@@ -2,26 +2,24 @@
 <?= $this->section('content') ?>
 
 <!-- Hero Section -->
-<section class="hero-section" style="background: none; min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; margin-top: 76px; padding: 2.5rem 1.5rem;">
-    <!-- Blur Background Image -->
-    <div style="position: absolute; inset: 0; background: url('https://i.pinimg.com/736x/cd/66/6a/cd666a84ab3c739f356c8b5b366731bb.jpg') center/cover no-repeat; filter: blur(2px) brightness(0.5); z-index: 0; transform: scale(1.05);"></div>
+<section class="hero-section" style="--hero-bg-url: url('<?= base_url('assets/images/hero.jpeg') ?>');">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
 
-    <div class="container-fluid px-md-5" style="position: relative; z-index: 2;">
+    <div class="container-fluid px-md-5 hero-content">
         <div class="row align-items-center justify-content-center">
-            <div class="col-lg-10 d-flex flex-column flex-md-row align-items-center gap-4">
+            <div class="col-12 col-xl-10 d-flex flex-column flex-md-row align-items-center gap-4">
 
-                <!-- Logo kiri (bergerak) -->
-                <div class="text-md-start text-center fade-in-up" style="flex-shrink: 0; margin-left: -30px;">
-                    <img src="/assets/images/inlislite.png" alt="Logo InlisLite" style="width: 320px; max-width: 100%; height: auto;">
+                <!-- Logo kiri -->
+                <div class="text-md-start text-center fade-in-up hero-logo">
+                    <img src="<?= base_url('assets/images/inlislite.png') ?>" alt="Logo InlisLite">
                 </div>
 
-                <!-- Teks kanan (bergerak) -->
-                <div class="text-center text-md-center fade-in-up" style="flex: 1; color: white;">
-                    <h1 style="font-size: 3.2rem; font-weight: 700; margin-bottom: 1rem; text-shadow: 1px 1px 3px rgb(0, 0, 0); font-family: 'Poppins', sans-serif; color: #ffffff;">
-                        Selamat datang di InlisLite V3
-                    </h1>
-                    <p style="font-size: 1.25rem; line-height: 1.6; max-width: 800px; margin: 0 auto; text-shadow: 1px 1px 2px rgb(0, 0, 0); font-family: 'Poppins', sans-serif;">
-                        Sebuah sistem otomasi perpustakaan yang modern, terintegrasi, dan bersifat open-source, dikembangkan oleh Perpustakaan Nasional Republik Indonesia.
+                <!-- Teks kanan -->
+                <div class="text-center text-md-center fade-in-up hero-text">
+                    <h1 class="hero-title">INLISLite v3</h1>
+                    <p class="hero-subtitle">
+                        Sistem otomasi perpustakaan yang modern, sederhana, dan mudah digunakan.
                     </p>
                 </div>
 
@@ -30,237 +28,104 @@
     </div>
 </section>
 
-<!-- Combined Features and Why Choose InlisLite Section -->
-<section class="combined-features-section" id="featuresAndWhy">
-    <!-- Animated Gradient Background -->
-    <div class="gradient-bg"></div>
-    
-    <!-- Floating Particles -->
-    <div class="particles-container">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-
-    <!-- Morphing SVG Shapes -->
-    <div class="morphing-shapes">
-        <svg class="morph-shape" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="rgb(59, 130, 246)" d="M40.7,-69.8C50.9,-59.4,56.3,-43.2,64.4,-27.5C72.5,-11.8,83.3,3.4,83.6,19.1C83.9,34.8,73.7,51,59.6,61.5C45.5,72,27.5,76.8,8.9,75.2C-9.7,73.6,-28.9,65.6,-43.8,54.1C-58.7,42.6,-69.3,27.6,-74.4,10.1C-79.5,-7.4,-79.1,-27.4,-71.2,-42.8C-63.3,-58.2,-47.9,-69,-31.1,-68.9C-14.3,-68.8,3.9,-57.8,22.6,-52.4C41.3,-47,60.5,-47.2,40.7,-69.8Z" transform="translate(100 100)" />
-        </svg>
-        
-        <svg class="morph-shape morph-shape-2" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="rgb(29, 78, 216)" d="M44.3,-76.1C56.2,-68.3,64.4,-53.4,69.8,-37.8C75.2,-22.2,77.8,-5.9,75.9,9.7C74,25.3,67.6,40.2,57.8,51.8C48,63.4,34.8,71.7,20.2,75.4C5.6,79.1,-10.4,78.2,-25.1,73.8C-39.8,69.4,-53.2,61.5,-63.4,50.2C-73.6,38.9,-80.6,24.2,-82.1,8.8C-83.6,-6.6,-79.6,-22.7,-71.8,-36.4C-64,-50.1,-52.4,-61.4,-39.2,-68.8C-26,-76.2,-11.2,-79.7,4.2,-86.4C19.6,-93.1,32.4,-83.9,44.3,-76.1Z" transform="translate(100 100)" />
-        </svg>
-    </div>
-    
-    <!-- Gradient Waves -->
-    <div class="gradient-waves">
-        <svg class="wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path fill="rgb(37, 99, 235)" fill-opacity="1" d="M0,96L48,122.7C96,149,192,203,288,192C384,181,480,107,576,112C672,117,768,203,864,224C960,245,1056,203,1152,176C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-        </svg>
-        
-        <svg class="wave wave-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path fill="rgb(29, 78, 216)" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,149.3C672,149,768,203,864,208C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-        </svg>
-    </div>
-
+<!-- Why Choose INLISLite - Simple Card Grid -->
+<section class="why-choose-section">
     <div class="container">
-        <!-- First Section Header -->
-        <div class="section-header">
-            <h2 class="section-title">Keunggulan Sistem InlisLite V3</h2>
-            <p class="section-subtitle">Solusi perpustakaan digital yang modern, terintegrasi, dan mudah digunakan</p>
+        <div class="why-header text-center">
+            <h2 class="why-title">Mengapa memilih INLISLite?</h2>
+            <p class="why-subtitle">Fokus pada yang penting: cepat, stabil, dan gratis.</p>
         </div>
 
-        <!-- Feature Cards -->
-        <div class="features-grid">
-            <!-- Card 1: Teknologi Modern -->
-            <div class="glass-card" data-aos="fade-up" data-aos-delay="100">
-                <div class="card-icon">
+        <div class="why-cards-grid">
+            <!-- Card: Teknologi Modern -->
+            <div class="why-card">
+                <div class="icon-badge badge-blue">
                     <i class="bi bi-cpu"></i>
                 </div>
-                <div class="card-content">
-                    <h3 class="card-title">Teknologi Modern</h3>
-                    <p class="card-description">
-                        Dibangun dengan teknologi terdepan dan arsitektur yang scalable untuk mendukung 
-                        kebutuhan perpustakaan masa depan dengan performa optimal.
-                    </p>
-                    <div class="card-features">
-                        <span class="feature-tag">Cloud Ready</span>
-                        <span class="feature-tag">API Integration</span>
-                        <span class="feature-tag">Real-time Sync</span>
-                    </div>
-                </div>
+                <h3 class="why-card-title">Teknologi Modern</h3>
+                <p class="why-card-text">Dibangun di atas framework modern dengan performa yang andal.</p>
             </div>
 
-            <!-- Card 2: Open Source -->
-            <div class="glass-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="card-icon">
+            <!-- Card: Open Source -->
+            <div class="why-card">
+                <div class="icon-badge badge-green">
                     <i class="bi bi-code-slash"></i>
                 </div>
-                <div class="card-content">
-                    <h3 class="card-title">Open Source & Gratis</h3>
-                    <p class="card-description">
-                        Bebas digunakan tanpa biaya lisensi, dengan kode sumber terbuka yang memungkinkan 
-                        kustomisasi sesuai kebutuhan spesifik institusi Anda.
-                    </p>
-                    <div class="card-features">
-                        <span class="feature-tag">No License Fee</span>
-                        <span class="feature-tag">Customizable</span>
-                        <span class="feature-tag">Community Support</span>
-                    </div>
-                </div>
+                <h3 class="why-card-title">Open Source</h3>
+                <p class="why-card-text">Gratis, dapat dimodifikasi, dan didukung komunitas.</p>
             </div>
 
-            <!-- Card 3: Dukungan Nasional -->
-            <div class="glass-card" data-aos="fade-up" data-aos-delay="300">
-                <div class="card-icon">
-                    <i class="bi bi-shield-check"></i>
+            <!-- Card: Aman & Terpercaya -->
+            <div class="why-card">
+                <div class="icon-badge badge-cyan">
+                    <i class="bi bi-shield"></i>
                 </div>
-                <div class="card-content">
-                    <h3 class="card-title">Dukungan Nasional</h3>
-                    <p class="card-description">
-                        Dikembangkan dan didukung langsung oleh Perpustakaan Nasional RI dengan 
-                        standar keamanan tinggi dan dokumentasi lengkap dalam bahasa Indonesia.
-                    </p>
-                    <div class="card-features">
-                        <span class="feature-tag">Official Support</span>
-                        <span class="feature-tag">Secure</span>
-                        <span class="feature-tag">Bahasa Indonesia</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Second Section Header -->
-        <div class="section-header-why">
-            <h2 class="section-title-why">Kenapa Memilih InlisLite?</h2>
-            <p class="section-subtitle-why">Tiga alasan utama mengapa InlisLite menjadi pilihan terbaik untuk sistem perpustakaan modern</p>
-        </div>
-
-        <!-- Vertical Feature Cards -->
-        <div class="vertical-features">
-            <!-- Card 1: Otomasi & Digitalisasi -->
-            <div class="full-width-card" data-aos="fade-up" data-aos-delay="100">
-                <div class="card-visual">
-                    <div class="card-icon-large">
-                        <i class="bi bi-gear-wide-connected"></i>
-                    </div>
-                    <img src="/assets/images/digital-canva.png" alt="Otomasi Digital" class="card-illustration">
-                </div>
-                <div class="card-content-full">
-                    <h3 class="card-title-large">Otomasi & Digitalisasi Terdepan</h3>
-                    <p class="card-description-large">
-                        Menghadirkan revolusi digital dalam pengelolaan perpustakaan dengan sistem otomasi yang canggih. 
-                        Proses katalogisasi, sirkulasi, dan manajemen koleksi menjadi lebih efisien dan akurat dengan 
-                        teknologi terdepan yang terintegrasi sempurna.
-                    </p>
-                    <div class="card-benefits">
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Katalogisasi Otomatis</span>
-                        </div>
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Sirkulasi Digital</span>
-                        </div>
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Laporan Real-time</span>
-                        </div>
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Backup Otomatis</span>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="why-card-title">Aman & Terpercaya</h3>
+                <p class="why-card-text">Dikembangkan dengan standar keamanan yang baik.</p>
             </div>
 
-            <!-- Card 2: Gratis & Open Source -->
-            <div class="full-width-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="card-visual">
-                    <div class="card-icon-large">
-                        <i class="bi bi-code-slash"></i>
-                    </div>
-                    <img src="/assets/images/book-canva.png" alt="Open Source" class="card-illustration">
+            <!-- Card: Mudah Dioperasikan -->
+            <div class="why-card">
+                <div class="icon-badge badge-yellow">
+                    <i class="bi bi-gear"></i>
                 </div>
-                <div class="card-content-full">
-                    <h3 class="card-title-large">Gratis & Open Source Selamanya</h3>
-                    <p class="card-description-large">
-                        Nikmati kebebasan penuh tanpa biaya lisensi yang memberatkan. Dengan sifat open source, 
-                        Anda dapat mengkustomisasi sistem sesuai kebutuhan spesifik institusi, mendapat dukungan 
-                        komunitas global, dan berkontribusi dalam pengembangan sistem perpustakaan masa depan.
-                    </p>
-                    <div class="card-benefits">
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Tanpa Biaya Lisensi</span>
-                        </div>
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Kustomisasi Bebas</span>
-                        </div>
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Dukungan Komunitas</span>
-                        </div>
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Update Berkelanjutan</span>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="why-card-title">Mudah Dioperasikan</h3>
+                <p class="why-card-text">Antarmuka yang bersih dan alur kerja sederhana.</p>
             </div>
 
-            <!-- Card 3: Etis & Dapat Dimodifikasi -->
-            <div class="full-width-card" data-aos="fade-up" data-aos-delay="300">
-                <div class="card-visual">
-                    <div class="card-icon-large">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-                    <img src="/assets/images/ceklis-canva.png" alt="Etis dan Aman" class="card-illustration">
+            <!-- Card: Skalabel -->
+            <div class="why-card">
+                <div class="icon-badge badge-pink">
+                    <i class="bi bi-graph-up-arrow"></i>
                 </div>
-                <div class="card-content-full">
-                    <h3 class="card-title-large">Etis, Aman & Dapat Dimodifikasi</h3>
-                    <p class="card-description-large">
-                        Dikembangkan dengan standar etika tinggi dan keamanan berlapis oleh Perpustakaan Nasional RI. 
-                        Sistem yang fleksibel memungkinkan adaptasi dengan workflow institusi Anda, sambil menjaga 
-                        integritas data dan privasi pengguna dengan standar keamanan internasional.
-                    </p>
-                    <div class="card-benefits">
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Standar Keamanan Tinggi</span>
-                        </div>
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Privasi Terjamin</span>
-                        </div>
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Workflow Fleksibel</span>
-                        </div>
-                        <div class="benefit-item">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Dukungan Resmi Perpusnas</span>
-                        </div>
-                    </div>
+                <h3 class="why-card-title">Skalabel</h3>
+                <p class="why-card-text">Siap digunakan dari perpustakaan kecil hingga besar.</p>
+            </div>
+
+            <!-- Card: Siap Cloud -->
+            <div class="why-card">
+                <div class="icon-badge badge-gray">
+                    <i class="bi bi-cloud"></i>
                 </div>
+                <h3 class="why-card-title">Siap Cloud</h3>
+                <p class="why-card-text">Dapat di-deploy di server lokal maupun cloud.</p>
             </div>
         </div>
     </div>
 </section>
+
+<style>
+    /* Why Choose INLISLite - Card Grid Styles */
+    .why-choose-section { background:#f3f4f6; padding: 3rem 0 2.5rem; }
+    .why-header { margin-bottom: 1.25rem; }
+    .why-title { font-weight:800; font-size:2rem; color:#111827; margin:0; }
+    .why-subtitle { color:#6b7280; margin-top:.25rem; }
+    .why-cards-grid { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.25rem; margin-top:1rem; }
+    @media (max-width: 992px) { .why-cards-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+    @media (max-width: 576px) { .why-cards-grid { grid-template-columns: 1fr; } }
+
+    .why-card { position:relative; background:#ffffff; border:1px solid #e5e7eb; border-radius:18px; padding:1.5rem; padding-top:2.25rem; box-shadow: 0 10px 0 rgba(0,0,0,0.12), 0 10px 18px rgba(0,0,0,0.12); transition: transform .2s ease, box-shadow .2s ease; }
+    .why-card:hover { transform: translateY(-2px); box-shadow: 0 12px 0 rgba(0,0,0,0.16), 0 16px 30px rgba(0,0,0,0.16); }
+
+    .icon-badge { position:absolute; top:-18px; left:18px; width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#0f172a; background:#e5e7eb; border:1px solid rgba(0,0,0,0.05); filter: drop-shadow(0 10px 10px rgba(0,0,0,0.25)); }
+    .icon-badge i { font-size: 1.4rem; color:#0f172a; }
+
+    .badge-blue { background: linear-gradient(135deg,#93c5fd,#60a5fa); }
+    .badge-green { background: linear-gradient(135deg,#86efac,#34d399); }
+    .badge-cyan { background: linear-gradient(135deg,#a5f3fc,#67e8f9); }
+    .badge-yellow { background: linear-gradient(135deg,#fde68a,#fbbf24); }
+    .badge-pink { background: linear-gradient(135deg,#fbcfe8,#f472b6); }
+    .badge-gray { background: linear-gradient(135deg,#e5e7eb,#cbd5e1); }
+
+    .why-card-title { font-size:1.05rem; font-weight:700; color:#111827; margin:0 0 .25rem; }
+    .why-card-text { font-size:.95rem; color:#6b7280; margin:0; }
+</style>
+<style>
+  /* Hide blue wave/gradient blob area */
+  .gradient-waves, .gradient-bg, .morphing-shapes, .particles-container, .combined-features-section { display: none !important; }
+</style>
+
+
 
 <!-- Custom Style -->
 <style>
@@ -907,6 +772,36 @@
         border-radius: 10px !important;
     }
 }
+</style>
+
+<!-- Override & polish cards layout for better proportions -->
+<style>
+/* Features grid: 3 cols on large, 2 on medium, 1 on small */
+.features-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
+@media (max-width: 992px) { .features-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 576px) { .features-grid { grid-template-columns: 1fr; } }
+
+/* Glass cards: lighter glass, subtler shadow, consistent height */
+.features-grid .glass-card { 
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    padding: 2rem;
+    height: 100%;
+}
+.features-grid .glass-card .card-icon i { color:#fff; font-size:1.6rem; }
+
+/* Full-width cards: use same glass style so text putih tetap terbaca */
+.full-width-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 10px 36px rgba(0,0,0,0.35);
+}
+.card-illustration { width: 160px; height:auto; }
+
+/* Tighten vertical spacing */
+.section-header { margin-bottom: 3rem; }
+.vertical-features { gap: 2.5rem; }
 </style>
 
 <!-- Animasi CSS -->

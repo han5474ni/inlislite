@@ -26,6 +26,21 @@
     <?php else: ?>
         <!-- Public CSS -->
         <link href="<?= base_url('assets/css/public/main.css') ?>" rel="stylesheet" />
+        <!-- Default hero image variable; apply when using page-header--image -->
+        <style>
+            :root { --header-bg-url: url('<?= base_url('assets/images/hero.jpeg') ?>'); }
+            .page-header { position: relative; color: #fff; }
+            .page-header.page-header--image { background: var(--header-bg-url) center/cover no-repeat; }
+            .page-header.page-header--bg-fixed { background-attachment: fixed; }
+            .page-header::before {
+                content: '';
+                position: absolute; inset: 0;
+                background: linear-gradient(180deg, rgba(10,68,153,0.55) 0%, rgba(0,56,128,0.55) 60%, rgba(0,56,128,0.35) 100%);
+                z-index: 1;
+            }
+            .page-header .container, .page-header .page-header-content { position: relative; z-index: 2; }
+            .page-header .page-title, .page-header .page-subtitle, .page-header .page-icon { color: #fff; }
+        </style>
     <?php endif; ?>
     
     <?php if (isset($page_css)): ?>
@@ -65,38 +80,50 @@
                     <div class="navbar-brand-icon me-2">
                         <img src="<?= base_url('assets/images/inlislite.png') ?>" alt="Logo" />
                     </div>
-                    <span class="brand-title">INLISlite</span>
+                    <span class="brand-title">INLISLite</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <?php
+                    // Determine active menu based on first segment
+                    $seg = strtolower($segments[0] ?? '');
+                    $isActive = function(array $keys) use ($seg) { return in_array($seg, $keys, true); };
+                ?>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="<?= base_url('/') ?>">Beranda</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($seg === '' ? 'active' : '') ?>" href="<?= base_url('/') ?>">Beranda</a>
+                        </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Fitur</a>
+                            <a class="nav-link dropdown-toggle <?= ($isActive(['fitur','aplikasi','patch','demo']) ? 'active' : '') ?>" href="#" role="button" data-bs-toggle="dropdown">Fitur</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="<?= base_url('aplikasi') ?>"><i class="bi bi-app me-2"></i>Aplikasi Pendukung</a></li>
                                 <li><a class="dropdown-item" href="<?= base_url('patch') ?>"><i class="bi bi-arrow-clockwise me-2"></i>Patch & Updater</a></li>
                                 <li><a class="dropdown-item" href="<?= base_url('demo') ?>"><i class="bi bi-play-circle me-2"></i>Demo Program</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="<?= base_url('tentang') ?>">Tentang</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($seg === 'tentang' ? 'active' : '') ?>" href="<?= base_url('tentang') ?>">Tentang</a>
+                        </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Bantuan</a>
+                            <a class="nav-link dropdown-toggle <?= ($isActive(['panduan','dukungan','bimbingan']) ? 'active' : '') ?>" href="#" role="button" data-bs-toggle="dropdown">Bantuan</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="<?= base_url('panduan') ?>"><i class="bi bi-book me-2"></i>Panduan</a></li>
                                 <li><a class="dropdown-item" href="<?= base_url('dukungan') ?>"><i class="bi bi-headset me-2"></i>Dukungan Teknis</a></li>
                                 <li><a class="dropdown-item" href="<?= base_url('bimbingan') ?>"><i class="bi bi-mortarboard me-2"></i>Bimbingan Teknis</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="<?= base_url('bimbingan') ?>">Kontak</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($seg === 'dukungan' ? 'active' : '') ?>" href="<?= base_url('dukungan') ?>">Kontak</a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
         <!-- Main Content -->
-        <main class="pt-5 public-main">
+        <?php $isHome = ($seg1 === '' || $seg1 === null); ?>
+        <main class="public-main">
             <?= $this->renderSection('content') ?>
         </main>
         <!-- Public Footer (simplified) -->

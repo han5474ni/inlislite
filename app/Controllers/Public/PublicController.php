@@ -510,6 +510,24 @@ class PublicController extends BaseController
                 'date' => '2024-02-15',
                 'program' => 'Basic Training',
                 'location' => 'Jakarta',
+                'registered' => 12,
+                'capacity' => 25,
+                'status' => 'Available'
+            ],
+            [
+                'date' => '2024-03-05',
+                'program' => 'Advanced Cataloguing',
+                'location' => 'Bandung',
+                'registered' => 25,
+                'capacity' => 25,
+                'status' => 'Full'
+            ],
+            [
+                'date' => '2024-03-20',
+                'program' => 'Digital Library Management',
+                'location' => 'Yogyakarta',
+                'registered' => 5,
+                'capacity' => 20,
                 'status' => 'Available'
             ]
         ];

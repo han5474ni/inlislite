@@ -38,12 +38,16 @@
     --border-radius: 16px;
     --border-radius-small: 8px;
     --border-radius-large: 24px;
-    --box-shadow: 0 1px 3px 0 rgb(0, 0, 0), 0 1px 2px 0 rgb(0, 0, 0);
-    --box-shadow-md: 0 4px 6px -1px rgb(0, 0, 0), 0 2px 4px -1px rgb(0, 0, 0);
-    --box-shadow-lg: 0 10px 15px -3px rgb(0, 0, 0), 0 4px 6px -2px rgb(0, 0, 0);
-    --box-shadow-xl: 0 20px 25px -5px rgb(0, 0, 0), 0 10px 10px -5px rgb(0, 0, 0);
+    /* Softer, realistic shadows */
+    --box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --box-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Common gradients */
+    --primary-gradient: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
 }
 
 /* Global Styles */
@@ -58,6 +62,21 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Image & media defaults */
+img, svg { max-width: 100%; height: auto; }
+
+/* Sections */
+.hero-section { min-height: 80vh; display:flex; align-items:center; position:relative; overflow:hidden; margin-top:0; padding: calc(76px + 2rem) 1.25rem 2rem; background: radial-gradient(1200px 500px at 50% -200px, rgba(255,255,255,.14), rgba(255,255,255,0)); }
+.hero-bg { position:absolute; inset:0; background: var(--hero-bg-url, none) center/cover no-repeat; filter: blur(1.5px) brightness(0.75); transform: scale(1.05); z-index:0; }
+/* blue overlay like screenshot */
+.hero-overlay { position:absolute; inset:0; background: linear-gradient(180deg, rgba(10,68,153,0.85) 0%, rgba(0,56,128,0.85) 60%, rgba(0,56,128,0.65) 100%); z-index:1; box-shadow: inset 0 -6px 10px rgba(0,0,0,.15); }
+.hero-content { position:relative; z-index:2; color:#fff; }
+.hero-logo { flex-shrink:0; margin-left:-30px; }
+.hero-logo img { width:300px; max-width:100%; height:auto; filter: drop-shadow(0 6px 16px rgba(0,0,0,.25)); }
+.hero-text { flex:1; color:#fff; }
+.hero-title { font-size:3rem; font-weight:800; margin-bottom:0.75rem; text-shadow:1px 1px 3px rgba(0,0,0,.55); color:#fff; }
+.hero-subtitle { font-size:1.05rem; line-height:1.6; max-width:700px; margin:0 auto; text-shadow:1px 1px 2px rgba(0,0,0,.5); color:#dbeafe; }
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
@@ -71,19 +90,23 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Navigation Styles - Modern Solid Design */
 .navbar-public {
-    background-color: var(--primary-blue);
+    /* solid dark blue like screenshot */
+    background: linear-gradient(180deg, #0a4299 0%, #073a89 100%);
     transition: var(--transition);
     box-shadow: var(--box-shadow-md);
-    padding: 0.5rem 0; /* tighter navbar */
-    border-bottom: 1px solid var(--primary-blue-dark);
+    padding: 0.6rem 0; /* consistent height */
+    border-bottom: 0;
 }
 
 .navbar-public .container { align-items: center; }
 
+/* Transparent on top of hero, becomes solid gradient when scrolled */
+.navbar-public { background: transparent; }
 .navbar-public.scrolled {
-    background-color: var(--primary-blue-dark);
+    background: linear-gradient(180deg, #0a4299 0%, #073a89 100%);
     box-shadow: var(--box-shadow-lg);
-    padding: 0.4rem 0;
+    border-bottom: none;
+    padding: 0.55rem 0;
 }
 
 .navbar-brand {
@@ -91,37 +114,59 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     gap: 0.5rem;
     font-weight: 700;
-    font-size: 1.25rem; /* slightly smaller */
+    font-size: 1.25rem;
     color: var(--white);
     transition: var(--transition);
 }
 
 .navbar-brand .brand-title { line-height: 1; letter-spacing: 0.3px; }
 
-.navbar-public .navbar-brand-icon img { height: 48px; width: auto; } 
+.navbar-public .navbar-brand-icon img { height: 40px; width: auto; }
 
 .nav-link {
-    color: rgb(255, 255, 255);
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
     transition: var(--transition);
     position: relative;
-    padding: 0.75rem 1.25rem;
+    padding: 0.8rem 1.25rem;
     border-radius: var(--border-radius-small);
-    margin: 0 0.25rem;
-    font-size: 0.95rem;
-} 
+    margin: 0 0.2rem;
+    font-size: 1rem;
+}
 
+.nav-link:hover, .nav-link.active { color: #fff; }
+
+/* underline indicator */
 .nav-link::after {
     content: '';
     position: absolute;
-    bottom: -5px;
+    bottom: -8px;
     left: 50%;
     width: 0;
-    height: 2px;
-    background-color: var(--secondary-green);
+    height: 3px;
+    background-color: #22c55e; /* green */
     transition: var(--transition);
     transform: translateX(-50%);
-} 
+}
+
+.nav-link.active::after, .nav-link:hover::after { width: 60%; }
+
+/* Green caret indicator for dropdowns */
+.nav-item.dropdown > .nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--secondary-green);
+    opacity: 0;
+    transition: var(--transition);
+}
+.nav-item.dropdown:hover > .nav-link::before,
+.nav-item.dropdown:focus-within > .nav-link::before { opacity: 1; }
 
 /* Dropdown Menu */
 .dropdown-menu {
@@ -143,16 +188,50 @@ h1, h2, h3, h4, h5, h6 {
 .page-header {
     background-color: var(--primary-blue);
     color: var(--white);
-    padding: 8rem 0 4rem;
+    /* Add top padding to account for fixed navbar, remove top margin so navbar overlays like homepage */
+    padding: calc(76px + 2rem) 0 4rem;
     position: relative;
-    margin-top: 76px;
+    margin-top: 0;
 }
 
-/* Public footer modern (extracted from inline style) */
-.footer-modern { background: #012B5E; margin-top: 2rem; }
+/* Page header variants */
+.page-header--image { background: var(--header-bg-url, var(--primary-blue)) center/cover no-repeat; }
+.page-header--bg-fixed { background-attachment: fixed; }
+.page-header--with-overlay { overflow: hidden; }
+.page-header__overlay { position:absolute; inset:0; backdrop-filter: blur(2px); background: rgba(0,0,0,.45); z-index:1; }
+.page-header--gradient { background: var(--header-gradient, var(--primary-gradient)); }
+.page-header .container { position: relative; z-index: 2; }
+.page-header .page-header-content { padding: 2rem; }
+.page-header .page-icon img { height: 80px; }
+.page-title.page-title--md { font-size: 2.5rem; }
+.page-subtitle.page-subtitle--md { font-size: 1.125rem; max-width: 800px; margin-left:auto; margin-right:auto; }
 
-/* Public main offset below fixed navbar (from layout inline) */
-.public-main { margin-top: 70px; }
+/* Public footer modern */
+.footer-modern { background:#012B5E; margin-top:2rem; color:rgba(255,255,255,.85); }
+.footer-modern .container{ text-align:center; }
+.footer-modern a{ color:#fff; opacity:.9; text-decoration:none; }
+.footer-modern a:hover{ opacity:1; }
+
+/* Public main offset below fixed navbar - make overlay like homepage */
+.public-main { margin-top: 0; }
+/* Keep helper in case older views rely on it */
+.home-no-offset { margin-top: 0 !important; }
+
+/* Utility buttons */
+.btn-primary-gradient{ background: var(--primary-gradient); color:#fff; border:none; }
+.btn-primary-gradient:hover{ filter: brightness(0.95); }
+
+/* Dropdown hover */
+.dropdown-item:hover{ background-color: var(--gray-100); color: var(--gray-900); }
+
+/* Breadcrumb separators color */
+.breadcrumb-item + .breadcrumb-item::before{ color: var(--gray-400); }
+
+/* Card hover polish */
+.content-card:hover { transform: translateY(-2px); box-shadow: var(--box-shadow-lg); }
+
+/* Nav link underline on hover */
+.nav-link:hover::after{ width:60%; }
 
 .page-header-content {
     position: relative;
