@@ -1,1 +1,113 @@
-/* tentang page styles */
+/* Tentang page styles - modern, clean, and consistent with hero header */
+
+/* --- HERO / PAGE HEADER --- */
+.page-header.page-header--image.page-header--with-overlay {
+  padding: clamp(72px, 12vw, 160px) 0 clamp(48px, 6vw, 80px);
+  text-align: center;
+}
+.page-title--md {
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.2;
+  letter-spacing: 0.2px;
+}
+.page-subtitle--md {
+  font-size: clamp(14px, 2.1vw, 20px);
+}
+
+/* Optional centered round icon above title (if used later) */
+.page-header .page-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+}
+
+/* --- CONTENT LAYOUT --- */
+.public-main section + section { margin-top: 1rem; }
+
+/* Grid gutters already defined in markup via g-4; ensure nice spacing on small screens */
+@media (max-width: 575.98px) {
+  .container { padding-left: 1rem; padding-right: 1rem; }
+}
+
+/* --- ABOUT CARDS (tt-card) --- */
+.tt-card {
+  background: #ffffff;
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  border-radius: 14px;
+  overflow: hidden; /* keep header radius clean */
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.tt-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px -16px rgba(16, 24, 40, 0.15);
+}
+
+/* Header: keep brand accent color but soften with gradient and improve contrast */
+.tt-card-header {
+  position: relative;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+}
+.tt-card-header::after {
+  /* light inner shadow for depth */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.0) 60%);
+  pointer-events: none;
+}
+.tt-card-header .tt-icon {
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  flex: 0 0 auto;
+}
+.tt-card-header .tt-icon i { font-size: 18px; }
+.tt-card-header .tt-title {
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(18px, 2.2vw, 22px);
+}
+
+/* Body */
+.tt-card-body {
+  padding: 18px 20px 20px;
+}
+.tt-card-body .tt-desc {
+  color: #334155; /* slate-700-ish */
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+
+/* Buttons inside cards */
+.tt-card .btn {
+  padding: 0.5rem 0.9rem;
+  font-weight: 600;
+}
+
+/* Better readability for ordered lists inside content */
+.tt-card-body ol {
+  padding-left: 1.15rem;
+  margin: 0.5rem 0 0;
+}
+.tt-card-body li {
+  margin-bottom: 0.35rem;
+}
+
+/* Utilities */
+.text-white-50 { color: rgba(255,255,255,0.7) !important; }
+
+/* Prevent any sticky/overlap issue with fixed navbar on first section */
+.public-main > section:first-child { scroll-margin-top: 84px; }
+
+/* Smoothen header color if provided as pure hex by adding gradient overlay via mix-blend */
+/* If needed later, we can switch header overlay modes here. */

@@ -1,1 +1,4 @@
-// tentang page scripts\ndocument.addEventListener('DOMContentLoaded',()=>console.debug('[tentang] loaded'));
+// tentang page scripts
+document.addEventListener('DOMContentLoaded', () => {
+  console.debug('[tentang] loaded');
+});

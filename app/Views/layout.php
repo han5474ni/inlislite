@@ -124,6 +124,7 @@
         <!-- Main Content -->
         <?php $isHome = ($seg1 === '' || $seg1 === null); ?>
         <main class="public-main">
+            <?= $this->renderSection('page_header') ?>
             <?= $this->renderSection('content') ?>
         </main>
         <!-- Public Footer (simplified) -->
