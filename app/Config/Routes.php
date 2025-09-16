@@ -220,15 +220,15 @@ $routes->group('admin', ['namespace' => 'App\\Controllers\\Admin', 'filter' => '
     $routes->post('users/ajax/features/(:num)', 'UserManagement::updateUserFeatures/$1');
     $routes->get('users/reloadUsers', 'UserManagement::reloadUsers');
     
-    // Profile Management
-    $routes->get('profile', '\App\Controllers\ProfileController::index');
-    $routes->post('profile/update', '\App\Controllers\ProfileController::updateProfile');
-    $routes->post('profile/upload-photo', '\App\Controllers\ProfileController::uploadPhoto');
-    $routes->get('profile/data', '\App\Controllers\ProfileController::getProfile');
-    $routes->get('profile/data/(:num)', '\App\Controllers\ProfileController::getProfile/$1');
-    $routes->get('profile/activities', '\App\Controllers\ProfileController::getActivityHistory');
-    $routes->get('profile/sync-status', '\App\Controllers\ProfileController::checkSyncStatus');
-    $routes->post('profile/fix-sync', '\App\Controllers\ProfileController::fixSynchronization');
+    // Profile Management (use Admin namespace from group)
+    $routes->get('profile', 'ProfileController::index');
+    $routes->post('profile/update', 'ProfileController::updateProfile');
+    $routes->post('profile/upload-photo', 'ProfileController::uploadPhoto');
+    $routes->get('profile/data', 'ProfileController::getProfile');
+    $routes->get('profile/data/(:num)', 'ProfileController::getProfile/$1');
+    $routes->get('profile/activities', 'ProfileController::getActivityHistory');
+    $routes->get('profile/sync-status', 'ProfileController::checkSyncStatus');
+    $routes->post('profile/fix-sync', 'ProfileController::fixSynchronization');
     
     // Profile Testing (remove in production)
     $routes->get('profile-test', 'ProfileTestController::index');
