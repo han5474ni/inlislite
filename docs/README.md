@@ -1,4 +1,4 @@
-# 📚 INLISLite v3.0 Documentation
+# 📚 INLISLite Documentation
 
 ## 📁 Directory Structure
 
